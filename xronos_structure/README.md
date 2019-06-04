@@ -12,5 +12,9 @@ The database was
 
 ### How to read it
 
+**Shapes**
 
-
+- Boxes: Each box represents an entity. An entity is a class of objects in the real world that can be described with a set of attributes. All entities will become tables in database.
+- Diamonds: Each diamond represents a relationship. Relationships describe the interaction of entities. Some relationships will become tables in the database, others won't. That depends on the nature of the relationship.
+- Lines: Lines connect entities and relationships. Each line has a label to describe
+- Arrows: 
