@@ -19,4 +19,19 @@ The database was
 - Boxes: Entity. An entity is a class of objects in the real world (e.g. *archaeological sites*) that can be described with a set of attributes (e.g. *name, number of documented houses, spatial position*). All entities will become tables in database.
 - Diamonds: Relationship. Relationships describe the relations and interaction of entities (e.g. the *radiocarbon laboratory* is linked to the *sample* via the process of *measurement*). Some relationships have additional arguments (the *measurement* produces a *labnr*, happens at a certain *time* and has a specific *price* tag). Some relationships will become tables in the database, others won't. That depends on the nature of the relationship.
 - Lines: Lines connect entities and relationships. Each line has a label to describe the amount of objects within an entity that can or have to be part of that relationship. Some examples: *(0,\*)*: Zero or many objects can be part of that that relationship. *(1,1)*: Exactly one object can be part of that relationship. That also implies that each object has to have exactly one partner in this specific relationship. *(0,1)*: Each object linked to the relationship has zero or one partner within the other linked entity. 
-- Arrows: Is-a-hierarchy. Entities from which an arrow emanates are subcategories of the linked entity. They share the same set of attributes, but also some special, addition ones.
+- Arrows: Is-a-hierarchy. Entities from which an arrow emanates are subcategories of the linked entity. They share the same set of attributes, but also some special, additional ones.
+
+**Colours**
+
+Colours are used to distinguish semantic areas of the ER diagram.
+
+- White: Archaeological objects, samples and meaurements
+- Blue: Literature/References
+- Pink: Phases and archaelogical cultures
+- Yellow: Spatial attribution
+- Dark yellow: Spatial attribution on the site
+- Grey: Archaeological categorization of sites
+- Purple: Laboratories
+- Brown: Specific information for C14 
+- Green: Specific information for Dendrodating 
+- Blue: User management
