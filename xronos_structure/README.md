@@ -8,7 +8,7 @@ The database was
 
 ## The Entity Relationship diagram
 
-![](xronos_structure/xronos_erd.png)
+![](xronos_erd.png)
 
 ### How to read it
 
