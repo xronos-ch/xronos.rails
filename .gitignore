@@ -1,3 +1,6 @@
 # dia files
 *.dia~
 *.dia.autosave
+
+# MySQL Workbench
+*.mwb.bak
