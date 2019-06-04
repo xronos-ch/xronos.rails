@@ -23,13 +23,13 @@ The database was
 
 Colours are used to distinguish semantic areas/domains within the ER diagram.
 
-1. *(White)* Archaeological objects, samples and meaurements
-2. *(Blue)* Literature/References
-3. *(Pink)* Phases and archaelogical cultures
-4. *(Yellow)* Spatial attribution
-5. *(Dark)* yellow: Spatial attribution on the site
-6. *(Grey)* Archaeological categorization of sites
-7 *(Purple)* Laboratories
-8. *(Brown)* Specific information for C14 
-9. *(Green)* Specific information for Dendrodating 
-10. *(Blue)* User management
+1. *(White)* Archaeological objects, samples and measurements: 
+2. *(Blue)* Literature/References: 
+3. *(Pink)* Phases and archaelogical cultures: Each measurement can be attributed to zero or many archaeological phases or cultures. Each phase and culture can be linked to zero or many spatial units (e.g. countries). Each phase and culture can be linked to zero or many cultures or phases by coexistence and hierarchy.
+4. *(Yellow)* Spatial attribution: Each object stems from exactly one site and each site can be within zero or many spatial units.
+5. *(Dark)* yellow: Spatial attribution on the site: Each object can have zero or many precise position indicators on a site (e.g. coordinates in a local reference system).
+6. *(Grey)* Archaeological categorization of sites: Each site can have zero or one site type definitions (e.g. settlement, burial site, cave). Each on site object position can be linked to zero or one feature types (e.g. burial, pit, Schlitzgrube)
+7 *(Purple)* Laboratories:
+8. *(Brown)* Specific information for C14: 
+9. *(Green)* Specific information for Dendrodating: 
+10. *(Blue)* User management: 
