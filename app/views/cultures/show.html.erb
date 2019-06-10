@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @culture.name %>
+</p>
+
+<p>
+  <strong>Approx start ime:</strong>
+  <%= @culture.approx_start_ime %>
+</p>
+
+<p>
+  <strong>Approx end time:</strong>
+  <%= @culture.approx_end_time %>
+</p>
+
+<%= link_to 'Edit', edit_culture_path(@culture) %> |
+<%= link_to 'Back', cultures_path %>

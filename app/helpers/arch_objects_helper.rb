@@ -1,0 +1,2 @@
+module ArchObjectsHelper
+end

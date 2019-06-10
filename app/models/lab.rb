@@ -1,0 +1,2 @@
+class Lab < ApplicationRecord
+end

@@ -1,0 +1,37 @@
+<%= form_with(model: species, local: true) do |form| %>
+  <% if species.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(species.errors.count, "error") %> prohibited this species from being saved:</h2>
+
+      <ul>
+      <% species.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :family %>
+    <%= form.text_field :family %>
+  </div>
+
+  <div class="field">
+    <%= form.label :genus %>
+    <%= form.text_field :genus %>
+  </div>
+
+  <div class="field">
+    <%= form.label :species %>
+    <%= form.text_field :species %>
+  </div>
+
+  <div class="field">
+    <%= form.label :subspecies %>
+    <%= form.text_field :subspecies %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

@@ -10,7 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_10_065457) do
+ActiveRecord::Schema.define(version: 2019_06_10_071535) do
+
+  create_table "arch_objects", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "countries", force: :cascade do |t|
     t.string "name"
@@ -19,9 +24,30 @@ ActiveRecord::Schema.define(version: 2019_06_10_065457) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "cultures", force: :cascade do |t|
+    t.string "name"
+    t.integer "approx_start_ime"
+    t.integer "approx_end_time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "feature_types", force: :cascade do |t|
     t.string "name"
     t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "labs", force: :cascade do |t|
+    t.string "name"
+    t.boolean "active"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "materials", force: :cascade do |t|
+    t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -37,6 +63,25 @@ ActiveRecord::Schema.define(version: 2019_06_10_065457) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "phases", force: :cascade do |t|
+    t.string "name"
+    t.integer "approx_start_ime"
+    t.integer "approx_end_time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "references", force: :cascade do |t|
+    t.text "bibtex"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "samples", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "site_types", force: :cascade do |t|
     t.string "name"
     t.text "description"
@@ -48,6 +93,15 @@ ActiveRecord::Schema.define(version: 2019_06_10_065457) do
     t.string "name"
     t.integer "lat"
     t.integer "lng"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "species", force: :cascade do |t|
+    t.string "family"
+    t.string "genus"
+    t.string "species"
+    t.string "subspecies"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
