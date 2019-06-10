@@ -1,0 +1,2 @@
+class SiteType < ApplicationRecord
+end

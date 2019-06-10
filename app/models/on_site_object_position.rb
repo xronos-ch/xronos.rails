@@ -1,0 +1,2 @@
+class OnSiteObjectPosition < ApplicationRecord
+end
