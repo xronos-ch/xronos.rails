@@ -69,6 +69,6 @@ class SamplesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def sample_params
-      params.fetch(:sample, {})
+      params.require(:sample).permit(:arch_object_id)
     end
 end
