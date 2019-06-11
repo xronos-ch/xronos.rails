@@ -6,19 +6,32 @@
   </button>
 
   <nav class="nav">
-    <p><%= link_to 'sites management', controller: 'sites' %></p>
-		<p><%= link_to 'countries management', controller: 'countries' %></p>
-		<p><%= link_to 'site_types management', controller: 'site_types' %></p>
-		<p><%= link_to 'on_site_object_positions management', controller: 'on_site_object_positions' %></p>
-		<p><%= link_to 'feature_types management', controller: 'feature_types' %></p>
-		<p><%= link_to 'materials management', controller: 'materials' %></p>
-		<p><%= link_to 'species management', controller: 'species' %></p>
-		<p><%= link_to 'references management', controller: 'references' %></p>
-		<p><%= link_to 'phases management', controller: 'phases' %></p>
-		<p><%= link_to 'cultures management', controller: 'cultures' %></p>
-		<p><%= link_to 'arch_objects management', controller: 'arch_objects' %></p>
-		<p><%= link_to 'samples management', controller: 'samples' %></p>
-		<p><%= link_to 'labs management', controller: 'labs' %></p>
+		
+		<!-- https://www.w3schools.com/css/tryit.asp?filename=trycss_dropdown_navbar -->
+		<ul>
+			<li class="dropdown">
+				<a href="javascript:void(0)" class="dropbtn">Tables</a>
+					<div class="dropdown-content">
+						<%= link_to 'sites', controller: 'sites' %>
+						<%= link_to 'countries', controller: 'countries' %>
+						<%= link_to 'site_types', controller: 'site_types' %>
+						<%= link_to 'on_site_object_positions', controller: 'on_site_object_positions' %>
+						<%= link_to 'feature_types', controller: 'feature_types' %>
+						<%= link_to 'materials', controller: 'materials' %>
+						<%= link_to 'species', controller: 'species' %>
+						<%= link_to 'references', controller: 'references' %>
+						<%= link_to 'phases', controller: 'phases' %>
+						<%= link_to 'cultures', controller: 'cultures' %>
+						<%= link_to 'arch_objects', controller: 'arch_objects' %>
+						<%= link_to 'samples', controller: 'samples' %>
+						<%= link_to 'labs', controller: 'labs' %>
+					</div>
+			</li>
+			<li><a href="#home">API</a></li>
+			<li><a href="#home">About</a></li>
+			<li><a href="#home">Login</a></li>
+		</ul>
+
   </nav>
 
 </div>
