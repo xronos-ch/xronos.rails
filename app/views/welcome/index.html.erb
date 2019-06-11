@@ -20,10 +20,13 @@
 
 </div>
 
-<%= map(:center => {
-  :latlng => [51.52238797921441, -0.08366235665359283],
-  :zoom => 18
-}) %>
+<%= map(
+	:center => {
+	  :latlng => [45, 8],
+	  :zoom => 2
+	},
+	:markers => Site.all.map { |site| { latlng: [site.lat, site.lng], popup: site.name } }
+) %>
 
 <script>
 	//Make the DIV element draggagle:
