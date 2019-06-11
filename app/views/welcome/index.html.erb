@@ -1,16 +1,71 @@
-<h1>Welcome#index</h1>
-<p>Find me in app/views/welcome/index.html.erb</p>
+<div id = "mydiv">
 
-<p><%= link_to 'sites management', controller: 'sites' %></p>
-<p><%= link_to 'countries management', controller: 'countries' %></p>
-<p><%= link_to 'site_types management', controller: 'site_types' %></p>
-<p><%= link_to 'on_site_object_positions management', controller: 'on_site_object_positions' %></p>
-<p><%= link_to 'feature_types management', controller: 'feature_types' %></p>
-<p><%= link_to 'materials management', controller: 'materials' %></p>
-<p><%= link_to 'species management', controller: 'species' %></p>
-<p><%= link_to 'references management', controller: 'references' %></p>
-<p><%= link_to 'phases management', controller: 'phases' %></p>
-<p><%= link_to 'cultures management', controller: 'cultures' %></p>
-<p><%= link_to 'arch_objects management', controller: 'arch_objects' %></p>
-<p><%= link_to 'samples management', controller: 'samples' %></p>
-<p><%= link_to 'labs management', controller: 'labs' %></p>
+	<div id="mydivheader">Click here to move</div>
+
+	<h1>Xronos</h1>
+
+	<p><%= link_to 'sites management', controller: 'sites' %></p>
+	<p><%= link_to 'countries management', controller: 'countries' %></p>
+	<p><%= link_to 'site_types management', controller: 'site_types' %></p>
+	<p><%= link_to 'on_site_object_positions management', controller: 'on_site_object_positions' %></p>
+	<p><%= link_to 'feature_types management', controller: 'feature_types' %></p>
+	<p><%= link_to 'materials management', controller: 'materials' %></p>
+	<p><%= link_to 'species management', controller: 'species' %></p>
+	<p><%= link_to 'references management', controller: 'references' %></p>
+	<p><%= link_to 'phases management', controller: 'phases' %></p>
+	<p><%= link_to 'cultures management', controller: 'cultures' %></p>
+	<p><%= link_to 'arch_objects management', controller: 'arch_objects' %></p>
+	<p><%= link_to 'samples management', controller: 'samples' %></p>
+	<p><%= link_to 'labs management', controller: 'labs' %></p>
+</div>
+
+<%= map(:center => {
+  :latlng => [51.52238797921441, -0.08366235665359283],
+  :zoom => 18
+}) %>
+
+<script>
+	//Make the DIV element draggagle:
+	dragElement(document.getElementById("mydiv"));
+
+	function dragElement(elmnt) {
+		var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+		if (document.getElementById("mydivheader")) {
+		  /* if present, the header is where you move the DIV from:*/
+		  document.getElementById("mydivheader").onmousedown = dragMouseDown;
+		} else {
+		  /* otherwise, move the DIV from anywhere inside the DIV:*/
+		  elmnt.onmousedown = dragMouseDown;
+		}
+
+		function dragMouseDown(e) {
+		  e = e || window.event;
+		  e.preventDefault();
+		  // get the mouse cursor position at startup:
+		  pos3 = e.clientX;
+		  pos4 = e.clientY;
+		  document.onmouseup = closeDragElement;
+		  // call a function whenever the cursor moves:
+		  document.onmousemove = elementDrag;
+		}
+
+		function elementDrag(e) {
+		  e = e || window.event;
+		  e.preventDefault();
+		  // calculate the new cursor position:
+		  pos1 = pos3 - e.clientX;
+		  pos2 = pos4 - e.clientY;
+		  pos3 = e.clientX;
+		  pos4 = e.clientY;
+		  // set the element's new position:
+		  elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+		  elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+		}
+
+		function closeDragElement() {
+		  /* stop moving when mouse button is released:*/
+		  document.onmouseup = null;
+		  document.onmousemove = null;
+		}
+	}
+</script>
