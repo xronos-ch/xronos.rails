@@ -1,9 +1,12 @@
-<div id = "controls">
+<!-- https://codepen.io/anon/pen/GbRzoL -->
+<div class="menu">
 
-	<div id="controlsheader"><h1>Xronos</h1></div>
+  <button class="nav-tgl" type="button" aria-label="toggle menu">
+    <!-- this span just for the three dividers in the hamburger button--><span aria-hidden="true"></span>
+  </button>
 
-	<div id="controlsbody">
-		<p><%= link_to 'sites management', controller: 'sites' %></p>
+  <nav class="nav">
+    <p><%= link_to 'sites management', controller: 'sites' %></p>
 		<p><%= link_to 'countries management', controller: 'countries' %></p>
 		<p><%= link_to 'site_types management', controller: 'site_types' %></p>
 		<p><%= link_to 'on_site_object_positions management', controller: 'on_site_object_positions' %></p>
@@ -16,6 +19,28 @@
 		<p><%= link_to 'arch_objects management', controller: 'arch_objects' %></p>
 		<p><%= link_to 'samples management', controller: 'samples' %></p>
 		<p><%= link_to 'labs management', controller: 'labs' %></p>
+  </nav>
+
+</div>
+
+<script>
+	const menu = document.querySelector(".menu");
+	const btn = menu.querySelector(".nav-tgl");
+	btn.addEventListener("click", evt => {
+		if (menu.className.indexOf("active") === -1) {
+			menu.classList.add("active");
+		} else {
+			menu.classList.remove("active");
+		}
+	});
+</script>
+
+<div id = "controls">
+
+	<div id="controlsheader"><h1>Xronos</h1></div>
+
+	<div id="controlsbody">
+		test
 	</div>
 
 </div>

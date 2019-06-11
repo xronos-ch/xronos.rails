@@ -2,6 +2,103 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+.nav-tgl {
+  display: inline-block;
+  cursor: pointer;
+  position: fixed;
+  z-index: 100;
+  left: 30px;
+  top: calc(100% - 100px);
+  width: 70px;
+  height: 70px;
+  border: none;
+  border-radius: 50%;
+  padding: 0;
+  background: #fff;
+  box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.24);
+  line-height: 0.6;
+  text-align: center;
+}
+
+.nav-tgl > span {
+  display: inline-block;
+  position: relative;
+  height: 2px;
+  width: 34px;
+  border-radius: 1px;
+  background: black;
+  vertical-align: middle;
+}
+
+.nav-tgl > span:before, .nav-tgl > span:after {
+  display: inline-block;
+  position: absolute;
+  content: "";
+  height: 2px;
+  border-radius: 1px;
+  background: black;
+  transition: all 200ms;
+}
+
+.nav-tgl > span:before {
+  top: -11px;
+  left: 3px;
+  width: 28px;
+}
+
+.nav-tgl > span:after {
+  top: 11px;
+  left: 6px;
+  width: 22px;
+}
+
+.nav-tgl:focus {
+  outline: none;
+}
+
+.nav-tgl:hover > span:after, .nav-tgl:hover > span:before {
+  width: 34px;
+  left: 0;
+}
+
+.nav {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 40vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.9);
+  transition: all 500ms ease-in-out;
+  clip-path: circle(30px at 65px calc(100% - 65px));
+  visibility: hidden;
+	padding: 30px;
+	color: white;
+}
+
+.menu.active .nav {
+  visibility: visible;
+  clip-path: circle(100%);
+}
+
+.menu.active .nav-tgl > span {
+  height: 0;
+}
+
+.menu.active .nav-tgl > span:after, .menu.active .nav-tgl > span:before {
+  top: 0px;
+  left: 0;
+  width: 34px;
+}
+
+.menu.active .nav-tgl > span:after {
+  transform: rotate(-45deg);
+}
+
+.menu.active .nav-tgl > span:before {
+  transform: rotate(45deg);
+}
+
 #map {
   height: 100%;
   width: 100%;
@@ -12,10 +109,9 @@
 }
 
 #controls{
+	box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.24);
   position: absolute;
   z-index: 9;
-  background-color: #f1f1f1;
-  border: 1px solid #d3d3d3;
 	width: 200px;
 	top: 50px;
 	right: 50px;
@@ -26,10 +122,12 @@
   padding: 10px;
   cursor: move;
   z-index: 10;
-  background-color: #2196F3;
-  color: #fff;
+  background-color: rgba(255, 255, 255, 1);
+  color: black;
 }
 
 #controlsbody {
-	padding-left: 10px
+	padding-left: 10px;
+	color: white;
+	background-color: rgba(0, 0, 0, 0.9);
 }
