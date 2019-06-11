@@ -1,22 +1,23 @@
-<div id = "mydiv">
+<div id = "controls">
 
-	<div id="mydivheader">Click here to move</div>
+	<div id="controlsheader"><h1>Xronos</h1></div>
 
-	<h1>Xronos</h1>
+	<div id="controlsbody">
+		<p><%= link_to 'sites management', controller: 'sites' %></p>
+		<p><%= link_to 'countries management', controller: 'countries' %></p>
+		<p><%= link_to 'site_types management', controller: 'site_types' %></p>
+		<p><%= link_to 'on_site_object_positions management', controller: 'on_site_object_positions' %></p>
+		<p><%= link_to 'feature_types management', controller: 'feature_types' %></p>
+		<p><%= link_to 'materials management', controller: 'materials' %></p>
+		<p><%= link_to 'species management', controller: 'species' %></p>
+		<p><%= link_to 'references management', controller: 'references' %></p>
+		<p><%= link_to 'phases management', controller: 'phases' %></p>
+		<p><%= link_to 'cultures management', controller: 'cultures' %></p>
+		<p><%= link_to 'arch_objects management', controller: 'arch_objects' %></p>
+		<p><%= link_to 'samples management', controller: 'samples' %></p>
+		<p><%= link_to 'labs management', controller: 'labs' %></p>
+	</div>
 
-	<p><%= link_to 'sites management', controller: 'sites' %></p>
-	<p><%= link_to 'countries management', controller: 'countries' %></p>
-	<p><%= link_to 'site_types management', controller: 'site_types' %></p>
-	<p><%= link_to 'on_site_object_positions management', controller: 'on_site_object_positions' %></p>
-	<p><%= link_to 'feature_types management', controller: 'feature_types' %></p>
-	<p><%= link_to 'materials management', controller: 'materials' %></p>
-	<p><%= link_to 'species management', controller: 'species' %></p>
-	<p><%= link_to 'references management', controller: 'references' %></p>
-	<p><%= link_to 'phases management', controller: 'phases' %></p>
-	<p><%= link_to 'cultures management', controller: 'cultures' %></p>
-	<p><%= link_to 'arch_objects management', controller: 'arch_objects' %></p>
-	<p><%= link_to 'samples management', controller: 'samples' %></p>
-	<p><%= link_to 'labs management', controller: 'labs' %></p>
 </div>
 
 <%= map(:center => {
@@ -26,13 +27,13 @@
 
 <script>
 	//Make the DIV element draggagle:
-	dragElement(document.getElementById("mydiv"));
+	dragElement(document.getElementById("controls"));
 
 	function dragElement(elmnt) {
 		var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-		if (document.getElementById("mydivheader")) {
+		if (document.getElementById("controlsheader")) {
 		  /* if present, the header is where you move the DIV from:*/
-		  document.getElementById("mydivheader").onmousedown = dragMouseDown;
+		  document.getElementById("controlsheader").onmousedown = dragMouseDown;
 		} else {
 		  /* otherwise, move the DIV from anywhere inside the DIV:*/
 		  elmnt.onmousedown = dragMouseDown;
