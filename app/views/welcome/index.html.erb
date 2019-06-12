@@ -36,6 +36,24 @@
 			<li><a href="#home">Login</a></li>
 		</ul>
 
+		<h1>Sites</h1>
+		<table>
+			<tr>
+				<th>id</th>
+				<th>name</th>
+				<th>lat</th>
+				<th>lng</th>
+			</tr>
+			<% @data.each do |data| %>
+				<tr>
+					<td><%= data.id %></td>
+					<td><%= data.name %></td>
+					<td><%= data.lat %></td>
+					<td><%= data.lng %></td>
+				</tr>
+			<% end %>
+		</table>
+
   </nav>
 
 </div>
