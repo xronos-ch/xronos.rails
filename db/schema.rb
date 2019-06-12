@@ -10,11 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_12_092118) do
+ActiveRecord::Schema.define(version: 2019_06_12_140730) do
 
   create_table "arch_objects", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "c14_measurements", force: :cascade do |t|
+    t.integer "bp"
+    t.integer "std"
+    t.decimal "delta_c13"
+    t.decimal "delta_c13_std"
+    t.string "method"
   end
 
   create_table "countries", force: :cascade do |t|
@@ -30,6 +38,13 @@ ActiveRecord::Schema.define(version: 2019_06_12_092118) do
     t.integer "approx_end_time"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "dendro_measurements", force: :cascade do |t|
+    t.integer "age"
+    t.integer "start_age_deviation"
+    t.integer "end_age_deviation"
+    t.string "dating_quality_estimation_category"
   end
 
   create_table "feature_types", force: :cascade do |t|
@@ -59,6 +74,8 @@ ActiveRecord::Schema.define(version: 2019_06_12_092118) do
     t.integer "lab_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "actable_id"
+    t.string "actable_type"
     t.index ["lab_id"], name: "index_measurements_on_lab_id"
     t.index ["sample_id"], name: "index_measurements_on_sample_id"
   end

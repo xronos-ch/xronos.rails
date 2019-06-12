@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Age:</strong>
+  <%= @dendro_measurement.age %>
+</p>
+
+<p>
+  <strong>Start age deviation:</strong>
+  <%= @dendro_measurement.start_age_deviation %>
+</p>
+
+<p>
+  <strong>End age deviation:</strong>
+  <%= @dendro_measurement.end_age_deviation %>
+</p>
+
+<p>
+  <strong>Dating quality estimation category:</strong>
+  <%= @dendro_measurement.dating_quality_estimation_category %>
+</p>
+
+<%= link_to 'Edit', edit_dendro_measurement_path(@dendro_measurement) %> |
+<%= link_to 'Back', dendro_measurements_path %>

@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :dendro_measurements
+  resources :c14_measurements
   resources :measurements
   resources :samples
   resources :arch_objects

@@ -12,6 +12,12 @@
 			<li class="dropdown">
 				<a href="javascript:void(0)" class="dropbtn">Tables</a>
 					<div class="dropdown-content">
+            <%= link_to 'c14_measurements', controller: 'c14_measurements' %>
+            <%= link_to 'dendro_measurements', controller: 'dendro_measurements' %>
+            <%= link_to 'measurements', controller: 'measurements' %>
+						<%= link_to 'labs', controller: 'labs' %>
+						<%= link_to 'samples', controller: 'samples' %>
+						<%= link_to 'labs', controller: 'labs' %>
 						<%= link_to 'sites', controller: 'sites' %>
 						<%= link_to 'countries', controller: 'countries' %>
 						<%= link_to 'site_types', controller: 'site_types' %>
@@ -23,8 +29,6 @@
 						<%= link_to 'phases', controller: 'phases' %>
 						<%= link_to 'cultures', controller: 'cultures' %>
 						<%= link_to 'arch_objects', controller: 'arch_objects' %>
-						<%= link_to 'samples', controller: 'samples' %>
-						<%= link_to 'labs', controller: 'labs' %>
 					</div>
 			</li>
 			<li><a href="#home">API</a></li>

@@ -1,0 +1,35 @@
+<p id="notice"><%= notice %></p>
+
+<h1>C14 Measurements</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Bp</th>
+      <th>Std</th>
+      <th>Delta c13</th>
+      <th>Delta c13 std</th>
+      <th>Method</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @c14_measurements.each do |c14_measurement| %>
+      <tr>
+        <td><%= c14_measurement.bp %></td>
+        <td><%= c14_measurement.std %></td>
+        <td><%= c14_measurement.delta_c13 %></td>
+        <td><%= c14_measurement.delta_c13_std %></td>
+        <td><%= c14_measurement.method %></td>
+        <td><%= link_to 'Show', c14_measurement %></td>
+        <td><%= link_to 'Edit', edit_c14_measurement_path(c14_measurement) %></td>
+        <td><%= link_to 'Destroy', c14_measurement, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New C14 Measurement', new_c14_measurement_path %>

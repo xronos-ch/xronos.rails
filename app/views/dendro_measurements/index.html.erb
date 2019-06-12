@@ -1,0 +1,33 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Dendro Measurements</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Age</th>
+      <th>Start age deviation</th>
+      <th>End age deviation</th>
+      <th>Dating quality estimation category</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @dendro_measurements.each do |dendro_measurement| %>
+      <tr>
+        <td><%= dendro_measurement.age %></td>
+        <td><%= dendro_measurement.start_age_deviation %></td>
+        <td><%= dendro_measurement.end_age_deviation %></td>
+        <td><%= dendro_measurement.dating_quality_estimation_category %></td>
+        <td><%= link_to 'Show', dendro_measurement %></td>
+        <td><%= link_to 'Edit', edit_dendro_measurement_path(dendro_measurement) %></td>
+        <td><%= link_to 'Destroy', dendro_measurement, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Dendro Measurement', new_dendro_measurement_path %>
