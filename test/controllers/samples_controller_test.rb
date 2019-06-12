@@ -17,7 +17,7 @@ class SamplesControllerTest < ActionDispatch::IntegrationTest
 
   test "should create sample" do
     assert_difference('Sample.count') do
-      post samples_url, params: { sample: {  } }
+      post samples_url, params: { sample: { arch_object_id: @sample.arch_object_id } }
     end
 
     assert_redirected_to sample_url(Sample.last)
@@ -34,7 +34,7 @@ class SamplesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update sample" do
-    patch sample_url(@sample), params: { sample: {  } }
+    patch sample_url(@sample), params: { sample: { arch_object_id: @sample.arch_object_id } }
     assert_redirected_to sample_url(@sample)
   end
 
