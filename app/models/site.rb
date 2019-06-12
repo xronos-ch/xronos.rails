@@ -1,3 +1,4 @@
 class Site < ApplicationRecord
-	belongs_to :country
+  has_many :physical_locations
+  has_many :countries, :through => :physical_locations
 end
