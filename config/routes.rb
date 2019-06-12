@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :measurements
   resources :samples
   resources :arch_objects
   resources :labs

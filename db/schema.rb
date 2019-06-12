@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_12_072901) do
+ActiveRecord::Schema.define(version: 2019_06_12_092118) do
 
   create_table "arch_objects", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -50,6 +50,17 @@ ActiveRecord::Schema.define(version: 2019_06_12_072901) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "measurements", force: :cascade do |t|
+    t.integer "year"
+    t.string "labnr"
+    t.integer "sample_id"
+    t.integer "lab_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lab_id"], name: "index_measurements_on_lab_id"
+    t.index ["sample_id"], name: "index_measurements_on_sample_id"
   end
 
   create_table "on_site_object_positions", force: :cascade do |t|
