@@ -2,6 +2,6 @@ class WelcomeController < ApplicationController
   def index
   end
   def index
-    @data = Site.all
+    @selected_measurements = Site.where("lat > ?", 5).all
   end 
 end

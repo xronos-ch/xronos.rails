@@ -44,12 +44,12 @@
 				<th>lat</th>
 				<th>lng</th>
 			</tr>
-			<% @data.each do |data| %>
+			<% @selected_measurements.each do |selected_measurements| %>
 				<tr>
-					<td><%= data.id %></td>
-					<td><%= data.name %></td>
-					<td><%= data.lat %></td>
-					<td><%= data.lng %></td>
+					<td><%= selected_measurements.id %></td>
+					<td><%= selected_measurements.name %></td>
+					<td><%= selected_measurements.lat %></td>
+					<td><%= selected_measurements.lng %></td>
 				</tr>
 			<% end %>
 		</table>
