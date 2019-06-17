@@ -66,3 +66,6 @@ gem 'leaflet-rails'
 
 # enable isa-relations
 gem 'active_record-acts_as'
+
+# irb for bootsnap: rails console
+gem 'irb', require: false
