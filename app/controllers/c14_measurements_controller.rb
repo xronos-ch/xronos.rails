@@ -69,6 +69,6 @@ class C14MeasurementsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def c14_measurement_params
-      params.require(:c14_measurement).permit(:bp, :std, :delta_c13, :delta_c13_std, :method)
+      params.require(:c14_measurement).permit(:year, :labnr, :sample_id, :lab_id, :bp, :std, :delta_c13, :delta_c13_std, :method)
     end
 end

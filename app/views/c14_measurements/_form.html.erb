@@ -12,6 +12,26 @@
   <% end %>
 
   <div class="field">
+    <%= form.label :year %>
+    <%= form.number_field :year %>
+  </div>
+
+  <div class="field">
+    <%= form.label :labnr %>
+    <%= form.text_field :labnr %>
+  </div>
+
+  <div class="field">
+    <%= form.label :sample_id %>
+    <%= form.collection_select :sample_id, Sample.all, :id, :id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :lab_id %>
+    <%= form.collection_select :lab_id, Lab.all, :id, :name %>
+  </div>
+
+  <div class="field">
     <%= form.label :bp %>
     <%= form.number_field :bp %>
   </div>
