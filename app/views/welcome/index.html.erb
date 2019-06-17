@@ -75,7 +75,12 @@
 	<div id="controlsheader"><h1>Xronos</h1></div>
 
 	<div id="controlsbody">
-		test
+		<%= form_tag({controller: "welcome", action: "index"}, method: "get") do %>
+  		<%= label_tag(:query_site_name, "Search for:") %>
+  		<%= text_field_tag(:query_site_name) %>
+  		<%= submit_tag("Search") %>
+	<% end %>
+
 	</div>
 
 </div>
@@ -85,7 +90,7 @@
 	  :latlng => [45, 8],
 	  :zoom => 3
 	},
-	:markers => Site.all.map { |site| { latlng: [site.lat, site.lng], popup: site.name } }
+	:markers => @selected_measurements.all.map { |site| { latlng: [site.lat, site.lng], popup: site.name } }
 ) %>
 
 <script>
