@@ -12,11 +12,11 @@ class WelcomeController < ApplicationController
     @selected_measurements = Measurement.joins(
       sample: {arch_object: :site}
     ).select(
-      "measurements.year, 
-      measurements.labnr, 
-      sites.name, 
-      sites.lat, 
-      sites.lng"
+      "measurements.labnr as measurements_labnr, 
+			measurements.year as measurements_year, 
+      sites.name as site_name, 
+      sites.lat as site_lat, 
+      sites.lng as site_lng"
     ).all
   end 
 end

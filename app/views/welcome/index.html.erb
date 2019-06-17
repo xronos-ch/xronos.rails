@@ -36,20 +36,22 @@
 			<li><a href="#home">Login</a></li>
 		</ul>
 
-		<h1>Sites</h1>
+		<h1>Measurements</h1>
 		<table>
 			<tr>
-				<th>id</th>
-				<th>name</th>
+				<th>Lab Nr.</th>
+				<th>Year</th>
+				<th>Site name</th>
 				<th>lat</th>
 				<th>lng</th>
 			</tr>
 			<% @selected_measurements.each do |selected_measurements| %>
 				<tr>
-					<td><%= selected_measurements.id %></td>
-					<td><%= selected_measurements.name %></td>
-					<td><%= selected_measurements.lat %></td>
-					<td><%= selected_measurements.lng %></td>
+					<td><%= selected_measurements.measurements_labnr %></td>
+					<td><%= selected_measurements.measurements_year %></td>
+					<td><%= selected_measurements.site_name %></td>
+					<td><%= selected_measurements.site_lat %></td>
+					<td><%= selected_measurements.site_lng %></td>
 				</tr>
 			<% end %>
 		</table>
@@ -94,7 +96,11 @@
 	  :latlng => [45, 8],
 	  :zoom => 3
 	},
-	:markers => @selected_measurements.all.map { |site| { latlng: [site.lat, site.lng], popup: site.name } }
+	:markers => @selected_measurements.all.map {
+    |selected_measurements| { 
+      latlng: [selected_measurements.site_lat, selected_measurements.site_lng], popup: selected_measurements.site_name 
+    } 
+  }
 ) %>
 
 <script>
