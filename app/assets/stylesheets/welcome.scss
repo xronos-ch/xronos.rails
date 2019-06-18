@@ -143,7 +143,7 @@
 // content
 #content {
   display:grid;
-  grid-template-columns: 150px auto;
+  grid-template-columns: 70px auto;
   height:100%;
 }
 
@@ -152,21 +152,19 @@
   height: 50px;
   text-align:center;
   height:100%;
-  background-color:#ffcc88;
-
+  background-color:#333333;
 }
 
 #nav a {
-  line-height:50px;
+  line-height:40px;
   text-decoration:none;
-  color: black;
-  font-variant:small-caps;
-  font-size: 32px;
+  color: white;
+  font-size: 12px;
   display: block;
 }
 
 #nav a:hover {
-  background-color: rgba(0,0,0,0.1)
+  background-color: red;
 }
 
 main {
@@ -176,7 +174,6 @@ main {
 
 .page {
   display: none;
-  background-color:#ffeecc;
   padding-left:20px;
   padding-top:20px;
   margin:0px;
