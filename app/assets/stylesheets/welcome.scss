@@ -3,7 +3,7 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
 // hamburger
-.nav-tgl {
+.burger_nav-tgl {
   display: inline-block;
   cursor: pointer;
   position: fixed;
@@ -21,7 +21,7 @@
   text-align: center;
 }
 
-.nav-tgl > span {
+.burger_nav-tgl > span {
   display: inline-block;
   position: relative;
   height: 2px;
@@ -31,7 +31,7 @@
   vertical-align: middle;
 }
 
-.nav-tgl > span:before, .nav-tgl > span:after {
+.burger_nav-tgl > span:before, .burger_nav-tgl > span:after {
   display: inline-block;
   position: absolute;
   content: "";
@@ -41,28 +41,28 @@
   transition: all 200ms;
 }
 
-.nav-tgl > span:before {
+.burger_nav-tgl > span:before {
   top: -11px;
   left: 3px;
   width: 28px;
 }
 
-.nav-tgl > span:after {
+.burger_nav-tgl > span:after {
   top: 11px;
   left: 6px;
   width: 22px;
 }
 
-.nav-tgl:focus {
+.burger_nav-tgl:focus {
   outline: none;
 }
 
-.nav-tgl:hover > span:after, .nav-tgl:hover > span:before {
+.burger_nav-tgl:hover > span:after, .burger_nav-tgl:hover > span:before {
   width: 34px;
   left: 0;
 }
 
-.nav {
+.burger_nav {
   display: block;
   position: fixed;
   top: 0;
@@ -77,26 +77,26 @@
 	color: white;
 }
 
-.menu.active .nav {
+.menu.active .burger_nav {
   visibility: visible;
   clip-path: circle(100%);
 }
 
-.menu.active .nav-tgl > span {
+.menu.active .burger_nav-tgl > span {
   height: 0;
 }
 
-.menu.active .nav-tgl > span:after, .menu.active .nav-tgl > span:before {
+.menu.active .burger_nav-tgl > span:after, .menu.active .burger_nav-tgl > span:before {
   top: 0px;
   left: 0;
   width: 34px;
 }
 
-.menu.active .nav-tgl > span:after {
+.menu.active .burger_nav-tgl > span:after {
   transform: rotate(-45deg);
 }
 
-.menu.active .nav-tgl > span:before {
+.menu.active .burger_nav-tgl > span:before {
   transform: rotate(45deg);
 }
 
@@ -141,32 +141,35 @@
 
 
 // menu
-ul {
-  list-style-type: none;
+#nav_2 {
+	list-style-type: none;
   margin: 0;
   padding: 0;
   overflow: hidden;
   background-color: #333;
 }
 
-li {
-  float: left;
+#nav_2 a {
+	float: left;
+  line-height:20px;
+  text-decoration:none;
+  color: black;
+  display: block;
 }
 
-li a, .dropbtn {
+#nav_2 a, .dropbtn {
   display: inline-block;
-  color: white;
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
 }
 
-li a:hover, .dropdown:hover .dropbtn {
+#nav_2 a:hover, .dropdown:hover .dropbtn {
   background-color: red;
 }
 
-li.dropdown {
-  display: inline-block;
+#nav_2.dropdown {
+  display: block;
 }
 
 .dropdown-content {
@@ -186,8 +189,36 @@ li.dropdown {
   text-align: left;
 }
 
-.dropdown-content a:hover {background-color: #f1f1f1;}
+.dropdown-content a:hover {
+	background-color: #f1f1f1;
+}
 
 .dropdown:hover .dropdown-content {
   display: block;
 }
+
+// page
+main {
+  display:inline-block;
+  margin:0px;
+  height:100%;
+}
+
+.page {
+  display: none;
+  margin:0px;
+  height: 100%;
+}
+
+.default {
+  display:block;
+}
+
+:target {
+  display:block;
+}
+
+:target ~ .default {
+  display:none;
+}
+
