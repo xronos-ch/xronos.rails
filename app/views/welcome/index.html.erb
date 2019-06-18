@@ -1,14 +1,12 @@
-<!-- https://codepen.io/anon/pen/GbRzoL -->
+<!-- Foldout main navigation window -->
 <div class="burger_menu active">
 
   <button class="burger_nav-tgl" type="button" aria-label="toggle burger_menu">
-    <!-- this span just for the three dividers in the hamburger button-->
 		<span aria-hidden="true"></span>
   </button>
 
   <nav class="burger_nav">
 
-		<!-- https://www.w3schools.com/css/tryit.asp?filename=trycss_dropdown_navbar -->
 		<div id="content">
 
 			<!-- #### Menu #### -->		
@@ -21,23 +19,33 @@
 
 			<!-- #### Pages #### -->
       <main>
+				
+				<!-- #### API #### -->
         <div id="API" class="page">
           <h1>API</h1>
 					<hr>
           <p>You can query this database in the following ways...</p>
         </div>
+				
+				<!-- #### About #### -->
         <div id="About" class="page">
           <h1>About</h1>
 					<hr>
           <p>Xronos is...</p>
         </div>
+
+				<!-- #### User #### -->
         <div id="User" class="page">
           <h1>User settings</h1>
 					<hr>
           <p>Uhh... Change password?</p>
         </div>
+
+				<!-- #### Data #### -->
         <div id="Data" class="page default">
-        	<h1>Measurements</h1>
+        	
+					<!-- #### Measurements table #### -->
+					<h1>Measurements</h1>
 					<hr>
 					<table>
 						<tr>
@@ -58,6 +66,7 @@
 						<% end %>
 					</table>
 
+					<!-- #### Links to models #### -->
 					<%= link_to 'c14_measurements', controller: 'c14_measurements', :action => :index %>
 					<%= link_to 'dendro_measurements', controller: 'dendro_measurements', :action => :index %>
 					<%= link_to 'measurements', controller: 'measurements', :action => :index %>
@@ -77,12 +86,14 @@
 					<%= link_to 'arch_objects', controller: 'arch_objects', :action => :index %>
 
         </div>
+
       </main>
 
   </nav>
 
 </div>
 
+<!-- #### Draggable console #### -->
 <div id = "controls">
 
 	<div id="controls_login_status">
@@ -103,8 +114,7 @@
       <%= number_field_tag(:query_lat_stop, (params[:query_lat_stop] or ""), in: (-100..100).to_a) %>
 			<br><br>
   		<%= submit_tag("Search") %>
-	<% end %>
-
+		<% end %>
 	</div>
 
 </div>
