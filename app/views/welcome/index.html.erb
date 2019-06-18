@@ -78,11 +78,11 @@
 
 	<div id="controlsbody">
 		<%= form_tag({controller: "welcome", action: "index"}, method: "get") do %>
-  		<%= label_tag(:query_site_name, "Search for: " + params[:query_site_name]) %>
+  		<%= label_tag(:query_site_name, "Search for: " + params[:query_site_name].to_s) %>
   		<%= text_field_tag(:query_site_name) %>
-      <%= label_tag(:query_lat_start, "Lat min: " + params[:query_lat_start]) %>
+      <%= label_tag(:query_lat_start, "Lat min: " + params[:query_lat_start].to_s) %>
       <%= number_field_tag(:query_lat_start, in: -100..100) %>
-      <%= label_tag(:query_lat_stop, "Lat max: " + params[:query_lat_stop]) %>
+      <%= label_tag(:query_lat_stop, "Lat max: " + params[:query_lat_stop].to_s) %>
       <%= number_field_tag(:query_lat_stop, in: -100..100) %>
 			<br><br>
   		<%= submit_tag("Search") %>
