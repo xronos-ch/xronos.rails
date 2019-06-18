@@ -24,7 +24,7 @@
         <div id="API" class="page">
           <h1>API</h1>
 					<hr>
-          <p>You can automaically query this database in the following ways...</p>
+          <p>You can query this database in the following ways...</p>
         </div>
         <div id="About" class="page">
           <h1>About</h1>
@@ -99,9 +99,15 @@
 
 <div id = "controls">
 
-	<div id="controlsheader"><h1>Xronos</h1></div>
+	<div id="controls_login_status">
+		User: Peter [Log out]
+	</div>
 
-	<div id="controlsbody">
+	<div id="controls_header">
+		<h1>Xronos</h1>
+	</div>
+
+	<div id="controls_body">
 		<%= form_tag({controller: "welcome", action: "index"}, method: "get") do %>
   		<%= label_tag(:query_site_name, "Site name:") %>
   		<%= text_field_tag(:query_site_name, (params[:query_site_name] or "")) %>
@@ -136,9 +142,9 @@
 
 	function dragElement(elmnt) {
 		var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-		if (document.getElementById("controlsheader")) {
+		if (document.getElementById("controls_header")) {
 		  /* if present, the header is where you move the DIV from:*/
-		  document.getElementById("controlsheader").onmousedown = dragMouseDown;
+		  document.getElementById("controls_header").onmousedown = dragMouseDown;
 		} else {
 		  /* otherwise, move the DIV from anywhere inside the DIV:*/
 		  elmnt.onmousedown = dragMouseDown;
