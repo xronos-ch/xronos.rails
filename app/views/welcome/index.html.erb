@@ -1,96 +1,65 @@
 <!-- https://codepen.io/anon/pen/GbRzoL -->
-<div class="menu active">
+<div class="burger_menu active">
 
-  <button class="burger_nav-tgl" type="button" aria-label="toggle menu">
-    <!-- this span just for the three dividers in the hamburger button--><span aria-hidden="true"></span>
+  <button class="burger_nav-tgl" type="button" aria-label="toggle burger_menu">
+    <!-- this span just for the three dividers in the hamburger button-->
+		<span aria-hidden="true"></span>
   </button>
 
   <nav class="burger_nav">
 
-		<!-- #### Menu #### -->		
 		<!-- https://www.w3schools.com/css/tryit.asp?filename=trycss_dropdown_navbar -->
-		<nav id="nav_2">	
-			<a href="#Current_selection">Current selection</a>
-			<li class="dropdown">
-				<a href="javascript:void(0)" class="dropbtn">Tables</a>
-					<div class="dropdown-content">
-	          <%= link_to 'c14_measurements', controller: 'c14_measurements' %>
-	          <%= link_to 'dendro_measurements', controller: 'dendro_measurements' %>
-	          <%= link_to 'measurements', controller: 'measurements' %>
-						<%= link_to 'labs', controller: 'labs' %>
-						<%= link_to 'samples', controller: 'samples' %>
-						<%= link_to 'labs', controller: 'labs' %>
-						<%= link_to 'sites', controller: 'sites' %>
-						<%= link_to 'countries', controller: 'countries' %>
-						<%= link_to 'site_types', controller: 'site_types' %>
-						<%= link_to 'on_site_object_positions', controller: 'on_site_object_positions' %>
-						<%= link_to 'feature_types', controller: 'feature_types' %>
-						<%= link_to 'materials', controller: 'materials' %>
-						<%= link_to 'species', controller: 'species' %>
-						<%= link_to 'references', controller: 'references' %>
-						<%= link_to 'phases', controller: 'phases' %>
-						<%= link_to 'cultures', controller: 'cultures' %>
-						<%= link_to 'arch_objects', controller: 'arch_objects' %>
-					</div>
-			</li>
-			<a href="#API">API</a>
-			<a href="#About">About</a>
-			<a href="#User_settings">User settings</a>
-		</nav>
+		<div id="content">
 
-		<!-- #### Pages #### -->
-		<main>
+			<!-- #### Menu #### -->		
+      <nav id="nav">
+        <a href="#page1">Page 1</a>
+        <a href="#page2">Page 2</a>
+        <a href="#page3">Page 3</a>
+        <a href="#page4">Page 4</a>
+        <a href="#page5">Page 5</a>
+      </nav>
 
-		  <div id="API" class="page">
-		    <h1>Page 2</h1>
-		    <p>And this is the second page!</p>
-		  </div>
-		  <div id="About" class="page">
-		    <h1>Page 3</h1>
-		    <p>Okay... This is the third page...</p>
-		  </div>
-		  <div id="User_settings" class="page">
-		    <h1>Page 4</h1>
-		    <p>Uhh... Fourth page?</p>
-		  </div>
-			<div id="Current_selection" class="page default">
-		    <h1>Measurements</h1>
-				<table>
-					<tr>
-						<th>Lab Nr.</th>
-						<th>Year</th>
-						<th>Site name</th>
-						<th>lat</th>
-						<th>lng</th>
-					</tr>
-					<% @selected_measurements.each do |selected_measurements| %>
-						<tr>
-							<td><%= selected_measurements.measurements_labnr %></td>
-							<td><%= selected_measurements.measurements_year %></td>
-							<td><%= selected_measurements.site_name %></td>
-							<td><%= selected_measurements.site_lat %></td>
-							<td><%= selected_measurements.site_lng %></td>
-						</tr>
-					<% end %>
-				</table>
-		  </div>
-
-		</main>
+			<!-- #### Pages #### -->
+      <main>
+        <div id="page2" class="page">
+          <h1>Page 2</h1>
+          <p>And this is the second page!</p>
+        </div>
+        <div id="page3" class="page">
+          <h1>Page 3</h1>
+          <p>Okay... This is the third page...</p>
+        </div>
+        <div id="page4" class="page">
+          <h1>Page 4</h1>
+          <p>Uhh... Fourth page?</p>
+        </div>
+        <div id="page5" class="page">
+          <h1>Page 5</h1>
+          <p>Still here? Fine, fifth page...</p>
+        </div>
+        <div id="page1" class="page default">
+          <h1>Page 1</h1>
+          <p>This is the first page!</p>
+        </div>
+      </main>
 
   </nav>
 
 </div>
 
 <script>
-	const menu = document.querySelector(".menu");
-	const btn = menu.querySelector(".burger_nav-tgl");
+{	
+	const burger_menu = document.querySelector(".burger_menu");
+	const btn = burger_menu.querySelector(".burger_nav-tgl");
 	btn.addEventListener("click", evt => {
-		if (menu.className.indexOf("active") === -1) {
-			menu.classList.add("active");
+		if (burger_menu.className.indexOf("active") === -1) {
+			burger_menu.classList.add("active");
 		} else {
-			menu.classList.remove("active");
+			burger_menu.classList.remove("active");
 		}
 	});
+}
 </script>
 
 <div id = "controls">
