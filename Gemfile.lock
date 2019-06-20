@@ -92,6 +92,8 @@ GEM
     irb (1.0.0)
     jbuilder (2.9.1)
       activesupport (>= 4.2.0)
+    leaflet-rails (1.4.0)
+      rails (>= 4.2.0)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -209,6 +211,7 @@ DEPENDENCIES
   gon
   irb
   jbuilder (~> 2.5)
+  leaflet-rails
   listen (>= 3.0.5, < 3.2)
   puma (~> 3.11)
   rails (~> 5.2.3)

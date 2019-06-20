@@ -67,3 +67,6 @@ gem 'irb', require: false
 
 # To use controller variables as javascript variables
 gem 'gon'
+
+# leaflet
+gem 'leaflet-rails'
