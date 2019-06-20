@@ -11,20 +11,27 @@ document.addEventListener('DOMContentLoaded',function(){
 
 	// load markers
 	var sel = JSON.parse(gon.selected_measurements);
-  const markers = new Array(sel.length).fill(undefined).map((_, i) => L.circle(
-		[sel[i].site_lat, sel[i].site_lng], {
-		  color: 'blue',
-		  fillColor: 'blue',
-		  fillOpacity: 0.5,
-		  radius: 500
-		}
-	));
+
+  const markers = new Array(sel.length)
+	for (var i = 0; i < markers.length; i++) { 
+		markers[i] = L.circle(
+			[sel[i].site_lat, sel[i].site_lng], {
+				color: 'blue',
+				fillColor: 'blue',
+				fillOpacity: 0.5,
+				radius: 1000,
+				measurements_id: sel[i].measurements_id
+			}
+		).bindPopup("I am a circle: " + sel[i].measurements_id);
+	}
 
 	const layers = [
       ...markers
   ];
 
-	const featureGroup = L.featureGroup(layers).addTo(map);
+	const featureGroup = L.featureGroup(
+		layers
+	).addTo(map);
 
 	// add lasso functionality
 	const lasso = L.lasso(map);
@@ -49,7 +56,7 @@ document.addEventListener('DOMContentLoaded',function(){
               layer.setStyle({ color: 'red' });
           }
       });
-      lassoResult.innerHTML = layers.length ? `Selected ${layers.length} layers` : '';
+      lassoResult.innerHTML = layers.length ? `First selected ID: ${layers[0].options.measurements_id}` : '';
   }
 
   map.on('mousedown', () => {
