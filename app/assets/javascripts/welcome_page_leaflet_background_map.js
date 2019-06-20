@@ -3,10 +3,10 @@ document.addEventListener('DOMContentLoaded',function(){
 	// define base map
 	const map = L.map('background_map').setView([45, 7], 3);
 	L.tileLayer('https://maps.heigit.org/openmapsurfer/tiles/roads/webmercator/{z}/{x}/{y}.png', {
-		  attribution: 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> | Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-		  maxZoom: 18,
-		  id: 'mapbox.streets',
-		  accessToken: 'your.mapbox.access.token'
+	  attribution: 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> | Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+	  maxZoom: 18,
+	  id: 'mapbox.streets',
+	  accessToken: 'your.mapbox.access.token'
 	}).addTo(map);
 
 	// load markers
@@ -37,34 +37,34 @@ document.addEventListener('DOMContentLoaded',function(){
 	const lasso = L.lasso(map);
 
 	function resetSelectedState() {
-		  map.eachLayer(layer => {
-		      if (layer instanceof L.Marker) {
-		          layer.setIcon(new L.Icon.Default());
-		      } else if (layer instanceof L.Path) {
-		          layer.setStyle({ color: 'blue' });
-		      }
-		  });
-		  lassoResult.innerHTML = '';
+	  map.eachLayer(layer => {
+      if (layer instanceof L.Marker) {
+          layer.setIcon(new L.Icon.Default());
+      } else if (layer instanceof L.Path) {
+          layer.setStyle({ color: 'blue' });
+      }
+	  });
+	  lassoResult.innerHTML = '';
 	}
 
   function setSelectedLayers(layers) {
-      resetSelectedState();
-      layers.forEach(layer => {
-          if (layer instanceof L.Marker) {
-              layer.setIcon(new L.Icon.Default({ className: 'selected '}));
-          } else if (layer instanceof L.Path) {
-              layer.setStyle({ color: 'red' });
-          }
-      });
-      lassoResult.innerHTML = layers.length ? `First selected ID: ${layers[0].options.measurements_id}` : '';
+    resetSelectedState();
+    layers.forEach(layer => {
+      if (layer instanceof L.Marker) {
+        layer.setIcon(new L.Icon.Default({ className: 'selected '}));
+      } else if (layer instanceof L.Path) {
+        layer.setStyle({ color: 'red' });
+      }
+    });
+    lassoResult.innerHTML = layers.length ? `First selected ID: ${layers[0].options.measurements_id}` : '';
   }
 
   map.on('mousedown', () => {
-      resetSelectedState();
+    resetSelectedState();
   });
 
   map.on('lasso.finished', event => {
-      setSelectedLayers(event.layers);
+    setSelectedLayers(event.layers);
   });
 
   map.on('lasso.enabled', () => {
@@ -73,15 +73,15 @@ document.addEventListener('DOMContentLoaded',function(){
   });
 
   map.on('lasso.disabled', () => {
-      lassoEnabled.innerHTML = 'Disabled';
+    lassoEnabled.innerHTML = 'Disabled';
   });
 
   toggleLasso.addEventListener('click', () => {
-      if (lasso.enabled()) {
-          lasso.disable();
-      } else {
-          lasso.enable();
-      }
+    if (lasso.enabled()) {
+      lasso.disable();
+    } else {
+      lasso.enable();
+    }
   });
 
 });
