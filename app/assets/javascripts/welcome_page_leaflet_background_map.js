@@ -56,7 +56,20 @@ document.addEventListener('DOMContentLoaded',function(){
         layer.setStyle({ color: 'red' });
       }
     });
-    lassoResult.innerHTML = layers.length ? `First selected ID: ${layers[0].options.measurements_id}` : '';
+    //lassoResult.innerHTML = layers.length ? `First selected ID: ${layers[0].options.measurements_id}` : '';
+		const selected_measurements = new Array(layers.length)
+		for (var i = 0; i < selected_measurements.length; i++) {
+			selected_measurements[i] = layers[i].options.measurements_id
+		}
+		alert(JSON.stringify(selected_measurements));
+		//Rails.ajax({
+		//	url: '/welcome/spatial_filter',
+		//	data: JSON.stringify(selected_measurements),  // Explicit JSON serialization
+		//	contentType: 'application/json',  // Overwrite the default content type: application/x-www-form-urlencoded
+		//	success: function(data){
+		//	},
+		//	dataType : "json"
+		//});
   }
 
   map.on('mousedown', () => {
@@ -68,12 +81,10 @@ document.addEventListener('DOMContentLoaded',function(){
   });
 
   map.on('lasso.enabled', () => {
-      lassoEnabled.innerHTML = 'Enabled';
       resetSelectedState();
   });
 
   map.on('lasso.disabled', () => {
-    lassoEnabled.innerHTML = 'Disabled';
   });
 
   toggleLasso.addEventListener('click', () => {
