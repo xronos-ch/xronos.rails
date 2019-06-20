@@ -11,7 +11,12 @@ document.addEventListener('DOMContentLoaded',function(){
 
 	// load markers
 	var sel = JSON.parse(gon.selected_measurements);
-  const markers = new Array(sel.length).fill(undefined).map((_, i) => L.marker([sel[i].site_lat, sel[i].site_lng]));
+  const markers = new Array(sel.length).fill(undefined).map((_, i) => L.circle([sel[i].site_lat, sel[i].site_lng], {
+    color: 'blue',
+    fillColor: 'blue',
+    fillOpacity: 0.5,
+    radius: 500
+	}));
 	//for (var i = 0; i < sel.length; i++) {
 	//	marker = new L.marker([sel[i].site_lat,sel[i].site_lng])
 			//.bindPopup(site_name[i])
@@ -32,7 +37,7 @@ document.addEventListener('DOMContentLoaded',function(){
 		      if (layer instanceof L.Marker) {
 		          layer.setIcon(new L.Icon.Default());
 		      } else if (layer instanceof L.Path) {
-		          layer.setStyle({ color: '#3388ff' });
+		          layer.setStyle({ color: 'blue' });
 		      }
 		  });
 		  lassoResult.innerHTML = '';
