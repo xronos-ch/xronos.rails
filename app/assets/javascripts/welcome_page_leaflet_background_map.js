@@ -11,17 +11,14 @@ document.addEventListener('DOMContentLoaded',function(){
 
 	// load markers
 	var sel = JSON.parse(gon.selected_measurements);
-  const markers = new Array(sel.length).fill(undefined).map((_, i) => L.circle([sel[i].site_lat, sel[i].site_lng], {
-    color: 'blue',
-    fillColor: 'blue',
-    fillOpacity: 0.5,
-    radius: 500
-	}));
-	//for (var i = 0; i < sel.length; i++) {
-	//	marker = new L.marker([sel[i].site_lat,sel[i].site_lng])
-			//.bindPopup(site_name[i])
-	//		.addTo(map);
-	//}
+  const markers = new Array(sel.length).fill(undefined).map((_, i) => L.circle(
+		[sel[i].site_lat, sel[i].site_lng], {
+		  color: 'blue',
+		  fillColor: 'blue',
+		  fillOpacity: 0.5,
+		  radius: 500
+		}
+	));
 
 	const layers = [
       ...markers
@@ -49,7 +46,7 @@ document.addEventListener('DOMContentLoaded',function(){
           if (layer instanceof L.Marker) {
               layer.setIcon(new L.Icon.Default({ className: 'selected '}));
           } else if (layer instanceof L.Path) {
-              layer.setStyle({ color: '#ff4620' });
+              layer.setStyle({ color: 'red' });
           }
       });
       lassoResult.innerHTML = layers.length ? `Selected ${layers.length} layers` : '';
@@ -70,6 +67,14 @@ document.addEventListener('DOMContentLoaded',function(){
 
   map.on('lasso.disabled', () => {
       lassoEnabled.innerHTML = 'Disabled';
+  });
+
+  toggleLasso.addEventListener('click', () => {
+      if (lassoControl.enabled()) {
+          lassoControl.disable();
+      } else {
+          lassoControl.enable();
+      }
   });
 
 });
