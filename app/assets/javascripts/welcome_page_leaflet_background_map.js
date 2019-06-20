@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded',function(){
 	const featureGroup = L.featureGroup(layers).addTo(map);
 
 	// add lasso functionality
-	const lassoControl = L.control.lasso().addTo(map);
+	const lasso = L.lasso(map);
 
 	function resetSelectedState() {
 		  map.eachLayer(layer => {
@@ -70,10 +70,10 @@ document.addEventListener('DOMContentLoaded',function(){
   });
 
   toggleLasso.addEventListener('click', () => {
-      if (lassoControl.enabled()) {
-          lassoControl.disable();
+      if (lasso.enabled()) {
+          lasso.disable();
       } else {
-          lassoControl.enable();
+          lasso.enable();
       }
   });
 
