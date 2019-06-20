@@ -64,3 +64,6 @@ gem 'active_record-acts_as'
 
 # irb for bootsnap: rails console
 gem 'irb', require: false
+
+# To use controller variables as javascript variables
+gem 'gon'

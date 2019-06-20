@@ -16,5 +16,7 @@ class WelcomeController < ApplicationController
       params[:query_lat_start],
       params[:query_lat_stop],
     ).all
+
+		gon.selected_measurements = @selected_measurements.to_json
   end 
 end

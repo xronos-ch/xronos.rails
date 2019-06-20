@@ -7,4 +7,12 @@ document.addEventListener('DOMContentLoaded',function(){
 		  id: 'mapbox.streets',
 		  accessToken: 'your.mapbox.access.token'
 	}).addTo(mymap);
+
+	var sel = JSON.parse(gon.selected_measurements);
+
+	for (var i = 0; i < sel.length; i++) {
+		marker = new L.marker([sel[i].site_lat,sel[i].site_lng])
+			//.bindPopup(site_name[i])
+			.addTo(mymap);
+	}
 });
