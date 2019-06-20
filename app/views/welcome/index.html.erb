@@ -120,14 +120,4 @@
 </div>
 
 <!-- #### Background map #### -->
-<%= map(
-	:center => {
-	  :latlng => [45, 8],
-	  :zoom => 3
-	},
-	:markers => @selected_measurements.all.map {
-    |selected_measurements| { 
-      latlng: [selected_measurements.site_lat, selected_measurements.site_lng], popup: selected_measurements.site_name 
-    } 
-  }
-) %>
+<!-- latlng: [selected_measurements.site_lat, selected_measurements.site_lng], popup: selected_measurements.site_name -->
