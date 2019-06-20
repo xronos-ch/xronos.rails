@@ -13,5 +13,6 @@
 //= require rails-ujs
 //= require activestorage
 //= require leaflet
+//= require leaflet_lasso
 //= require_tree .
 

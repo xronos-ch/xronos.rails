@@ -114,7 +114,10 @@
       <%= number_field_tag(:query_lat_stop, (params[:query_lat_stop] or ""), in: (-100..100).to_a) %>
 			<br><br>
   		<%= submit_tag("Search") %>
-		<% end %>
+		<% end %>#
+
+		<div id="lassoResult"></div>
+
 	</div>
 
 </div>
