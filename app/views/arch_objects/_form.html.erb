@@ -21,6 +21,11 @@
     <%= form.collection_select :material_id, Material.all, :id, :name %>
   </div>
 
+  <div class="field">
+    <%= form.label :species %>
+    <%= form.collection_select :species_id, Species.all, :id, :species %>
+  </div>
+
   <div class="actions">
     <%= form.submit %>
   </div>

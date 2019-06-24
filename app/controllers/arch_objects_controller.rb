@@ -69,6 +69,6 @@ class ArchObjectsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def arch_object_params
-      params.require(:arch_object).permit(:site_id, :material_id)
+      params.require(:arch_object).permit(:site_id, :material_id, :species_id)
     end
 end
