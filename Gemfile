@@ -73,3 +73,6 @@ gem 'leaflet-rails'
 
 # jquery for ajax calls
 gem 'jquery-rails'
+
+# user management
+gem 'devise'

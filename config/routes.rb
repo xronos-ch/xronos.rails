@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  devise_for :users
   resources :dendro_measurements
   resources :c14_measurements
   resources :measurements
@@ -17,4 +18,5 @@ Rails.application.routes.draw do
   resources :sites
   get 'welcome/index'
   root 'welcome#index'
+  root to: "welcome#index"
 end
