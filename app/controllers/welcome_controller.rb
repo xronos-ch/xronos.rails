@@ -12,8 +12,9 @@ class WelcomeController < ApplicationController
       sites.lat as site_lat, 
       sites.lng as site_lng"
     ).where(
-      "name = ? OR (lat >= ? AND lat <= ?)", ##"name LIKE '%?%' OR (lat >= ? AND lat <= ?)", 
-      params[:query_site_name],
+      "measurements_id IN (?) OR name = ? OR (lat >= ? AND lat <= ?)", ##"name LIKE '%?%' OR (lat >= ? AND lat <= ?)", 
+			JSON.parse(params[:spatial_lasso_selection]),      
+			params[:query_site_name],
       params[:query_lat_start],
       params[:query_lat_stop],
     ).all
