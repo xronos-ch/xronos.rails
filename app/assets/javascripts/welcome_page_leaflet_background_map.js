@@ -61,16 +61,37 @@ document.addEventListener('DOMContentLoaded',function(){
 			lasso_selected_measurements[i] = layers[i].options.measurements_id
 		}
 		//alert(JSON.stringify(lasso_selected_measurements));
-		//$.ajax({
-		//	type: "get",
-		//	url: '/?',
-		//	data: { spatial_lasso_selection: JSON.stringify(lasso_selected_measurements) },
-    //  success: function(){
-    //    alert('Saved Successfully');
-    //  },
-		//});
-		window.open("/welcome/index?spatial_lasso_selection=" + JSON.stringify(lasso_selected_measurements), "_self")
+		$.ajax({
+			type: "get",
+			url: '/welcome/index',
+			data: { spatial_lasso_selection: JSON.stringify(lasso_selected_measurements) },
+		  success: function(data) {
+		    return location.reload();
+		  },
+		  error: function(e) {
+		    alert("Oops! An error occurred, please try again");
+		    return console.log(e);
+		  }
+		});
   }
+
+	var addUrlParam = function(search, key, val){
+		var newParam = key + '=' + val,
+		    params = '?' + newParam;
+
+		// If the "search" string exists, then build params from it
+		if (search) {
+		  // Try to replace an existance instance
+		  params = search.replace(new RegExp('([?&])' + key + '[^&]*'), '$1' + newParam);
+
+		  // If nothing was replaced, then add the new param to the end
+		  if (params === search) {
+		    params += '&' + newParam;
+		  }
+		}
+
+		return params;
+	};
 
   map.on('mousedown', () => {
     resetSelectedState();
