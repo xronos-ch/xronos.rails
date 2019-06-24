@@ -26,6 +26,11 @@
     <%= form.text_field :lng %>
   </div>
 
+  <div class="field">
+    <%= form.label :site_type %>
+    <%= form.collection_select :site_type_id, SiteType.all, :id, :name %>
+  </div>
+
 	<div class="field">
     <%= form.label :country %>
     <%= form.collection_check_boxes :country_ids, Country.all, :id, :name %>
