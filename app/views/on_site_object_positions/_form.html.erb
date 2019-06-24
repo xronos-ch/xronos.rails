@@ -16,6 +16,11 @@
     <%= form.text_field :feature %>
   </div>
 
+	<div class="field">
+    <%= form.label :feature_type %>
+    <%= form.collection_select :feature_type_id, FeatureType.all, :id, :name %>
+  </div>
+
   <div class="field">
     <%= form.label :site_grid_square %>
     <%= form.text_field :site_grid_square %>

@@ -26,6 +26,11 @@
     <%= form.collection_select :species_id, Species.all, :id, :species %>
   </div>
 
+  <div class="field">
+    <%= form.label :on_site_object_position %>
+    <%= form.collection_select :on_site_object_position_id, OnSiteObjectPosition.all, :id, :feature %>
+  </div>
+
   <div class="actions">
     <%= form.submit %>
   </div>

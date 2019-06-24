@@ -69,6 +69,6 @@ class OnSiteObjectPositionsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def on_site_object_position_params
-      params.require(:on_site_object_position).permit(:feature, :site_grid_square, :coord_reference_system, :coord_X, :coord_Y, :coord_Z)
+      params.require(:on_site_object_position).permit(:feature, :feature_type_id, :site_grid_square, :coord_reference_system, :coord_X, :coord_Y, :coord_Z)
     end
 end
