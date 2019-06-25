@@ -76,3 +76,6 @@ gem 'jquery-rails'
 
 # user management
 gem 'devise'
+
+# menu
+gem 'simple-navigation'
