@@ -1,4 +1,6 @@
 class DendroMeasurementsController < ApplicationController
+  load_and_authorize_resource
+
   before_action :set_dendro_measurement, only: [:show, :edit, :update, :destroy]
 
   # GET /dendro_measurements

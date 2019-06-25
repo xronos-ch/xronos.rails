@@ -1,4 +1,6 @@
 class CulturesController < ApplicationController
+  load_and_authorize_resource
+
   before_action :set_culture, only: [:show, :edit, :update, :destroy]
 
   # GET /cultures

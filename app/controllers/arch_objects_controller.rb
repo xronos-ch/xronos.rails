@@ -1,4 +1,6 @@
 class ArchObjectsController < ApplicationController
+  load_and_authorize_resource
+
   before_action :set_arch_object, only: [:show, :edit, :update, :destroy]
 
   # GET /arch_objects

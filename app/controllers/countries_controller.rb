@@ -1,4 +1,6 @@
 class CountriesController < ApplicationController
+  load_and_authorize_resource
+
   before_action :set_country, only: [:show, :edit, :update, :destroy]
 
   # GET /countries

@@ -1,4 +1,6 @@
 class C14MeasurementsController < ApplicationController
+  load_and_authorize_resource
+
   before_action :set_c14_measurement, only: [:show, :edit, :update, :destroy]
 
   # GET /c14_measurements

@@ -1,4 +1,6 @@
 class FeatureTypesController < ApplicationController
+  load_and_authorize_resource
+
   before_action :set_feature_type, only: [:show, :edit, :update, :destroy]
 
   # GET /feature_types

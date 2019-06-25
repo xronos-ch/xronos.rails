@@ -1,4 +1,6 @@
 class SpeciesController < ApplicationController
+  load_and_authorize_resource
+
   before_action :set_species, only: [:show, :edit, :update, :destroy]
 
   # GET /species

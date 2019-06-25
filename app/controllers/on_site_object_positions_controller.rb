@@ -1,4 +1,6 @@
 class OnSiteObjectPositionsController < ApplicationController
+  load_and_authorize_resource
+
   before_action :set_on_site_object_position, only: [:show, :edit, :update, :destroy]
 
   # GET /on_site_object_positions
