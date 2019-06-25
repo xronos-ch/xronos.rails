@@ -89,12 +89,12 @@
 
 			<div id="controls_login_status">
 				<% if user_signed_in? %>
-					<p> <%= current_user.email %> </p>
-					<%= link_to('Logout', destroy_user_session_path, method: :delete) %>
-					<%= link_to('Edit registration', edit_user_registration_path) %>
+					<%= fa_icon "user" %> <%= current_user.email %> <br>
+					<%= fa_icon "edit" %> <%= link_to('Edit registration', edit_user_registration_path) %> <br>
+					<%= fa_icon "sign-out" %> <%= link_to('Logout', destroy_user_session_path, method: :delete) %> <br>
 				<% else %>
-					<%= link_to('Login', new_user_session_path) %>
-					<%= link_to('Register', new_user_registration_path) %>
+					<%= fa_icon "sign-in" %> <%= link_to('Login', new_user_session_path) %> 
+					<%= fa_icon "user-plus" %> <%= link_to('Register', new_user_registration_path) %> <br>
 				<% end %>
 			</div>
 

@@ -116,6 +116,14 @@ a:visited {
 }
 
 // draggable selector
+#controls a:link {
+	color: white;
+}
+
+#controls a:visited {
+	color: white;
+}
+
 #controls{
 	box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.24);
   position: absolute;

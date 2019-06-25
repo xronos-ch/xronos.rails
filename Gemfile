@@ -79,3 +79,6 @@ gem 'devise'
 
 # menu
 gem 'simple-navigation'
+
+# fontawesome symbols
+gem 'font-awesome-rails'
