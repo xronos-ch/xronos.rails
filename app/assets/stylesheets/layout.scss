@@ -1,0 +1,204 @@
+// links
+a:link {
+    color: pink;
+}
+
+// hamburger
+.burger_nav-tgl {
+  display: inline-block;
+  cursor: pointer;
+  position: fixed;
+  z-index: 100;
+  left: 30px;
+  top: calc(100% - 100px);
+  width: 70px;
+  height: 70px;
+  border: none;
+  border-radius: 50%;
+  padding: 0;
+  background: #fff;
+  box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.24);
+  line-height: 0.6;
+  text-align: center;
+}
+
+.burger_nav-tgl > span {
+  display: inline-block;
+  position: relative;
+  height: 2px;
+  width: 34px;
+  border-radius: 1px;
+  background: black;
+  vertical-align: middle;
+}
+
+.burger_nav-tgl > span:before, .burger_nav-tgl > span:after {
+  display: inline-block;
+  position: absolute;
+  content: "";
+  height: 2px;
+  border-radius: 1px;
+  background: black;
+  transition: all 200ms;
+}
+
+.burger_nav-tgl > span:before {
+  top: -11px;
+  left: 3px;
+  width: 28px;
+}
+
+.burger_nav-tgl > span:after {
+  top: 11px;
+  left: 6px;
+  width: 22px;
+}
+
+.burger_nav-tgl:focus {
+  outline: none;
+}
+
+.burger_nav-tgl:hover > span:after, .burger_nav-tgl:hover > span:before {
+  width: 34px;
+  left: 0;
+}
+
+.burger_nav {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 40vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.9);
+  transition: all 500ms ease-in-out;
+  clip-path: circle(30px at 65px calc(100% - 125px));
+  visibility: hidden;
+	padding: 30px;
+	color: white;
+}
+
+.burger_menu.active .burger_nav {
+  visibility: visible;
+  clip-path: circle(100%);
+}
+
+.burger_menu.active .burger_nav-tgl > span {
+  height: 0;
+}
+
+.burger_menu.active .burger_nav-tgl > span:after, .burger_menu.active .burger_nav-tgl > span:before {
+  top: 0px;
+  left: 0;
+  width: 34px;
+}
+
+.burger_menu.active .burger_nav-tgl > span:after {
+  transform: rotate(-45deg);
+}
+
+.burger_menu.active .burger_nav-tgl > span:before {
+  transform: rotate(45deg);
+}
+
+// map
+#background_map {
+  height: 100%;
+  width: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: -100;
+}
+
+// draggable selector
+#controls{
+	box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.24);
+  position: absolute;
+  z-index: 9;
+	width: 200px;
+	top: 50px;
+	right: 50px;
+}
+
+#controls_header {
+	text-align: center;
+  padding: 10px;
+  cursor: move;
+	z-index: 10;
+  background-color: rgba(255, 255, 255, 1);
+  color: black;
+}
+
+#controls_login_status {
+	padding: 2px 15px 2px 10px;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+#controls_body {
+	padding: 10px 15px 10px 10px;
+	color: white;
+	background-color: rgba(0, 0, 0, 0.9);
+}
+
+#controls_body input {
+  width: 95%;
+}
+
+
+// content
+#content {
+  display:grid;
+  grid-template-columns: 70px auto;
+  height:100%;
+}
+
+#nav {
+  width: 100%;
+  height: 50px;
+  text-align:center;
+  height:100%;
+  background-color:#333333;
+}
+
+#nav a {
+  line-height:40px;
+  text-decoration:none;
+  color: white;
+  font-size: 12px;
+  display: block;
+}
+
+#nav a:hover {
+  background-color: red;
+}
+
+main {
+  display:inline-block;
+  height:100%;
+}
+
+.page {
+  display: none;
+  padding-left:20px;
+  padding-top:20px;
+  margin:0px;
+  height: 100%;
+}
+
+.page h1 {
+  margin:0px;
+}
+
+.default {
+  display:block;
+}
+
+:target {
+  display:block;
+}
+
+:target ~ .default {
+  display:none;
+}

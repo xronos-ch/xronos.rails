@@ -1,133 +1,20 @@
-<!-- Foldout main navigation window -->
-<div class="burger_menu active">
-
-  <button class="burger_nav-tgl" type="button" aria-label="toggle burger_menu">
-		<span aria-hidden="true"></span>
-  </button>
-
-  <nav class="burger_nav">
-
-		<div id="content">
-
-			<!-- #### Menu #### -->		
-      <nav id="nav">
-        <a href="#Data">Data</a>
-				<a href="#API">API</a>
-				<a href="#About">About</a>
-				<a href="#User">User</a>
-      </nav>
-
-			<!-- #### Pages #### -->
-      <main>
-				
-				<!-- #### API #### -->
-        <div id="API" class="page">
-          <h1>API</h1>
-					<hr>
-          <p>You can query this database in the following ways...</p>
-        </div>
-				
-				<!-- #### About #### -->
-        <div id="About" class="page">
-          <h1>About</h1>
-					<hr>
-          <p>Xronos is...</p>
-        </div>
-
-				<!-- #### User #### -->
-        <div id="User" class="page">
-          <h1>User settings</h1>
-					<hr>
-          <p>Uhh... Change password?</p>
-        </div>
-
-				<!-- #### Data #### -->
-        <div id="Data" class="page default">
-        	
-					<!-- #### Measurements table #### -->
-					<h1>Measurements</h1>
-					<hr>
-					<table>
-						<tr>
-							<th>Lab Nr.</th>
-							<th>Year</th>
-							<th>Site name</th>
-							<th>lat</th>
-							<th>lng</th>
-						</tr>
-						<% @selected_measurements.each do |selected_measurements| %>
-							<tr>
-								<td><%= selected_measurements.measurements_labnr %></td>
-								<td><%= selected_measurements.measurements_year %></td>
-								<td><%= selected_measurements.site_name %></td>
-								<td><%= selected_measurements.site_lat %></td>
-								<td><%= selected_measurements.site_lng %></td>
-							</tr>
-						<% end %>
-					</table>
-
-					<!-- #### Links to models #### -->
-					<%= link_to 'c14_measurements', controller: 'c14_measurements', :action => :index %>
-					<%= link_to 'dendro_measurements', controller: 'dendro_measurements', :action => :index %>
-					<%= link_to 'measurements', controller: 'measurements', :action => :index %>
-					<%= link_to 'labs', controller: 'labs', :action => :index %>
-					<%= link_to 'samples', controller: 'samples', :action => :index %>
-					<%= link_to 'labs', controller: 'labs', :action => :index %>
-					<%= link_to 'sites', controller: 'sites', :action => :index %>
-					<%= link_to 'countries', controller: 'countries', :action => :index %>
-					<%= link_to 'site_types', controller: 'site_types', :action => :index %>
-					<%= link_to 'on_site_object_positions', controller: 'on_site_object_positions', :action => :index %>
-					<%= link_to 'feature_types', controller: 'feature_types', :action => :index %>
-					<%= link_to 'materials', controller: 'materials', :action => :index %>
-					<%= link_to 'species', controller: 'species', :action => :index %>
-					<%= link_to 'references', controller: 'references', :action => :index %>
-					<%= link_to 'phases', controller: 'phases', :action => :index %>
-					<%= link_to 'cultures', controller: 'cultures', :action => :index %>
-					<%= link_to 'arch_objects', controller: 'arch_objects', :action => :index %>
-
-        </div>
-
-      </main>
-
-  </nav>
-
-</div>
-
-<!-- #### Draggable console #### -->
-<div id = "controls">
-
-	<div id="controls_login_status">
-	  <% if user_signed_in? %>
-      <%= link_to('Logout', destroy_user_session_path, method: :delete) %>
-			<%= link_to('Edit registration', edit_user_registration_path) %>
-    <% else %>
-      <%= link_to('Login', new_user_session_path) %>
-			<%= link_to('Register', new_user_registration_path) %>
-    <% end %>
-	</div>
-
-	<div id="controls_header">
-		<h1>Xronos</h1>
-	</div>
-
-	<div id="controls_body">
-		<%= form_tag({controller: "welcome", action: "index"}, method: "get") do %>
-  		<%= label_tag(:query_site_name, "Site name:") %>
-  		<%= text_field_tag(:query_site_name, (params[:query_site_name] or "")) %>
-      <%= label_tag(:query_lat_start, "Lat min:") %>
-      <%= number_field_tag(:query_lat_start, (params[:query_lat_start] or ""), in: (-100..100).to_a) %>
-      <%= label_tag(:query_lat_stop, "Lat max:") %>
-      <%= number_field_tag(:query_lat_stop, (params[:query_lat_stop] or ""), in: (-100..100).to_a) %>
-			<br><br>
-  		<%= submit_tag("Search") %>
-		<% end %>
-		<br><br>
-		<button id="toggleLasso">Lasso selection</button>
-		<div id="lassoResult"></div>
-
-	</div>
-
-</div>
-
-<!-- #### Background map #### -->
-<div id="background_map"></div>
+<h1>Measurements</h1>
+<hr>
+<table>
+	<tr>
+		<th>Lab Nr.</th>
+		<th>Year</th>
+		<th>Site name</th>
+		<th>lat</th>
+		<th>lng</th>
+	</tr>
+	<% @selected_measurements.each do |selected_measurements| %>
+		<tr>
+			<td><%= selected_measurements.measurements_labnr %></td>
+			<td><%= selected_measurements.measurements_year %></td>
+			<td><%= selected_measurements.site_name %></td>
+			<td><%= selected_measurements.site_lat %></td>
+			<td><%= selected_measurements.site_lng %></td>
+		</tr>
+	<% end %>
+</table>
