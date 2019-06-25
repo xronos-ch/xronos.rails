@@ -77,6 +77,9 @@ gem 'jquery-rails'
 # user management
 gem 'devise'
 
+# authorizations management
+gem 'cancancan'
+
 # menu
 gem 'simple-navigation'
 
