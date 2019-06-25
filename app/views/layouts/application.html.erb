@@ -47,40 +47,34 @@
 							<h1>About</h1>
 							<hr>
 							<p>Xronos is...</p>
+							<h2>Team</h2>
 						</div>
 
-						<!-- #### User #### -->
-						<div id="User" class="page">
-							<h1>User settings</h1>
-							<hr>
-							<p>Uhh... Change password?</p>
-						</div>
-
-						<!-- #### Data #### -->
-						<div id="Data" class="page default">
+						<!-- #### Home #### -->
+						<div id="Home" class="page default">
 							
 							<%= yield %>
 
 							<hr>
 
 							<!-- #### Links to models #### -->
-							<%= link_to 'c14_measurements', controller: 'c14_measurements', :action => :index %>
-							<%= link_to 'dendro_measurements', controller: 'dendro_measurements', :action => :index %>
-							<%= link_to 'measurements', controller: 'measurements', :action => :index %>
-							<%= link_to 'labs', controller: 'labs', :action => :index %>
-							<%= link_to 'samples', controller: 'samples', :action => :index %>
-							<%= link_to 'labs', controller: 'labs', :action => :index %>
-							<%= link_to 'sites', controller: 'sites', :action => :index %>
-							<%= link_to 'countries', controller: 'countries', :action => :index %>
-							<%= link_to 'site_types', controller: 'site_types', :action => :index %>
-							<%= link_to 'on_site_object_positions', controller: 'on_site_object_positions', :action => :index %>
-							<%= link_to 'feature_types', controller: 'feature_types', :action => :index %>
-							<%= link_to 'materials', controller: 'materials', :action => :index %>
-							<%= link_to 'species', controller: 'species', :action => :index %>
-							<%= link_to 'references', controller: 'references', :action => :index %>
-							<%= link_to 'phases', controller: 'phases', :action => :index %>
-							<%= link_to 'cultures', controller: 'cultures', :action => :index %>
-							<%= link_to 'arch_objects', controller: 'arch_objects', :action => :index %>
+							<%= link_to 'c14_measurements', controller: '/c14_measurements', :action => :index %>
+							<%= link_to 'dendro_measurements', controller: '/dendro_measurements', :action => :index %>
+							<%= link_to 'measurements', controller: '/measurements', :action => :index %>
+							<%= link_to 'labs', controller: '/labs', :action => :index %>
+							<%= link_to 'samples', controller: '/samples', :action => :index %>
+							<%= link_to 'labs', controller: '/labs', :action => :index %>
+							<%= link_to 'sites', controller: '/sites', :action => :index %>
+							<%= link_to 'countries', controller: '/countries', :action => :index %>
+							<%= link_to 'site_types', controller: '/site_types', :action => :index %>
+							<%= link_to 'on_site_object_positions', controller: '/on_site_object_positions', :action => :index %>
+							<%= link_to 'feature_types', controller: '/feature_types', :action => :index %>
+							<%= link_to 'materials', controller: '/materials', :action => :index %>
+							<%= link_to 'species', controller: '/species', :action => :index %>
+							<%= link_to 'references', controller: '/references', :action => :index %>
+							<%= link_to 'phases', controller: '/phases', :action => :index %>
+							<%= link_to 'cultures', controller: '/cultures', :action => :index %>
+							<%= link_to 'arch_objects', controller: '/arch_objects', :action => :index %>
 
 						</div>
 
@@ -108,7 +102,7 @@
 			</div>
 
 			<div id="controls_body">
-				<%= form_tag({controller: "welcome", action: "index"}, method: "get") do %>
+				<%= form_tag({controller: "/welcome", action: "index"}, method: "get") do %>
 					<%= label_tag(:query_site_name, "Site name:") %>
 					<%= text_field_tag(:query_site_name, (params[:query_site_name] or "")) %>
 					<%= label_tag(:query_lat_start, "Lat min:") %>
