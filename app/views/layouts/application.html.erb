@@ -33,7 +33,15 @@
 
 					<!-- #### Pages #### -->
 					<main>
-						
+            
+						<% flash.each do |name, msg| %>
+              <% if msg.is_a?(String) %>
+						    <div id="flash_container">
+							    <%= content_tag :div, msg %>
+                </div>
+             <% end %>
+           <% end %>
+
 						<!-- #### API #### -->
 						<div id="API" class="page">
 							<h1>API</h1>

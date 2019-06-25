@@ -214,3 +214,10 @@ main {
 :target ~ .default {
   display:none;
 }
+
+// flash popup messages
+#flash_container{
+  padding-left:20px;
+  margin-left:20px;
+	background-color: red;
+}
