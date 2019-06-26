@@ -9,10 +9,10 @@ jQuery(document).ready(function() {
     "columns": [
       {"data": "measurements_id"},
       {"data": "measurements_labnr"},
-      {"data": "measurements_year"}
-      //{data": "site_name"},
-      //{"data": "site_lat"},
-      //{"data": "site_lng"}
+      {"data": "measurements_year"},
+      {"data": "site_name"},
+      {"data": "site_lat"},
+      {"data": "site_lng"}
     ]
     // pagingType is optional, if you want full pagination controls.
     // Check dataTables documentation to learn more about
