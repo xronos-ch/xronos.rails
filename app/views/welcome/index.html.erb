@@ -1,20 +1,14 @@
 <h1>Measurements</h1>
 <hr>
-<table>
-	<tr>
-		<th>Lab Nr.</th>
-		<th>Year</th>
-		<th>Site name</th>
-		<th>lat</th>
-		<th>lng</th>
-	</tr>
-	<% @selected_measurements.each do |selected_measurements| %>
+
+<table id="selected_measurements-datatable" data-source="<%= root_path(format: :json) %>">
+	<thead>
 		<tr>
-			<td><%= selected_measurements.measurements_labnr %></td>
-			<td><%= selected_measurements.measurements_year %></td>
-			<td><%= selected_measurements.site_name %></td>
-			<td><%= selected_measurements.site_lat %></td>
-			<td><%= selected_measurements.site_lng %></td>
+			<th>measurements_id</th>
+			<th>measurements_labnr</th>
+			<th>measurements_year</th>
 		</tr>
-	<% end %>
+	</thead>
+  <tbody>
+  </tbody>
 </table>

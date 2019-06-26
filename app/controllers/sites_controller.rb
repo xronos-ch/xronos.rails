@@ -3,6 +3,13 @@ class SitesController < ApplicationController
 
   before_action :set_site, only: [:show, :edit, :update, :destroy]
 
+  def index
+    respond_to do |format|
+      format.html
+      format.json { render json: WelcomeDatatable.new(params) }
+    end
+  end
+
   # GET /sites
   # GET /sites.json
   def index

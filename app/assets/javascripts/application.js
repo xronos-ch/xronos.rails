@@ -15,5 +15,10 @@
 //= require activestorage
 //= require leaflet
 //= require leaflet_lasso
+//= require datatables
 //= require_tree .
 
+// initialize datatables
+$(document).ready(function() {
+  $("#dttb").dataTable();
+});

@@ -85,3 +85,7 @@ gem 'simple-navigation'
 
 # fontawesome symbols
 gem 'font-awesome-rails'
+
+# datatables
+gem 'jquery-datatables'
+gem 'ajax-datatables-rails'

@@ -1,9 +1,10 @@
 class WelcomeController < ApplicationController
   def index
   end
+
   def index
-    
-		spatial_lasso_selection = Array.new;
+
+    spatial_lasso_selection = Array.new;
 		unless params[:spatial_lasso_selection].nil?
 			spatial_lasso_selection = JSON.parse(params[:spatial_lasso_selection]);
 		end   
@@ -26,5 +27,12 @@ class WelcomeController < ApplicationController
     ).all
 
 		gon.selected_measurements = @selected_measurements.to_json
+
+    respond_to do |format|
+      format.html
+      format.json { render json: SelectedMeasurementDatatable.new(params) }
+    end
+    
   end 
+
 end
