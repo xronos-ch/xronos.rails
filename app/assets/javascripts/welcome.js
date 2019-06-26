@@ -1,5 +1,6 @@
 jQuery(document).ready(function() {
   $('#selected_measurements-datatable').dataTable({
+    "sDom": 'r<"H"lf><"datatable-scroll"t><"F"ip>',
     "processing": true,
     "serverSide": true,
     "ajax": {
