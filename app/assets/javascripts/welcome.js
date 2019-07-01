@@ -17,7 +17,8 @@ jQuery(document).ready(function() {
       {"data": "lng"},
       {"data": "country"},
       {"data": "feature"},
-      {"data": "material"}
+      {"data": "material"},
+      {"data": "species"}
       ]
     // pagingType is optional, if you want full pagination controls.
     // Check dataTables documentation to learn more about

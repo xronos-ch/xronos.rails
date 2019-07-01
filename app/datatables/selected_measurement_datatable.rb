@@ -12,7 +12,8 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
       lng: { source: "Site.lng", cond: :like },
       country: { source: "Country.name", cond: :like },
       feature: { source: "OnSiteObjectPosition.feature", cond: :like },
-      material: { source: "Material.name", cond: :like }
+      material: { source: "Material.name", cond: :like },
+      species: { source: "Measurement.species", cond: :like }
     }
   end
 
@@ -21,20 +22,47 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
       {
         "labnr": record.labnr,
         "year": record.year,
-        "site": record.sample.arch_object.site.name,
-        "site_type": record.sample.arch_object.site.site_type.name,
-        "lat": record.sample.arch_object.site.lat,
-        "lng": record.sample.arch_object.site.lng,
-        "country": record.sample.arch_object.site.country.name,
-        "feature": record.sample.arch_object.on_site_object_position.feature,
-        "material": record.sample.arch_object.material.name
+        "site": record.site,
+        "site_type": record.site_type,
+        "lat": record.lat,
+        "lng": record.lng,
+        "country": record.country,
+        "feature": record.feature,
+        "material": record.material,
+        "species": record.species
       }
     end
   end
 
+  def query_lat_start
+    @query_lat_start ||= options[:query_lat_start]
+    #puts(@query_lat_start);
+  end
+
+  def query_lat_stop
+    @query_lat_stop ||= options[:query_lat_stop]
+  end
+
   def get_raw_records
     Measurement.joins(
-      sample: {arch_object: :site}
+        sample: {arch_object: [{site: [:site_type, :country]}, {on_site_object_position: :feature_type}, :material, :species]}
+    ).select(
+      "
+      measurements.labnr as labnr,
+			measurements.year as year,
+      sites.name as site,
+      site_types.name as site_type,
+      sites.lat as lat,
+      sites.lng as lng,
+      countries.name as country,
+      on_site_object_positions.feature as feature,
+      materials.name as material,
+      (species.family || ' ' || species.genus || ' ' || species.species  || ' ' || species.subspecies) as species
+      "
+    ).where(
+      "(lat >= ? AND lat <= ?)",
+      query_lat_start,
+      query_lat_stop
     ).all
   end
 

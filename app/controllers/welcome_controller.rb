@@ -12,7 +12,8 @@ class WelcomeController < ApplicationController
 		@selected_measurements = Measurement.joins(
       sample: {arch_object: [{site: [:site_type, :country]}, {on_site_object_position: :feature_type}, :material, :species]}
     ).select(
-      "measurements.labnr as labnr,
+      "
+      measurements.labnr as labnr,
 			measurements.year as year,
       sites.name as site,
       site_types.name as site_type,
@@ -20,11 +21,12 @@ class WelcomeController < ApplicationController
       sites.lng as lng,
       countries.name as country,
       on_site_object_positions.feature as feature,
-      materials.name as material
+      materials.name as material,
+      (species.family || ' ' || species.genus || ' ' || species.species  || ' ' || species.subspecies) as species
       "
     ).where(
-      "site = ? OR (lat >= ? AND lng <= ?)",
-			params[:query_site_name],
+      "(lat >= ? AND lat <= ?)",
+			#params[:query_site_name],
       params[:query_lat_start],
       params[:query_lat_stop],
     ).all
@@ -33,7 +35,10 @@ class WelcomeController < ApplicationController
 
     respond_to do |format|
       format.html
-      format.json { render json: SelectedMeasurementDatatable.new(params) }
+      format.json { render json: SelectedMeasurementDatatable.new(params,
+        query_lat_start: params[:query_lat_start],
+        query_lat_stop: params[:query_lat_stop]
+      ) }
     end
     
   end 
