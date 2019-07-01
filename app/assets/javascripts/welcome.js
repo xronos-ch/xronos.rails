@@ -1,5 +1,6 @@
 jQuery(document).ready(function() {
   $('#selected_measurements-datatable').dataTable({
+    "autoWidth": true,
     "sDom": 'r<"H"lf><"datatable-scroll"t><"F"ip>',
     "processing": true,
     "serverSide": true,
