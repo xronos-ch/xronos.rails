@@ -10,17 +10,20 @@ class WelcomeController < ApplicationController
 		end   
 
 		@selected_measurements = Measurement.joins(
-      sample: {arch_object: :site}
+      sample: {arch_object: [{site: [:site_type, :country]}, {on_site_object_position: :feature_type}, :material, :species]}
     ).select(
-      "measurements.id as measurements_id,
-      measurements.labnr as measurements_labnr, 
-			measurements.year as measurements_year, 
-      sites.name as site_name, 
-      sites.lat as site_lat, 
-      sites.lng as site_lng"
+      "measurements.labnr as labnr,
+			measurements.year as year,
+      sites.name as site,
+      site_types.name as site_type,
+      sites.lat as lat,
+      sites.lng as lng,
+      countries.name as country,
+      on_site_object_positions.feature as feature,
+      materials.name as material
+      "
     ).where(
-      "measurements_id IN (?) OR name = ? OR (lat >= ? AND lat <= ?)", ##"name LIKE '%?%' OR (lat >= ? AND lat <= ?)", 
-			spatial_lasso_selection,      
+      "site = ? OR (lat >= ? AND lng <= ?)",
 			params[:query_site_name],
       params[:query_lat_start],
       params[:query_lat_stop],

@@ -9,13 +9,16 @@ jQuery(document).ready(function() {
     },
     "pagingType": "full_numbers",
     "columns": [
-      {"data": "measurements_id"},
-      {"data": "measurements_labnr"},
-      {"data": "measurements_year"},
-      {"data": "site_name"},
-      {"data": "site_lat"},
-      {"data": "site_lng"}
-    ]
+      {"data": "labnr"},
+      {"data": "year"},
+      {"data": "site"},
+      {"data": "site_type"},
+      {"data": "lat"},
+      {"data": "lng"},
+      {"data": "country"},
+      {"data": "feature"},
+      {"data": "material"}
+      ]
     // pagingType is optional, if you want full pagination controls.
     // Check dataTables documentation to learn more about
     // available options.
