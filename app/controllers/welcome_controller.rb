@@ -10,19 +10,23 @@ class WelcomeController < ApplicationController
       session[:query_lat_stop] = params[:query_lat_stop]
     end
 
-    spatial_lasso_selection = Array.new;
-		unless params[:spatial_lasso_selection].nil?
-			spatial_lasso_selection = JSON.parse(params[:spatial_lasso_selection]);
-		end   
+    if params[:spatial_lasso_selection].present?
+      spatial_lasso_selection = Array.new;
+      unless params[:spatial_lasso_selection].nil?
+        spatial_lasso_selection = JSON.parse(params[:spatial_lasso_selection]);
+      end
+      session[:spatial_lasso_selection] = spatial_lasso_selection
+    end
 
-    puts("#####" + params[:query_lat_start].to_s + "#####")
-    #session[:query_lat_start] = params[:query_lat_start]
-    puts("#####" + session[:query_lat_start].to_s + "#####")
+    puts("#####" + params[:spatial_lasso_selection].to_s + "#####")
+    puts("#####" + session[:spatial_lasso_selection].to_s + "#####")
+    puts("#####" + session[:spatial_lasso_selection].map{|x| x.to_i}.to_s + "#####")
 
 		@selected_measurements = Measurement.joins(
       sample: {arch_object: [{site: [:site_type, :country]}, {on_site_object_position: :feature_type}, :material, :species]}
     ).select(
       "
+      measurements.id as measurement_id,
       measurements.labnr as labnr,
       measurements.year as year,
       sites.name as site,
@@ -36,10 +40,15 @@ class WelcomeController < ApplicationController
       "
     ).where(
       "lat >= ? AND lat <= ?",
-			#params[:query_site_name],
       session[:query_lat_start],
       session[:query_lat_stop],
     ).all
+
+    unless params[:spatial_lasso_selection].nil?
+       @selected_measurements = @selected_measurements.where(
+        "measurement_id IN (?)", session[:spatial_lasso_selection]
+      ).all
+    end
 
 		gon.selected_measurements = @selected_measurements.to_json
 

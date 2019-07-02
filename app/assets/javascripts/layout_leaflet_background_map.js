@@ -20,9 +20,9 @@ document.addEventListener('DOMContentLoaded',function(){
 				fillColor: 'blue',
 				fillOpacity: 0.5,
 				radius: 1000,
-				measurements_id: sel[i].measurements_id
+				measurement_id: sel[i].measurement_id
 			}
-		).bindPopup("I am a circle: " + sel[i].measurements_id);
+		).bindPopup("I am a circle: " + sel[i].measurement_id);
 	}
 
 	const layers = [
@@ -58,12 +58,13 @@ document.addEventListener('DOMContentLoaded',function(){
     });
 		const lasso_selected_measurements = new Array(layers.length)
 		for (var i = 0; i < lasso_selected_measurements.length; i++) {
-			lasso_selected_measurements[i] = layers[i].options.measurements_id
+			lasso_selected_measurements[i] = layers[i].options.measurement_id
 		}
 		//alert(JSON.stringify(lasso_selected_measurements));
 		$.ajax({
 			type: "get",
 			url: '/welcome/index',
+            dataType: 'json',
 			data: { spatial_lasso_selection: JSON.stringify(lasso_selected_measurements) },
 		  success: function(data) {
 		    //return location.reload();
