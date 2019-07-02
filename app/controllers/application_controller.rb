@@ -9,11 +9,4 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  before_action :set_query
-
-  def set_query
-    session[:query_lat_start] ||= params[:query_lat_start]
-    session[:query_lat_stop] ||= params[:query_lat_stop]
-  end
-
 end
