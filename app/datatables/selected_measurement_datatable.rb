@@ -34,36 +34,8 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
     end
   end
 
-  def query_lat_start
-    @query_lat_start ||= options[:query_lat_start]
-    #puts(@query_lat_start);
-  end
-
-  def query_lat_stop
-    @query_lat_stop ||= options[:query_lat_stop]
-  end
-
   def get_raw_records
-    Measurement.joins(
-        sample: {arch_object: [{site: [:site_type, :country]}, {on_site_object_position: :feature_type}, :material, :species]}
-    ).select(
-      "
-      measurements.labnr as labnr,
-			measurements.year as year,
-      sites.name as site,
-      site_types.name as site_type,
-      sites.lat as lat,
-      sites.lng as lng,
-      countries.name as country,
-      on_site_object_positions.feature as feature,
-      materials.name as material,
-      (species.family || ' ' || species.genus || ' ' || species.species  || ' ' || species.subspecies) as species
-      "
-    ).where(
-      "(lat >= ? AND lat <= ?)",
-      query_lat_start,
-      query_lat_stop
-    ).all
+    options[:selected_measurements]
   end
 
 end

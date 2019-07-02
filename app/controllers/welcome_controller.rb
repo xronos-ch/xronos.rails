@@ -4,9 +4,13 @@ class WelcomeController < ApplicationController
 
   def index
 
+    param_spatial_lasso_selection = params[:spatial_lasso_selection];
+    param_query_lat_start = params[:query_lat_start];
+    param_query_lat_stop = params[:query_lat_stop];
+
     spatial_lasso_selection = Array.new;
-		unless params[:spatial_lasso_selection].nil?
-			spatial_lasso_selection = JSON.parse(params[:spatial_lasso_selection]);
+		unless param_spatial_lasso_selection.nil?
+			spatial_lasso_selection = JSON.parse(param_spatial_lasso_selection);
 		end   
 
 		@selected_measurements = Measurement.joins(
@@ -25,19 +29,21 @@ class WelcomeController < ApplicationController
       (species.family || ' ' || species.genus || ' ' || species.species  || ' ' || species.subspecies) as species
       "
     ).where(
-      "(lat >= ? AND lat <= ?)",
+      "lat >= ? AND lat <= ?",
 			#params[:query_site_name],
-      params[:query_lat_start],
-      params[:query_lat_stop],
+      1,#param_query_lat_start,
+      20#param_query_lat_stop,
     ).all
 
 		gon.selected_measurements = @selected_measurements.to_json
 
     respond_to do |format|
       format.html
-      format.json { render json: SelectedMeasurementDatatable.new(params,
-        query_lat_start: params[:query_lat_start],
-        query_lat_stop: params[:query_lat_stop]
+      format.json { render json: SelectedMeasurementDatatable.new(
+        params,
+        {
+          selected_measurements: @selected_measurements
+        }
       ) }
     end
     
