@@ -115,7 +115,7 @@
 			</div>
 
 			<div id="controls_body">
-				<%= form_tag({controller: "/welcome", action: "index"}, method: "get") do %>
+				<%= form_tag(root_path, method: "get") do %>
 					<%= label_tag(:query_site_name, "Site name:") %>
 					<%= text_field_tag(:query_site_name, (params[:query_site_name] or "")) %>
 					<%= label_tag(:query_lat_start, "Lat min:") %>
