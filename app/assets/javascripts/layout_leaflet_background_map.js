@@ -1,21 +1,21 @@
 document.addEventListener('DOMContentLoaded',function(){
 	
-	// define base map
-	const map = L.map('background_map').setView([45, 7], 3);
-	L.tileLayer('https://maps.heigit.org/openmapsurfer/tiles/roads/webmercator/{z}/{x}/{y}.png', {
-	  attribution: 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> | Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-	  maxZoom: 18,
-	  id: 'mapbox.streets',
-	  accessToken: 'your.mapbox.access.token'
-	}).addTo(map);
+    // define base map
+    const map = L.map('background_map').setView([45, 7], 3);
+    L.tileLayer('https://maps.heigit.org/openmapsurfer/tiles/roads/webmercator/{z}/{x}/{y}.png', {
+      attribution: 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> | Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      maxZoom: 18,
+      id: 'mapbox.streets',
+      accessToken: 'your.mapbox.access.token'
+    }).addTo(map);
 
-	// load markers
-	var sel = JSON.parse(gon.selected_measurements);
+    // load markers
+    var sel = JSON.parse(gon.selected_measurements);
 
-  const markers = new Array(sel.length)
+    const markers = new Array(sel.length)
 	for (var i = 0; i < markers.length; i++) { 
 		markers[i] = L.circle(
-			[sel[i].site_lat, sel[i].site_lng], {
+			[sel[i].lat, sel[i].lng], {
 				color: 'blue',
 				fillColor: 'blue',
 				fillOpacity: 0.5,
@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
 	const layers = [
       ...markers
-  ];
+    ];
 
 	const featureGroup = L.featureGroup(
 		layers
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded',function(){
 			url: '/welcome/index',
 			data: { spatial_lasso_selection: JSON.stringify(lasso_selected_measurements) },
 		  success: function(data) {
-		    return location.reload();
+		    //return location.reload();
 		  },
 		  error: function(e) {
 		    alert("Oops! An error occurred, please try again");
