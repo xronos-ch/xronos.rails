@@ -3,7 +3,6 @@ class WelcomeController < ApplicationController
   def index
 
     #### update session ####
-
     # site name
     if params.has_key?(:query_site_name)
       session[:query_site_name] = params[:query_site_name]
@@ -28,6 +27,30 @@ class WelcomeController < ApplicationController
       session[:query_country] = nil
     end
 
+    # feature
+    if params.has_key?(:query_feature)
+      session[:query_feature] = params[:query_feature]
+    end
+    if params.has_key?(:query_feature) and params[:query_feature].empty?
+      session[:query_feature] = nil
+    end
+
+    # material
+    if params.has_key?(:query_material)
+      session[:query_material] = params[:query_material]
+    end
+    if params.has_key?(:query_material) and params[:query_material].empty?
+      session[:query_material] = nil
+    end
+
+    # species
+    if params.has_key?(:query_species)
+      session[:query_species] = params[:query_species]
+    end
+    if params.has_key?(:query_species) and params[:query_species].empty?
+      session[:query_species] = nil
+    end
+
     # lasso
     if params[:spatial_lasso_selection].present?
       spatial_lasso_selection = Array.new;
@@ -40,6 +63,8 @@ class WelcomeController < ApplicationController
     if params[:turn_off_lasso].present?
       session[:spatial_lasso_selection] = nil;
     end
+
+
 
     ##### select data #####
 		# general dataset preparation
@@ -75,10 +100,31 @@ class WelcomeController < ApplicationController
       ).all
     end
 
-    # site type
+    # country
     unless session[:query_country].nil?
       @selected_measurements = @selected_measurements.where(
           "countries.name = ?", session[:query_country]
+      ).all
+    end
+
+    # feature
+    unless session[:query_feature].nil?
+      @selected_measurements = @selected_measurements.where(
+          "on_site_object_positions.feature = ?", session[:query_feature]
+      ).all
+    end
+
+    # material
+    unless session[:query_material].nil?
+      @selected_measurements = @selected_measurements.where(
+          "materials.name = ?", session[:query_material]
+      ).all
+    end
+
+    # species
+    unless session[:query_species].nil?
+      @selected_measurements = @selected_measurements.where(
+          "(species.family || ' ' || species.genus || ' ' || species.species  || ' ' || species.subspecies) = ?", session[:query_species]
       ).all
     end
 
@@ -88,6 +134,8 @@ class WelcomeController < ApplicationController
         "measurements.id IN (?)", session[:spatial_lasso_selection]
        ).all
     end
+
+
 
     #### provide data ####
     # https://github.com/jbox-web/ajax-datatables-rails/issues/246

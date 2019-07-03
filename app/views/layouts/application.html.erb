@@ -128,6 +128,12 @@
           <%= select_tag(:query_site_type, options_for_select(site_types_array, session[:query_site_type]), include_blank: true) %>
           <%= label_tag(:query_site_type, "Country:") %>
           <%= select_tag(:query_country, options_for_select(countries_array, session[:query_country]), include_blank: true) %>
+          <%= label_tag(:query_feature, "Feature:") %>
+          <%= text_field_tag(:query_feature, (session[:query_feature] or "")) %>
+          <%= label_tag(:query_material, "Material:") %>
+          <%= text_field_tag(:query_material, (session[:query_material] or "")) %>
+          <%= label_tag(:query_species, "Species:") %>
+          <%= text_field_tag(:query_species, (session[:query_species] or "")) %>
           <br><br>
 					<%= submit_tag("Search") %>
 				<% end %>
