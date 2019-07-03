@@ -18,9 +18,11 @@ class WelcomeController < ApplicationController
       session[:spatial_lasso_selection] = spatial_lasso_selection
     end
 
-    puts("#####" + params[:spatial_lasso_selection].to_s + "#####")
-    puts("#####" + session[:spatial_lasso_selection].to_s + "#####")
-    puts("#####" + session[:spatial_lasso_selection].map{|x| x.to_i}.to_s + "#####")
+    if params[:spatial_lasso_selection].present? and !session[:spatial_lasso_selection].nil?
+      session[:spatial_lasso_selection] = spatial_lasso_selection
+    end
+
+
 
 		@selected_measurements = Measurement.joins(
       sample: {arch_object: [{site: [:site_type, :country]}, {on_site_object_position: :feature_type}, :material, :species]}
@@ -44,10 +46,14 @@ class WelcomeController < ApplicationController
       session[:query_lat_stop],
     ).all
 
-    unless params[:spatial_lasso_selection].nil?
+    # https://github.com/jbox-web/ajax-datatables-rails/issues/246
+    params["columns"] ||= { "0" => {"data" => "" } }
+    params["length"]  ||= -1
+
+    unless session[:spatial_lasso_selection].nil?
        @selected_measurements = @selected_measurements.where(
-        "measurement_id IN (?)", session[:spatial_lasso_selection]
-      ).all
+        "measurements.id IN (?)", session[:spatial_lasso_selection]
+       ).all
     end
 
 		gon.selected_measurements = @selected_measurements.to_json
@@ -59,7 +65,8 @@ class WelcomeController < ApplicationController
         {
           selected_measurements: @selected_measurements
         }
-      ) }
+      )
+      }
     end
     
   end 

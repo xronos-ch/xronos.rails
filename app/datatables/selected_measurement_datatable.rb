@@ -4,7 +4,6 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
     # Declare strings in this format: ModelName.column_name
     # or in aliased_join_table.column_name format
     @view_columns ||= {
-      measurement_id: { source: "Measurement.id", cond: :like },
       labnr: { source: "Measurement.labnr", cond: :like },
       year: { source: "Measurement.year", cond: :like },
       site: { source: "Site.name", cond: :like },
@@ -21,7 +20,6 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
   def data
     records.map do |record|
       {
-        "measurement_id": record.measurement_id,
         "labnr": record.labnr,
         "year": record.year,
         "site": record.site,
@@ -37,7 +35,7 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
   end
 
   def get_raw_records
-    options[:selected_measurements]
+    return options[:selected_measurements]
   end
 
 end
