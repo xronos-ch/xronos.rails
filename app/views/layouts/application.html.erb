@@ -116,7 +116,7 @@
 
 			<div id="controls_body">
 
-        <button id="toggleLasso">Lasso</button><button id="turnoffLasso">turn off</button>
+        <button id="toggleLasso"><%= fa_icon "circle-o-notch" %> Lasso</button><button id="turnoffLasso"><%= fa_icon "times-circle" %> turn off</button>
 
 				<%= form_tag(root_path, method: "get") do %>
 					<%= label_tag(:query_site_name, "Site name:") %>
