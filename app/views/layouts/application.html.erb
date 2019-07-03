@@ -118,13 +118,13 @@
 
         <button id="toggleLasso"><%= fa_icon "circle-o-notch" %> Lasso</button><button id="turnoffLasso"><%= fa_icon "times-circle" %> turn off</button>
 
+        <% site_types_array = SiteType.all.map { |type| [type.name, type.name] } %>
+
 				<%= form_tag(root_path, method: "get") do %>
 					<%= label_tag(:query_site_name, "Site name:") %>
-					<%= text_field_tag(:query_site_name, (params[:query_site_name] or "")) %>
-					<%= label_tag(:query_lat_start, "Lat min:") %>
-					<%= number_field_tag(:query_lat_start, (params[:query_lat_start] or ""), in: (-100..100).to_a) %>
-					<%= label_tag(:query_lat_stop, "Lat max:") %>
-					<%= number_field_tag(:query_lat_stop, (params[:query_lat_stop] or ""), in: (-100..100).to_a) %>
+					<%= text_field_tag(:query_site_name, (session[:query_site_name] or "")) %>
+          <%= label_tag(:query_site_type, "Site type:") %>
+          <%= select_tag(:query_site_type, options_for_select(site_types_array, session[:query_site_type]), include_blank: true) %>
 					<br><br>
 					<%= submit_tag("Search") %>
 				<% end %>

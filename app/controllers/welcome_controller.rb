@@ -9,6 +9,11 @@ class WelcomeController < ApplicationController
       session[:query_site_name] = params[:query_site_name]
     end
 
+    # site type
+    if params[:query_site_type].present?
+      session[:query_site_type] = params[:query_site_type]
+    end
+
     # lasso
     if params[:spatial_lasso_selection].present?
       spatial_lasso_selection = Array.new;
@@ -23,7 +28,8 @@ class WelcomeController < ApplicationController
     end
 
     ##### select data #####
-		@selected_measurements = Measurement.joins(
+		# general dataset preparation
+    @selected_measurements = Measurement.joins(
       sample: {arch_object: [{site: [:site_type, :country]}, {on_site_object_position: :feature_type}, :material, :species]}
     ).select(
       "
@@ -41,12 +47,21 @@ class WelcomeController < ApplicationController
       "
     ).all
 
+    # site name
     unless session[:query_site_name].nil?
       @selected_measurements = @selected_measurements.where(
         "sites.name = ?", session[:query_site_name]
       ).all
     end
 
+    # site type
+    unless session[:query_site_type].nil?
+      @selected_measurements = @selected_measurements.where(
+        "site_types.name = ?", session[:query_site_type]
+      ).all
+    end
+
+    # lasso
     unless session[:spatial_lasso_selection].nil?
        @selected_measurements = @selected_measurements.where(
         "measurements.id IN (?)", session[:spatial_lasso_selection]
@@ -58,8 +73,10 @@ class WelcomeController < ApplicationController
     params["columns"] ||= { "0" => {"data" => "" } }
     params["length"]  ||= -1
 
+    # data for javascript
 		gon.selected_measurements = @selected_measurements.to_json
 
+    # json data (u.a. for datatables)
     respond_to do |format|
       format.html
       format.json { render json: SelectedMeasurementDatatable.new(
