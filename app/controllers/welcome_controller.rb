@@ -18,12 +18,6 @@ class WelcomeController < ApplicationController
       session[:spatial_lasso_selection] = spatial_lasso_selection
     end
 
-    if params[:spatial_lasso_selection].present? and !session[:spatial_lasso_selection].nil?
-      session[:spatial_lasso_selection] = spatial_lasso_selection
-    end
-
-
-
 		@selected_measurements = Measurement.joins(
       sample: {arch_object: [{site: [:site_type, :country]}, {on_site_object_position: :feature_type}, :material, :species]}
     ).select(
