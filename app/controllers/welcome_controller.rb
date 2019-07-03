@@ -5,13 +5,19 @@ class WelcomeController < ApplicationController
     #### update session ####
 
     # site name
-    if params[:query_site_name].present?
+    if params.has_key?(:query_site_name)
       session[:query_site_name] = params[:query_site_name]
+    end
+    if params.has_key?(:query_site_name) and params[:query_site_name].empty?
+      session[:query_site_name] = nil
     end
 
     # site type
-    if params[:query_site_type].present?
+    if params.has_key?(:query_site_type)
       session[:query_site_type] = params[:query_site_type]
+    end
+    if params.has_key?(:query_site_type) and params[:query_site_type].empty?
+      session[:query_site_type] = nil
     end
 
     # lasso
