@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded',function(){
-	
+
     // define base map
     const map = L.map('background_map').setView([45, 7], 3);
     L.tileLayer('https://maps.heigit.org/openmapsurfer/tiles/roads/webmercator/{z}/{x}/{y}.png', {
@@ -44,7 +44,6 @@ document.addEventListener('DOMContentLoaded',function(){
           layer.setStyle({ color: 'blue' });
       }
 	  });
-	  lassoResult.innerHTML = '';
 	}
 
   function setSelectedLayers(layers) {
@@ -56,24 +55,26 @@ document.addEventListener('DOMContentLoaded',function(){
         layer.setStyle({ color: 'red' });
       }
     });
-		const lasso_selected_measurements = new Array(layers.length)
-		for (var i = 0; i < lasso_selected_measurements.length; i++) {
-			lasso_selected_measurements[i] = layers[i].options.measurement_id
-		}
-		//alert(JSON.stringify(lasso_selected_measurements));
-		$.ajax({
-			type: "get",
-			url: '/welcome/index',
-            dataType: 'json',
-			data: { spatial_lasso_selection: JSON.stringify(lasso_selected_measurements) },
-		  success: function(data) {
-		    return location.reload();
-		  },
-		  error: function(e) {
-		    alert("Oops! An error occurred, please try again");
-		    return console.log(e);
-		  }
-		});
+
+    const lasso_selected_measurements = new Array(layers.length)
+    for (var i = 0; i < lasso_selected_measurements.length; i++) {
+      lasso_selected_measurements[i] = layers[i].options.measurement_id
+    }
+
+    //alert(JSON.stringify(lasso_selected_measurements));
+    $.ajax({
+        type: "get",
+        url: '/welcome/index',
+        dataType: 'json',
+        data: { spatial_lasso_selection: JSON.stringify(lasso_selected_measurements) },
+        success: function(data) {
+        return location.reload();
+        },
+        error: function(e) {
+        alert("Oops! An error occurred, please try again");
+        return console.log(e);
+      }
+    });
   }
 
 	var addUrlParam = function(search, key, val){
@@ -111,10 +112,26 @@ document.addEventListener('DOMContentLoaded',function(){
 
   toggleLasso.addEventListener('click', () => {
     if (lasso.enabled()) {
-      lasso.disable();
+        lasso.disable();
     } else {
-      lasso.enable();
+        lasso.enable();
     }
+  });
+
+  turnoffLasso.addEventListener('click', () => {
+      $.ajax({
+          type: "get",
+          url: '/welcome/index',
+          dataType: 'json',
+          data: { turn_off_lasso: JSON.stringify(true) },
+          success: function(data) {
+              return location.reload();
+          },
+          error: function(e) {
+              alert("Oops! An error occurred, please try again");
+              return console.log(e);
+          }
+      });
   });
 
 });

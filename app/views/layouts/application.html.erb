@@ -115,6 +115,9 @@
 			</div>
 
 			<div id="controls_body">
+
+        <button id="toggleLasso">Lasso</button><button id="turnoffLasso">turn off</button>
+
 				<%= form_tag(root_path, method: "get") do %>
 					<%= label_tag(:query_site_name, "Site name:") %>
 					<%= text_field_tag(:query_site_name, (params[:query_site_name] or "")) %>
@@ -125,9 +128,6 @@
 					<br><br>
 					<%= submit_tag("Search") %>
 				<% end %>
-				<br><br>
-				<button id="toggleLasso">Lasso selection</button>
-				<div id="lassoResult"></div>
 
 			</div>
 
