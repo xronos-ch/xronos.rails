@@ -118,14 +118,17 @@
 
         <button id="toggleLasso"><%= fa_icon "circle-o-notch" %> Lasso</button><button id="turnoffLasso"><%= fa_icon "times-circle" %> turn off</button>
 
-        <% site_types_array = SiteType.all.map { |type| [type.name, type.name] } %>
+        <% site_types_array = SiteType.all.map { |x| [x.name, x.name] } %>
+        <% countries_array = Country.all.map { |x| [x.name, x.name] } %>
 
 				<%= form_tag(root_path, method: "get") do %>
 					<%= label_tag(:query_site_name, "Site name:") %>
 					<%= text_field_tag(:query_site_name, (session[:query_site_name] or "")) %>
           <%= label_tag(:query_site_type, "Site type:") %>
           <%= select_tag(:query_site_type, options_for_select(site_types_array, session[:query_site_type]), include_blank: true) %>
-					<br><br>
+          <%= label_tag(:query_site_type, "Country:") %>
+          <%= select_tag(:query_country, options_for_select(countries_array, session[:query_country]), include_blank: true) %>
+          <br><br>
 					<%= submit_tag("Search") %>
 				<% end %>
 

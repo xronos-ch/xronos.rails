@@ -20,6 +20,14 @@ class WelcomeController < ApplicationController
       session[:query_site_type] = nil
     end
 
+    # country
+    if params.has_key?(:query_country)
+      session[:query_country] = params[:query_country]
+    end
+    if params.has_key?(:query_country) and params[:query_country].empty?
+      session[:query_country] = nil
+    end
+
     # lasso
     if params[:spatial_lasso_selection].present?
       spatial_lasso_selection = Array.new;
@@ -64,6 +72,13 @@ class WelcomeController < ApplicationController
     unless session[:query_site_type].nil?
       @selected_measurements = @selected_measurements.where(
         "site_types.name = ?", session[:query_site_type]
+      ).all
+    end
+
+    # site type
+    unless session[:query_country].nil?
+      @selected_measurements = @selected_measurements.where(
+          "countries.name = ?", session[:query_country]
       ).all
     end
 
