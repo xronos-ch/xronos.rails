@@ -41,3 +41,6 @@
 
 #### RoR IDE RubyMine ####
 .idea/*
+
+#### docker env variables ####
+docker_env_variables.env

@@ -1,0 +1,24 @@
+version: "3.7"
+services:
+  db:
+    container_name: xronos_postgres_db
+    restart: always
+    image: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+    env_file:
+      - docker_env_variables.env
+  web:
+    container_name: xronos_rails_app
+    restart: always
+    build: .
+    volumes:
+      - .:/myapp
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    env_file:
+      - docker_env_variables.env

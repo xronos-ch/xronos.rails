@@ -89,3 +89,8 @@ gem 'font-awesome-rails'
 # datatables
 gem 'jquery-datatables'
 gem 'ajax-datatables-rails'
+
+# postgres adapter for the production mode
+group :production do
+  gem 'pg'
+end
