@@ -26,6 +26,6 @@ production:
   host: db
   encoding: unicode
   port: 5432
-  username: <%= ENV.fetch('POSTGRES_USER') %>
-  password: <%= ENV.fetch('POSTGRES_PASSWORD') %>
-  database: <%= ENV.fetch('POSTGRES_DB') %>
+  username: <%= ENV.fetch('POSTGRES_USER') { |key| puts "env var #{key} not found"} %>
+  password: <%= ENV.fetch('POSTGRES_PASSWORD') { |key| puts "env var #{key} not found"} %>
+  database: <%= ENV.fetch('POSTGRES_DB') { |key| puts "env var #{key} not found"} %>
