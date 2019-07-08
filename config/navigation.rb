@@ -56,9 +56,28 @@ SimpleNavigation::Configuration.run do |navigation|
     #                            when the item should be highlighted, you can set a regexp which is matched
     #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>.
     #
-    primary.item :data, 'Home', "#Home"
-		primary.item :data, 'API', "#API"
-		primary.item :data, 'About', "#About"
+    primary.item :welcome, 'Data', root_path do |welcome|
+      welcome.item :labs, 'labs', labs_path
+      welcome.item :dendro_measurements, 'dendro_measurements', dendro_measurements_path
+      welcome.item :c14_measurements, 'c14_measurements', c14_measurements_path
+      welcome.item :measurements, 'measurements', measurements_path
+      welcome.item :samples, 'samples', samples_path
+      welcome.item :arch_objects, 'arch_objects', arch_objects_path
+      welcome.item :cultures, 'cultures', cultures_path
+      welcome.item :phases, 'phases', phases_path
+      welcome.item :references, 'references', references_path
+      # does not work because of plural
+      #welcome.item :species, 'species', species_path
+      welcome.item :materials, 'materials', materials_path
+      welcome.item :feature_types, 'feature_types', feature_types_path
+      welcome.item :on_site_object_positions, 'on_site_object_positions', on_site_object_positions_path
+      welcome.item :site_types, 'site_types', site_types_path
+      welcome.item :countries, 'countries', countries_path
+      welcome.item :sites, 'sites', sites_path
+    end
+
+		primary.item :api, 'API', api_path
+		primary.item :about, 'About', about_path
 
     # Add an item which has a sub navigation (same params, but with block)
     #primary.item :key_2, 'name', url, options do |sub_nav|

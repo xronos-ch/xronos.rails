@@ -37,7 +37,11 @@
 
 					<!-- #### Pages #### -->
 					<main>
-            
+
+            <nav id="breadcrumbs_nav">
+              <%= render_navigation renderer: :breadcrumbs, join_with: ' &gt; ' %>
+            </nav>
+
 						<% flash.each do |name, msg| %>
               <% if msg.is_a?(String) %>
 						    <div id="flash_container">
@@ -46,23 +50,7 @@
              <% end %>
            <% end %>
 
-						<!-- #### API #### -->
-						<div id="API" class="page">
-							<h1>API</h1>
-							<hr>
-							<p>You can query this database in the following ways...</p>
-	
-						</div>
-						
-						<!-- #### About #### -->
-						<div id="About" class="page">
-							<h1>About</h1>
-							<hr>
-							<p>Xronos is...</p>
-							<h2>Team</h2>
-						</div>
-
-						<!-- #### Home #### -->
+  					<!-- #### Home #### -->
 						<div id="Home" class="page default">
 							
 							<%= yield %>

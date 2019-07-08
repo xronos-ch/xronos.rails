@@ -19,4 +19,6 @@ Rails.application.routes.draw do
   get 'welcome/index'
   root 'welcome#index'
   root to: "welcome#index"
+  get '/api' => 'pages#api'
+  get '/about' => 'pages#about'
 end

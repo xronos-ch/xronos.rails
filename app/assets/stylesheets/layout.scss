@@ -227,6 +227,13 @@ main.big {
   width: calc(80vw - 100px);
 }
 
+#breadcrumbs_nav {
+  padding-left:20px;
+  width: 100%;
+  height: 50px;
+  color: white;
+}
+
 .page {
   display: none;
   padding-left:20px;
