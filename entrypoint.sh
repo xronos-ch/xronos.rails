@@ -1,5 +1,8 @@
-# Compile the assets
+# migrate the database
+bundle exec rake db:create db:migrate
+
+# compile the assets
 bundle exec rake assets:precompile
 
-# Start the server
+# start the server
 bundle exec rails server
