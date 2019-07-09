@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded',function(){
     //alert(JSON.stringify(lasso_selected_measurements));
     $.ajax({
         type: "get",
-        url: '/welcome/index',
+        url: '/data/index',
         dataType: 'json',
         data: { spatial_lasso_selection: JSON.stringify(lasso_selected_measurements) },
         success: function(data) {
@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded',function(){
   turnoffLasso.addEventListener('click', () => {
       $.ajax({
           type: "get",
-          url: '/welcome/index',
+          url: '/data/index',
           dataType: 'json',
           data: { turn_off_lasso: JSON.stringify(true) },
           success: function(data) {

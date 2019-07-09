@@ -6,7 +6,7 @@ class SitesController < ApplicationController
   def index
     respond_to do |format|
       format.html
-      format.json { render json: WelcomeDatatable.new(params) }
+      format.json { render json: DataDatatable.new(params) }
     end
   end
 

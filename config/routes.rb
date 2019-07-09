@@ -16,9 +16,9 @@ Rails.application.routes.draw do
   resources :site_types
   resources :countries
   resources :sites
-  get 'welcome/index'
-  root 'welcome#index'
-  root to: "welcome#index"
+  get 'data/index'
+  root 'data#index'
+  root to: "data#index"
   get '/api' => 'pages#api'
   get '/about' => 'pages#about'
 end
