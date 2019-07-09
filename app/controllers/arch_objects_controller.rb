@@ -80,7 +80,8 @@ class ArchObjectsController < ApplicationController
         :samples_attributes => [
           :measurements_attributes => [
             :year,
-            :labnr
+            :labnr,
+            :lab_id
           ]
         ]
       )

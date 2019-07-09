@@ -37,6 +37,8 @@
       <%= m.text_field :year %>
       <%= m.label :labnr %>
       <%= m.text_field :labnr %>
+      <%= m.label :lab_id %>
+      <%= m.collection_select :lab_id, Lab.all, :id, :name %>
     <% end %>
   <% end %>
 
