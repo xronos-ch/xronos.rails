@@ -31,6 +31,15 @@
     <%= form.collection_select :on_site_object_position_id, OnSiteObjectPosition.all, :id, :feature %>
   </div>
 
+  <%= form.fields_for :samples do |s| %>
+    <%= s.fields_for :measurements do |m| %>
+      <%= m.label :year %>
+      <%= m.text_field :year %>
+      <%= m.label :labnr %>
+      <%= m.text_field :labnr %>
+    <% end %>
+  <% end %>
+
   <div class="actions">
     <%= form.submit %>
   </div>
