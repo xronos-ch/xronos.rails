@@ -80,11 +80,12 @@
 			</div>
 
 			<div id="controls_header">
-				<h1>Xronos</h1>
+				<h2>Filter console</h2>
 			</div>
 
 			<div id="controls_body">
 
+        Spatial lasso selection: <br>
         <button id="toggleLasso"><%= fa_icon "circle-o-notch" %> Lasso</button><button id="turnoffLasso"><%= fa_icon "times-circle" %> turn off</button>
 
         <% site_types_array = SiteType.all.map { |x| [x.name, x.name] } %>
