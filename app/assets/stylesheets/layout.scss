@@ -1,10 +1,14 @@
 // links
 a:link {
-	color: #afafaf;
+	color: #b5b5b5 !important;
 }
 
 a:visited {
-	color: #878787;
+	color: #b5b5b5 !important;
+}
+
+a:hover {
+  color: red !important;
 }
 
 // hamburger
@@ -213,7 +217,7 @@ a:visited {
 }
 
 #nav a:hover {
-  background-color: red;
+  background-color: white;
 }
 
 main {
