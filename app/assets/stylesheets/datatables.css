@@ -81,7 +81,7 @@ table.dataTable {
     border-left: 1px solid #dddddd; }
   table.dataTable.cell-border tbody tr:first-child th,
   table.dataTable.cell-border tbody tr:first-child td {
-    border-top: 1px solid #ffffff;
+    border-top: 1px solid #dddddd;
   }
   table.dataTable.stripe tbody tr.odd, table.dataTable.display tbody tr.odd {
     background-color: rgba(0, 0, 0, 0); }
@@ -140,7 +140,7 @@ table.dataTable {
   table.dataTable.display tbody tr:hover.selected > .sorting_3, table.dataTable.order-column.hover tbody tr:hover.selected > .sorting_3 {
     background-color: #3a5385; }
   table.dataTable.no-footer {
-    border-bottom: 1px solid #b5b5b5; }
+    border-bottom: 1px solid #dddddd; }
   table.dataTable.nowrap th, table.dataTable.nowrap td {
     white-space: nowrap; }
   table.dataTable.compact thead th,
@@ -256,7 +256,7 @@ table.dataTable td {
       border-radius: 2px; }
       .dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
         color: #333333 !important;
-        border: 1px solid #979797;
+        border: 1px solid #dddddd;
         background-color: #b5b5b5;
         background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #b5b5b5), color-stop(100%, gainsboro));
         /* Chrome,Safari4+ */
@@ -278,7 +278,7 @@ table.dataTable td {
         box-shadow: none; }
       .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
         color: #b5b5b5 !important;
-        border: 1px solid #111111;
+        border: 1px solid #dddddd;
         background-color: #585858;
         background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #585858), color-stop(100%, #111111));
         /* Chrome,Safari4+ */
@@ -349,7 +349,7 @@ table.dataTable td {
         margin: 0 !important;
         padding: 0 !important; }
   .dataTables_wrapper.no-footer .dataTables_scrollBody {
-    border-bottom: 1px solid #111111; }
+    border-bottom: 1px solid #dddddd; }
   .dataTables_wrapper.no-footer div.dataTables_scrollHead table.dataTable,
   .dataTables_wrapper.no-footer div.dataTables_scrollBody > table {
     border-bottom: none; }
