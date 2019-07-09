@@ -56,7 +56,7 @@ SimpleNavigation::Configuration.run do |navigation|
     #                            when the item should be highlighted, you can set a regexp which is matched
     #                            against the current URI.  You may also use a proc, or the symbol <tt>:subpath</tt>.
     #
-    primary.item :welcome, 'Data', root_path do |welcome|
+    primary.item :welcome, 'data', root_path do |welcome|
       welcome.item :labs, 'labs', labs_path
       welcome.item :dendro_measurements, 'dendro_measurements', dendro_measurements_path
       welcome.item :c14_measurements, 'c14_measurements', c14_measurements_path
@@ -76,8 +76,8 @@ SimpleNavigation::Configuration.run do |navigation|
       welcome.item :sites, 'sites', sites_path
     end
 
-		primary.item :api, 'API', api_path
-		primary.item :about, 'About', about_path
+		primary.item :api, 'api', api_path
+		primary.item :about, 'about', about_path
 
     # Add an item which has a sub navigation (same params, but with block)
     #primary.item :key_2, 'name', url, options do |sub_nav|
