@@ -147,7 +147,7 @@ table.dataTable {
   table.dataTable.compact thead td {
     padding: 4px 17px 4px 4px;
     border-radius: 7px 7px 0px 0px;
-    background-color: #333333;
+    background-color: #868686;
     color: #ffffff;
   }
   table.dataTable.compact tfoot th,
