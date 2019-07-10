@@ -9,6 +9,7 @@ jQuery(document).ready(function() {
     },
     "pagingType": "full_numbers",
     "columns": [
+      {"data": "edit"},
       {"data": "labnr"},
       {"data": "year"},
       {"data": "site"},

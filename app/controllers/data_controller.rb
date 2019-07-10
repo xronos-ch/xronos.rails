@@ -151,7 +151,8 @@ class DataController < ApplicationController
       format.json { render json: SelectedMeasurementDatatable.new(
         params,
         {
-          selected_measurements: @selected_measurements
+          selected_measurements: @selected_measurements,
+          view_context: view_context
         }
       )
       }
