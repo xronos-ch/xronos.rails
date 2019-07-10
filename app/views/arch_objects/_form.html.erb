@@ -17,9 +17,30 @@
   </div>
   <div class="field">
     <%= f.fields_for :site, @arch_object.site do |site| %>
+      <%= f.label :name %>
       <%= site.text_field :name, placeholder: 'New site' %>
+      <%= f.label :lat %>
       <%= site.text_field :lat, placeholder: 0 %>
+      <%= f.label :lng %>
       <%= site.text_field :lng, placeholder: 0 %>
+    <% end %>
+  </div>
+  <p><b><%= f.label :site_type %></b></p>
+  <div class="field">
+    <%= f.fields_for :site_type, @arch_object.site.site_type do |site_type| %>
+      <%= f.label :name %>
+      <%= site_type.text_field :name, placeholder: 'New site type' %>
+      <%= f.label :description %>
+      <%= site_type.text_field :description, placeholder: 'Description' %>
+    <% end %>
+  </div>
+  <p><b><%= f.label :country %></b></p>
+  <div class="field">
+    <%= f.fields_for :country, @arch_object.site.country do |country| %>
+      <%= f.label :name %>
+      <%= country.text_field :name, placeholder: 'New country' %>
+      <%= f.label :description %>
+      <%= country.text_field :abbreviation, placeholder: 'Abbreviation' %>
     <% end %>
   </div>
   <hr>

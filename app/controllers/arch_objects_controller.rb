@@ -19,6 +19,8 @@ class ArchObjectsController < ApplicationController
     @arch_object = ArchObject.new
     @arch_object.samples.build.measurements.build
     @arch_object.build_site
+    @arch_object.site.build_site_type
+    @arch_object.site.build_country
   end
 
   # GET /arch_objects/1/edit
@@ -83,7 +85,21 @@ class ArchObjectsController < ApplicationController
           :name,
           :lat,
           :lng,
-          :_destroy
+          :_destroy,
+          :site_type_id,
+          :country_id,
+          :site_type_attributes => [
+            :id,
+            :name,
+            :description,
+            :_destroy
+          ],
+          :country_attributes => [
+            :id,
+            :name,
+            :abbreviation,
+            :_destroy
+          ]
         ],
         :samples_attributes => [
           :id,
