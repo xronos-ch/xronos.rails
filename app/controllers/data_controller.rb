@@ -72,6 +72,7 @@ class DataController < ApplicationController
       sample: {arch_object: [{site: [:site_type, :country]}, {on_site_object_position: :feature_type}, :material, :species]}
     ).select(
       "
+      arch_objects.id as arch_object_id,
       measurements.id as measurement_id,
       measurements.labnr as labnr,
       measurements.year as year,
