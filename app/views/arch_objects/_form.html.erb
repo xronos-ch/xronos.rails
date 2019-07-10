@@ -11,8 +11,7 @@
     </div>
   <% end %>
 
-  <h3>Site</h3>
-  <hr>
+  <h3><%= f.label :site %></h3>
   <div class="field">
     <%= f.collection_select :site_id, Site.all, :id, :name, { include_blank: 'Create new' } %>
   </div>
@@ -25,23 +24,25 @@
   </div>
   <hr>
 
+  <h3><%= f.label :material %></h3>
 	<div class="field">
-    <%= f.label :material %>
     <%= f.collection_select :material_id, Material.all, :id, :name %>
   </div>
+  <hr>
 
+  <h3><%= f.label :species %></h3>
   <div class="field">
-    <%= f.label :species %>
     <%= f.collection_select :species_id, Species.all, :id, :species %>
   </div>
+  <hr>
 
+  <h3><%= f.label :on_site_object_position %></h3>
   <div class="field">
-    <%= f.label :on_site_object_position %>
     <%= f.collection_select :on_site_object_position_id, OnSiteObjectPosition.all, :id, :feature %>
   </div>
+  <hr>
 
   <h3>Samples</h3>
-  <hr>
   <div id='sample'>
     <%= f.fields_for :samples do |sample| %>
       <%= render 'sample_fields', :f => sample %>
