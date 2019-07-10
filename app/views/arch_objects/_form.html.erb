@@ -1,4 +1,4 @@
-<%= form_with(model: arch_object, local: true) do |form| %>
+<%= form_with(model: arch_object, local: true) do |f| %>
   <% if arch_object.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(arch_object.errors.count, "error") %> prohibited this arch_object from being saved:</h2>
@@ -12,37 +12,46 @@
   <% end %>
 
 	<div class="field">
-    <%= form.label :site %>
-    <%= form.collection_select :site_id, Site.all, :id, :name %>
+    <%= f.label :site %>
+    <%= f.collection_select :site_id, Site.all, :id, :name %>
   </div>
 
 	<div class="field">
-    <%= form.label :material %>
-    <%= form.collection_select :material_id, Material.all, :id, :name %>
+    <%= f.label :material %>
+    <%= f.collection_select :material_id, Material.all, :id, :name %>
   </div>
 
   <div class="field">
-    <%= form.label :species %>
-    <%= form.collection_select :species_id, Species.all, :id, :species %>
+    <%= f.label :species %>
+    <%= f.collection_select :species_id, Species.all, :id, :species %>
   </div>
 
   <div class="field">
-    <%= form.label :on_site_object_position %>
-    <%= form.collection_select :on_site_object_position_id, OnSiteObjectPosition.all, :id, :feature %>
+    <%= f.label :on_site_object_position %>
+    <%= f.collection_select :on_site_object_position_id, OnSiteObjectPosition.all, :id, :feature %>
   </div>
 
-  <%= form.fields_for :samples do |s| %>
-    <%= s.fields_for :measurements do |m| %>
-      <%= m.label :year %>
-      <%= m.text_field :year %>
-      <%= m.label :labnr %>
-      <%= m.text_field :labnr %>
-      <%= m.label :lab_id %>
-      <%= m.collection_select :lab_id, Lab.all, :id, :name %>
+  <h3>Samples</h3>
+  <div id='tasks'>
+    <%= f.fields_for :samples do |sample| %>
+      <%= render 'sample_fields', :f => sample %>
     <% end %>
-  <% end %>
+    <div class='links'>
+      <%= link_to_add_association 'add sample', f, :samples %>
+    </div>
+  </div>
+
+    <%#= s.fields_for :measurements do |m| %>
+      <%#= m.label :year %>
+      <%#= m.text_field :year %>
+      <%#= m.label :labnr %>
+      <%#= m.text_field :labnr %>
+      <%#= m.label :lab_id %>
+      <%#= m.collection_select :lab_id, Lab.all, :id, :name %>
+    <%# end %>
+  <%# end %>
 
   <div class="actions">
-    <%= form.submit %>
+    <%= f.submit %>
   </div>
 <% end %>

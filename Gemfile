@@ -94,3 +94,6 @@ gem 'ajax-datatables-rails'
 group :production do
   gem 'pg'
 end
+
+# nested forms
+gem "cocoon"

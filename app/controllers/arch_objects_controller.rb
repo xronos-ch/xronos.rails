@@ -78,10 +78,14 @@ class ArchObjectsController < ApplicationController
         :species_id,
         :on_site_object_position_id,
         :samples_attributes => [
+          :id,
+          :_destroy,
           :measurements_attributes => [
+            :id,
             :year,
             :labnr,
-            :lab_id
+            :lab_id,
+            :_destroy
           ]
         ]
       )
