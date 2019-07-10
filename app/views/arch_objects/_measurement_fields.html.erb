@@ -10,12 +10,13 @@
     <%= f.text_field :labnr %>
   </div>
 
-
   <div class="field">
     <%= f.label :lab_id %>
     <%= f.collection_select :lab_id, Lab.all, :id, :name %>
   </div>
 
   <%= link_to_remove_association "remove measurement", f %>
+
+  <hr>
 
 </div>

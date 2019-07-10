@@ -5,7 +5,8 @@
     <%= f.text_field :id %>
   </div>
 
-  <h4>Measurements</h4>
+  <h3>Measurements</h3>
+  <hr>
   <div id='measurements'>
     <%= f.fields_for :measurements do |measurement| %>
       <%= render 'measurement_fields', :f => measurement %>
@@ -16,5 +17,7 @@
   </div>
 
   <%= link_to_remove_association "remove sample", f %>
+
+  <hr>
 
 </div>
