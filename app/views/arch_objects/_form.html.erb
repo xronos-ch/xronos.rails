@@ -11,10 +11,19 @@
     </div>
   <% end %>
 
-	<div class="field">
-    <%= f.label :site %>
-    <%= f.collection_select :site_id, Site.all, :id, :name %>
+  <h3>Site</h3>
+  <hr>
+  <div class="field">
+    <%= f.collection_select :site_id, Site.all, :id, :name, { include_blank: 'Create new' } %>
   </div>
+  <div class="field">
+    <%= f.fields_for :site, @arch_object.site do |site| %>
+      <%= site.text_field :name, placeholder: 'New site' %>
+      <%= site.text_field :lat, placeholder: 0 %>
+      <%= site.text_field :lng, placeholder: 0 %>
+    <% end %>
+  </div>
+  <hr>
 
 	<div class="field">
     <%= f.label :material %>
@@ -33,7 +42,7 @@
 
   <h3>Samples</h3>
   <hr>
-  <div id='tasks'>
+  <div id='sample'>
     <%= f.fields_for :samples do |sample| %>
       <%= render 'sample_fields', :f => sample %>
     <% end %>

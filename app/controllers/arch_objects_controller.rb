@@ -18,6 +18,7 @@ class ArchObjectsController < ApplicationController
   def new
     @arch_object = ArchObject.new
     @arch_object.samples.build.measurements.build
+    @arch_object.build_site
   end
 
   # GET /arch_objects/1/edit
@@ -73,10 +74,17 @@ class ArchObjectsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def arch_object_params
       params.require(:arch_object).permit(
-        :site_id,
         :material_id,
         :species_id,
         :on_site_object_position_id,
+        :site_id,
+        :site_attributes => [
+          :id,
+          :name,
+          :lat,
+          :lng,
+          :_destroy
+        ],
         :samples_attributes => [
           :id,
           :_destroy,
