@@ -14,7 +14,9 @@ Rails.application.routes.draw do
   resources :feature_types
   resources :on_site_object_positions
   resources :site_types
+  get 'data/autocomplete_site_type_name'
   resources :countries
+  get 'data/autocomplete_country_name'
   resources :sites
   get 'data/index'
   root 'data#index'

@@ -97,3 +97,7 @@ end
 
 # nested forms
 gem "cocoon"
+
+# autocomplete in forms
+gem 'jquery-ui-rails'
+gem 'rails-jquery-autocomplete'

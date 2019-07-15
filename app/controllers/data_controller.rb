@@ -1,4 +1,6 @@
 class DataController < ApplicationController
+  autocomplete :site_type, :name, :full => true
+  autocomplete :country, :name, :full => true
 
   def reset_filter_session_variable
     session[:query_site_name] = nil
