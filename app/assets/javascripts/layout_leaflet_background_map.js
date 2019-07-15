@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded',function(){
 
+    // #### map ####
+
     // define base map
     const map = L.map('background_map').setView([45, 7], 3);
     L.tileLayer('https://maps.heigit.org/openmapsurfer/tiles/roads/webmercator/{z}/{x}/{y}.png', {
@@ -33,105 +35,101 @@ document.addEventListener('DOMContentLoaded',function(){
 		layers
 	).addTo(map);
 
+	// #### lasso ####
+
 	// add lasso functionality
 	const lasso = L.lasso(map);
 
-	function resetSelectedState() {
-	  map.eachLayer(layer => {
-      if (layer instanceof L.Marker) {
-          layer.setIcon(new L.Icon.Default());
-      } else if (layer instanceof L.Path) {
-          layer.setStyle({ color: 'blue' });
-      }
-	  });
-	}
+	// indicator div
+    //var lai = document.getElementById("lasso_active_indicator");
+    //lai.style.display = "none";
 
-  function setSelectedLayers(layers) {
-    resetSelectedState();
-    layers.forEach(layer => {
-      if (layer instanceof L.Marker) {
-        layer.setIcon(new L.Icon.Default({ className: 'selected '}));
-      } else if (layer instanceof L.Path) {
-        layer.setStyle({ color: 'red' });
-      }
-    });
-
-    const lasso_selected_measurements = new Array(layers.length)
-    for (var i = 0; i < lasso_selected_measurements.length; i++) {
-      lasso_selected_measurements[i] = layers[i].options.measurement_id
-    }
-
-    //alert(JSON.stringify(lasso_selected_measurements));
-    $.ajax({
-        type: "get",
-        url: '/data/index',
-        dataType: 'json',
-        data: { spatial_lasso_selection: JSON.stringify(lasso_selected_measurements) },
-        success: function(data) {
-        return location.reload();
-        },
-        error: function(e) {
-        alert("Oops! An error occurred, please try again");
-        return console.log(e);
-      }
-    });
-  }
-
-	var addUrlParam = function(search, key, val){
-		var newParam = key + '=' + val,
-		    params = '?' + newParam;
-
-		// If the "search" string exists, then build params from it
-		if (search) {
-		  // Try to replace an existance instance
-		  params = search.replace(new RegExp('([?&])' + key + '[^&]*'), '$1' + newParam);
-
-		  // If nothing was replaced, then add the new param to the end
-		  if (params === search) {
-		    params += '&' + newParam;
-		  }
-		}
-
-		return params;
-	};
-
-  map.on('mousedown', () => {
-    resetSelectedState();
-  });
-
-  map.on('lasso.finished', event => {
-    setSelectedLayers(event.layers);
-  });
-
-  map.on('lasso.enabled', () => {
-      resetSelectedState();
-  });
-
-  map.on('lasso.disabled', () => {
-  });
-
-  toggleLasso.addEventListener('click', () => {
-    if (lasso.enabled()) {
-        lasso.disable();
-    } else {
-        lasso.enable();
-    }
-  });
-
-  turnoffLasso.addEventListener('click', () => {
-      $.ajax({
-          type: "get",
-          url: '/data/index',
-          dataType: 'json',
-          data: { turn_off_lasso: JSON.stringify(true) },
-          success: function(data) {
-              return location.reload();
-          },
-          error: function(e) {
-              alert("Oops! An error occurred, please try again");
-              return console.log(e);
+    function resetSelectedState() {
+      map.eachLayer(layer => {
+          if (layer instanceof L.Marker) {
+              layer.setIcon(new L.Icon.Default());
+          } else if (layer instanceof L.Path) {
+              layer.setStyle({ color: 'blue' });
           }
       });
-  });
+    }
+
+    function setSelectedLayers(layers) {
+
+        resetSelectedState();
+        layers.forEach(layer => {
+          if (layer instanceof L.Marker) {
+            layer.setIcon(new L.Icon.Default({ className: 'selected '}));
+          } else if (layer instanceof L.Path) {
+            layer.setStyle({ color: 'red' });
+          }
+        });
+
+        const lasso_selected_measurements = new Array(layers.length)
+        for (var i = 0; i < lasso_selected_measurements.length; i++) {
+          lasso_selected_measurements[i] = layers[i].options.measurement_id
+        }
+
+        //alert(JSON.stringify(lasso_selected_measurements));
+        $.ajax({
+            type: "get",
+            url: '/data/index',
+            dataType: 'json',
+            data: { spatial_lasso_selection: JSON.stringify(lasso_selected_measurements) },
+            success: function(data) {
+            return location.reload();
+            },
+            error: function(e) {
+            alert("Oops! An error occurred, please try again");
+            return console.log(e);
+          }
+        });
+
+        //lai.style.display = "block";
+
+    }
+
+    map.on('mousedown', () => {
+        resetSelectedState();
+    });
+
+    map.on('lasso.finished', event => {
+        setSelectedLayers(event.layers);
+    });
+
+    map.on('lasso.enabled', () => {
+        resetSelectedState();
+    });
+
+    map.on('lasso.disabled', () => {
+    });
+
+    toggleLasso.addEventListener('click', () => {
+        if (lasso.enabled()) {
+            lasso.disable();
+        } else {
+            lasso.enable();
+        }
+    });
+
+    turnoffLasso.addEventListener('click', () => {
+
+        $.ajax({
+            type: "get",
+            url: '/data/index',
+            dataType: 'json',
+            data: { turn_off_lasso: JSON.stringify(true) },
+            success: function(data) {
+                return location.reload();
+            },
+            error: function(e) {
+                alert("Oops! An error occurred, please try again");
+                return console.log(e);
+            }
+        });
+
+        //lai.style.display = "none";
+
+    });
 
 });

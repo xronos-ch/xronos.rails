@@ -86,7 +86,13 @@
 			<div id="controls_body">
 
         Spatial lasso selection: <br>
-        <button id="toggleLasso"><%= fa_icon "circle-o-notch" %> Lasso</button><button id="turnoffLasso"><%= fa_icon "times-circle" %> turn off</button>
+        <button id="toggleLasso"><%= fa_icon "circle-o-notch" %> Lasso</button>
+        <button id="turnoffLasso"><%= fa_icon "times-circle" %> turn off</button>
+        <% if session[:spatial_lasso_selection].present? || !(session[:spatial_lasso_selection].nil?) %>
+          <%= fa_icon "check" %>
+        <% else %>
+          <%= fa_icon "times" %>
+        <% end %>
 
         <% site_types_array = SiteType.all.map { |x| [x.name, x.name] } %>
         <% countries_array = Country.all.map { |x| [x.name, x.name] } %>
