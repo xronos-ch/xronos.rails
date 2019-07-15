@@ -1,5 +1,16 @@
 class DataController < ApplicationController
 
+  def reset_filter_session_variable
+    session[:query_site_name] = nil
+    session[:query_site_type] = nil
+    session[:query_country] = nil
+    session[:query_feature] = nil
+    session[:query_material] = nil
+    session[:query_species] = nil
+    session[:spatial_lasso_selection] = nil
+    redirect_to :root
+  end
+
   def index
 
     #### update session ####
@@ -97,14 +108,14 @@ class DataController < ApplicationController
     # site type
     unless session[:query_site_type].nil?
       @selected_measurements = @selected_measurements.where(
-        "site_types.name = ?", session[:query_site_type]
+        "site_types.name IN (?)", session[:query_site_type]
       ).all
     end
 
     # country
     unless session[:query_country].nil?
       @selected_measurements = @selected_measurements.where(
-          "countries.name = ?", session[:query_country]
+          "countries.name IN (?)", session[:query_country]
       ).all
     end
 

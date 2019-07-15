@@ -98,21 +98,22 @@
         <% countries_array = Country.all.map { |x| [x.name, x.name] } %>
 
 				<%= form_tag(root_path, method: "get") do %>
-					<%= label_tag(:query_site_name, "Site name:") %>
-					<%= text_field_tag(:query_site_name, (session[:query_site_name] or "")) %>
-          <%= label_tag(:query_site_type, "Site type:") %>
-          <%= select_tag(:query_site_type, options_for_select(site_types_array, session[:query_site_type]), include_blank: true) %>
-          <%= label_tag(:query_site_type, "Country:") %>
-          <%= select_tag(:query_country, options_for_select(countries_array, session[:query_country]), include_blank: true) %>
-          <%= label_tag(:query_feature, "Feature:") %>
-          <%= text_field_tag(:query_feature, (session[:query_feature] or "")) %>
-          <%= label_tag(:query_material, "Material:") %>
-          <%= text_field_tag(:query_material, (session[:query_material] or "")) %>
-          <%= label_tag(:query_species, "Species:") %>
-          <%= text_field_tag(:query_species, (session[:query_species] or "")) %>
-          <br><br>
-					<%= submit_tag("Search") %>
+					  <%= label_tag(:query_site_name, "Site name:") %>
+					  <%= text_field_tag(:query_site_name, (session[:query_site_name] or "")) %>
+            <%= label_tag(:query_site_type, "Site type:") %>
+            <%= select_tag(:query_site_type, options_for_select(site_types_array, session[:query_site_type]), include_blank: true, multiple: true) %>
+            <%= label_tag(:query_site_type, "Country:") %>
+            <%= select_tag(:query_country, options_for_select(countries_array, session[:query_country]), include_blank: true, multiple: true) %>
+            <%= label_tag(:query_feature, "Feature:") %>
+            <%= text_field_tag(:query_feature, (session[:query_feature] or "")) %>
+            <%= label_tag(:query_material, "Material:") %>
+            <%= text_field_tag(:query_material, (session[:query_material] or "")) %>
+            <%= label_tag(:query_species, "Species:") %>
+            <%= text_field_tag(:query_species, (session[:query_species] or "")) %>
+					  <%= submit_tag("Filter") %>
 				<% end %>
+
+        <%= fa_icon "times" %> <%= link_to('Reset Filter', resetfilter_url) %>
 
 			</div>
 

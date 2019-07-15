@@ -21,4 +21,5 @@ Rails.application.routes.draw do
   root to: "data#index"
   get '/api' => 'pages#api'
   get '/about' => 'pages#about'
+  get '/resetfilter', :to=>'data#reset_filter_session_variable'
 end
