@@ -101,9 +101,9 @@
 					  <%= label_tag(:query_site_name, "Site name:") %>
 					  <%= text_field_tag(:query_site_name, (session[:query_site_name] or "")) %>
             <%= label_tag(:query_site_type, "Site type:") %>
-            <%= autocomplete_field_tag(:query_site_type, '', data_autocomplete_site_type_name_path, 'data-delimiter' => ',', multiple: true, 'data-auto-focus' => true) %>
+            <%= autocomplete_field_tag(:query_site_type, session[:query_site_type], data_autocomplete_site_type_name_path, 'data-delimiter' => ', ', multiple: true, 'data-auto-focus' => true) %>
             <%= label_tag(:query_country, "Country:") %>
-            <%= autocomplete_field_tag(:query_country, '', data_autocomplete_country_name_path, 'data-delimiter' => ',', multiple: true) %>
+            <%= autocomplete_field_tag(:query_country, session[:query_country], data_autocomplete_country_name_path, 'data-delimiter' => ', ', multiple: true) %>
             <%= label_tag(:query_feature, "Feature:") %>
             <%= text_field_tag(:query_feature, (session[:query_feature] or "")) %>
             <%= label_tag(:query_material, "Material:") %>

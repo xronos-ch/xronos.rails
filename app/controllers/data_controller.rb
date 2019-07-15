@@ -110,14 +110,14 @@ class DataController < ApplicationController
     # site type
     unless session[:query_site_type].nil?
       @selected_measurements = @selected_measurements.where(
-        "site_types.name IN (?)", session[:query_site_type]
+        "site_types.name IN (?)", session[:query_site_type].split(', ')
       ).all
     end
 
     # country
     unless session[:query_country].nil?
       @selected_measurements = @selected_measurements.where(
-          "countries.name IN (?)", session[:query_country]
+          "countries.name IN (?)", session[:query_country].split(', ')
       ).all
     end
 
