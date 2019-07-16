@@ -5,6 +5,7 @@ class DataController < ApplicationController
   autocomplete :material, :name, :full => true
 
   def reset_filter_session_variable
+    session[:query_labnr] = nil
     session[:query_site_name] = nil
     session[:query_site_type] = nil
     session[:query_country] = nil
@@ -18,6 +19,15 @@ class DataController < ApplicationController
   def index
 
     #### update session ####
+
+    # labnr
+    if params.has_key?(:query_labnr)
+      session[:query_labnr] = params[:query_labnr]
+    end
+    if params.has_key?(:query_labnr) and params[:query_labnr].empty?
+      session[:query_labnr] = nil
+    end
+
     # site name
     if params.has_key?(:query_site_name)
       session[:query_site_name] = params[:query_site_name]
@@ -82,7 +92,8 @@ class DataController < ApplicationController
 
 
     ##### select data #####
-		# general dataset preparation
+
+    # general dataset preparation
     @selected_measurements = Measurement.joins(
       sample: {arch_object: [{site: [:site_type, :country]}, {on_site_object_position: :feature_type}, :material, :species]}
     ).select(
@@ -101,6 +112,13 @@ class DataController < ApplicationController
       (species.family || ' ' || species.genus || ' ' || species.species  || ' ' || species.subspecies) as species
       "
     ).all
+
+    # labnr
+    unless session[:query_labnr].nil?
+      @selected_measurements = @selected_measurements.where(
+          "measurements.labnr LIKE ?", session[:query_labnr]
+      ).all
+    end
 
     # site name
     unless session[:query_site_name].nil?

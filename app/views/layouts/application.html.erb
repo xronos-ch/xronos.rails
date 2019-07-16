@@ -98,6 +98,8 @@
         <%# countries_array = Country.all.map { |x| [x.name, x.name] } %>
 
 				<%= form_tag(root_path, method: "get") do %>
+          <%= label_tag(:query_labnr, "Lab number:") %>
+          <%= text_field_tag(:query_labnr, (session[:query_labnr] or "")) %>
           <%= label_tag(:query_site_name, "Site name:") %>
           <%= autocomplete_field_tag(:query_site_name, session[:query_site_name], data_autocomplete_site_name_path, 'data-delimiter' => ', ', multiple: true, 'data-auto-focus' => true) %>
           <%= label_tag(:query_site_type, "Site type:") %>
