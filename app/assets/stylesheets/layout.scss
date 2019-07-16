@@ -291,21 +291,10 @@ main.big {
   margin: 2px 0 0 0;
   list-style: none;
   background-color: #ffffff;
-  border-color: #ccc;
-  border-color: rgba(0, 0, 0, 0.2);
+  border-color: #000000;
   border-style: solid;
   border-width: 1px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
-  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-  -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-  -webkit-background-clip: padding-box;
-  -moz-background-clip: padding;
-  background-clip: padding-box;
-  *border-right-width: 2px;
-  *border-bottom-width: 2px;
+  cursor: pointer;
 
   .ui-menu-item > a.ui-corner-all {
     display: block;
@@ -313,10 +302,14 @@ main.big {
     clear: both;
     font-weight: normal;
     line-height: 18px;
-    color: #555555;
+    color: #000000;
     white-space: nowrap;
   }
 
+}
+
+.ui-autocomplete:hover {
+  color: red;
 }
 
 .ui-widget-content .ui-state-focus {
