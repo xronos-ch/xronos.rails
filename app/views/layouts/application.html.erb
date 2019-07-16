@@ -85,12 +85,8 @@
 
 			<div id="controls_body">
 
+        <% if session[:spatial_lasso_selection].present? || !(session[:spatial_lasso_selection].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %>
         Spatial lasso selection <br>
-        <% if session[:spatial_lasso_selection].present? || !(session[:spatial_lasso_selection].nil?) %>
-          <%= fa_icon "check" %>
-        <% else %>
-          <%= fa_icon "times" %>
-        <% end %>
         <button id="toggleLasso"><%= fa_icon "circle-o-notch" %> Lasso</button>
         <button id="turnoffLasso"><%= fa_icon "times-circle" %> turn off</button>
 
@@ -113,7 +109,7 @@
           <label for="query_species"><% if !(session[:query_species].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Species</label>
           <%= text_field_tag(:query_species, (session[:query_species] or "")) %>
           <br><br>
-          <%= submit_tag("Filter") %>
+          <%= button_tag type: 'submit' do %> <%= fa_icon "search" %> Filter dates<% end %>
 				<% end %>
 
         <%= fa_icon "times" %> <%= link_to('Reset Filter', resetfilter_url) %>
