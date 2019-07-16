@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   resources :references
   resources :species
   resources :materials
+  get 'data/autocomplete_material_name'
   resources :feature_types
   resources :on_site_object_positions
   resources :site_types
@@ -18,6 +19,7 @@ Rails.application.routes.draw do
   resources :countries
   get 'data/autocomplete_country_name'
   resources :sites
+  get 'data/autocomplete_site_name'
   get 'data/index'
   root 'data#index'
   root to: "data#index"

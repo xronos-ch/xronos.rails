@@ -1,6 +1,8 @@
 class DataController < ApplicationController
+  autocomplete :site, :name, :full => true
   autocomplete :site_type, :name, :full => true
   autocomplete :country, :name, :full => true
+  autocomplete :material, :name, :full => true
 
   def reset_filter_session_variable
     session[:query_site_name] = nil
@@ -103,7 +105,7 @@ class DataController < ApplicationController
     # site name
     unless session[:query_site_name].nil?
       @selected_measurements = @selected_measurements.where(
-        "sites.name = ?", session[:query_site_name]
+        "sites.name IN (?)", session[:query_site_name].split(', ')
       ).all
     end
 
@@ -124,21 +126,21 @@ class DataController < ApplicationController
     # feature
     unless session[:query_feature].nil?
       @selected_measurements = @selected_measurements.where(
-          "on_site_object_positions.feature = ?", session[:query_feature]
+          "on_site_object_positions.feature LIKE ?", session[:query_feature]
       ).all
     end
 
     # material
     unless session[:query_material].nil?
       @selected_measurements = @selected_measurements.where(
-          "materials.name = ?", session[:query_material]
+          "materials.name IN (?)", session[:query_material].split(', ')
       ).all
     end
 
     # species
     unless session[:query_species].nil?
       @selected_measurements = @selected_measurements.where(
-          "(species.family || ' ' || species.genus || ' ' || species.species  || ' ' || species.subspecies) = ?", session[:query_species]
+          "(species.family || ' ' || species.genus || ' ' || species.species  || ' ' || species.subspecies) LIKE ?", session[:query_species]
       ).all
     end
 
