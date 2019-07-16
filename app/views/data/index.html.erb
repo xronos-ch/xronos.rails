@@ -20,9 +20,9 @@
 
 <hr>
 
-<%= link_to 'Add new sample', new_arch_object_path %>
+<%= fa_icon "plus" %> <%= link_to 'Add new sample', new_arch_object_path %> <br>
 
-<a href="<%= root_path(format: :csv) %>"><button>Download current selection</button></a>
+<%= fa_icon "cloud-download" %> <%= link_to 'Download current selection as .csv file', root_path(format: :csv) %>
 
 <hr>
 
