@@ -1,2 +1,0 @@
-module C14MeasurementsHelper
-end

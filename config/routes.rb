@@ -1,7 +1,5 @@
 Rails.application.routes.draw do
   devise_for :users
-  resources :dendro_measurements
-  resources :c14_measurements
   resources :measurements
   resources :samples
   resources :arch_objects

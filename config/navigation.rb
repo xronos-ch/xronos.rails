@@ -58,8 +58,6 @@ SimpleNavigation::Configuration.run do |navigation|
     #
     primary.item :data, 'data', root_path do |data|
       data.item :labs, 'labs', labs_path
-      data.item :dendro_measurements, 'dendro_measurements', dendro_measurements_path
-      data.item :c14_measurements, 'c14_measurements', c14_measurements_path
       data.item :measurements, 'measurements', measurements_path
       data.item :samples, 'samples', samples_path
       data.item :arch_objects, 'arch_objects', arch_objects_path
