@@ -19,8 +19,9 @@ class ArchObjectsController < ApplicationController
     @arch_object = ArchObject.new
     @arch_object.samples.build.measurements.build
     @arch_object.build_site
-    @arch_object.site.build_site_type
-    @arch_object.site.build_country
+    @arch_object.build_material
+    @arch_object.build_species
+    @arch_object.build_on_site_object_position
   end
 
   # GET /arch_objects/1/edit
@@ -100,6 +101,11 @@ class ArchObjectsController < ApplicationController
             :abbreviation,
             :_destroy
           ]
+        ],
+        :material_attributes => [
+          :id,
+          :name,
+          :_destroy
         ],
         :samples_attributes => [
           :id,

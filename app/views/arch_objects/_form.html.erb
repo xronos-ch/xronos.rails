@@ -25,7 +25,11 @@
       <%= site.text_field :lng, placeholder: 0 %>
     <% end %>
   </div>
+
   <p><b><%= f.label :site_type %></b></p>
+  <div class="field">
+    <%= f.collection_select :site_type_id, SiteType.all, :id, :name, { include_blank: 'Create new' } %>
+  </div>
   <div class="field">
     <%= f.fields_for :site_type, @arch_object.site.site_type do |site_type| %>
       <%= f.label :name %>
@@ -34,7 +38,11 @@
       <%= site_type.text_field :description, placeholder: 'Description' %>
     <% end %>
   </div>
+
   <p><b><%= f.label :country %></b></p>
+  <div class="field">
+    <%= f.collection_select :country_id, Country.all, :id, :name, { include_blank: 'Create new' } %>
+  </div>
   <div class="field">
     <%= f.fields_for :country, @arch_object.site.country do |country| %>
       <%= f.label :name %>
@@ -43,24 +51,34 @@
       <%= country.text_field :abbreviation, placeholder: 'Abbreviation' %>
     <% end %>
   </div>
+
   <hr>
 
   <h3><%= f.label :material %></h3>
-	<div class="field">
-    <%= f.collection_select :material_id, Material.all, :id, :name %>
+  <div class="field">
+    <%= f.collection_select :material_id, Material.all, :id, :name, { include_blank: 'Create new' } %>
   </div>
+  <div class="field">
+    <%= f.fields_for :material, @arch_object.material do |material| %>
+      <%= f.label :name %>
+      <%= material.text_field :name, placeholder: 'New material' %>
+    <% end %>
+  </div>
+
   <hr>
 
   <h3><%= f.label :species %></h3>
   <div class="field">
     <%= f.collection_select :species_id, Species.all, :id, :species %>
   </div>
+
   <hr>
 
   <h3><%= f.label :on_site_object_position %></h3>
   <div class="field">
     <%= f.collection_select :on_site_object_position_id, OnSiteObjectPosition.all, :id, :feature %>
   </div>
+
   <hr>
 
   <h3>Samples</h3>
