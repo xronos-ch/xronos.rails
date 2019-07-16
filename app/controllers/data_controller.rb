@@ -179,9 +179,9 @@ class DataController < ApplicationController
     # data for javascript
 		gon.selected_measurements = @selected_measurements.to_json
 
-    # json data (u.a. for datatables)
     respond_to do |format|
       format.html
+      # json data (u.a. for datatables)
       format.json { render json: SelectedMeasurementDatatable.new(
         params,
         {
@@ -190,8 +190,10 @@ class DataController < ApplicationController
         }
       )
       }
+      # csv data for the download button
+      format.csv { send_data @selected_measurements.to_csv }
     end
     
-  end 
+  end
 
 end
