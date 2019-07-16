@@ -94,7 +94,7 @@ class DataController < ApplicationController
     ##### select data #####
 
     # general dataset preparation
-    @selected_measurements = Measurement.joins(
+    @all_measurements = Measurement.joins(
       sample: {arch_object: [{site: [:site_type, :country]}, {on_site_object_position: :feature_type}, :material, :species]}
     ).select(
       "
@@ -112,6 +112,8 @@ class DataController < ApplicationController
       (species.family || ' ' || species.genus || ' ' || species.species  || ' ' || species.subspecies) as species
       "
     ).all
+
+    @selected_measurements = @all_measurements
 
     # labnr
     unless session[:query_labnr].nil?
@@ -191,7 +193,7 @@ class DataController < ApplicationController
       )
       }
       # csv data for the download button
-      format.csv { send_data @selected_measurements.to_csv }
+      format.csv { send_data @selected_measurements.to_csv, filename: "dates-#{Date.today}.csv" }
     end
     
   end

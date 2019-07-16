@@ -5,9 +5,9 @@ class Measurement < ApplicationRecord
 
   def self.to_csv
     CSV.generate do |csv|
-      csv << column_names
-      all.each do |result|
-        csv << result.attributes.values_at(*column_names)
+      csv << ["labnr", "site", "site_type"]
+      all.each do |item|
+        csv << [item.labnr] + [item.site] + [item.site_type]
       end
     end
   end
