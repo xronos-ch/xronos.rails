@@ -9,6 +9,7 @@ a:visited {
 
 a:hover {
   color: red !important;
+  background-color: transparent !important;
 }
 
 // hamburger
@@ -150,14 +151,6 @@ a:hover {
 }
 
 // draggable selector
-#controls a:link {
-	color: white;
-}
-
-#controls a:visited {
-	color: white;
-}
-
 #controls{
 	box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.24);
   position: absolute;
@@ -214,10 +207,6 @@ a:hover {
   color: white;
   font-size: 12px;
   display: block;
-}
-
-#nav a:hover {
-  background-color: white;
 }
 
 main {
