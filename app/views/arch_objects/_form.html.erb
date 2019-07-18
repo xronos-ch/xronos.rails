@@ -27,7 +27,7 @@
   <div class="field">
     <%= site_fields.collection_select :site_type_id, SiteType.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
   </div>
-  <div class="field" id="arch_object_site_attributes_site_type_attributes">
+  <div class="field">
     <%= site_fields.fields_for :site_type, SiteType.new do |site_type_fields| %>
       <%= site_type_fields.label :name %>
       <%= site_type_fields.text_field :name, placeholder: 'New site type' %>
