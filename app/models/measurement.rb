@@ -1,6 +1,7 @@
 class Measurement < ApplicationRecord
   belongs_to :sample
   belongs_to :lab, optional: true
+  belongs_to :c14_measurement, optional: true
 
   def self.to_csv
     CSV.generate do |csv|

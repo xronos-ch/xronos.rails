@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_16_133157) do
+ActiveRecord::Schema.define(version: 2019_07_19_080513) do
 
   create_table "arch_objects", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -19,6 +19,18 @@ ActiveRecord::Schema.define(version: 2019_07_16_133157) do
     t.integer "material_id"
     t.integer "species_id"
     t.integer "on_site_object_position_id"
+  end
+
+  create_table "c14_measurements", force: :cascade do |t|
+    t.integer "bp"
+    t.integer "std"
+    t.integer "cal_bp"
+    t.integer "cal_std"
+    t.float "delta_c13"
+    t.float "delta_c13_std"
+    t.string "method"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "countries", force: :cascade do |t|
@@ -63,6 +75,8 @@ ActiveRecord::Schema.define(version: 2019_07_16_133157) do
     t.integer "lab_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "c14_measurement_id"
+    t.index ["c14_measurement_id"], name: "index_measurements_on_c14_measurement_id"
     t.index ["lab_id"], name: "index_measurements_on_lab_id"
     t.index ["sample_id"], name: "index_measurements_on_sample_id"
   end
