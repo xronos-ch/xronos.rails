@@ -17,6 +17,7 @@ class MeasurementsController < ApplicationController
   # GET /measurements/new
   def new
     @measurement = Measurement.new
+    @measurement.c14_measurement.new
   end
 
   # GET /measurements/1/edit
@@ -76,7 +77,18 @@ class MeasurementsController < ApplicationController
         :labnr,
         :sample_id,
         :lab_id,
-        :c14_measurement_id
+        :c14_measurement_id,
+        :c14_measurement_attributes => [
+          :id,
+          :bp,
+          :std,
+          :cal_bp,
+          :cal_std,
+          :delta_c13,
+          :delta_c13_std,
+          :method,
+          :_destroy
+        ]
       )
     end
 end

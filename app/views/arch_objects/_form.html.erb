@@ -23,33 +23,34 @@
       <%= site_fields.text_field :lat, placeholder: 0 %>
       <%= site_fields.label :lng %>
       <%= site_fields.text_field :lng, placeholder: 0 %>
-  <p><b><%= site_fields.label :site_type %></b></p>
-  <div class="field">
-    <%= site_fields.collection_select :site_type_id, SiteType.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
-  </div>
-  <div class="field">
-    <%= site_fields.fields_for :site_type, SiteType.new do |site_type_fields| %>
-      <%= site_type_fields.label :name %>
-      <%= site_type_fields.text_field :name, placeholder: 'New site type' %>
-      <%= site_type_fields.label :description %>
-      <%= site_type_fields.text_field :description, placeholder: 'Description' %>
-    <% end %>
-  </div>
 
-  <p><b><%= site_fields.label :country %></b></p>
-  <div class="field">
-    <%= site_fields.collection_select :country_id, Country.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
-  </div>
-  <div class="field">
-    <%= site_fields.fields_for :country, Country.new do |country_fields| %>
-      <%= country_fields.label :name %>
-      <%= country_fields.text_field :name, placeholder: 'New country' %>
-      <%= country_fields.label :description %>
-      <%= country_fields.text_field :abbreviation, placeholder: 'Abbreviation' %>
+      <p><b><%= site_fields.label :site_type %></b></p>
+      <div class="field">
+        <%= site_fields.collection_select :site_type_id, SiteType.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
+      </div>
+      <div class="field">
+        <%= site_fields.fields_for :site_type, SiteType.new do |site_type_fields| %>
+          <%= site_type_fields.label :name %>
+          <%= site_type_fields.text_field :name, placeholder: 'New site type' %>
+          <%= site_type_fields.label :description %>
+          <%= site_type_fields.text_field :description, placeholder: 'Description' %>
+        <% end %>
+      </div>
+
+      <p><b><%= site_fields.label :country %></b></p>
+      <div class="field">
+        <%= site_fields.collection_select :country_id, Country.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
+      </div>
+      <div class="field">
+        <%= site_fields.fields_for :country, Country.new do |country_fields| %>
+          <%= country_fields.label :name %>
+          <%= country_fields.text_field :name, placeholder: 'New country' %>
+          <%= country_fields.label :description %>
+          <%= country_fields.text_field :abbreviation, placeholder: 'Abbreviation' %>
+        <% end %>
+      </div>
     <% end %>
   </div>
-  <% end %>
-</div>
   <hr>
 
   <h3><%= f.label :material %></h3>

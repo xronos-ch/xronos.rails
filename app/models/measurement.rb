@@ -2,6 +2,7 @@ class Measurement < ApplicationRecord
   belongs_to :sample
   belongs_to :lab, optional: true
   belongs_to :c14_measurement, optional: true
+  accepts_nested_attributes_for :c14_measurement, reject_if: :all_blank
 
   def self.to_csv
     CSV.generate do |csv|

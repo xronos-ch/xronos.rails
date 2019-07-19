@@ -5,10 +5,32 @@
 
 <div class="field">
   <%= f.label :labnr %>
-  <%= f.text_field :labnr %>
+  <%= f.number_field :labnr %>
 </div>
 
 <div class="field">
   <%= f.label :lab_id %>
   <%= f.collection_select :lab_id, Lab.all, :id, :name %>
+</div>
+
+<h3><%= f.label :c14_measurement %></h3>
+<div class="field">
+  <%= f.collection_select :c14_measurement_id, C14Measurement.all, :id, :id, { include_blank: 'Create new' } %>
+</div>
+<div class="field">
+  <%= f.fields_for :c14_measurement, @measurement.c14_measurement do |c14_measurement_fields| %>
+    <%= c14_measurement_fields.label :bp %>
+    <%= c14_measurement_fields.text_field :bp %>
+    <%= c14_measurement_fields.label :std %>
+    <%= c14_measurement_fields.text_field :std %>
+    <%= c14_measurement_fields.label :cal_bp %>
+    <%= c14_measurement_fields.text_field :cal_bp %>
+    <%= c14_measurement_fields.label :cal_std %>
+    <%= c14_measurement_fields.text_field :cal_std %>
+    <%= c14_measurement_fields.label :delta_c13 %>
+    <%= c14_measurement_fields.text_field :delta_c13 %>
+    <%= c14_measurement_fields.label :delta_c13_std %>
+    <%= c14_measurement_fields.text_field :delta_c13_std %>
+    <%= c14_measurement_fields.text_field :method %>
+  <% end %>
 </div>
