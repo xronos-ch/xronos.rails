@@ -5,7 +5,7 @@ services:
     restart: always
     image: postgres
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - ./tmp/db:/var/lib/postgresql/data
     env_file:
@@ -17,7 +17,7 @@ services:
     volumes:
       - .:/application
     ports:
-      - "3000:3000"
+      - "4000:3000"
     depends_on:
       - db
     env_file:
