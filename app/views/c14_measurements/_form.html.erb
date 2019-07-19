@@ -1,0 +1,52 @@
+<%= form_with(model: c14_measurement, local: true) do |form| %>
+  <% if c14_measurement.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(c14_measurement.errors.count, "error") %> prohibited this c14_measurement from being saved:</h2>
+
+      <ul>
+      <% c14_measurement.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :bp %>
+    <%= form.number_field :bp %>
+  </div>
+
+  <div class="field">
+    <%= form.label :std %>
+    <%= form.number_field :std %>
+  </div>
+
+  <div class="field">
+    <%= form.label :cal_bp %>
+    <%= form.number_field :cal_bp %>
+  </div>
+
+  <div class="field">
+    <%= form.label :cal_std %>
+    <%= form.number_field :cal_std %>
+  </div>
+
+  <div class="field">
+    <%= form.label :delta_c13 %>
+    <%= form.text_field :delta_c13 %>
+  </div>
+
+  <div class="field">
+    <%= form.label :delta_c13_std %>
+    <%= form.text_field :delta_c13_std %>
+  </div>
+
+  <div class="field">
+    <%= form.label :method %>
+    <%= form.text_field :method %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

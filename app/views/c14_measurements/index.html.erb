@@ -1,0 +1,21 @@
+<h1>C14 Measurements</h1>
+
+<table class="responsive nowrap table table-hover" id="dttb-c14_measurements" data-sort="true" data-source="<%= url_for(format: :json)%>">
+  <thead>
+    <tr>
+      <th data-data="bp">Bp</th>
+      <th data-data="std">Std</th>
+      <th data-data="cal_bp">Cal bp</th>
+      <th data-data="cal_std">Cal std</th>
+      <th data-data="delta_c13">Delta c13</th>
+      <th data-data="delta_c13_std">Delta c13 std</th>
+      <th data-data="method">Method</th>
+      <th data-data="url" data-orderable="false" data-class-name="all" data-searchable="false" class="skip-export" width="100px"></th>
+    </tr>
+  </thead>
+
+</table>
+
+<br>
+
+<%= link_to 'New C14 Measurement', new_c14_measurement_path %>

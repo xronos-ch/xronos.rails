@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :c14_measurements
   devise_for :users
   resources :measurements
   resources :samples
