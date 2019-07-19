@@ -3,25 +3,9 @@ Status](https://travis-ci.com/nevrome/temp.svg?token=vxsQ9RjxoGASGtX4Q8jc&branch
 
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Ideas for the Deployment procedure:
 
-Things you may want to cover:
+1. Building the app image on dockerhub
+2. Running docker compose on the server
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+The compose yaml has to be changed for this setup: Instead of building the app container, the already build image has to be downloaded. Environment variables in docker_env_variables + master.key have to be available when the entrypoint script runs. 
