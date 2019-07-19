@@ -68,7 +68,7 @@
 
   <h3><%= f.label :species %></h3>
   <div class="field">
-    <%= f.collection_select :species_id, Species.all, :id, :species %>
+    <%= f.collection_select :species_id, Species.all, :id, :name %>
   </div>
 
   <hr>

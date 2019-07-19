@@ -109,7 +109,7 @@ class DataController < ApplicationController
       countries.name as country,
       on_site_object_positions.feature as feature,
       materials.name as material,
-      (species.family || ' ' || species.genus || ' ' || species.species  || ' ' || species.subspecies) as species
+      species.name as species
       "
     ).all
 
@@ -160,7 +160,7 @@ class DataController < ApplicationController
     # species
     unless session[:query_species].nil?
       @selected_measurements = @selected_measurements.where(
-          "(species.family || ' ' || species.genus || ' ' || species.species  || ' ' || species.subspecies) LIKE ?", session[:query_species]
+          "species.name LIKE ?", session[:query_species]
       ).all
     end
 

@@ -5,10 +5,7 @@
 <table>
   <thead>
     <tr>
-      <th>Family</th>
-      <th>Genus</th>
-      <th>Species</th>
-      <th>Subspecies</th>
+      <th>name</th>
       <th colspan="3"></th>
     </tr>
   </thead>
@@ -16,10 +13,7 @@
   <tbody>
     <% @species.each do |species| %>
       <tr>
-        <td><%= species.family %></td>
-        <td><%= species.genus %></td>
-        <td><%= species.species %></td>
-        <td><%= species.subspecies %></td>
+        <td><%= species.name %></td>
         <td><%= link_to 'Show', species %></td>
         <td><%= link_to 'Edit', edit_species_path(species) %></td>
         <td><%= link_to 'Destroy', species, method: :delete, data: { confirm: 'Are you sure?' } %></td>
