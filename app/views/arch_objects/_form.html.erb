@@ -82,10 +82,10 @@
   <h3>Samples</h3>
   <div id='sample'>
     <%= f.fields_for :samples do |sample| %>
-      <%= render 'samples/sample_fields', :f => sample %>
+      <%= render 'samples/sample_fields_ass', :f => sample %>
     <% end %>
     <div class='links'>
-      <%= link_to_add_association 'add sample', f, :samples, partial: 'samples/sample_fields' %>
+      <%= link_to_add_association 'add sample', f, :samples, partial: 'samples/sample_fields_ass' %>
     </div>
   </div>
 
