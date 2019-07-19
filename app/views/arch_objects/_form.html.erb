@@ -82,22 +82,12 @@
   <h3>Samples</h3>
   <div id='sample'>
     <%= f.fields_for :samples do |sample| %>
-      <%= render 'sample_fields', :f => sample %>
+      <%= render 'samples/sample_fields', :f => sample %>
     <% end %>
     <div class='links'>
-      <%= link_to_add_association 'add sample', f, :samples %>
+      <%= link_to_add_association 'add sample', f, :samples, partial: 'samples/sample_fields' %>
     </div>
   </div>
-
-    <%#= s.fields_for :measurements do |m| %>
-      <%#= m.label :year %>
-      <%#= m.text_field :year %>
-      <%#= m.label :labnr %>
-      <%#= m.text_field :labnr %>
-      <%#= m.label :lab_id %>
-      <%#= m.collection_select :lab_id, Lab.all, :id, :name %>
-    <%# end %>
-  <%# end %>
 
   <div class="actions">
     <%= f.submit %>

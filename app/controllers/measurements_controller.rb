@@ -75,7 +75,8 @@ class MeasurementsController < ApplicationController
         :year,
         :labnr,
         :sample_id,
-        :lab_id
+        :lab_id,
+        :c14_measurement_id
       )
     end
 end
