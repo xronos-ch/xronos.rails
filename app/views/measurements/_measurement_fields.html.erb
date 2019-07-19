@@ -1,22 +1,14 @@
-<div class='nested-fields'>
+<div class="field">
+  <%= f.label :year %>
+  <%= f.number_field :year %>
+</div>
 
-  <div class="field">
-    <%= f.label :year %>
-    <%= f.number_field :year %>
-  </div>
+<div class="field">
+  <%= f.label :labnr %>
+  <%= f.text_field :labnr %>
+</div>
 
-  <div class="field">
-    <%= f.label :labnr %>
-    <%= f.text_field :labnr %>
-  </div>
-
-  <div class="field">
-    <%= f.label :lab_id %>
-    <%= f.collection_select :lab_id, Lab.all, :id, :name %>
-  </div>
-
-  <%= link_to_remove_association "remove measurement", f %>
-
-  <hr>
-
+<div class="field">
+  <%= f.label :lab_id %>
+  <%= f.collection_select :lab_id, Lab.all, :id, :name %>
 </div>

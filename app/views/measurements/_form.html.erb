@@ -11,10 +11,9 @@
     </div>
   <% end %>
 
-  <div id='measurements'>
-    <%= f.fields_for :measurements do |measurement| %>
-      <%= render 'measurements/measurement_fields', :f => measurement %>
-    <% end %>
-  </div>
+  <%= render  'measurements/measurement_fields', f: f %>
 
+  <div class="actions">
+    <%= f.submit %>
+  </div>
 <% end %>

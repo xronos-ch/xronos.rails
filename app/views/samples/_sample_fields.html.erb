@@ -7,9 +7,9 @@
 <hr>
 <div id='measurements'>
   <%= f.fields_for :measurements do |measurement| %>
-    <%= render 'measurements/measurement_fields', :f => measurement %>
+    <%= render 'measurements/measurement_fields_ass', :f => measurement %>
   <% end %>
   <div class='links'>
-    <%= link_to_add_association 'add measurement', f, :measurements, partial: 'measurements/measurement_fields' %>
+    <%= link_to_add_association 'add measurement', f, :measurements, partial: 'measurements/measurement_fields_ass' %>
   </div>
 </div>
