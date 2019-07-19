@@ -1,4 +1,4 @@
-class CreateC14Measurements < ActiveRecord::Migration[5.2]
+class CreateC14MeasurementsFirstTry < ActiveRecord::Migration[5.2]
   def change
     create_table :c14_measurements do |t|
       t.integer :bp
