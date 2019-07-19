@@ -18,7 +18,7 @@
   <%= f.collection_select :c14_measurement_id, C14Measurement.all, :id, :id, { include_blank: 'Create new' } %>
 </div>
 <div class="field">
-  <%= f.fields_for :c14_measurement, @measurement.c14_measurement do |c14_measurement_fields| %>
+  <%= f.fields_for :c14_measurement, f.object.c14_measurement || C14Measurement.new do |c14_measurement_fields| %>
     <%= c14_measurement_fields.label :bp %>
     <%= c14_measurement_fields.text_field :bp %>
     <%= c14_measurement_fields.label :std %>
