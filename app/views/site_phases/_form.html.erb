@@ -1,4 +1,4 @@
-<%= form_with(model: site_phase, local: true) do |form| %>
+<%= form_with(model: site_phase, local: true) do |f| %>
   <% if site_phase.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(site_phase.errors.count, "error") %> prohibited this site_phase from being saved:</h2>
@@ -12,21 +12,31 @@
   <% end %>
 
   <div class="field">
-    <%= form.label :name %>
-    <%= form.text_field :name %>
+    <%= f.label :name %>
+    <%= f.text_field :name %>
   </div>
 
   <div class="field">
-    <%= form.label :approx_start_time %>
-    <%= form.number_field :approx_start_time %>
+    <%= f.label :approx_start_time %>
+    <%= f.number_field :approx_start_time %>
   </div>
 
   <div class="field">
-    <%= form.label :approx_end_time %>
-    <%= form.number_field :approx_end_time %>
+    <%= f.label :approx_end_time %>
+    <%= f.number_field :approx_end_time %>
+  </div>
+
+  <h3>Periods</h3>
+  <div id='period'>
+    <%= f.fields_for :periods do |period| %>
+      <%= render 'periods/period_fields_ass', :f => period %>
+    <% end %>
+    <div class='links'>
+      <%= link_to_add_association 'add period', f, :periods, partial: 'periods/period_fields_ass' %>
+    </div>
   </div>
 
   <div class="actions">
-    <%= form.submit %>
+    <%= f.submit %>
   </div>
 <% end %>
