@@ -166,7 +166,26 @@ class ArchObjectsController < ApplicationController
             :year,
             :labnr,
             :lab_id,
-            :_destroy
+            :_destroy,
+            :c14_measurement_id,
+            :lab_id,
+            :c14_measurement_attributes => [
+              :id,
+              :bp,
+              :std,
+              :cal_bp,
+              :cal_std,
+              :delta_c13,
+              :delta_c13_std,
+              :method,
+              :_destroy
+            ],
+            :lab_attributes => [
+              :id,
+              :name,
+              :active,
+              :_destroy
+            ]
           ]
         ]
       )
