@@ -10,6 +10,19 @@
     </tr>
   </thead>
 
+  <tbody>
+  <% @typochronological_units.each do |typochronological_unit| %>
+    <tr>
+      <td><%= typochronological_unit.name %></td>
+      <td><%= typochronological_unit.approx_start_time %></td>
+      <td><%= typochronological_unit.approx_end_time %></td>
+      <td><%= link_to 'Show', typochronological_unit %></td>
+      <td><%= link_to 'Edit', edit_typochronological_unit_path(typochronological_unit) %></td>
+      <td><%= link_to 'Destroy', typochronological_unit, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+    </tr>
+  <% end %>
+  </tbody>
+
 </table>
 
 <br>

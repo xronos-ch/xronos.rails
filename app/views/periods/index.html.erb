@@ -10,6 +10,19 @@
     </tr>
   </thead>
 
+  <tbody>
+  <% @periods.each do |period| %>
+    <tr>
+      <td><%= period.name %></td>
+      <td><%= period.approx_start_time %></td>
+      <td><%= period.approx_end_time %></td>
+      <td><%= link_to 'Show', period %></td>
+      <td><%= link_to 'Edit', edit_period_path(period) %></td>
+      <td><%= link_to 'Destroy', period, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+    </tr>
+  <% end %>
+  </tbody>
+
 </table>
 
 <br>

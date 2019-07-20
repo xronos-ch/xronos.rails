@@ -10,6 +10,19 @@
     </tr>
   </thead>
 
+  <tbody>
+  <% @ecochronological_units.each do |ecochronological_unit| %>
+    <tr>
+      <td><%= ecochronological_unit.name %></td>
+      <td><%= ecochronological_unit.approx_start_time %></td>
+      <td><%= ecochronological_unit.approx_end_time %></td>
+      <td><%= link_to 'Show', ecochronological_unit %></td>
+      <td><%= link_to 'Edit', edit_ecochronological_unit_path(ecochronological_unit) %></td>
+      <td><%= link_to 'Destroy', ecochronological_unit, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+    </tr>
+  <% end %>
+  </tbody>  
+  
 </table>
 
 <br>
