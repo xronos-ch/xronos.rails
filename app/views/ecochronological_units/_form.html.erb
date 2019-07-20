@@ -11,20 +11,7 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= form.label :name %>
-    <%= form.text_field :name %>
-  </div>
-
-  <div class="field">
-    <%= form.label :approx_start_time %>
-    <%= form.number_field :approx_start_time %>
-  </div>
-
-  <div class="field">
-    <%= form.label :approx_end_time %>
-    <%= form.number_field :approx_end_time %>
-  </div>
+  <%= render  'ecochronological_units/ecochronological_unit_fields', f: f %>
 
   <div class="actions">
     <%= form.submit %>

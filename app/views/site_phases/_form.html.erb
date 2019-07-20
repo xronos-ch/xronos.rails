@@ -36,6 +36,26 @@
     </div>
   </div>
 
+  <h3>Typochronological unit</h3>
+  <div id='typochronological_unit'>
+    <%= f.fields_for :typochronological_units do |typochronological_unit| %>
+      <%= render 'typochronological_units/typochronological_unit_fields_ass', :f => typochronological_unit %>
+    <% end %>
+    <div class='links'>
+      <%= link_to_add_association 'add typochronological_unit', f, :typochronological_units, partial: 'typochronological_units/typochronological_unit_fields_ass' %>
+    </div>
+  </div>
+
+  <h3>Ecochronological unit</h3>
+  <div id='ecochronological_unit'>
+    <%= f.fields_for :ecochronological_units do |ecochronological_unit| %>
+      <%= render 'ecochronological_units/ecochronological_unit_fields_ass', :f => ecochronological_unit %>
+    <% end %>
+    <div class='links'>
+      <%= link_to_add_association 'add ecochronological_unit', f, :ecochronological_units, partial: 'ecochronological_units/ecochronological_unit_fields_ass' %>
+    </div>
+  </div>
+
   <div class="actions">
     <%= f.submit %>
   </div>
