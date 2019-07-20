@@ -11,12 +11,53 @@
     </div>
   <% end %>
 
-  <h3><%= f.label :site_phase %></h3>
+
   <div class="field">
 
+    <%= f.fields_for :site_phase, @arch_object.site_phase do |site_phase_fields| %>
 
-    <%= f.fields_for :site, @arch_object.site_phase do |site_phase_fields| %>
+      <h3><%= site_phase_fields.label :site %></h3>
+      <div class="field">
+        <%= site_phase_fields.collection_select :site_id, Site.all, :id, :name, { include_blank: 'Create new' } %>
+      </div>
+      <div class="field">
+        <%= site_phase_fields.fields_for :site, Site.new do |site_fields| %>
+          <%= site_fields.label :name %>
+          <%= site_fields.text_field :name, placeholder: 'New site' %>
+          <%= site_fields.label :lat %>
+          <%= site_fields.text_field :lat, placeholder: 0 %>
+          <%= site_fields.label :lng %>
+          <%= site_fields.text_field :lng, placeholder: 0 %>
 
+          <p><b><%= site_fields.label :site_type %></b></p>
+          <div class="field">
+            <%= site_fields.collection_select :site_type_id, SiteType.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
+          </div>
+          <div class="field">
+            <%= site_fields.fields_for :site_type, SiteType.new do |site_type_fields| %>
+              <%= site_type_fields.label :name %>
+              <%= site_type_fields.text_field :name, placeholder: 'New site type' %>
+              <%= site_type_fields.label :description %>
+              <%= site_type_fields.text_field :description, placeholder: 'Description' %>
+            <% end %>
+          </div>
+
+          <p><b><%= site_fields.label :country %></b></p>
+          <div class="field">
+            <%= site_fields.collection_select :country_id, Country.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
+          </div>
+          <div class="field">
+            <%= site_fields.fields_for :country, Country.new do |country_fields| %>
+              <%= country_fields.label :name %>
+              <%= country_fields.text_field :name, placeholder: 'New country' %>
+              <%= country_fields.label :description %>
+              <%= country_fields.text_field :abbreviation, placeholder: 'Abbreviation' %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+
+      <h3><%= f.label :site_phase %></h3>
       <%= site_phase_fields.label :name %>
       <%= site_phase_fields.text_field :name %>
       <%= site_phase_fields.label :approx_start_time %>
@@ -24,76 +65,36 @@
       <%= site_phase_fields.label :approx_end_time %>
       <%= site_phase_fields.number_field :approx_end_time %>
 
-    <h3>Periods</h3>
-    <div id='period'>
-      <%= site_phase_fields.fields_for :periods do |period| %>
-        <%= render 'periods/period_fields_ass', :f => period %>
-      <% end %>
-      <div class='links'>
-        <%= link_to_add_association 'add period', site_phase_fields, :periods, partial: 'periods/period_fields_ass' %>
+      <h3>Periods</h3>
+      <div id='period'>
+        <%= site_phase_fields.fields_for :periods do |period| %>
+          <%= render 'periods/period_fields_ass', :f => period %>
+        <% end %>
+        <div class='links'>
+          <%= link_to_add_association 'add period', site_phase_fields, :periods, partial: 'periods/period_fields_ass' %>
+        </div>
       </div>
-    </div>
 
-    <h3>Typochronological unit</h3>
-    <div id='typochronological_unit'>
-      <%= site_phase_fields.fields_for :typochronological_units do |typochronological_unit| %>
-        <%= render 'typochronological_units/typochronological_unit_fields_ass', :f => typochronological_unit %>
-      <% end %>
-      <div class='links'>
-        <%= link_to_add_association 'add typochronological_unit', site_phase_fields, :typochronological_units, partial: 'typochronological_units/typochronological_unit_fields_ass' %>
+      <h3>Typochronological unit</h3>
+      <div id='typochronological_unit'>
+        <%= site_phase_fields.fields_for :typochronological_units do |typochronological_unit| %>
+          <%= render 'typochronological_units/typochronological_unit_fields_ass', :f => typochronological_unit %>
+        <% end %>
+        <div class='links'>
+          <%= link_to_add_association 'add typochronological_unit', site_phase_fields, :typochronological_units, partial: 'typochronological_units/typochronological_unit_fields_ass' %>
+        </div>
       </div>
-    </div>
 
-    <h3>Ecochronological unit</h3>
-    <div id='ecochronological_unit'>
-      <%= site_phase_fields.fields_for :ecochronological_units do |ecochronological_unit| %>
-        <%= render 'ecochronological_units/ecochronological_unit_fields_ass', :f => ecochronological_unit %>
-      <% end %>
-      <div class='links'>
-        <%= link_to_add_association 'add ecochronological_unit', site_phase_fields, :ecochronological_units, partial: 'ecochronological_units/ecochronological_unit_fields_ass' %>
+      <h3>Ecochronological unit</h3>
+      <div id='ecochronological_unit'>
+        <%= site_phase_fields.fields_for :ecochronological_units do |ecochronological_unit| %>
+          <%= render 'ecochronological_units/ecochronological_unit_fields_ass', :f => ecochronological_unit %>
+        <% end %>
+        <div class='links'>
+          <%= link_to_add_association 'add ecochronological_unit', site_phase_fields, :ecochronological_units, partial: 'ecochronological_units/ecochronological_unit_fields_ass' %>
+        </div>
       </div>
-    </div>
 
-    <h3><%= site_phase_fields.label :site %></h3>
-    <div class="field">
-      <%= site_phase_fields.collection_select :site_id, Site.all, :id, :name, { include_blank: 'Create new' } %>
-    </div>
-    <div class="field">
-      <%= site_phase_fields.fields_for :site, Site.new do |site_fields| %>
-        <%= site_fields.label :name %>
-        <%= site_fields.text_field :name, placeholder: 'New site' %>
-        <%= site_fields.label :lat %>
-        <%= site_fields.text_field :lat, placeholder: 0 %>
-        <%= site_fields.label :lng %>
-        <%= site_fields.text_field :lng, placeholder: 0 %>
-
-        <p><b><%= site_fields.label :site_type %></b></p>
-        <div class="field">
-          <%= site_fields.collection_select :site_type_id, SiteType.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
-        </div>
-        <div class="field">
-          <%= site_fields.fields_for :site_type, SiteType.new do |site_type_fields| %>
-            <%= site_type_fields.label :name %>
-            <%= site_type_fields.text_field :name, placeholder: 'New site type' %>
-            <%= site_type_fields.label :description %>
-            <%= site_type_fields.text_field :description, placeholder: 'Description' %>
-          <% end %>
-        </div>
-
-        <p><b><%= site_fields.label :country %></b></p>
-        <div class="field">
-          <%= site_fields.collection_select :country_id, Country.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
-        </div>
-        <div class="field">
-          <%= site_fields.fields_for :country, Country.new do |country_fields| %>
-            <%= country_fields.label :name %>
-            <%= country_fields.text_field :name, placeholder: 'New country' %>
-            <%= country_fields.label :description %>
-            <%= country_fields.text_field :abbreviation, placeholder: 'Abbreviation' %>
-          <% end %>
-        </div>
-      <% end %>
-    </div>
     <% end %>
   </div>
   <hr>
