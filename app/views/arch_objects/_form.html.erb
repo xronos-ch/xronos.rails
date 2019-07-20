@@ -11,14 +11,17 @@
     </div>
   <% end %>
 
-
+  <h3><%= f.label :site_phase %></h3>
+  <div class="field">
+    <%= f.collection_select :site_phase_id, SitePhase.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
+  </div>
   <div class="field">
 
     <%= f.fields_for :site_phase, @arch_object.site_phase do |site_phase_fields| %>
 
       <h3><%= site_phase_fields.label :site %></h3>
       <div class="field">
-        <%= site_phase_fields.collection_select :site_id, Site.all, :id, :name, { include_blank: 'Create new' } %>
+        <%= site_phase_fields.collection_select :site_id, Site.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
       </div>
       <div class="field">
         <%= site_phase_fields.fields_for :site, Site.new do |site_fields| %>
@@ -101,7 +104,7 @@
 
   <h3><%= f.label :material %></h3>
   <div class="field">
-    <%= f.collection_select :material_id, Material.all, :id, :name, { include_blank: 'Create new' } %>
+    <%= f.collection_select :material_id, Material.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
   </div>
   <div class="field">
     <%= f.fields_for :material, @arch_object.material do |material| %>
@@ -114,7 +117,7 @@
 
   <h3><%= f.label :species %></h3>
   <div class="field">
-    <%= f.collection_select :species_id, Species.all, :id, :name, { include_blank: 'Create new' } %>
+    <%= f.collection_select :species_id, Species.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
   </div>
   <div class="field">
     <%= f.fields_for :species, @arch_object.species do |species| %>
@@ -127,7 +130,7 @@
 
   <h3><%= f.label :on_site_object_position %></h3>
   <div class="field">
-    <%= f.collection_select :on_site_object_position_id, OnSiteObjectPosition.all, :id, :feature, { include_blank: 'Create new' } %>
+    <%= f.collection_select :on_site_object_position_id, OnSiteObjectPosition.all, :id, :feature, { include_blank: 'Create new' }, {:class => "observed_select"} %>
   </div>
   <div class="field">
     <%= f.fields_for :on_site_object_position, @arch_object.on_site_object_position do |on_site_object_position_fields| %>
