@@ -1,0 +1,17 @@
+<h1>Site Phases</h1>
+
+<table class="responsive nowrap table table-hover" id="dttb-site_phases" data-sort="true" data-source="<%= url_for(format: :json)%>">
+  <thead>
+    <tr>
+      <th data-data="name">Name</th>
+      <th data-data="approx_start_time">Approx start time</th>
+      <th data-data="approx_end_time">Approx end time</th>
+      <th data-data="url" data-orderable="false" data-class-name="all" data-searchable="false" class="skip-export" width="100px"></th>
+    </tr>
+  </thead>
+
+</table>
+
+<br>
+
+<%= link_to 'New Site Phase', new_site_phase_path %>

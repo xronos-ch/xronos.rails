@@ -1,0 +1,2 @@
+class SitePhase < ApplicationRecord
+end

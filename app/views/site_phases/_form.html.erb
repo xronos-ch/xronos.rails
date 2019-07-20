@@ -1,0 +1,32 @@
+<%= form_with(model: site_phase, local: true) do |form| %>
+  <% if site_phase.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(site_phase.errors.count, "error") %> prohibited this site_phase from being saved:</h2>
+
+      <ul>
+      <% site_phase.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :approx_start_time %>
+    <%= form.number_field :approx_start_time %>
+  </div>
+
+  <div class="field">
+    <%= form.label :approx_end_time %>
+    <%= form.number_field :approx_end_time %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

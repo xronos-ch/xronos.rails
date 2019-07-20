@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :site_phases
   resources :ecochronological_units
   resources :typochronological_units
   resources :periods

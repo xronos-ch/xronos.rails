@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_20_073923) do
+ActiveRecord::Schema.define(version: 2019_07_20_080920) do
 
   create_table "arch_objects", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -120,6 +120,14 @@ ActiveRecord::Schema.define(version: 2019_07_20_073923) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "arch_object_id"
+  end
+
+  create_table "site_phases", force: :cascade do |t|
+    t.string "name"
+    t.integer "approx_start_time"
+    t.integer "approx_end_time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "site_types", force: :cascade do |t|
