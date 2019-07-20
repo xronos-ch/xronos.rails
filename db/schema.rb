@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_20_080920) do
+ActiveRecord::Schema.define(version: 2019_07_20_082225) do
 
   create_table "arch_objects", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -46,6 +46,12 @@ ActiveRecord::Schema.define(version: 2019_07_20_080920) do
     t.integer "approx_end_time"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "ecochronological_units_site_phases", id: false, force: :cascade do |t|
+    t.integer "site_phase_id", null: false
+    t.integer "ecochronological_unit_id", null: false
+    t.index ["site_phase_id", "ecochronological_unit_id"], name: "index_speu"
   end
 
   create_table "feature_types", force: :cascade do |t|
@@ -101,6 +107,12 @@ ActiveRecord::Schema.define(version: 2019_07_20_080920) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "periods_site_phases", id: false, force: :cascade do |t|
+    t.integer "site_phase_id", null: false
+    t.integer "period_id", null: false
+    t.index ["site_phase_id", "period_id"], name: "index_periods_site_phases_on_site_phase_id_and_period_id"
+  end
+
   create_table "physical_locations", force: :cascade do |t|
     t.integer "site_id"
     t.integer "country_id"
@@ -128,6 +140,12 @@ ActiveRecord::Schema.define(version: 2019_07_20_080920) do
     t.integer "approx_end_time"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "site_phases_typochronological_units", id: false, force: :cascade do |t|
+    t.integer "site_phase_id", null: false
+    t.integer "typochronological_unit_id", null: false
+    t.index ["site_phase_id", "typochronological_unit_id"], name: "index_sptu"
   end
 
   create_table "site_types", force: :cascade do |t|
