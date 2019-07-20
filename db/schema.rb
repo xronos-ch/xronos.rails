@@ -10,15 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_20_082225) do
+ActiveRecord::Schema.define(version: 2019_07_20_115754) do
 
   create_table "arch_objects", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "site_id"
     t.integer "material_id"
     t.integer "species_id"
     t.integer "on_site_object_position_id"
+    t.integer "site_phase_id"
   end
 
   create_table "c14_measurements", force: :cascade do |t|
@@ -140,6 +140,7 @@ ActiveRecord::Schema.define(version: 2019_07_20_082225) do
     t.integer "approx_end_time"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "site_id"
   end
 
   create_table "site_phases_typochronological_units", id: false, force: :cascade do |t|
