@@ -94,7 +94,7 @@ class DataController < ApplicationController
     ##### select data #####
 
     # general dataset preparation
-    @all_measurements = Measurement.joins(
+    @all_measurements = Measurement.left_joins(
       sample: {arch_object: [{site_phase: [site: [:site_type, :country]]}, {on_site_object_position: :feature_type}, :material, :species]}
     ).select(
       "
