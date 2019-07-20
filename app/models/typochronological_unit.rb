@@ -1,0 +1,2 @@
+class TypochronologicalUnit < ApplicationRecord
+end

@@ -69,7 +69,10 @@ SimpleNavigation::Configuration.run do |navigation|
       data.item :on_site_object_positions, 'on_site_object_positions', on_site_object_positions_path
       data.item :site_types, 'site_types', site_types_path
       data.item :countries, 'countries', countries_path
+      data.item :periods, 'periods', periods_path
       data.item :sites, 'sites', sites_path
+      data.item :typochronological_units, 'typochronological_units', typochronological_units_path
+      data.item :ecochronological_units, 'ecochronological_units', ecochronological_units_path
     end
 
 		primary.item :api, 'api', api_path

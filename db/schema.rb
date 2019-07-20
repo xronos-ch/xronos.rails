@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_20_070937) do
+ActiveRecord::Schema.define(version: 2019_07_20_073923) do
 
   create_table "arch_objects", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -36,6 +36,14 @@ ActiveRecord::Schema.define(version: 2019_07_20_070937) do
   create_table "countries", force: :cascade do |t|
     t.string "name"
     t.string "abbreviation"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "ecochronological_units", force: :cascade do |t|
+    t.string "name"
+    t.integer "approx_start_time"
+    t.integer "approx_end_time"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -85,6 +93,14 @@ ActiveRecord::Schema.define(version: 2019_07_20_070937) do
     t.integer "feature_type_id"
   end
 
+  create_table "periods", force: :cascade do |t|
+    t.string "name"
+    t.integer "approx_start_time"
+    t.integer "approx_end_time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "physical_locations", force: :cascade do |t|
     t.integer "site_id"
     t.integer "country_id"
@@ -125,6 +141,14 @@ ActiveRecord::Schema.define(version: 2019_07_20_070937) do
 
   create_table "species", force: :cascade do |t|
     t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "typochronological_units", force: :cascade do |t|
+    t.string "name"
+    t.integer "approx_start_time"
+    t.integer "approx_end_time"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

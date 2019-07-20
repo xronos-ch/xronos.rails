@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @typochronological_unit.name %>
+</p>
+
+<p>
+  <strong>Approx start time:</strong>
+  <%= @typochronological_unit.approx_start_time %>
+</p>
+
+<p>
+  <strong>Approx end time:</strong>
+  <%= @typochronological_unit.approx_end_time %>
+</p>
+
+<%= link_to 'Edit', edit_typochronological_unit_path(@typochronological_unit) %> |
+<%= link_to 'Back', typochronological_units_path %>
