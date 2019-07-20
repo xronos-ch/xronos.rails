@@ -1,2 +1,0 @@
-class Phase < ApplicationRecord
-end

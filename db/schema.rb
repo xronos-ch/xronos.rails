@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_19_130801) do
+ActiveRecord::Schema.define(version: 2019_07_20_070937) do
 
   create_table "arch_objects", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -36,14 +36,6 @@ ActiveRecord::Schema.define(version: 2019_07_19_130801) do
   create_table "countries", force: :cascade do |t|
     t.string "name"
     t.string "abbreviation"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "cultures", force: :cascade do |t|
-    t.string "name"
-    t.integer "approx_start_ime"
-    t.integer "approx_end_time"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -91,14 +83,6 @@ ActiveRecord::Schema.define(version: 2019_07_19_130801) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "feature_type_id"
-  end
-
-  create_table "phases", force: :cascade do |t|
-    t.string "name"
-    t.integer "approx_start_ime"
-    t.integer "approx_end_time"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "physical_locations", force: :cascade do |t|

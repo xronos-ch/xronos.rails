@@ -1,2 +1,0 @@
-class Culture < ApplicationRecord
-end

@@ -5,8 +5,6 @@ Rails.application.routes.draw do
   resources :samples
   resources :arch_objects
   resources :labs
-  resources :cultures
-  resources :phases
   resources :references
   resources :species
   resources :materials
