@@ -114,14 +114,50 @@
 
   <h3><%= f.label :species %></h3>
   <div class="field">
-    <%= f.collection_select :species_id, Species.all, :id, :name %>
+    <%= f.collection_select :species_id, Species.all, :id, :name, { include_blank: 'Create new' } %>
+  </div>
+  <div class="field">
+    <%= f.fields_for :species, @arch_object.species do |species| %>
+      <%= f.label :name %>
+      <%= species.text_field :name, placeholder: 'New species' %>
+    <% end %>
   </div>
 
   <hr>
 
   <h3><%= f.label :on_site_object_position %></h3>
   <div class="field">
-    <%= f.collection_select :on_site_object_position_id, OnSiteObjectPosition.all, :id, :feature %>
+    <%= f.collection_select :on_site_object_position_id, OnSiteObjectPosition.all, :id, :feature, { include_blank: 'Create new' } %>
+  </div>
+  <div class="field">
+    <%= f.fields_for :on_site_object_position, @arch_object.on_site_object_position do |on_site_object_position_fields| %>
+      <%= on_site_object_position_fields.label :feature %>
+      <%= on_site_object_position_fields.text_field :feature %>
+      <%= on_site_object_position_fields.label :site_grid_square %>
+      <%= on_site_object_position_fields.text_field :site_grid_square %>
+      <%= on_site_object_position_fields.label :coord_reference_system %>
+      <%= on_site_object_position_fields.text_field :coord_reference_system %>
+      <%= on_site_object_position_fields.label :coord_X %>
+      <%= on_site_object_position_fields.text_field :coord_X %>
+      <%= on_site_object_position_fields.label :coord_Y %>
+      <%= on_site_object_position_fields.text_field :coord_Y %>
+      <%= on_site_object_position_fields.label :coord_Z %>
+      <%= on_site_object_position_fields.text_field :coord_Z %>
+
+      <p><b><%= on_site_object_position_fields.label :feature_type %></b></p>
+      <div class="field">
+        <%= on_site_object_position_fields.collection_select :feature_type_id, FeatureType.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
+      </div>
+      <div class="field">
+        <%= on_site_object_position_fields.fields_for :feature_type, FeatureType.new do |feature_type_fields| %>
+          <%= feature_type_fields.label :name %>
+          <%= feature_type_fields.text_field :name, placeholder: 'New site type' %>
+          <%= feature_type_fields.label :description %>
+          <%= feature_type_fields.text_field :description, placeholder: 'Description' %>
+        <% end %>
+      </div>
+
+    <% end %>
   </div>
 
   <hr>
