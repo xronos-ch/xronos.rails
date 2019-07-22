@@ -19,19 +19,16 @@
       <div id="notch_login_status">
         <% if user_signed_in? %>
           <%= fa_icon "user" %> <% if current_user.admin? %> <%= fa_icon "legal" %> <% end %> <%= current_user.email[0...15] + "..." %> <br>
-          <%= fa_icon "edit" %> <%= link_to('Edit registration', edit_user_registration_path) %>
+          <%= fa_icon "edit" %> <%= link_to('Edit registration', edit_user_registration_path, class: "user_edit_link") %>
           <%= fa_icon "sign-out" %> <%= link_to('Logout', destroy_user_session_path, method: :delete) %>
         <% else %>
-          <%= fa_icon "sign-in" %> <%= link_to('Login', new_user_session_path) %>
-          <%= fa_icon "user-plus" %> <%= link_to('Register', new_user_registration_path) %>
+          <%= fa_icon "sign-in" %> <%= link_to('Login', new_user_session_path, class: "user_edit_link") %>
+          <%= fa_icon "user-plus" %> <%= link_to('Register', new_user_registration_path, class: "user_edit_link") %>
         <% end %>
       </div>
     </div>
   </div>
 
-  	<p class="notice"><%= notice %></p>
-  	<p class="alert"><%= alert %></p>
-  
 		<!-- #### left_window #### -->
 		<div class="left_window_menu">
 
