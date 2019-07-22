@@ -22,6 +22,33 @@ a:hover {
   z-index: -100;
 }
 
+// notch
+#notch_wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin:0 auto;
+  z-index: 100;
+  clear: left;
+  width: 20vw;
+  filter: drop-shadow(0px 4px 24px rgba(0, 0, 0, 0.24));
+}
+
+#notch {
+  position: relative;
+  height: auto;
+  text-align: center;
+  clip-path: polygon(0 0, 100% 0, 90% 100%, 10% 100%);
+  color: black;
+  background: white;
+  border: none;
+}
+
+#notch_login_status {
+  padding: 2px 15px 2px 10px;
+}
+
 // left_window
 #left_window_nav_general {
   left: 30px;
@@ -224,12 +251,6 @@ main.big {
   z-index: 10;
   background-color: rgba(255, 255, 255, 1);
   color: black;
-}
-
-#right_window_login_status {
-  padding: 2px 15px 2px 10px;
-  color: white;
-  background-color: rgba(0, 0, 0, 0.9);
 }
 
 #right_window_body {
