@@ -26,9 +26,6 @@ a:hover {
 #left_window_nav_general {
   left: 30px;
   top: calc(100% - 100px);
-}
-
-.left_window_nav-tgl {
   display: inline-block;
   cursor: pointer;
   position: fixed;
@@ -45,7 +42,7 @@ a:hover {
   font-size: 30px;
 }
 
-.left_window_nav-tgl:focus {
+#left_window_nav_general:focus {
   outline: none;
 }
 
@@ -180,9 +177,6 @@ main.big {
 #right_window_nav_general {
   right: 30px;
   top: calc(100% - 100px);
-}
-
-.right_window_nav-tgl {
   display: inline-block;
   cursor: pointer;
   position: fixed;
@@ -199,7 +193,7 @@ main.big {
   font-size: 30px;
 }
 
-.right_window_nav-tgl:focus {
+#right_window_nav_general:focus {
   outline: none;
 }
 
