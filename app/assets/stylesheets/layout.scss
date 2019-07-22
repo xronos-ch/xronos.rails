@@ -12,13 +12,13 @@ a:hover {
   background-color: transparent !important;
 }
 
-// hamburger
-#burger_nav_general {
+// hamleft_window
+#left_window_nav_general {
   left: 30px;
   top: calc(100% - 100px);
 }
 
-#burger_nav_extend {
+#left_window_nav_extend {
   left: 30px;
   top: calc(100% - 200px);
   display: inline-block;
@@ -37,11 +37,11 @@ a:hover {
   font-size: 30px;
 }
 
-#burger_nav_extend:focus {
+#left_window_nav_extend:focus {
   outline: none;
 }
 
-.burger_nav-tgl {
+.left_window_nav-tgl {
   display: inline-block;
   cursor: pointer;
   position: fixed;
@@ -57,7 +57,7 @@ a:hover {
   text-align: center;
 }
 
-.burger_nav-tgl > span {
+.left_window_nav-tgl > span {
   display: inline-block;
   position: relative;
   height: 2px;
@@ -67,7 +67,7 @@ a:hover {
   vertical-align: middle;
 }
 
-.burger_nav-tgl > span:before, .burger_nav-tgl > span:after {
+.left_window_nav-tgl > span:before, .left_window_nav-tgl > span:after {
   display: inline-block;
   position: absolute;
   content: "";
@@ -77,28 +77,28 @@ a:hover {
   transition: all 200ms;
 }
 
-.burger_nav-tgl > span:before {
+.left_window_nav-tgl > span:before {
   top: -11px;
   left: 3px;
   width: 28px;
 }
 
-.burger_nav-tgl > span:after {
+.left_window_nav-tgl > span:after {
   top: 11px;
   left: 6px;
   width: 22px;
 }
 
-.burger_nav-tgl:focus {
+.left_window_nav-tgl:focus {
   outline: none;
 }
 
-.burger_nav-tgl:hover > span:after, .burger_nav-tgl:hover > span:before {
+.left_window_nav-tgl:hover > span:after, .left_window_nav-tgl:hover > span:before {
   width: 34px;
   left: 0;
 }
 
-.burger_nav {
+.left_window_nav {
   display: block;
   position: fixed;
   top: 0;
@@ -113,30 +113,30 @@ a:hover {
 	color: white;
 }
 
-.burger_nav.big {
+.left_window_nav.big {
   width: 80vw;
 }
 
-.burger_menu.active .burger_nav {
+.left_window_menu.active .left_window_nav {
   visibility: visible;
   clip-path: circle(100%);
 }
 
-.burger_menu.active .burger_nav-tgl > span {
+.left_window_menu.active .left_window_nav-tgl > span {
   height: 0;
 }
 
-.burger_menu.active .burger_nav-tgl > span:after, .burger_menu.active .burger_nav-tgl > span:before {
+.left_window_menu.active .left_window_nav-tgl > span:after, .left_window_menu.active .left_window_nav-tgl > span:before {
   top: 0px;
   left: 0;
   width: 34px;
 }
 
-.burger_menu.active .burger_nav-tgl > span:after {
+.left_window_menu.active .left_window_nav-tgl > span:after {
   transform: rotate(-45deg);
 }
 
-.burger_menu.active .burger_nav-tgl > span:before {
+.left_window_menu.active .left_window_nav-tgl > span:before {
   transform: rotate(45deg);
 }
 
