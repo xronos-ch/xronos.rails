@@ -16,7 +16,7 @@
   	<p class="notice"><%= notice %></p>
   	<p class="alert"><%= alert %></p>
   
-		<!-- Foldout main navigation window -->
+		<!-- #### left_window #### -->
 		<div class="left_window_menu active">
 
 			<button id="left_window_nav_general" class="left_window_nav-tgl" type="button" aria-label="toggle left_window_menu">
@@ -65,7 +65,7 @@
 
 		</div>
 
-		<!-- #### Draggable console #### -->
+		<!-- #### right_window #### -->
     <div class="right_window_menu active">
 
       <button id="right_window_nav_general" class="right_window_nav-tgl" type="button" aria-label="toggle right_window_menu">
@@ -74,53 +74,53 @@
 
       <nav class="right_window_nav">
 
-			<div id="right_window_login_status">
-				<% if user_signed_in? %>
-					<%= fa_icon "user" %> <% if current_user.admin? %> <%= fa_icon "legal" %> <% end %> <%= current_user.email[0...15] + "..." %> <br>
-					<%= fa_icon "edit" %> <%= link_to('Edit registration', edit_user_registration_path) %> <br>
-					<%= fa_icon "sign-out" %> <%= link_to('Logout', destroy_user_session_path, method: :delete) %> <br>
-				<% else %>
-					<%= fa_icon "sign-in" %> <%= link_to('Login', new_user_session_path) %> 
-					<%= fa_icon "user-plus" %> <%= link_to('Register', new_user_registration_path) %> <br>
-				<% end %>
-			</div>
+        <div id="right_window_login_status">
+          <% if user_signed_in? %>
+            <%= fa_icon "user" %> <% if current_user.admin? %> <%= fa_icon "legal" %> <% end %> <%= current_user.email[0...15] + "..." %> <br>
+            <%= fa_icon "edit" %> <%= link_to('Edit registration', edit_user_registration_path) %> <br>
+            <%= fa_icon "sign-out" %> <%= link_to('Logout', destroy_user_session_path, method: :delete) %> <br>
+          <% else %>
+            <%= fa_icon "sign-in" %> <%= link_to('Login', new_user_session_path) %>
+            <%= fa_icon "user-plus" %> <%= link_to('Register', new_user_registration_path) %> <br>
+          <% end %>
+        </div>
 
-			<div id="right_window_header">
-				<h2>Filter console</h2>
-			</div>
+        <div id="right_window_header">
+          <h2>Filter console</h2>
+        </div>
 
-			<div id="right_window_body">
+        <div id="right_window_body">
 
-        <% if session[:spatial_lasso_selection].present? || !(session[:spatial_lasso_selection].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %>
-        Spatial lasso selection <br>
-        <button id="toggleLasso"><%= fa_icon "circle-o-notch" %> Lasso</button>
-        <button id="turnoffLasso"><%= fa_icon "times-circle" %> turn off</button>
+          <% if session[:spatial_lasso_selection].present? || !(session[:spatial_lasso_selection].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %>
+          Spatial lasso selection <br>
+          <button id="toggleLasso"><%= fa_icon "circle-o-notch" %> Lasso</button>
+          <button id="turnoffLasso"><%= fa_icon "times-circle" %> turn off</button>
 
-        <%# site_types_array = SiteType.all.map { |x| [x.name, x.name] } %>
-        <%# countries_array = Country.all.map { |x| [x.name, x.name] } %>
+          <%# site_types_array = SiteType.all.map { |x| [x.name, x.name] } %>
+          <%# countries_array = Country.all.map { |x| [x.name, x.name] } %>
 
-				<%= form_tag(root_path, method: "get") do %>
-          <label for="query_labnr"><% if !(session[:query_labnr].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Lab number</label>
-          <%= text_field_tag(:query_labnr, (session[:query_labnr] or "")) %>
-          <label for="query_site_name"><% if !(session[:query_site_name].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Site name</label>
-          <%= autocomplete_field_tag(:query_site_name, session[:query_site_name], data_autocomplete_site_name_path, 'data-delimiter' => ', ', multiple: true, 'data-auto-focus' => true) %>
-          <label for="query_site_type"><% if !(session[:query_site_type].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Site type</label>
-          <%= autocomplete_field_tag(:query_site_type, session[:query_site_type], data_autocomplete_site_type_name_path, 'data-delimiter' => ', ', multiple: true, 'data-auto-focus' => true) %>
-          <label for="query_country"><% if !(session[:query_country].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Country</label>
-          <%= autocomplete_field_tag(:query_country, session[:query_country], data_autocomplete_country_name_path, 'data-delimiter' => ', ', multiple: true) %>
-          <label for="query_feature"><% if !(session[:query_feature].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Feature</label>
-          <%= text_field_tag(:query_feature, (session[:query_feature] or "")) %>
-          <label for="query_material"><% if !(session[:query_material].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Material</label>
-          <%= autocomplete_field_tag(:query_material, session[:query_material], data_autocomplete_material_name_path, 'data-delimiter' => ', ', multiple: true, 'data-auto-focus' => true) %>
-          <label for="query_species"><% if !(session[:query_species].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Species</label>
-          <%= text_field_tag(:query_species, (session[:query_species] or "")) %>
-          <br><br>
-          <%= button_tag type: 'submit' do %> <%= fa_icon "search" %> Filter dates<% end %>
-				<% end %>
+          <%= form_tag(root_path, method: "get") do %>
+            <label for="query_labnr"><% if !(session[:query_labnr].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Lab number</label>
+            <%= text_field_tag(:query_labnr, (session[:query_labnr] or "")) %>
+            <label for="query_site_name"><% if !(session[:query_site_name].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Site name</label>
+            <%= autocomplete_field_tag(:query_site_name, session[:query_site_name], data_autocomplete_site_name_path, 'data-delimiter' => ', ', multiple: true, 'data-auto-focus' => true) %>
+            <label for="query_site_type"><% if !(session[:query_site_type].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Site type</label>
+            <%= autocomplete_field_tag(:query_site_type, session[:query_site_type], data_autocomplete_site_type_name_path, 'data-delimiter' => ', ', multiple: true, 'data-auto-focus' => true) %>
+            <label for="query_country"><% if !(session[:query_country].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Country</label>
+            <%= autocomplete_field_tag(:query_country, session[:query_country], data_autocomplete_country_name_path, 'data-delimiter' => ', ', multiple: true) %>
+            <label for="query_feature"><% if !(session[:query_feature].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Feature</label>
+            <%= text_field_tag(:query_feature, (session[:query_feature] or "")) %>
+            <label for="query_material"><% if !(session[:query_material].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Material</label>
+            <%= autocomplete_field_tag(:query_material, session[:query_material], data_autocomplete_material_name_path, 'data-delimiter' => ', ', multiple: true, 'data-auto-focus' => true) %>
+            <label for="query_species"><% if !(session[:query_species].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Species</label>
+            <%= text_field_tag(:query_species, (session[:query_species] or "")) %>
+            <br><br>
+            <%= button_tag type: 'submit' do %> <%= fa_icon "search" %> Filter dates<% end %>
+          <% end %>
 
-        <%= fa_icon "times" %> <%= link_to('Reset Filter', resetfilter_url) %>
+          <%= fa_icon "times" %> <%= link_to('Reset Filter', resetfilter_url) %>
 
-			</div>
+        </div>
 
       </nav>
 
