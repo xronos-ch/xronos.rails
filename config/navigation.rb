@@ -62,8 +62,7 @@ SimpleNavigation::Configuration.run do |navigation|
       data.item :samples, 'samples', samples_path
       data.item :arch_objects, 'arch_objects', arch_objects_path
       data.item :references, 'references', references_path
-      # does not work because of plural
-      #data.item :species, 'species', species_path
+      data.item :species, 'species', species_index_path
       data.item :materials, 'materials', materials_path
       data.item :feature_types, 'feature_types', feature_types_path
       data.item :on_site_object_positions, 'on_site_object_positions', on_site_object_positions_path

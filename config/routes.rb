@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :species
   resources :site_phases
   resources :ecochronological_units
   resources :typochronological_units
@@ -10,7 +11,6 @@ Rails.application.routes.draw do
   resources :arch_objects
   resources :labs
   resources :references
-  resources :species
   resources :materials
   get 'data/autocomplete_material_name'
   resources :feature_types

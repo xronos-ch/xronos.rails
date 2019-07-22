@@ -1,13 +1,7 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  family: MyString
-  genus: MyString
-  species: MyString
-  subspecies: MyString
+  name: MyString
 
 two:
-  family: MyString
-  genus: MyString
-  species: MyString
-  subspecies: MyString
+  name: MyString

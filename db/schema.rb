@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_20_115754) do
+ActiveRecord::Schema.define(version: 2019_07_22_133840) do
 
   create_table "arch_objects", force: :cascade do |t|
     t.datetime "created_at", null: false

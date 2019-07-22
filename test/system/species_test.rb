@@ -14,10 +14,7 @@ class SpeciesTest < ApplicationSystemTestCase
     visit species_url
     click_on "New Species"
 
-    fill_in "Family", with: @species.family
-    fill_in "Genus", with: @species.genus
-    fill_in "Species", with: @species.species
-    fill_in "Subspecies", with: @species.subspecies
+    fill_in "Name", with: @species.name
     click_on "Create Species"
 
     assert_text "Species was successfully created"
@@ -28,10 +25,7 @@ class SpeciesTest < ApplicationSystemTestCase
     visit species_url
     click_on "Edit", match: :first
 
-    fill_in "Family", with: @species.family
-    fill_in "Genus", with: @species.genus
-    fill_in "Species", with: @species.species
-    fill_in "Subspecies", with: @species.subspecies
+    fill_in "Name", with: @species.name
     click_on "Update Species"
 
     assert_text "Species was successfully updated"
