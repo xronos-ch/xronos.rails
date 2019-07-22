@@ -20,7 +20,7 @@
 		<div class="left_window_menu active">
 
 			<button id="left_window_nav_general" class="left_window_nav-tgl" type="button" aria-label="toggle left_window_menu">
-				<span aria-hidden="true"></span>
+        <%= fa_icon "database" %>
 			</button>
 
 			<nav class="left_window_nav">
@@ -66,9 +66,15 @@
 		</div>
 
 		<!-- #### Draggable console #### -->
-		<div id = "controls">
+    <div class="right_window_menu active">
 
-			<div id="controls_login_status">
+      <button id="right_window_nav_general" class="right_window_nav-tgl" type="button" aria-label="toggle right_window_menu">
+        <%= fa_icon "search" %>
+      </button>
+
+      <nav class="right_window_nav">
+
+			<div id="right_window_login_status">
 				<% if user_signed_in? %>
 					<%= fa_icon "user" %> <% if current_user.admin? %> <%= fa_icon "legal" %> <% end %> <%= current_user.email[0...15] + "..." %> <br>
 					<%= fa_icon "edit" %> <%= link_to('Edit registration', edit_user_registration_path) %> <br>
@@ -79,11 +85,11 @@
 				<% end %>
 			</div>
 
-			<div id="controls_header">
+			<div id="right_window_header">
 				<h2>Filter console</h2>
 			</div>
 
-			<div id="controls_body">
+			<div id="right_window_body">
 
         <% if session[:spatial_lasso_selection].present? || !(session[:spatial_lasso_selection].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %>
         Spatial lasso selection <br>
@@ -115,6 +121,8 @@
         <%= fa_icon "times" %> <%= link_to('Reset Filter', resetfilter_url) %>
 
 			</div>
+
+      </nav>
 
 		</div>
 
