@@ -36,7 +36,7 @@
   <%= f.collection_select :lab_id, Lab.all, :id, :name, { include_blank: 'Create new' } %>
 </div>
 <div class="field">
-  <%= f.fields_for :lab, f.object.c14_measurement || Lab.new do |lab_fields| %>
+  <%= f.fields_for :lab, f.object.lab || Lab.new do |lab_fields| %>
     <%= lab_fields.label :name %>
     <%= lab_fields.text_field :name %>
     <%= lab_fields.label :active %>

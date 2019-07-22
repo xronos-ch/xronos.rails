@@ -10,6 +10,19 @@
     </tr>
   </thead>
 
+  <tbody>
+  <% @site_phases.each do |site_phase| %>
+    <tr>
+      <td><%= site_phase.name %></td>
+      <td><%= site_phase.approx_start_time %></td>
+      <td><%= site_phase.approx_end_time %></td>
+      <td><%= link_to 'Show', site_phase %></td>
+      <td><%= link_to 'Edit', edit_site_phase_path(site_phase) %></td>
+      <td><%= link_to 'Destroy', site_phase, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+    </tr>
+  <% end %>
+  </tbody>
+
 </table>
 
 <br>
