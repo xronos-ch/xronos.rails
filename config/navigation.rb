@@ -74,8 +74,8 @@ SimpleNavigation::Configuration.run do |navigation|
       end
       data.item :arch_objects, 'arch_objects', arch_objects_path do |i|
         i.item :arch_object, 'new arch_object', new_arch_object_path
-        i.item :arch_object, 'show arch_object', lambda {arch_object_path(@arch_object)}, :unless => lambda {@arch_object.nil?}
-        i.item :arch_object, 'edit arch_object', lambda {edit_arch_object_path(@arch_object)}, :unless => lambda {@arch_object.nil?}
+        #i.item :arch_object, 'show arch_object', lambda {arch_object_path(@arch_object)}, :unless => lambda {@arch_object.nil?}
+        #i.item :arch_object, 'edit arch_object', lambda {edit_arch_object_path(@arch_object)}, :unless => lambda {@arch_object.nil?}
       end
       data.item :references, 'references', references_path do |i|
         i.item :reference, 'new reference', new_reference_path
@@ -94,8 +94,8 @@ SimpleNavigation::Configuration.run do |navigation|
       end
       data.item :feature_types, 'feature_types', feature_types_path do |i|
         i.item :feature_type, 'new feature_type', new_feature_type_path
-        i.item :feature_type, 'show feature_type', lambda {feature_type_path(@feature_type)}, :unless => lambda {@feature_type.nil?}
-        i.item :feature_type, 'edit feature_type', lambda {edit_feature_type_path(@feature_type)}, :unless => lambda {@feature_type.nil?}
+        #i.item :feature_type, 'show feature_type', lambda {feature_type_path(@feature_type)}, :unless => lambda {@feature_type.nil?}
+        #i.item :feature_type, 'edit feature_type', lambda {edit_feature_type_path(@feature_type)}, :unless => lambda {@feature_type.nil?}
       end
       data.item :on_site_object_positions, 'on_site_object_positions', on_site_object_positions_path do |i|
         i.item :on_site_object_position, 'new on_site_object_position', new_on_site_object_position_path

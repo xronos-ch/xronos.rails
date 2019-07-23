@@ -128,10 +128,13 @@ a:hover {
 }
 
 .field {
+  float: left;
   margin: 10px 10px 10px 10px;
   padding: 10px 10px 10px 20px;
-  background-color: rgba(50, 50, 50, 0.50);
-  clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
+  background-color: rgba(50, 50, 50, 0.30);
+  border-color: #636363;
+  border-style: dashed;
+  border-width: 1px;
 }
 
 #nav {
