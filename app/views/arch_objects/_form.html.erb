@@ -11,8 +11,10 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= f.label :site_phase %>
+  <div class="field_master_top">
+    <b><%= f.label :site_phase %></b>
+  </div>
+  <div class="field_master">
     <div class="field">
       <%= f.collection_select :site_phase_id, SitePhase.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
     </div>
@@ -25,8 +27,10 @@
     </div>
   </div>
 
-  <div class="field">
+  <div class="field_master_top">
     <b><%= f.label :material %></b>
+  </div>
+  <div class="field_master">
     <div class="field">
       <%= f.collection_select :material_id, Material.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
     </div>
@@ -38,8 +42,10 @@
     </div>
   </div>
 
-  <div class="field">
+  <div class="field_master_top">
     <b><%= f.label :species %></b>
+  </div>
+  <div class="field_master">
     <div class="field">
       <%= f.collection_select :species_id, Species.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
     </div>
@@ -51,8 +57,10 @@
     </div>
   </div>
 
-  <div class="field">
-    <%= f.label :on_site_object_position %>
+  <div class="field_master_top">
+    <b><%= f.label :on_site_object_position %></b>
+  </div>
+  <div class="field_master">
     <div class="field">
       <%= f.collection_select :on_site_object_position_id, SitePhase.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
     </div>
@@ -65,8 +73,10 @@
     </div>
   </div>
 
-  <div class="field">
-    <b>Samples</b>
+  <div class="field_master_top">
+    <b><%= f.label :sample %></b>
+  </div>
+  <div class="field_master">
     <div id='sample'>
       <%= f.fields_for :samples do |sample| %>
         <%= render 'samples/sample_fields_ass', :f => sample %>
@@ -77,9 +87,8 @@
     </div>
   </div>
 
-  <div class="field">
-    <div class="actions">
-      <%= f.submit %>
-    </div>
+  <div class="actions">
+    <%= f.submit %>
   </div>
+
 <% end %>

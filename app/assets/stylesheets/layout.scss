@@ -127,9 +127,25 @@ a:hover {
   height:100%;
 }
 
+.field_master_top {
+  margin: 10px 10px 0px 10px;
+  padding: 5px 10px 5px 10px;
+  background-color: #636363;
+  color: #ffffff
+}
+
+.field_master {
+  margin: 0px 10px 10px 10px;
+  padding: 10px 10px 10px 10px;
+  background-color: rgba(50, 50, 50, 0.30);
+  border-color: #636363;
+  border-style: solid;
+  border-width: 1px;
+}
+
 .field {
   margin: 10px 10px 10px 10px;
-  padding: 10px 10px 10px 20px;
+  padding: 10px 10px 10px 10px;
   background-color: rgba(50, 50, 50, 0.30);
   border-color: #636363;
   border-style: dashed;
