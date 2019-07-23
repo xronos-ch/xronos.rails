@@ -4,6 +4,14 @@ class DataController < ApplicationController
   autocomplete :country, :name, :full => true
   autocomplete :material, :name, :full => true
 
+  def activate_right_window
+    session[:right_window_active] = true
+  end
+
+  def deactivate_right_window
+    session[:right_window_active] = false
+  end
+
   def reset_filter_session_variable
     session[:query_labnr] = nil
     session[:query_site_name] = nil

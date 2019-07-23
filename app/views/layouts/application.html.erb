@@ -79,7 +79,7 @@
 		</div>
 
 		<!-- #### right_window #### -->
-    <div class="right_window_menu">
+    <div class="right_window_menu <%= 'active' if session[:right_window_active] %>">
 
       <button id="right_window_nav_general" type="button" aria-label="toggle right_window_menu">
         <%= fa_icon "search" %>
