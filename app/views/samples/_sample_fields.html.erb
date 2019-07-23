@@ -10,7 +10,7 @@
       <%= render 'measurements/measurement_fields_ass', :f => measurement %>
     <% end %>
     <div class='links'>
-      <%= link_to_add_association 'add measurement', f, :measurements, partial: 'measurements/measurement_fields_ass' %>
+      <%= fa_icon "plus" %> <%= link_to_add_association 'add measurement', f, :measurements, partial: 'measurements/measurement_fields_ass' %>
     </div>
   </div>
 </div>

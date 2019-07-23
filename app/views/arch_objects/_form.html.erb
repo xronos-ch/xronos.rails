@@ -82,7 +82,7 @@
         <%= render 'samples/sample_fields_ass', :f => sample %>
       <% end %>
       <div class='links'>
-        <%= link_to_add_association 'add sample', f, :samples, partial: 'samples/sample_fields_ass' %>
+        <%= fa_icon "plus" %> <%= link_to_add_association 'add sample', f, :samples, partial: 'samples/sample_fields_ass' %>
       </div>
     </div>
   </div>
