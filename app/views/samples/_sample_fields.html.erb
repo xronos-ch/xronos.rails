@@ -3,13 +3,14 @@
   <%= f.label :id, f.object.id %>
 </div>
 
-<h3>Measurements</h3>
-<hr>
-<div id='measurements'>
-  <%= f.fields_for :measurements do |measurement| %>
-    <%= render 'measurements/measurement_fields_ass', :f => measurement %>
-  <% end %>
-  <div class='links'>
-    <%= link_to_add_association 'add measurement', f, :measurements, partial: 'measurements/measurement_fields_ass' %>
+<div class="field">
+  <b>Measurements</b>
+  <div id='measurements'>
+    <%= f.fields_for :measurements do |measurement| %>
+      <%= render 'measurements/measurement_fields_ass', :f => measurement %>
+    <% end %>
+    <div class='links'>
+      <%= link_to_add_association 'add measurement', f, :measurements, partial: 'measurements/measurement_fields_ass' %>
+    </div>
   </div>
 </div>
