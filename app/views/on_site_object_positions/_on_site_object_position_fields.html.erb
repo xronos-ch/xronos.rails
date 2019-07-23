@@ -1,0 +1,44 @@
+<div class="field">
+  <%= f.label :feature %>
+  <%= f.text_field :feature %>
+</div>
+
+<div class="field">
+  <%= f.label :site_grid_square %>
+  <%= f.text_field :site_grid_square %>
+</div>
+
+<div class="field">
+  <%= f.label :coord_reference_system %>
+  <%= f.text_field :coord_reference_system %>
+</div>
+
+<div class="field">
+  <%= f.label :coord_X %>
+  <%= f.text_field :coord_X %>
+</div>
+
+<div class="field">
+  <%= f.label :coord_Y %>
+  <%= f.text_field :coord_Y %>
+</div>
+
+<div class="field">
+  <%= f.label :coord_Z %>
+  <%= f.text_field :coord_Z %>
+</div>
+
+<div class="field">
+  <b><%= f.label :feature_type %></b>
+  <div class="field">
+    <%= f.collection_select :feature_type_id, FeatureType.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
+  </div>
+  <div class="field">
+    <%= f.fields_for :feature_type, f.object.feature_type || FeatureType.new do |feature_type_fields| %>
+      <%= feature_type_fields.label :name %>
+      <%= feature_type_fields.text_field :name, placeholder: 'New feature type' %>
+      <%= feature_type_fields.label :description %>
+      <%= feature_type_fields.text_field :description, placeholder: 'Description' %>
+    <% end %>
+  </div>
+</div>

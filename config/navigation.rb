@@ -59,18 +59,18 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item :data, 'data', root_path do |data|
       data.item :labs, 'labs', labs_path do |i|
         i.item :lab, 'new lab', new_lab_path
-        i.item :lab, 'show lab', lambda {lab_path(@lab)}, :unless => lambda {@lab.nil?}
-        i.item :lab, 'edit lab', lambda {edit_lab_path(@lab)}, :unless => lambda {@lab.nil?}
+        #i.item :lab, 'show lab', lambda {lab_path(@lab)}, :unless => lambda {@lab.nil?}
+        #i.item :lab, 'edit lab', lambda {edit_lab_path(@lab)}, :unless => lambda {@lab.nil?}
       end
       data.item :measurements, 'measurements', measurements_path do |i|
         i.item :measurement, 'new measurement', new_measurement_path
-        i.item :measurement, 'show measurement', lambda {measurement_path(@measurement)}, :unless => lambda {@measurement.nil?}
-        i.item :measurement, 'edit measurement', lambda {edit_measurement_path(@measurement)}, :unless => lambda {@measurement.nil?}
+        #i.item :measurement, 'show measurement', lambda {measurement_path(@measurement)}, :unless => lambda {@measurement.nil?}
+        #i.item :measurement, 'edit measurement', lambda {edit_measurement_path(@measurement)}, :unless => lambda {@measurement.nil?}
       end
       data.item :samples, 'samples', samples_path do |i|
         i.item :sample, 'new sample', new_sample_path
-        i.item :sample, 'show sample', lambda {sample_path(@sample)}, :unless => lambda {@sample.nil?}
-        i.item :sample, 'edit sample', lambda {edit_sample_path(@sample)}, :unless => lambda {@sample.nil?}
+        #i.item :sample, 'show sample', lambda {sample_path(@sample)}, :unless => lambda {@sample.nil?}
+        #i.item :sample, 'edit sample', lambda {edit_sample_path(@sample)}, :unless => lambda {@sample.nil?}
       end
       data.item :arch_objects, 'arch_objects', arch_objects_path do |i|
         i.item :arch_object, 'new arch_object', new_arch_object_path
@@ -79,18 +79,18 @@ SimpleNavigation::Configuration.run do |navigation|
       end
       data.item :references, 'references', references_path do |i|
         i.item :reference, 'new reference', new_reference_path
-        i.item :reference, 'show reference', lambda {reference_path(@reference)}, :unless => lambda {@reference.nil?}
-        i.item :reference, 'edit reference', lambda {edit_reference_path(@reference)}, :unless => lambda {@reference.nil?}
+        #i.item :reference, 'show reference', lambda {reference_path(@reference)}, :unless => lambda {@reference.nil?}
+        #i.item :reference, 'edit reference', lambda {edit_reference_path(@reference)}, :unless => lambda {@reference.nil?}
       end
       data.item :species, 'species', species_index_path do |i|
         i.item :species, 'new species', new_species_path
-        i.item :species, 'show species', lambda {species_path(@species)}, :unless => lambda {@species.nil?}
-        i.item :species, 'edit species', lambda {edit_species_path(@species)}, :unless => lambda {@species.nil?}
+        #i.item :species, 'show species', lambda {species_path(@species)}, :unless => lambda {@species.nil?}
+        #i.item :species, 'edit species', lambda {edit_species_path(@species)}, :unless => lambda {@species.nil?}
       end
       data.item :materials, 'materials', materials_path do |i|
         i.item :material, 'new material', new_material_path
-        i.item :material, 'show material', lambda {material_path(@material)}, :unless => lambda {@material.nil?}
-        i.item :material, 'edit material', lambda {edit_material_path(@material)}, :unless => lambda {@material.nil?}
+        #i.item :material, 'show material', lambda {material_path(@material)}, :unless => lambda {@material.nil?}
+        #i.item :material, 'edit material', lambda {edit_material_path(@material)}, :unless => lambda {@material.nil?}
       end
       data.item :feature_types, 'feature_types', feature_types_path do |i|
         i.item :feature_type, 'new feature_type', new_feature_type_path
@@ -99,8 +99,8 @@ SimpleNavigation::Configuration.run do |navigation|
       end
       data.item :on_site_object_positions, 'on_site_object_positions', on_site_object_positions_path do |i|
         i.item :on_site_object_position, 'new on_site_object_position', new_on_site_object_position_path
-        i.item :on_site_object_position, 'show on_site_object_position', lambda {on_site_object_position_path(@on_site_object_position)}, :unless => lambda {@on_site_object_position.nil?}
-        i.item :on_site_object_position, 'edit on_site_object_position', lambda {edit_on_site_object_position_path(@on_site_object_position)}, :unless => lambda {@on_site_object_position.nil?}
+        #i.item :on_site_object_position, 'show on_site_object_position', lambda {on_site_object_position_path(@on_site_object_position)}, :unless => lambda {@on_site_object_position.nil?}
+        #i.item :on_site_object_position, 'edit on_site_object_position', lambda {edit_on_site_object_position_path(@on_site_object_position)}, :unless => lambda {@on_site_object_position.nil?}
       end
       data.item :site_types, 'site_types', site_types_path do |i|
         i.item :site_type, 'new site_type', new_site_type_path
@@ -109,28 +109,28 @@ SimpleNavigation::Configuration.run do |navigation|
       end
       data.item :countries, 'countries', countries_path do |i|
         i.item :country, 'new country', new_country_path
-        i.item :country, 'show country', lambda {country_path(@country)}, :unless => lambda {@country.nil?}
-        i.item :country, 'edit country', lambda {edit_country_path(@country)}, :unless => lambda {@country.nil?}
+        #i.item :country, 'show country', lambda {country_path(@country)}, :unless => lambda {@country.nil?}
+        #i.item :country, 'edit country', lambda {edit_country_path(@country)}, :unless => lambda {@country.nil?}
       end
       data.item :periods, 'periods', periods_path do |i|
         i.item :period, 'new period', new_period_path
-        i.item :period, 'show period', lambda {period_path(@period)}, :unless => lambda {@period.nil?}
-        i.item :period, 'edit period', lambda {edit_period_path(@period)}, :unless => lambda {@period.nil?}
+        #i.item :period, 'show period', lambda {period_path(@period)}, :unless => lambda {@period.nil?}
+        #i.item :period, 'edit period', lambda {edit_period_path(@period)}, :unless => lambda {@period.nil?}
       end
       data.item :sites, 'sites', sites_path do |i|
         i.item :site, 'new site', new_site_path
-        i.item :site, 'show site', lambda {site_path(@site)}, :unless => lambda {@site.nil?}
-        i.item :site, 'edit site', lambda {edit_site_path(@site)}, :unless => lambda {@site.nil?}
+        #i.item :site, 'show site', lambda {site_path(@site)}, :unless => lambda {@site.nil?}
+        #i.item :site, 'edit site', lambda {edit_site_path(@site)}, :unless => lambda {@site.nil?}
       end
       data.item :typochronological_units, 'typochronological_units', typochronological_units_path do |i|
         i.item :typochronological_unit, 'new typochronological_unit', new_typochronological_unit_path
-        i.item :typochronological_unit, 'show typochronological_unit', lambda {typochronological_unit_path(@typochronological_unit)}, :unless => lambda {@typochronological_unit.nil?}
-        i.item :typochronological_unit, 'edit typochronological_unit', lambda {edit_typochronological_unit_path(@typochronological_unit)}, :unless => lambda {@typochronological_unit.nil?}
+        #i.item :typochronological_unit, 'show typochronological_unit', lambda {typochronological_unit_path(@typochronological_unit)}, :unless => lambda {@typochronological_unit.nil?}
+        #i.item :typochronological_unit, 'edit typochronological_unit', lambda {edit_typochronological_unit_path(@typochronological_unit)}, :unless => lambda {@typochronological_unit.nil?}
       end
       data.item :ecochronological_units, 'ecochronological_units', ecochronological_units_path do |i|
         i.item :ecochronological_unit, 'new ecochronological_unit', new_ecochronological_unit_path
-        i.item :ecochronological_unit, 'show ecochronological_unit', lambda {ecochronological_unit_path(@ecochronological_unit)}, :unless => lambda {@ecochronological_unit.nil?}
-        i.item :ecochronological_unit, 'edit ecochronological_unit', lambda {edit_ecochronological_unit_path(@ecochronological_unit)}, :unless => lambda {@ecochronological_unit.nil?}
+        #i.item :ecochronological_unit, 'show ecochronological_unit', lambda {ecochronological_unit_path(@ecochronological_unit)}, :unless => lambda {@ecochronological_unit.nil?}
+        #i.item :ecochronological_unit, 'edit ecochronological_unit', lambda {edit_ecochronological_unit_path(@ecochronological_unit)}, :unless => lambda {@ecochronological_unit.nil?}
       end
       data.item :site_phases, 'site_phases', site_phases_path do |i|
         i.item :site_phase, 'new site_phase', new_site_phase_path

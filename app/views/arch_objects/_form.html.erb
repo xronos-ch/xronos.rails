@@ -52,41 +52,17 @@
   </div>
 
   <div class="field">
-  <b><%= f.label :on_site_object_position %></b>
-  <div class="field">
-    <%= f.collection_select :on_site_object_position_id, OnSiteObjectPosition.all, :id, :feature, { include_blank: 'Create new' }, {:class => "observed_select"} %>
-  </div>
-  <div class="field">
-    <%= f.fields_for :on_site_object_position, @arch_object.on_site_object_position do |on_site_object_position_fields| %>
-      <%= on_site_object_position_fields.label :feature %>
-      <%= on_site_object_position_fields.text_field :feature %>
-      <%= on_site_object_position_fields.label :site_grid_square %>
-      <%= on_site_object_position_fields.text_field :site_grid_square %>
-      <%= on_site_object_position_fields.label :coord_reference_system %>
-      <%= on_site_object_position_fields.text_field :coord_reference_system %>
-      <%= on_site_object_position_fields.label :coord_X %>
-      <%= on_site_object_position_fields.text_field :coord_X %>
-      <%= on_site_object_position_fields.label :coord_Y %>
-      <%= on_site_object_position_fields.text_field :coord_Y %>
-      <%= on_site_object_position_fields.label :coord_Z %>
-      <%= on_site_object_position_fields.text_field :coord_Z %>
-
-      <div class="field">
-        <b><%= on_site_object_position_fields.label :feature_type %></b>
-        <div class="field">
-          <%= on_site_object_position_fields.collection_select :feature_type_id, FeatureType.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
-        </div>
-        <div class="field">
-          <%= on_site_object_position_fields.fields_for :feature_type, FeatureType.new do |feature_type_fields| %>
-            <%= feature_type_fields.label :name %>
-            <%= feature_type_fields.text_field :name, placeholder: 'New feature type' %>
-            <%= feature_type_fields.label :description %>
-            <%= feature_type_fields.text_field :description, placeholder: 'Description' %>
-          <% end %>
-        </div>
+    <%= f.label :on_site_object_position %>
+    <div class="field">
+      <%= f.collection_select :on_site_object_position_id, SitePhase.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
+    </div>
+    <div class="field">
+      <div id='on_site_object_position'>
+        <%= f.fields_for :on_site_object_position, @arch_object.on_site_object_position do |on_site_object_position| %>
+          <%= render 'on_site_object_positions/on_site_object_position_fields', :f => on_site_object_position %>
+        <% end %>
       </div>
-    <% end %>
-  </div>
+    </div>
   </div>
 
   <div class="field">
