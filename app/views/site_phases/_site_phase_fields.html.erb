@@ -1,0 +1,103 @@
+<div class="field">
+  <%= f.label :name %>
+  <%= f.text_field :name %>
+</div>
+
+<div class="field">
+  <%= f.label :approx_start_time %>
+  <%= f.number_field :approx_start_time %>
+</div>
+
+<div class="field">
+  <%= f.label :approx_end_time %>
+  <%= f.number_field :approx_end_time %>
+</div>
+
+<div class="field">
+  <b>Periods</b>
+  <div id='period'>
+    <%= f.fields_for :periods do |period| %>
+      <%= render 'periods/period_fields_ass', :f => period %>
+    <% end %>
+    <div class='links'>
+      <%= link_to_add_association 'add period', f, :periods, partial: 'periods/period_fields_ass' %>
+    </div>
+  </div>
+</div>
+
+<div class="field">
+  <b>Typochronological unit</b>
+  <div id='typochronological_unit'>
+    <%= f.fields_for :typochronological_units do |typochronological_unit| %>
+      <%= render 'typochronological_units/typochronological_unit_fields_ass', :f => typochronological_unit %>
+    <% end %>
+    <div class='links'>
+      <%= link_to_add_association 'add typochronological_unit', f, :typochronological_units, partial: 'typochronological_units/typochronological_unit_fields_ass' %>
+    </div>
+  </div>
+</div>
+
+<div class="field">
+  <b>Ecochronological unit</b>
+  <div id='ecochronological_unit'>
+    <%= f.fields_for :ecochronological_units do |ecochronological_unit| %>
+      <%= render 'ecochronological_units/ecochronological_unit_fields_ass', :f => ecochronological_unit %>
+    <% end %>
+    <div class='links'>
+      <%= link_to_add_association 'add ecochronological_unit', f, :ecochronological_units, partial: 'ecochronological_units/ecochronological_unit_fields_ass' %>
+    </div>
+  </div>
+</div>
+
+<div class="field">
+
+  <b><%= f.label :site %></b>
+  <div class="field">
+    <%= f.collection_select :site_id, Site.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
+  </div>
+  <div class="field">
+
+    <div class="field">
+      <%= f.fields_for :site, Site.new do |site_fields| %>
+        <%= site_fields.label :name %>
+        <%= site_fields.text_field :name, placeholder: 'New site' %>
+        <%= site_fields.label :lat %>
+        <%= site_fields.text_field :lat, placeholder: 0 %>
+        <%= site_fields.label :lng %>
+        <%= site_fields.text_field :lng, placeholder: 0 %>
+        </div>
+
+        <div class="field">
+          <b><%= site_fields.label :site_type %></b>
+          <div class="field">
+            <%= site_fields.collection_select :site_type_id, SiteType.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
+          </div>
+          <div class="field">
+            <%= site_fields.fields_for :site_type, SiteType.new do |site_type_fields| %>
+              <%= site_type_fields.label :name %>
+              <%= site_type_fields.text_field :name, placeholder: 'New site type' %>
+              <%= site_type_fields.label :description %>
+              <%= site_type_fields.text_field :description, placeholder: 'Description' %>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="field">
+          <b><%= site_fields.label :country %></b>
+          <div class="field">
+            <%= site_fields.collection_select :country_id, Country.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
+          </div>
+          <div class="field">
+            <%= site_fields.fields_for :country, Country.new do |country_fields| %>
+              <%= country_fields.label :name %>
+              <%= country_fields.text_field :name, placeholder: 'New country' %>
+              <%= country_fields.label :description %>
+              <%= country_fields.text_field :abbreviation, placeholder: 'Abbreviation' %>
+            <% end %>
+          </div>
+        </div>
+
+      <% end %>
+      </div>
+
+</div>

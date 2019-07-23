@@ -11,50 +11,7 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= f.label :name %>
-    <%= f.text_field :name %>
-  </div>
-
-  <div class="field">
-    <%= f.label :approx_start_time %>
-    <%= f.number_field :approx_start_time %>
-  </div>
-
-  <div class="field">
-    <%= f.label :approx_end_time %>
-    <%= f.number_field :approx_end_time %>
-  </div>
-
-  <h3>Periods</h3>
-  <div id='period'>
-    <%= f.fields_for :periods do |period| %>
-      <%= render 'periods/period_fields_ass', :f => period %>
-    <% end %>
-    <div class='links'>
-      <%= link_to_add_association 'add period', f, :periods, partial: 'periods/period_fields_ass' %>
-    </div>
-  </div>
-
-  <h3>Typochronological unit</h3>
-  <div id='typochronological_unit'>
-    <%= f.fields_for :typochronological_units do |typochronological_unit| %>
-      <%= render 'typochronological_units/typochronological_unit_fields_ass', :f => typochronological_unit %>
-    <% end %>
-    <div class='links'>
-      <%= link_to_add_association 'add typochronological_unit', f, :typochronological_units, partial: 'typochronological_units/typochronological_unit_fields_ass' %>
-    </div>
-  </div>
-
-  <h3>Ecochronological unit</h3>
-  <div id='ecochronological_unit'>
-    <%= f.fields_for :ecochronological_units do |ecochronological_unit| %>
-      <%= render 'ecochronological_units/ecochronological_unit_fields_ass', :f => ecochronological_unit %>
-    <% end %>
-    <div class='links'>
-      <%= link_to_add_association 'add ecochronological_unit', f, :ecochronological_units, partial: 'ecochronological_units/ecochronological_unit_fields_ass' %>
-    </div>
-  </div>
+  <%= render 'site_phases/site_phase_fields', f: f %>
 
   <div class="actions">
     <%= f.submit %>

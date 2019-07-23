@@ -104,8 +104,8 @@ SimpleNavigation::Configuration.run do |navigation|
       end
       data.item :site_types, 'site_types', site_types_path do |i|
         i.item :site_type, 'new site_type', new_site_type_path
-        i.item :site_type, 'show site_type', lambda {site_type_path(@site_type)}, :unless => lambda {@site_type.nil?}
-        i.item :site_type, 'edit site_type', lambda {edit_site_type_path(@site_type)}, :unless => lambda {@site_type.nil?}
+        #i.item :site_type, 'show site_type', lambda {site_type_path(@site_type)}, :unless => lambda {@site_type.nil?}
+        #i.item :site_type, 'edit site_type', lambda {edit_site_type_path(@site_type)}, :unless => lambda {@site_type.nil?}
       end
       data.item :countries, 'countries', countries_path do |i|
         i.item :country, 'new country', new_country_path
@@ -134,8 +134,8 @@ SimpleNavigation::Configuration.run do |navigation|
       end
       data.item :site_phases, 'site_phases', site_phases_path do |i|
         i.item :site_phase, 'new site_phase', new_site_phase_path
-        i.item :site_phase, 'show site_phase', lambda {site_phase_path(@site_phase)}, :unless => lambda {@site_phase.nil?}
-        i.item :site_phase, 'edit site_phase', lambda {edit_site_phase_path(@site_phase)}, :unless => lambda {@site_phase.nil?}
+        #i.item :site_phase, 'show site_phase', lambda {site_phase_path(@site_phase)}, :unless => lambda {@site_phase.nil?}
+        #i.item :site_phase, 'edit site_phase', lambda {edit_site_phase_path(@site_phase)}, :unless => lambda {@site_phase.nil?}
       end
     end
 
