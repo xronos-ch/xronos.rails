@@ -12,6 +12,14 @@ class DataController < ApplicationController
     session[:right_window_active] = false
   end
 
+  def activate_left_window
+    session[:left_window_active] = true
+  end
+
+  def deactivate_left_window
+    session[:left_window_active] = false
+  end
+
   def reset_filter_session_variable
     session[:query_labnr] = nil
     session[:query_site_name] = nil

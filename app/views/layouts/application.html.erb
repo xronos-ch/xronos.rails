@@ -30,7 +30,7 @@
   </div>
 
 		<!-- #### left_window #### -->
-		<div class="left_window_menu">
+		<div class="left_window_menu <%= 'active' if session[:left_window_active] %>">
 
 			<button id="left_window_nav_general" type="button" aria-label="toggle left_window_menu">
         <%= fa_icon "database" %>

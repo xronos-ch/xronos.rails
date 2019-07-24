@@ -29,4 +29,6 @@ Rails.application.routes.draw do
   get '/resetfilter', :to=>'data#reset_filter_session_variable'
   post 'data/activate_right_window'
   post 'data/deactivate_right_window'
+  post 'data/activate_left_window'
+  post 'data/deactivate_left_window'
 end
