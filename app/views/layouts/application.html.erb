@@ -13,21 +13,21 @@
 
   <body>
 
-  <div id="notch_wrap">
-    <div id="notch">
-      <b>Xronos <a href="https://www.github.com/nevrome/temp">v0.0.1 <%= fa_icon "github" %></a></b>
-      <div id="notch_login_status">
-        <% if user_signed_in? %>
-          <%= fa_icon "user" %> <% if current_user.admin? %> <%= fa_icon "legal" %> <% end %> <%= current_user.email[0...15] + "..." %>
-          <%= fa_icon "edit" %> <%= link_to('Edit registration', edit_user_registration_path, class: "user_edit_link") %>
-          <%= fa_icon "sign-out" %> <%= link_to('Logout', destroy_user_session_path, method: :delete) %>
-        <% else %>
-          <%= fa_icon "sign-in" %> <%= link_to('Login', new_user_session_path, class: "user_edit_link") %>
-          <%= fa_icon "user-plus" %> <%= link_to('Register', new_user_registration_path, class: "user_edit_link") %>
-        <% end %>
+    <div id="notch_wrap">
+      <div id="notch">
+        <b>Xronos <a href="https://www.github.com/nevrome/temp">v0.0.1 <%= fa_icon "github" %></a></b>
+        <div id="notch_login_status">
+          <% if user_signed_in? %>
+            <%= fa_icon "user" %> <% if current_user.admin? %> <%= fa_icon "legal" %> <% end %> <%= current_user.email[0...15] + "..." %>
+            <%= fa_icon "edit" %> <%= link_to('Edit registration', edit_user_registration_path, class: "user_edit_link") %>
+            <%= fa_icon "sign-out" %> <%= link_to('Logout', destroy_user_session_path, method: :delete) %>
+          <% else %>
+            <%= fa_icon "sign-in" %> <%= link_to('Login', new_user_session_path, class: "user_edit_link") %>
+            <%= fa_icon "user-plus" %> <%= link_to('Register', new_user_registration_path, class: "user_edit_link") %>
+          <% end %>
+        </div>
       </div>
     </div>
-  </div>
 
 		<!-- #### left_window #### -->
 		<div class="left_window_menu <%= 'active' if session[:left_window_active] %>">
@@ -36,7 +36,7 @@
         <%= fa_icon "database" %>
 			</button>
 
-			<nav class="left_window_nav">
+			<nav class="left_window_nav <%= 'big' if session[:left_window_big] %>">
 
         <button id="left_window_nav_extend" type="button" aria-label="extend left_window_menu">
           <%= fa_icon "expand" %>
@@ -49,7 +49,7 @@
 					</nav>
 
 					<!-- #### Pages #### -->
-					<main>
+					<main class="<%= 'big' if session[:left_window_big] %>">
 
             <nav id="breadcrumbs_nav">
               <%= render_navigation renderer: :breadcrumbs, join_with: ' &gt; ' %>

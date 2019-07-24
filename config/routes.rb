@@ -31,4 +31,6 @@ Rails.application.routes.draw do
   post 'data/deactivate_right_window'
   post 'data/activate_left_window'
   post 'data/deactivate_left_window'
+  post 'data/extend_left_window'
+  post 'data/reduce_left_window'
 end

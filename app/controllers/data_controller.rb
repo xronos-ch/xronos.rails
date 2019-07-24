@@ -20,6 +20,14 @@ class DataController < ApplicationController
     session[:left_window_active] = false
   end
 
+  def extend_left_window
+    session[:left_window_big] = true
+  end
+
+  def reduce_left_window
+    session[:left_window_big] = false
+  end
+
   def reset_filter_session_variable
     session[:query_labnr] = nil
     session[:query_site_name] = nil
