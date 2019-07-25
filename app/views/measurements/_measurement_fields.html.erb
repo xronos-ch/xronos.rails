@@ -1,30 +1,34 @@
-<div class="field">
-  <%= f.label :year %>
-  <%= f.number_field :year %>
-</div>
-
-<div class="field">
-  <%= f.label :labnr %>
-  <%= f.text_field :labnr %>
-</div>
-
-<div class="field_master_top">
-  <b><%= f.label :c14_measurement %></b>
-</div>
 <div class="field_master">
-  <%= f.fields_for :c14_measurement, C14Measurement.new do |c14_measurement| %>
-    <%= render 'c14_measurements/c14_measurement_fields', :f => c14_measurement %>
-  <% end %>
-</div>
 
-<div class="field_master_top">
-  <b><%= f.label :lab %></b>
-</div>
-<div class="field_master">
   <div class="field">
-    <%= f.collection_select :lab_id, Lab.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"}  %>
+    <%= f.label :year %>
+    <%= f.number_field :year %>
   </div>
-  <%= f.fields_for :lab, Lab.new do |lab| %>
-    <%= render 'labs/lab_fields', :f => lab %>
-  <% end %>
+
+  <div class="field">
+    <%= f.label :labnr %>
+    <%= f.text_field :labnr %>
+  </div>
+
+  <div class="field_master_top">
+    <b><%= f.label :c14_measurement %></b>
+  </div>
+  <div class="field_master">
+    <%= f.fields_for :c14_measurement, C14Measurement.new do |c14_measurement| %>
+      <%= render 'c14_measurements/c14_measurement_fields', :f => c14_measurement %>
+    <% end %>
+  </div>
+
+  <div class="field_master_top">
+    <b><%= f.label :lab %></b>
+  </div>
+  <div class="field_master">
+    <div class="field">
+      <%= f.collection_select :lab_id, Lab.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"}  %>
+    </div>
+    <%= f.fields_for :lab, Lab.new do |lab| %>
+      <%= render 'labs/lab_fields', :f => lab %>
+    <% end %>
+  </div>
+
 </div>

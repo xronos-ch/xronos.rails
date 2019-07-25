@@ -1,5 +1,9 @@
 <div class='nested-fields'>
 
+  <div class="field_master_top">
+    <b><%= f.label :measurement %></b>
+  </div>
+
   <%= render  'measurements/measurement_fields', f: f %>
 
   <%= fa_icon "minus" %> <%= link_to_remove_association "remove measurement", f %>
