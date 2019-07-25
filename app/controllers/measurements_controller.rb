@@ -17,7 +17,6 @@ class MeasurementsController < ApplicationController
   # GET /measurements/new
   def new
     @measurement = Measurement.new
-    @measurement.c14_measurement.new
   end
 
   # GET /measurements/1/edit

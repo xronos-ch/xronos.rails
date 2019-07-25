@@ -8,28 +8,19 @@
   <%= f.text_field :labnr %>
 </div>
 
-<div class="field">
-  <b><%= f.label :c14_measurement %></b>
+<div class="field_master_top">
+  <b><%= f.label :site_phase %></b>
+</div>
+<div class="field_master">
   <div class="field">
     <%= f.collection_select :c14_measurement_id, C14Measurement.all, :id, :id, { include_blank: 'Create new' } %>
   </div>
   <div class="field">
-    <%= f.fields_for :c14_measurement, f.object.c14_measurement || C14Measurement.new do |c14_measurement_fields| %>
-      <%= c14_measurement_fields.label :bp %>
-      <%= c14_measurement_fields.text_field :bp %>
-      <%= c14_measurement_fields.label :std %>
-      <%= c14_measurement_fields.text_field :std %>
-      <%= c14_measurement_fields.label :cal_bp %>
-      <%= c14_measurement_fields.text_field :cal_bp %>
-      <%= c14_measurement_fields.label :cal_std %>
-      <%= c14_measurement_fields.text_field :cal_std %>
-      <%= c14_measurement_fields.label :delta_c13 %>
-      <%= c14_measurement_fields.text_field :delta_c13 %>
-      <%= c14_measurement_fields.label :delta_c13_std %>
-      <%= c14_measurement_fields.text_field :delta_c13_std %>
-      <%= c14_measurement_fields.label :method %>
-      <%= c14_measurement_fields.text_field :method %>
-    <% end %>
+    <div id='c14_measurement'>
+      <%= f.fields_for :c14_measurement, C14Measurement.new do |c14_measurement| %>
+        <%= render 'c14_measurements/c14_measurement_fields', :f => c14_measurement %>
+      <% end %>
+    </div>
   </div>
 </div>
 
