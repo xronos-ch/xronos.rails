@@ -13,7 +13,7 @@
 </div>
 <div class="field_master">
   <div class="field">
-    <%= f.collection_select :c14_measurement_id, C14Measurement.all, :id, :id, { include_blank: 'Create new' } %>
+    <%= f.collection_select :c14_measurement_id, C14Measurement.all, :id, :id, { include_blank: 'Create new' }, {:class => "observed_select"} %>
   </div>
   <div class="field">
     <div id='c14_measurement'>
