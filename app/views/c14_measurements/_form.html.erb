@@ -1,4 +1,4 @@
-<%= f_with(model: c14_measurement, local: true) do |f| %>
+<%= form_with(model: c14_measurement, local: true) do |f| %>
   <% if c14_measurement.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(c14_measurement.errors.count, "error") %> prohibited this c14_measurement from being saved:</h2>

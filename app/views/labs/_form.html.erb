@@ -1,4 +1,4 @@
-<%= form_with(model: lab, local: true) do |form| %>
+<%= form_with(model: lab, local: true) do |f| %>
   <% if lab.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(lab.errors.count, "error") %> prohibited this lab from being saved:</h2>

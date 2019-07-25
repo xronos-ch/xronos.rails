@@ -5,7 +5,7 @@
       var this_next_div, this_object, this_value;
       this_object = jQuery(object);
       this_value = this_object.val();
-      this_next_div = this_object.parent().next(".field");
+      this_next_div = this_object.parent().next(".field_master");
       if (this_value === "") {
         this_next_div.show();
         return this_next_div.find("input").each(function() {

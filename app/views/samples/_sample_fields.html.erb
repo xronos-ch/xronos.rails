@@ -3,8 +3,10 @@
   <%= f.label :id, f.object.id %>
 </div>
 
-<div class="field">
-  <b>Measurements</b>
+<div class="field_master_top">
+  <b><%= f.label :measurements %></b>
+</div>
+<div class="field_master">
   <div id='measurements'>
     <%= f.fields_for :measurements do |measurement| %>
       <%= render 'measurements/measurement_fields_ass', :f => measurement %>
