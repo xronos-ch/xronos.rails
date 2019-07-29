@@ -1,4 +1,4 @@
-<%= form_with(model: country, local: true) do |form| %>
+<%= form_with(model: country, local: true) do |f| %>
   <% if country.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(country.errors.count, "error") %> prohibited this country from being saved:</h2>
@@ -11,17 +11,9 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= form.label :name %>
-    <%= form.text_field :name %>
-  </div>
-
-  <div class="field">
-    <%= form.label :abbreviation %>
-    <%= form.text_field :abbreviation %>
-  </div>
+  <%= render  'countries/country_fields', f: f %>
 
   <div class="actions">
-    <%= form.submit %>
+    <%= f.submit %>
   </div>
 <% end %>
