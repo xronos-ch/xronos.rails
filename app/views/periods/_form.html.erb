@@ -1,4 +1,4 @@
-<%= f_with(model: period, local: true) do |f| %>
+<%= form_with(model: period, local: true) do |f| %>
   <% if period.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(period.errors.count, "error") %> prohibited this period from being saved:</h2>
@@ -12,7 +12,7 @@
   <% end %>
 
   <%= render  'periods/period_fields', f: f %>
-  
+
   <div class="actions">
     <%= f.submit %>
   </div>

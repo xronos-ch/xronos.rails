@@ -1,5 +1,9 @@
 <div class='nested-fields'>
 
+  <div class="field_master_top">
+    <b><%= f.label :period %></b>
+  </div>
+
   <%= render  'periods/period_fields', f: f %>
 
   <%= fa_icon "minus" %> <%= link_to_remove_association "remove period", f %>

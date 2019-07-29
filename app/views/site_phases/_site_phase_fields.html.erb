@@ -15,15 +15,15 @@
     <%= f.number_field :approx_end_time %>
   </div>
 
-  <div class="field">
-    <b>Periods</b>
-    <div id='period'>
-      <%= f.fields_for :periods do |period| %>
-        <%= render 'periods/period_fields_ass', :f => period %>
-      <% end %>
-      <div class='links'>
-        <%= fa_icon "plus" %> <%= link_to_add_association 'add period', f, :periods, partial: 'periods/period_fields_ass' %>
-      </div>
+  <div class="field_master_top">
+    <b><%= f.label :periods %></b>
+  </div>
+    <div class="field_master">
+    <%= f.fields_for :periods do |period| %>
+      <%= render 'periods/period_fields_ass', :f => period %>
+    <% end %>
+    <div class='links'>
+      <%= fa_icon "plus" %> <%= link_to_add_association 'add period', f, :periods, partial: 'periods/period_fields_ass' %>
     </div>
   </div>
 
