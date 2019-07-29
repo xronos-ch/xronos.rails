@@ -27,15 +27,15 @@
     </div>
   </div>
 
-  <div class="field">
-    <b>Typochronological unit</b>
-    <div id='typochronological_unit'>
-      <%= f.fields_for :typochronological_units do |typochronological_unit| %>
-        <%= render 'typochronological_units/typochronological_unit_fields_ass', :f => typochronological_unit %>
-      <% end %>
-      <div class='links'>
-        <%= fa_icon "plus" %> <%= link_to_add_association 'add typochronological_unit', f, :typochronological_units, partial: 'typochronological_units/typochronological_unit_fields_ass' %>
-      </div>
+  <div class="field_master_top">
+    <b><%= f.label :typochronological_units %></b>
+  </div>
+    <div class="field_master">
+    <%= f.fields_for :typochronological_units do |typochronological_unit| %>
+      <%= render 'typochronological_units/typochronological_unit_fields_ass', :f => typochronological_unit %>
+    <% end %>
+    <div class='links'>
+      <%= fa_icon "plus" %> <%= link_to_add_association 'add typochronological_unit', f, :typochronological_units, partial: 'typochronological_units/typochronological_unit_fields_ass' %>
     </div>
   </div>
 

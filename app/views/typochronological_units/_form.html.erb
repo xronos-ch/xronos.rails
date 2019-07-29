@@ -1,4 +1,4 @@
-<%= form_with(model: typochronological_unit, local: true) do |form| %>
+<%= form_with(model: typochronological_unit, local: true) do |f| %>
   <% if typochronological_unit.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(typochronological_unit.errors.count, "error") %> prohibited this typochronological_unit from being saved:</h2>
@@ -14,6 +14,6 @@
   <%= render  'typochronological_units/typochronological_unit_fields', f: f %>
 
   <div class="actions">
-    <%= form.submit %>
+    <%= f.submit %>
   </div>
 <% end %>
