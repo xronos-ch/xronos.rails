@@ -46,12 +46,9 @@
     <div class="field">
       <%= f.collection_select :species_id, Species.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
     </div>
-    <div class="field">
-      <%= f.fields_for :species, @arch_object.species do |species| %>
-        <%= f.label :name %>
-        <%= species.text_field :name, placeholder: 'New species' %>
-      <% end %>
-    </div>
+    <%= f.fields_for :species, @arch_object.species do |species| %>
+      <%= render 'species/species_fields', :f => species %>
+    <% end %>
   </div>
 
   <div class="field_master_top">
