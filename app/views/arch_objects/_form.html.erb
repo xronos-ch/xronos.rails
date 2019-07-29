@@ -11,67 +11,71 @@
     </div>
   <% end %>
 
-  <div class="field_master">
+  <div class="field_master flex_field_container">
 
-    
-
-    <div class="field_master_top">
-      <b><%= f.label :site_phase %></b>
-    </div>
-    <div class="field_master">
-      <div class="field">
-        <%= f.collection_select :site_phase_id, SitePhase.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
+    <div class="flex_field_element">
+      <div class="field_master_top">
+        <b><%= f.label :site_phase %></b>
       </div>
-      <%= f.fields_for :site_phase, @arch_object.site_phase do |site_phase| %>
-        <%= render 'site_phases/site_phase_fields', :f => site_phase %>
-      <% end %>
-    </div>
-
-    <div class="field_master_top">
-      <b><%= f.label :material %></b>
-    </div>
-    <div class="field_master">
-      <div class="field">
-        <%= f.collection_select :material_id, Material.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
+      <div class="field_master">
+        <div class="field">
+          <%= f.collection_select :site_phase_id, SitePhase.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
+        </div>
+        <%= f.fields_for :site_phase, @arch_object.site_phase do |site_phase| %>
+          <%= render 'site_phases/site_phase_fields', :f => site_phase %>
+        <% end %>
       </div>
-      <%= f.fields_for :material, @arch_object.material do |material| %>
-        <%= render 'materials/material_fields', :f => material %>
-      <% end %>
     </div>
 
-    <div class="field_master_top">
-      <b><%= f.label :species %></b>
-    </div>
-    <div class="field_master">
-      <div class="field">
-        <%= f.collection_select :species_id, Species.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
+    <div class="flex_field_element">
+      <div class="field_master_top">
+        <b><%= f.label :material %></b>
       </div>
-      <%= f.fields_for :species, @arch_object.species do |species| %>
-        <%= render 'species/species_fields', :f => species %>
-      <% end %>
-    </div>
-
-    <div class="field_master_top">
-      <b><%= f.label :on_site_object_position %></b>
-    </div>
-    <div class="field_master">
-      <div class="field">
-        <%= f.collection_select :on_site_object_position_id, SitePhase.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
+      <div class="field_master">
+        <div class="field">
+          <%= f.collection_select :material_id, Material.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
+        </div>
+        <%= f.fields_for :material, @arch_object.material do |material| %>
+          <%= render 'materials/material_fields', :f => material %>
+        <% end %>
       </div>
-      <%= f.fields_for :on_site_object_position, @arch_object.on_site_object_position do |on_site_object_position| %>
-        <%= render 'on_site_object_positions/on_site_object_position_fields', :f => on_site_object_position %>
-      <% end %>
+
+      <div class="field_master_top">
+        <b><%= f.label :species %></b>
+      </div>
+      <div class="field_master">
+        <div class="field">
+          <%= f.collection_select :species_id, Species.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
+        </div>
+        <%= f.fields_for :species, @arch_object.species do |species| %>
+          <%= render 'species/species_fields', :f => species %>
+        <% end %>
+      </div>
+
+      <div class="field_master_top">
+        <b><%= f.label :on_site_object_position %></b>
+      </div>
+      <div class="field_master">
+        <div class="field">
+          <%= f.collection_select :on_site_object_position_id, SitePhase.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
+        </div>
+        <%= f.fields_for :on_site_object_position, @arch_object.on_site_object_position do |on_site_object_position| %>
+          <%= render 'on_site_object_positions/on_site_object_position_fields', :f => on_site_object_position %>
+        <% end %>
+      </div>
     </div>
 
-    <div class="field_master_top">
-      <b><%= f.label :samples %></b>
-    </div>
-    <div class="field_master">
-      <%= f.fields_for :samples do |sample| %>
-        <%= render 'samples/sample_fields_ass', :f => sample %>
-      <% end %>
-      <div class='links'>
-        <%= fa_icon "plus" %> <%= link_to_add_association 'add sample', f, :samples, partial: 'samples/sample_fields_ass' %>
+    <div class="flex_field_element">
+      <div class="field_master_top">
+        <b><%= f.label :samples %></b>
+      </div>
+      <div class="field_master">
+        <%= f.fields_for :samples do |sample| %>
+          <%= render 'samples/sample_fields_ass', :f => sample %>
+        <% end %>
+        <div class='links'>
+          <%= fa_icon "plus" %> <%= link_to_add_association 'add sample', f, :samples, partial: 'samples/sample_fields_ass' %>
+        </div>
       </div>
     </div>
 
