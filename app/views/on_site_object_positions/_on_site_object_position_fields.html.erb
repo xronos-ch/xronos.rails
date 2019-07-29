@@ -30,19 +30,16 @@
     <%= f.text_field :coord_Z %>
   </div>
 
-  <div class="field">
+  <div class="field_master_top">
     <b><%= f.label :feature_type %></b>
+  </div>
+  <div class="field_master">
     <div class="field">
-      <%= f.collection_select :feature_type_id, FeatureType.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
+      <%= f.collection_select :feature_type_id, FeatureType.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"}  %>
     </div>
-    <div class="field">
-      <%= f.fields_for :feature_type, f.object.feature_type || FeatureType.new do |feature_type_fields| %>
-        <%= feature_type_fields.label :name %>
-        <%= feature_type_fields.text_field :name, placeholder: 'New feature type' %>
-        <%= feature_type_fields.label :description %>
-        <%= feature_type_fields.text_field :description, placeholder: 'Description' %>
-      <% end %>
-    </div>
+    <%= f.fields_for :feature_type, FeatureType.new do |feature_type| %>
+      <%= render 'feature_types/feature_type_fields', :f => feature_type %>
+    <% end %>
   </div>
 
 </div>
