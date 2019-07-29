@@ -54,13 +54,9 @@
     <div class="field">
       <%= f.collection_select :on_site_object_position_id, SitePhase.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
     </div>
-    <div class="field">
-      <div id='on_site_object_position'>
-        <%= f.fields_for :on_site_object_position, @arch_object.on_site_object_position do |on_site_object_position| %>
-          <%= render 'on_site_object_positions/on_site_object_position_fields', :f => on_site_object_position %>
-        <% end %>
-      </div>
-    </div>
+    <%= f.fields_for :on_site_object_position, @arch_object.on_site_object_position do |on_site_object_position| %>
+      <%= render 'on_site_object_positions/on_site_object_position_fields', :f => on_site_object_position %>
+    <% end %>
   </div>
 
   <div class="field_master_top">
