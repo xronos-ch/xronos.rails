@@ -63,13 +63,11 @@
     <b><%= f.label :samples %></b>
   </div>
   <div class="field_master">
-    <div id='sample'>
-      <%= f.fields_for :samples do |sample| %>
-        <%= render 'samples/sample_fields_ass', :f => sample %>
-      <% end %>
-      <div class='links'>
-        <%= fa_icon "plus" %> <%= link_to_add_association 'add sample', f, :samples, partial: 'samples/sample_fields_ass' %>
-      </div>
+    <%= f.fields_for :samples do |sample| %>
+      <%= render 'samples/sample_fields_ass', :f => sample %>
+    <% end %>
+    <div class='links'>
+      <%= fa_icon "plus" %> <%= link_to_add_association 'add sample', f, :samples, partial: 'samples/sample_fields_ass' %>
     </div>
   </div>
 
