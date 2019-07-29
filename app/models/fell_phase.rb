@@ -1,0 +1,2 @@
+class FellPhase < ApplicationRecord
+end

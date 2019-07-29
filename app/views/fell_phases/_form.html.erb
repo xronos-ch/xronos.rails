@@ -1,0 +1,37 @@
+<%= form_with(model: fell_phase, local: true) do |form| %>
+  <% if fell_phase.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(fell_phase.errors.count, "error") %> prohibited this fell_phase from being saved:</h2>
+
+      <ul>
+      <% fell_phase.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :start_time %>
+    <%= form.number_field :start_time %>
+  </div>
+
+  <div class="field">
+    <%= form.label :end_time %>
+    <%= form.number_field :end_time %>
+  </div>
+
+  <div class="field">
+    <%= form.label :site_id %>
+    <%= form.number_field :site_id %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

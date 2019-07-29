@@ -1,0 +1,18 @@
+<h1>Fell Phases</h1>
+
+<table class="responsive nowrap table table-hover" id="dttb-fell_phases" data-sort="true" data-source="<%= url_for(format: :json)%>">
+  <thead>
+    <tr>
+      <th data-data="name">Name</th>
+      <th data-data="start_time">Start time</th>
+      <th data-data="end_time">End time</th>
+      <th data-data="site_id">Site</th>
+      <th data-data="url" data-orderable="false" data-class-name="all" data-searchable="false" class="skip-export" width="100px"></th>
+    </tr>
+  </thead>
+
+</table>
+
+<br>
+
+<%= link_to 'New Fell Phase', new_fell_phase_path %>

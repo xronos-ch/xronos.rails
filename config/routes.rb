@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :fell_phases
   resources :species
   resources :site_phases
   resources :ecochronological_units
