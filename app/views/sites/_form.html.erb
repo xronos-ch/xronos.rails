@@ -1,4 +1,4 @@
-<%= form_with(model: site, local: true) do |form| %>
+<%= form_with(model: site, local: true) do |f| %>
   <% if site.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(site.errors.count, "error") %> prohibited this site from being saved:</h2>
@@ -11,27 +11,9 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= form.label :name %>
-    <%= form.text_field :name %>
-  </div>
-
-  <div class="field">
-    <%= form.label :lat %>
-    <%= form.text_field :lat %>
-  </div>
-
-  <div class="field">
-    <%= form.label :lng %>
-    <%= form.text_field :lng %>
-  </div>
-
-	<div class="field">
-    <%= form.label :country %>
-    <%= form.collection_select :country_id, Country.all, :id, :name %>
-  </div>
+  <%= render  'sites/site_fields', f: f %>
 
   <div class="actions">
-    <%= form.submit %>
+    <%= f.submit %>
   </div>
 <% end %>
