@@ -1,4 +1,4 @@
 class SiteType < ApplicationRecord
   validates :name, presence: true
-  has_many :sites, inverse_of: :site
+  has_many :site_phases, inverse_of: :site_type
 end

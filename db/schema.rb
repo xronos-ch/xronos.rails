@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_22_133840) do
+ActiveRecord::Schema.define(version: 2019_07_29_084213) do
 
   create_table "arch_objects", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -141,6 +141,7 @@ ActiveRecord::Schema.define(version: 2019_07_22_133840) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "site_id"
+    t.integer "site_type_id"
   end
 
   create_table "site_phases_typochronological_units", id: false, force: :cascade do |t|
@@ -162,7 +163,6 @@ ActiveRecord::Schema.define(version: 2019_07_22_133840) do
     t.decimal "lng"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "site_type_id"
     t.integer "country_id"
   end
 

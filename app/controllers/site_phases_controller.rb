@@ -76,6 +76,13 @@ class SitePhasesController < ApplicationController
         :name,
         :approx_start_time,
         :approx_end_time,
+        :site_type_id,
+        :site_type_attributes => [
+          :id,
+          :name,
+          :description,
+          :_destroy
+        ],
         :periods_attributes => [
           :id,
           :name,

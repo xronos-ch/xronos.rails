@@ -13,4 +13,7 @@ class SitePhase < ApplicationRecord
   has_and_belongs_to_many :ecochronological_units
   accepts_nested_attributes_for :ecochronological_units, reject_if: :all_blank
   validates_associated :ecochronological_units
+  belongs_to :site_type, optional: true
+  accepts_nested_attributes_for :site_type, reject_if: :all_blank, allow_destroy: true
+  validates_associated :site_type
 end
