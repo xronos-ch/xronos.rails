@@ -15,7 +15,7 @@
 
     <div id="notch_wrap">
       <div id="notch">
-        <b>Xronos <a href="https://www.github.com/nevrome/temp">v0.0.1 <%= fa_icon "github" %></a></b>
+        <b>Xronos <a href="https://www.github.com/nevrome/xronos.rails">v0.0.1 <%= fa_icon "github" %></a></b>
         <div id="notch_login_status">
           <% if user_signed_in? %>
             <%= fa_icon "user" %> <% if current_user.admin? %> <%= fa_icon "legal" %> <% end %> <%= current_user.email[0...15] + "..." %>
@@ -65,7 +65,7 @@
 
   					<!-- #### Home #### -->
 						<div id="Home" class="page default">
-							
+
 							<%= yield %>
 
               <hr>
