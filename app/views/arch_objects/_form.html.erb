@@ -34,12 +34,9 @@
     <div class="field">
       <%= f.collection_select :material_id, Material.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
     </div>
-    <div class="field">
-      <%= f.fields_for :material, @arch_object.material do |material| %>
-        <%= f.label :name %>
-        <%= material.text_field :name, placeholder: 'New material' %>
-      <% end %>
-    </div>
+    <%= f.fields_for :material, @arch_object.material do |material| %>
+      <%= render 'materials/material_fields', :f => material %>
+    <% end %>
   </div>
 
   <div class="field_master_top">
