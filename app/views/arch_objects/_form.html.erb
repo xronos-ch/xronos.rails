@@ -18,13 +18,9 @@
     <div class="field">
       <%= f.collection_select :site_phase_id, SitePhase.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
     </div>
-    <div class="field">
-      <div id='site_phase'>
-        <%= f.fields_for :site_phase, @arch_object.site_phase do |site_phase| %>
-          <%= render 'site_phases/site_phase_fields', :f => site_phase %>
-        <% end %>
-      </div>
-    </div>
+    <%= f.fields_for :site_phase, @arch_object.site_phase do |site_phase| %>
+      <%= render 'site_phases/site_phase_fields', :f => site_phase %>
+    <% end %>
   </div>
 
   <div class="field_master_top">
