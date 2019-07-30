@@ -17,8 +17,8 @@ class MeasurementsController < ApplicationController
   # GET /measurements/new
   def new
     @measurement = Measurement.new
-    @references_measurements = @measurement.references_measurements.build
-    @reference = @references_measurements.build_reference
+    @measurement.references.build
+    @measurement.references_measurements.build
   end
 
   # GET /measurements/1/edit
