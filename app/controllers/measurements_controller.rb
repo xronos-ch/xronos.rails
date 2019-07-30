@@ -17,6 +17,8 @@ class MeasurementsController < ApplicationController
   # GET /measurements/new
   def new
     @measurement = Measurement.new
+    @references_measurements = @measurement.references_measurements.build
+    @reference = @references_measurements.build_reference
   end
 
   # GET /measurements/1/edit
@@ -87,6 +89,16 @@ class MeasurementsController < ApplicationController
           :delta_c13_std,
           :method,
           :_destroy
+        ],
+        :references_measurements_attributes => [
+          :id,
+          :page,
+          :_destroy,
+          :reference_attributes => [
+            :id,
+            :bibtex,
+            :_destroy
+          ]
         ]
       )
     end
