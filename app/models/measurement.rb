@@ -5,6 +5,8 @@ class Measurement < ApplicationRecord
   belongs_to :c14_measurement, optional: true
   accepts_nested_attributes_for :c14_measurement, reject_if: :all_blank
   validates_associated :c14_measurement
+  has_many :references_measurements
+  has_many :references, through: :references_measurements
 
   def self.to_csv
     CSV.generate do |csv|

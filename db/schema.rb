@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_30_085412) do
+ActiveRecord::Schema.define(version: 2019_07_30_094317) do
 
   create_table "arch_objects", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -138,6 +138,16 @@ ActiveRecord::Schema.define(version: 2019_07_30_085412) do
     t.text "bibtex"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "references_measurements", force: :cascade do |t|
+    t.integer "reference_id"
+    t.integer "measurement_id"
+    t.string "page"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["measurement_id"], name: "index_references_measurements_on_measurement_id"
+    t.index ["reference_id"], name: "index_references_measurements_on_reference_id"
   end
 
   create_table "samples", force: :cascade do |t|
