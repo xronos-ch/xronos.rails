@@ -2,7 +2,9 @@
   <b>Editing Reference</b>
 </div>
 
-<%= render 'form', reference: @reference %>
+<div class="field_master">
+  <%= render 'form', reference: @reference %>
+</div>
 
 <%= link_to 'Show', @reference %> |
 <%= link_to 'Back', references_path %>

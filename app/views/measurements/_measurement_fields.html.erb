@@ -36,10 +36,10 @@
   </div>
   <div class="field_master">
     <%= f.fields_for :references_measurements do |references_measurement| %>
-      <%= render 'references_measurement_fields', :f => references_measurement %>
+      <%= render 'measurements/references_measurement_fields', :f => references_measurement %>
     <% end %>
     <div class='links'>
-      <%= fa_icon "plus" %> <%= link_to_add_association 'add reference', f, :references_measurements, partial: 'references_measurement_fields' %>
+      <%= fa_icon "plus" %> <%= link_to_add_association 'add reference', f, :references_measurements, partial: 'measurements/references_measurement_fields' %>
     </div>
   </div>
 

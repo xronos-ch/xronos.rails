@@ -5,14 +5,15 @@
   </div>
 
   <div class="field_master">
+    <%= f.fields_for :references do |reference| %>
+      <%= render 'references/reference_fields', :f => reference %>
+    <% end %>
+
     <div class = "field">
       <%= f.label :page %>
       <%= f.text_field :page %>
     </div>
 
-    <%= f.fields_for :references do |reference| %>
-      <%= render 'references/reference_fields', :f => reference %>
-    <% end %>
   </div>
 
   <%= fa_icon "minus" %> <%= link_to_remove_association "remove reference", f %>
