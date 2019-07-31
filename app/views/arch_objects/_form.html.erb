@@ -22,7 +22,7 @@
           <%= f.collection_select :site_phase_id, SitePhase.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
           <%= link_to 'edit', root_path, target: "_blank", :id => "edit_site_phase_link", :class => "select_edit_link" %>
           <script type="text/javascript">
-            $("#edit_site_phase_link").click(function() { $(this).attr("href", "/site_phases/" + $("#arch_object_site_phase_id").val() + "/edit"); });
+            $("#edit_site_phase_link").click(function() { $(this).attr("href", "/site_phases/" + $("#arch_object_site_phase_id").val() + "/edit") });
           </script>
         </div>
         <%= f.fields_for :site_phase, @arch_object.site_phase do |site_phase| %>
