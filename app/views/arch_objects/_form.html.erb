@@ -20,7 +20,7 @@
       <div class="field_master">
         <div class="field">
           <%= f.collection_select :site_phase_id, SitePhase.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
-          <%= link_to 'edit', root_path, target: "_blank", :id => "edit_site_phase_link", :class => "select_edit_link" %>
+          <%= link_to 'edit', root_path, :id => "edit_site_phase_link", :class => "select_edit_link" %>
           <script type="text/javascript">
             $("#edit_site_phase_link").click(function() { $(this).attr("href", "/site_phases/" + $("#arch_object_site_phase_id").val() + "/edit") });
           </script>
@@ -38,6 +38,10 @@
       <div class="field_master">
         <div class="field">
           <%= f.collection_select :material_id, Material.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
+          <%= link_to 'edit', root_path, :id => "edit_material_link", :class => "select_edit_link" %>
+          <script type="text/javascript">
+            $("#edit_material_link").click(function() { $(this).attr("href", "/materials/" + $("#arch_object_material_id").val() + "/edit") });
+          </script>
         </div>
         <%= f.fields_for :material, @arch_object.material do |material| %>
           <%= render 'materials/material_fields', :f => material %>
@@ -50,6 +54,10 @@
       <div class="field_master">
         <div class="field">
           <%= f.collection_select :species_id, Species.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
+          <%= link_to 'edit', root_path, :id => "edit_species_link", :class => "select_edit_link" %>
+          <script type="text/javascript">
+            $("#edit_species_link").click(function() { $(this).attr("href", "/species/" + $("#arch_object_species_id").val() + "/edit") });
+          </script>
         </div>
         <%= f.fields_for :species, @arch_object.species do |species| %>
           <%= render 'species/species_fields', :f => species %>
@@ -61,7 +69,11 @@
       </div>
       <div class="field_master">
         <div class="field">
-          <%= f.collection_select :on_site_object_position_id, SitePhase.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
+          <%= f.collection_select :on_site_object_position_id, OnSiteObjectPosition.all, :id, :feature, { include_blank: 'Create new' }, {:class => "observed_select"} %>
+          <%= link_to 'edit', root_path, :id => "edit_on_site_object_position_link", :class => "select_edit_link" %>
+          <script type="text/javascript">
+            $("#edit_on_site_object_position_link").click(function() { $(this).attr("href", "/on_site_object_positions/" + $("#arch_object_on_site_object_position_id").val() + "/edit") });
+          </script>
         </div>
         <%= f.fields_for :on_site_object_position, @arch_object.on_site_object_position do |on_site_object_position| %>
           <%= render 'on_site_object_positions/on_site_object_position_fields', :f => on_site_object_position %>
