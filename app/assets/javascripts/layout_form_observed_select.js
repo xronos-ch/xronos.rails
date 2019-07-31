@@ -8,7 +8,7 @@
       this_object = jQuery(object);
       this_value = this_object.val();
       this_next_div = this_object.parent().next(".field_master");
-      this_edit_link = this_object.next(".observed_select_edit_link");
+      this_edit_link = this_object.next(".select_edit_link");
 
       if (this_value === "") {
         this_next_div.show();
