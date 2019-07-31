@@ -2,6 +2,7 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
   extend Forwardable
 
   def_delegators :@view, :link_to, :edit_arch_object_path
+  def_delegators :@view, :best_in_place
 
   def initialize(params, opts = {})
     @view = opts[:view_context]
@@ -27,11 +28,12 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
   end
 
   def data
+    Rails.logger.debug records.first.to_yaml
     records.map do |record|
       {
         "edit": link_to("edit", edit_arch_object_path(record.arch_object_id)),
         "labnr": record.labnr,
-        "year": record.year,
+        "year": best_in_place(Measurement.find(record.measurement_id), :year),
         "site": record.site,
         "site_type": record.site_type,
         "lat": record.lat,

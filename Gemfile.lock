@@ -53,6 +53,9 @@ GEM
       io-like (~> 0.3.0)
     arel (9.0.0)
     bcrypt (3.1.13)
+    best_in_place (3.1.1)
+      actionpack (>= 3.2)
+      railties (>= 3.2)
     bindex (0.7.0)
     bootsnap (1.4.4)
       msgpack (~> 1.0)
@@ -235,6 +238,7 @@ PLATFORMS
 DEPENDENCIES
   active_record-acts_as
   ajax-datatables-rails
+  best_in_place
   bootsnap (>= 1.1.0)
   byebug
   cancancan
@@ -270,4 +274,4 @@ RUBY VERSION
    ruby 2.6.3p62
 
 BUNDLED WITH
-   2.0.1
+   2.0.2

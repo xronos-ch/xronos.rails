@@ -101,3 +101,6 @@ gem "cocoon"
 # autocomplete in forms
 gem 'jquery-ui-rails'
 gem 'rails-jquery-autocomplete'
+
+# in place editing
+gem 'best_in_place'

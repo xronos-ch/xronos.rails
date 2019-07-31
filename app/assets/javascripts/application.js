@@ -11,8 +11,11 @@
 // about supported directives.
 //
 //= require jquery
+//= require best_in_place
 //= require jquery_ujs
 //= require jquery-ui/widgets/autocomplete
+//= require jquery-ui
+//= require best_in_place.jquery-ui
 //= require autocomplete-rails
 //= require activestorage
 //= require leaflet
