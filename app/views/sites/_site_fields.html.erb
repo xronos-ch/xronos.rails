@@ -27,4 +27,16 @@
     <% end %>
   </div>
 
+  <div class="field_master_top">
+    <b><%= f.label :fell_phases %></b>
+  </div>
+    <div class="field_master">
+    <%= f.fields_for :fell_phases do |fell_phase| %>
+      <%= render 'fell_phases/fell_phase_fields_ass', :f => fell_phase %>
+    <% end %>
+    <div class='links'>
+      <%= fa_icon "plus" %> <%= link_to_add_association 'add fell_phase', f, :fell_phases, partial: 'fell_phases/fell_phase_fields_ass' %>
+    </div>
+  </div>
+
 </div>

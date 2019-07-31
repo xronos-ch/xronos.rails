@@ -1,3 +1,3 @@
 class FellPhase < ApplicationRecord
-  belongs_to :sample
+  belongs_to :site
 end

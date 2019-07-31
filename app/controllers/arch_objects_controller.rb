@@ -128,6 +128,13 @@ class ArchObjectsController < ApplicationController
               :name,
               :abbreviation,
               :_destroy
+            ],
+            :fell_phase_attributes => [
+              :id,
+              :name,
+              :start_time,
+              :end_time,
+              :_destroy
             ]
           ]
         ],
