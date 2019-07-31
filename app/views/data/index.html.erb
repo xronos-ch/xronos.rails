@@ -27,21 +27,41 @@
 <hr>
 
 <!-- #### Links to models #### -->
-<%= link_to 'site_phases', controller: '/site_phases', :action => :index %>
-<%= link_to 'periods', controller: '/periods', :action => :index %>
-<%= link_to 'typochronological_units', controller: '/typochronological_units', :action => :index %>
-<%= link_to 'ecochronological_units', controller: '/ecochronological_units', :action => :index %>
-<%= link_to 'measurements', controller: '/measurements', :action => :index %>
-<%= link_to 'c14_measurements', controller: '/c14_measurements', :action => :index %>
-<%= link_to 'samples', controller: '/samples', :action => :index %>
-<%= link_to 'labs', controller: '/labs', :action => :index %>
-<%= link_to 'sites', controller: '/sites', :action => :index %>
-<%= link_to 'countries', controller: '/countries', :action => :index %>
-<%= link_to 'site_types', controller: '/site_types', :action => :index %>
-<%= link_to 'on_site_object_positions', controller: '/on_site_object_positions', :action => :index %>
-<%= link_to 'feature_types', controller: '/feature_types', :action => :index %>
-<%= link_to 'materials', controller: '/materials', :action => :index %>
-<%= link_to 'species', controller: '/species', :action => :index %>
-<%= link_to 'references', controller: '/references', :action => :index %>
-<%= link_to 'arch_objects', controller: '/arch_objects', :action => :index %>
-
+<svg height="175px" width="100%" xmlns:xlink=“http://www.w3.org/1999/xlink">
+ <!-- 1 -->
+ <a xlink:href="arch_objects"><text transform="rotate(-90, 100, 100)" x="80" y="10" fill="#fff">arch_object</text></a>
+ <!-- 2 -->
+ <a xlink:href="samples"><text x="30" y="22" fill="#fff">sample</text></a>
+ <a xlink:href="site_phases"><text x="30" y="85" fill="#fff">site_phase</text></a>
+ <a xlink:href="on_site_object_positions"><text x="30" y="135" fill="#fff">on_site</text></a>
+ <a xlink:href="materials"><text x="30" y="150" fill="#fff">material</text></a>
+ <a xlink:href="species"><text x="30" y="165" fill="#fff">species</text></a>
+ <!-- 3 -->
+ <a xlink:href="measurements"><text x="120" y="22" fill="#fff">meas</text></a>
+ <a xlink:href="sites"><text x="120" y="52" fill="#fff">site</text></a>
+ <a xlink:href="site_types"><text x="120" y="75" fill="#fff">site_t</text></a>
+ <a xlink:href="periods"><text x="120" y="90" fill="#fff">period</text></a>
+ <a xlink:href="typochronological_units"><text x="120" y="105" fill="#fff">typo</text></a>
+ <a xlink:href="ecochronological_units"><text x="120" y="120" fill="#fff">eco</text></a>
+ <a xlink:href="feature_types"><text x="120" y="135" fill="#fff">feature_t</text></a>
+ <!-- 4 -->
+ <a xlink:href="c14_measurements"><text x="210" y="15" fill="#fff">c14_meas</text></a>
+ <a xlink:href="references"><text x="210" y="30" fill="#fff">reference</text></a>
+ <a xlink:href="countries"><text x="210" y="45" fill="#fff">country</text></a>
+ <a xlink:href="fell_phases"><text x="210" y="60" fill="#fff">fell_phase</text></a>
+ <!-- vlines -->
+ <line y1="0" x1="20" y2="175" x2="20" stroke-width="0.5" stroke="#fff"/>
+ <line y1="0" x1="110" y2="139" x2="110" stroke-width="0.5" stroke="#fff"/>
+ <line y1="0" x1="200" y2="64" x2="200" stroke-width="0.5" stroke="#fff"/>
+ <!-- hlines -->
+ <line y1="34" x1="20" y2="34" x2="290" stroke-width="0.5" stroke="#fff"/>
+ <line y1="124" x1="20" y2="124" x2="200" stroke-width="0.5" stroke="#fff"/>
+ <line y1="139" x1="20" y2="139" x2="200" stroke-width="0.5" stroke="#fff"/>
+ <line y1="154" x1="20" y2="154" x2="110" stroke-width="0.5" stroke="#fff"/>
+ <line y1="64" x1="110" y2="64" x2="290" stroke-width="0.5" stroke="#fff"/>
+ <line y1="79" x1="110" y2="79" x2="200" stroke-width="0.5" stroke="#fff"/>
+ <line y1="94" x1="110" y2="94" x2="200" stroke-width="0.5" stroke="#fff"/>
+ <line y1="109" x1="110" y2="109" x2="200" stroke-width="0.5" stroke="#fff"/>
+ <line y1="19" x1="200" y2="19" x2="290" stroke-width="0.5" stroke="#fff"/>
+ <line y1="49" x1="200" y2="49" x2="290" stroke-width="0.5" stroke="#fff"/>
+</svg>
