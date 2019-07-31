@@ -32,16 +32,16 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
     records.map do |record|
       {
         "edit": link_to("edit", edit_arch_object_path(record.arch_object_id)),
-        "labnr": record.labnr,
+        "labnr": best_in_place(Measurement.find(record.measurement_id), :labnr),
         "year": best_in_place(Measurement.find(record.measurement_id), :year),
-        "site": record.site,
-        "site_type": record.site_type,
-        "lat": record.lat,
-        "lng": record.lng,
-        "country": record.country,
-        "feature": record.feature,
-        "material": record.material,
-        "species": record.species
+        "site": best_in_place(Site.find(record.site_id), :name),
+        "site_type": best_in_place(SiteType.find(record.site_type_id), :name),
+        "lat": best_in_place(Site.find(record.site_id), :lat),
+        "lng": best_in_place(Site.find(record.site_id), :lng),
+        "country": best_in_place(Country.find(record.country_id), :name),
+        "feature": best_in_place(OnSiteObjectPosition.find(record.on_site_object_position_id), :feature),
+        "material": best_in_place(Material.find(record.material_id), :name),
+        "species": best_in_place(Species.find(record.species_id), :name)
       }
     end
   end

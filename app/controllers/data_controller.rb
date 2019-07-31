@@ -126,13 +126,19 @@ class DataController < ApplicationController
       measurements.id as measurement_id,
       measurements.labnr as labnr,
       measurements.year as year,
+      sites.id as site_id,
       sites.name as site,
+      site_types.id as site_type_id,
       site_types.name as site_type,
       sites.lat as lat,
       sites.lng as lng,
+      countries.id as country_id,
       countries.name as country,
+      on_site_object_positions.id as on_site_object_position_id,
       on_site_object_positions.feature as feature,
+      materials.id as material_id,
       materials.name as material,
+      species.id as species_id,
       species.name as species
       "
     ).all
