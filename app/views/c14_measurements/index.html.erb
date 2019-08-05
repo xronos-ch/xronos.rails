@@ -1,4 +1,4 @@
-<h1>C14 Measurements</h1>
+<h1>C14 c14_measurements</h1>
 
 <table class="responsive nowrap table table-hover" id="dttb-c14_measurements" data-sort="true" data-source="<%= url_for(format: :json)%>">
   <thead>
@@ -14,8 +14,25 @@
     </tr>
   </thead>
 
+  <tbody>
+    <% @c14_measurements.each do |c14_measurement| %>
+      <tr>
+        <td><%= c14_measurement.bp %></td>
+        <td><%= c14_measurement.std %></td>
+        <td><%= c14_measurement.cal_bp %></td>
+        <td><%= c14_measurement.cal_std %></td>
+        <td><%= c14_measurement.delta_c13 %></td>
+        <td><%= c14_measurement.delta_c13_std %></td>
+        <td><%= c14_measurement.method %></td>
+        <td><%= link_to 'Show', c14_measurement %></td>
+        <td><%= link_to 'Edit', edit_c14_measurement_path(c14_measurement) %></td>
+        <td><%= link_to 'Destroy', c14_measurement, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+
 </table>
 
 <br>
 
-<%= link_to 'New C14 Measurement', new_c14_measurement_path %>
+<%= link_to 'New C14 measurement', new_c14_measurement_path %>
