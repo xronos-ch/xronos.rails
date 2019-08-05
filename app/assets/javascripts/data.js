@@ -8,7 +8,20 @@ jQuery(document).ready(function() {
       "url": $('#selected_measurements-datatable').data('source')
     },
     "pagingType": "full_numbers",
+    "columnDefs": [
+      {
+       'targets': 0,
+       'searchable': false,
+       'orderable': false,
+       'className': 'dt-body-center',
+       render: function (data, type, full, meta){
+         return '<input type="checkbox" class="checkbox" name="id[]" value="' + $('<div/>').text(data).html() + '">';
+       }
+     }
+   ],
+    "select": {"style": "multi"},
     "columns": [
+      {"data": "edit"},
       {"data": "edit"},
       {"data": "labnr"},
       {"data": "year"},

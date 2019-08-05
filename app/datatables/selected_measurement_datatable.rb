@@ -13,6 +13,7 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
     # Declare strings in this format: ModelName.column_name
     # or in aliased_join_table.column_name format
     @view_columns ||= {
+      select: {},
       edit: { source: "ArchObject.id" },
       labnr: { source: "Measurement.labnr", cond: :like },
       year: { source: "Measurement.year", cond: :like },
@@ -31,6 +32,7 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
     Rails.logger.debug records.first.to_yaml
     records.map do |record|
       {
+        "select": "",
         "edit": link_to("edit", edit_arch_object_path(record.arch_object_id)),
         "labnr": best_in_place(Measurement.find(record.measurement_id), :labnr),
         "year": best_in_place(Measurement.find(record.measurement_id), :year),
