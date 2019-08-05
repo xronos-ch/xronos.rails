@@ -32,7 +32,7 @@ handles=[]
       type: 'line',
       name: '1' + String.fromCharCode(963),
       pointInterval: #{@likelihood_res[i].to_i.year * 1000 },
-      pointStart: #{@likelihood_start[i].to_i * 1000}, 
+      pointStart: #{@likelihood_start[i].to_i * 1000},
       data: [#{@one_sigma_range[i].join(", ")}],
       color: '#AA4643',
       showInLegend: false,
@@ -42,7 +42,7 @@ handles=[]
       type: 'line',
       name: '2' + String.fromCharCode(963),
       pointInterval: #{@likelihood_res[i].to_i.year * 1000},
-      pointStart: #{@likelihood_start[i].to_i * 1000}, 
+      pointStart: #{@likelihood_start[i].to_i * 1000},
       data: [#{@two_sigma_range[i].join(", ")}],
       color: '#DB843D',
       showInLegend: false,
@@ -50,7 +50,7 @@ handles=[]
     }
   "
   axis[i]="
-  { 
+  {
          gridLineWidth: 0,
          labels: false,
          title: false,
@@ -62,10 +62,8 @@ handles=[]
          maxPadding: 0.95
       }
   "
-  handles[i]="
-    <li style='position: relative; cursor: move;' id='#{i}'>#{@samples[i].lab.lab_code + '-' + @samples[i].lab_nr}</li>  
-  "
-  
+  <%- # handles[i]=" <li style='position: relative; cursor: move;' id='#{i}'>#{@c14_measurements[i].lab.lab_code + '-' + @c14_measurements[i].lab_nr}</li>  " -%>
+
 end
 series_string=series.reverse.join(',').html_safe
 axis_string=axis.reverse.join(',').html_safe
@@ -84,32 +82,32 @@ handles_string = "
 <%= javascript_tag "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %>
 <%= stylesheet_link_tag 'application' %>
 <%= javascript_include_tag "jquery", "jquery-ui", "highcharts", "modules/exporting" %>
-	<style> 
+	<style>
 	#sortable { list-style-type: none; margin: 0; padding: 0; width: 10%;}
 	#sortable li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; background: #ffffff}
 	#sortable li span { position: absolute; margin-left: -1.3em;}
-	</style> 
+	</style>
 
-<div id="calib_chart2" style="width: 800px; height: <%=300+50*anzahl%>px;float:left;"></div>  
+<div id="calib_chart2" style="width: 800px; height: <%=300+50*anzahl%>px;float:left;"></div>
 
 <script type="text/javascript" charset="utf-8">
 $(function() {
         $("#sortable").sortable();
         $("#sortable").disableSelection();
     });
-    
-$(function () {  
+
+$(function () {
   var multichart = new Highcharts.Chart({
     exporting:
     {
-      url: '/samples/export_chart?authenticity_token='+encodeURIComponent(AUTH_TOKEN)
+      url: '/c14_measurements/export_chart?authenticity_token='+encodeURIComponent(AUTH_TOKEN)
     },
     chart: { renderTo: 'calib_chart2',
              defaultSeriesType: 'area',
              alignTicks: false,
              shadow: true,
              zoomType: 'x'
-    },  
+    },
     tooltip: {
       enabled: true,
       formatter: function() {
@@ -142,7 +140,7 @@ $(function () {
                 }
              }
           }
-       }       
+       }
     },
     series: [<%=series_string%>],
     xAxis: {
@@ -158,7 +156,7 @@ $(function () {
          },
       minPadding:0.1,
       maxPadding:0.1
-      
+
     },
     title: {
       text: 'Calibration of multiple dates',
@@ -178,7 +176,7 @@ $(function () {
         href: 'http://radon.ufg.uni-kiel.de'
     },
     yAxis: [<%=axis_string%>]
-  });  
+  });
 
 		$( "#sortable" ).sortable({
 		  stop: function(event, ui) {
@@ -192,7 +190,7 @@ $(function () {
 		      counter = counter - 1;
 		    };
 		    multichart.redraw();
-		  }		  
+		  }
 		});
 		$( "#sortable" ).disableSelection();
 	});

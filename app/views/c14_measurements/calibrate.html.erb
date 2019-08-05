@@ -1,28 +1,28 @@
 <%= javascript_tag "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %>
 <%= stylesheet_link_tag 'application' %>
 <%= javascript_include_tag "jquery", "highcharts", "modules/exporting" %>
-	<style> 
+	<style>
 	#sortable { list-style-type: none; margin: 0; padding: 0; width: 10%; }
 	#sortable li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; background: #ffffff}
 	#sortable li span { position: absolute; margin-left: -1.3em;}
-	</style> 
+	</style>
 
-<div id="calib_chart" style="width: 800px; height: 500px; margin-top: -60px;"></div>  
+<div id="calib_chart" style="width: 800px; height: 500px; margin-top: -60px;"></div>
 
-<script type="text/javascript" charset="utf-8">  
+<script type="text/javascript" charset="utf-8">
 var chart1; // globally available
 
 $(document).ready(function() {
     chart1 =  new Highcharts.Chart({
     exporting:
     {
-      url: '/samples/export_chart?authenticity_token='+encodeURIComponent(AUTH_TOKEN)
+      url: '/c14_measurements/export_chart?authenticity_token='+encodeURIComponent(AUTH_TOKEN)
     },
     chart: { renderTo: 'calib_chart',
              defaultSeriesType: 'area',
              alignTicks: false,
              shadow: true
-    },  
+    },
     tooltip: {
       enabled: true,
       formatter: function() {
@@ -55,11 +55,12 @@ $(document).ready(function() {
                 }
              }
           }
-       }       
+       }
     },
     series: [{
       type: 'area',
-      name: '<%=@sample.lab.lab_code + '-' + @sample.lab_nr%>',
+      //name: '<%=@c14_measurement.lab.lab_code + '-' + @c14_measurement.lab_nr%>',
+			name: 'test name',
       pointInterval: <%= @likelihood_res.to_i.year * 1000 %>,
       pointStart: <%= @likelihood_start.to_i * 1000 %>,
       data: [<%=@data.join(", ")%>],
@@ -69,7 +70,7 @@ $(document).ready(function() {
       type: 'line',
       name: '1' + String.fromCharCode(963),
       pointInterval: <%= @likelihood_res.to_i.year * 1000 %>,
-      pointStart: <%= @likelihood_start.to_i * 1000 %>, 
+      pointStart: <%= @likelihood_start.to_i * 1000 %>,
       data: [<%=@one_sigma_range.join(", ")%>],
       color: '#AA4643'
     },
@@ -77,7 +78,7 @@ $(document).ready(function() {
       type: 'line',
       name: '2' + String.fromCharCode(963),
       pointInterval: <%= @likelihood_res.to_i.year * 1000 %>,
-      pointStart: <%= @likelihood_start.to_i * 1000 %>, 
+      pointStart: <%= @likelihood_start.to_i * 1000 %>,
       data: [<%=@two_sigma_range.join(", ")%>],
       color: '#DB843D'
     },
@@ -111,8 +112,9 @@ $(document).ready(function() {
          }
     },
     title: {
-      text: '<%=@sample.lab.lab_code + '-' + @sample.lab_nr + ' (' + @sample.bp.to_s + ' ± ' + @sample.std.to_s + ')'%>',
-      align: 'right',
+      // text: '<%=@c14_measurement.lab.lab_code + '-' + @c14_measurement.lab_nr + ' (' + @c14_measurement.bp.to_s + ' ± ' + @c14_measurement.std.to_s + ')'%>',
+			text: 'test title',
+			align: 'right',
       x: -70
     },
     subtitle: {
@@ -148,7 +150,7 @@ $(document).ready(function() {
          startOnTick:false,
          minPadding: 0.05,
          maxPadding: 0.95
-         
+
       }, { // Secondary yAxis
          gridLineWidth: 1,
          title: {
@@ -166,23 +168,23 @@ $(document).ready(function() {
             },
          },
          plotBands: [{
-            from: <%=(@sample.bp + @sample.std).to_s%>,
-            to: <%=(@sample.bp - @sample.std).to_s%>,
+            from: <%=(@c14_measurement.bp + @c14_measurement.std).to_s%>,
+            to: <%=(@c14_measurement.bp - @c14_measurement.std).to_s%>,
             color: 'rgba(69, 114, 167, 0.2)',
             label: {
-               text: 'Sample BP 1 '+ String.fromCharCode(963),
+               text: 'c14_measurement BP 1 '+ String.fromCharCode(963),
                style: {
                   color: '#606060'
                }
             }
          }],
-         
+
          startOnTick: false,
          endOnTick:false,
          minPadding: 0.8,
          maxPadding: 0
       }]
-  });  
+  });
 });
 
 </script>

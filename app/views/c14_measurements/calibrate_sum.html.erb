@@ -1,26 +1,26 @@
 <%= javascript_tag "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %>
 <%= stylesheet_link_tag 'application' %>
 <%= javascript_include_tag "jquery", "highcharts", "modules/exporting" %>
-	<style> 
+	<style>
 	#sortable { list-style-type: none; margin: 0; padding: 0; width: 10%; }
 	#sortable li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; background: #ffffff}
 	#sortable li span { position: absolute; margin-left: -1.3em;}
-	</style> 
+	</style>
 
-<div id="calib_chart" style="width: 800px; height: 500px; margin-top: -60px;"></div>  
+<div id="calib_chart" style="width: 800px; height: 500px; margin-top: -60px;"></div>
 
-<script type="text/javascript" charset="utf-8">  
+<script type="text/javascript" charset="utf-8">
 //$(function () {  
   var chart = new Highcharts.Chart({
     exporting:
     {
-      url: '/samples/export_chart?authenticity_token='+encodeURIComponent(AUTH_TOKEN)
+      url: '/c14_measurements/export_chart?authenticity_token='+encodeURIComponent(AUTH_TOKEN)
     },
     chart: { renderTo: 'calib_chart',
              defaultSeriesType: 'area',
              alignTicks: false,
              shadow: true
-    },  
+    },
     tooltip: {
       enabled: true,
       formatter: function() {
@@ -53,7 +53,7 @@
                 }
              }
           }
-       }       
+       }
     },
     series: [{
       type: 'area',
@@ -67,7 +67,7 @@
       type: 'line',
       name: '1' + String.fromCharCode(963),
       pointInterval: <%= @likelihood_res.to_i.year * 1000 %>,
-      pointStart: <%= @likelihood_start.to_i * 1000 %>, 
+      pointStart: <%= @likelihood_start.to_i * 1000 %>,
       data: [<%=@one_sigma_range.join(", ")%>],
       color: '#AA4643'
     },
@@ -75,7 +75,7 @@
       type: 'line',
       name: '2' + String.fromCharCode(963),
       pointInterval: <%= @likelihood_res.to_i.year * 1000 %>,
-      pointStart: <%= @likelihood_start.to_i * 1000 %>, 
+      pointStart: <%= @likelihood_start.to_i * 1000 %>,
       data: [<%=@two_sigma_range.join(", ")%>],
       color: '#DB843D'
     },
@@ -143,7 +143,7 @@
          startOnTick:false,
          minPadding: 0.05,
          maxPadding: 0.95
-         
+
       }, { // Secondary yAxis
          gridLineWidth: 1,
          title: {
@@ -160,13 +160,13 @@
                color: '#4572A7'
             },
          },
-         
+
          startOnTick: false,
          endOnTick:false,
          minPadding: 0.8,
          maxPadding: 0
       }]
-  });  
+  });
 //});
 
 
@@ -182,6 +182,6 @@ newMax = Date.UTC($('#max').val(),0,0);
 if (useNarrowExtremes) xAxis.setExtremes(newMin, newMax);
 else xAxis.setExtremes();
 useNarrowExtremes = !useNarrowExtremes;
-} 
+}
 </script>
 min:<%=text_field_tag("min") %> max:<%=text_field_tag("max") %> <%= link_to "Set Min/Max", "#", onclick: "setExtremes(true);", class: "btn btn-info"%> <%= link_to "Reset Zoom", "#", onclick: "setExtremes(false);", class: "btn btn-info"%>
