@@ -71,4 +71,410 @@ class C14MeasurementsController < ApplicationController
     def c14_measurement_params
       params.require(:c14_measurement).permit(:bp, :std, :cal_bp, :cal_std, :delta_c13, :delta_c13_std, :method)
     end
+
+  public
+
+  ################################
+  #### calibration with oxcal ####
+  ################################
+
+  def calibrate
+    @sample = Sample.with_permissions_to(:show).find(params[:id])
+    out="Options(){RawData=TRUE};Plot(){R_Date(\"#{@sample.name}\",#{@sample.bp},#{@sample.std});};"
+    File.open('tmp/radon_calib.oxcal', 'w') {|f| f.write(out) }
+    `vendor/oxcal/OxCalLinux tmp/radon_calib.oxcal`
+    @log = File.read('tmp/radon_calib.log')
+    @graph = File.read('tmp/radon_calib.js')
+    @log=@log.split("\n")[6..-1].join("\n")
+    result_lines=@log.scan(/\n/).length
+    @result_lines=result_lines
+    likelihood_start = @graph[/(likelihood.start=)(.*)(;)/,2].to_f
+  #    @likelihood_start=Time.local(likelihood_start,1,1)
+    @likelihood_start=Time.mktime(likelihood_start)
+    @likelihood_res = @graph[/(likelihood.resolution=)(.*)(;)/,2].to_f
+
+    likelihood_prob_string=@graph[/(likelihood.prob=\[)(.*)(\];)/,2]
+    likelihood_prob_norm=@graph[/(likelihood.probNorm=)(.*)(;)/,2]
+    likelihood_probs=likelihood_prob_string.split(', ').map{|prob| prob.to_f*likelihood_prob_norm.to_f}
+    calib_cal_string=@graph[/(calib\[0\].rawcal=\[)(.*)(\];)/,2]
+    @calib_cal=calib_cal_string.split(',').map{|prob| prob.to_f}
+    calib_bp_string=@graph[/(calib\[0\].rawbp=\[)(.*)(\];)/,2]
+    @calib_bp=calib_bp_string.split(',').map{|prob| prob.to_f}
+    calib_sigma_string=@graph[/(calib\[0\].rawsigma=\[)(.*)(\];)/,2]
+    @calib_sigma=calib_sigma_string.split(',').map{|prob| prob.to_f}
+
+    timespan=likelihood_probs.length * @likelihood_res
+    @likelihood_end = Time.mktime(likelihood_start+timespan)
+
+    @calib_data=Array.new
+    @calib_data[0]=@calib_cal
+    @calib_data[1]=@calib_bp
+    @calib_data[2]=@calib_bp.zip(@calib_sigma).map{ |pair| pair[0] + pair[1] }
+    @calib_data[3]=@calib_bp.zip(@calib_sigma).map{ |pair| pair[0] - pair[1] }
+    @calib_data=@calib_data.transpose
+
+    @calib_data_out=String.new
+    calib_data_out_tmp=Array.new
+    calib_upper_out_tmp=Array.new
+    calib_lower_out_tmp=Array.new
+
+    @calib_data.each do |a|
+     if ((a[0]>=likelihood_start) && ((likelihood_start + timespan) >=a[0]))
+       calib_data_out_tmp.push('[' + (Time.mktime(a[0]).to_i*1000).to_s + ', ' + a[1].to_s + ']')
+       calib_upper_out_tmp.push('[' + (Time.mktime(a[0]).to_i*1000).to_s + ', ' + a[2].to_s + ']')
+       calib_lower_out_tmp.push('[' + (Time.mktime(a[0]).to_i*1000).to_s + ', ' + a[3].to_s + ']')
+     end
+    end
+    @calib_data_out=calib_data_out_tmp.join(',')
+    @calib_upper_out=calib_upper_out_tmp.join(',')
+    @calib_lower_out=calib_lower_out_tmp.join(',')
+
+    @data=likelihood_probs
+
+    labels=likelihood_probs.length.times.collect { |x| (x * @likelihood_res +likelihood_start).round}
+
+    result_one_sigma=@graph.scan(/ocd\[2\].likelihood.range\[1\](.*);/)
+    result_one_sigma=result_one_sigma.collect{|x| x.to_s[/\[.*?\].*\[(.*?)\]/,1]}
+    one_sigma_dist=Array.new
+    counter=0
+    result_one_sigma.each do |range|
+      unless range.blank?
+        range = range.split(",").map{|value| value.to_f}
+        one_sigma_dist[counter] = labels.map{|label| label.between?(range[0],range[1])}
+        counter = counter + 1
+      end
+    end
+    one_sigma_prob=Array.new
+    one_sigma_dist.transpose.each_with_index do |one_sigma,i|
+      one_sigma_prob[i]=one_sigma.include?(true) ? -(likelihood_probs.max/10) : 'null'
+    end
+
+    @one_sigma_range = one_sigma_prob
+
+    result_two_sigma=@graph.scan(/ocd\[2\].likelihood.range\[2\](.*);/)
+    result_two_sigma=result_two_sigma.collect{|x| x.to_s[/\[.*?\].*\[(.*?)\]/,1]}
+
+    two_sigma_dist=Array.new
+    counter=0
+    result_two_sigma.each do |range|
+      unless range.blank?
+        range = range.split(",").map{|value| value.to_f}
+        two_sigma_dist[counter] = labels.map{|label| label.between?(range[0],range[1])}
+        counter = counter + 1
+      end
+    end
+    two_sigma_prob=Array.new
+    two_sigma_dist.transpose.each_with_index do |two_sigma,i|
+      two_sigma_prob[i]=two_sigma.include?(true) ? -(likelihood_probs.max/20) : 'null'
+    end
+
+    @two_sigma_range = two_sigma_prob
+
+    @curve=@graph[/(calib\[0\].ref=\")(.*)(;\";)/,2]
+
+    user_files_mask = File.join("#{Rails.root}/tmp/radon_calib*")
+
+    user_files = Dir.glob(user_files_mask)
+
+    render :layout => false
+
+  end
+
+  def calibrate_multi
+    # params[:ids]=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
+    order=params[:sort_by]
+    @samples = Sample.order(order).where(id: params[:ids])
+
+    out="Options(){RawData=TRUE};Plot(){"
+    @samples.each do |sample|
+      out << "R_Date(\"#{sample.name}\",#{sample.bp},#{sample.std});"
+    end
+    out << "};"
+    File.open('tmp/radon_calib.oxcal', 'w') {|f| f.write(out) }
+    `vendor/oxcal/OxCalLinux tmp/radon_calib.oxcal`
+
+    @graph = File.read('tmp/radon_calib.js')
+    first_sample_number=2
+    @likelihood_start=[]
+    @likelihood_res=[]
+    @data=[]
+    @likelihood_end=[]
+    @one_sigma_range=[]
+    @two_sigma_range=[]
+    max_likelihood=[]
+
+    @samples.each_with_index do |sample,i|
+      sample_prefix="ocd[#{(i+first_sample_number).to_s}]."
+
+      likelihood_start = @graph[/(#{Regexp.escape(sample_prefix)}likelihood.start=)(.*)(;)/,2].to_f
+
+      @likelihood_start[i]=Time.mktime(likelihood_start)
+      @likelihood_res[i] = @graph[/(#{Regexp.escape(sample_prefix)}likelihood.resolution=)(.*)(;)/,2].to_f
+
+      likelihood_prob_string=@graph[/(#{Regexp.escape(sample_prefix)}likelihood.prob=\[)(.*)(\];)/,2]
+      likelihood_prob_norm=@graph[/(#{Regexp.escape(sample_prefix)}likelihood.probNorm=)(.*)(;)/,2]
+      likelihood_probs=likelihood_prob_string.split(', ').map{|prob| prob.to_f*likelihood_prob_norm.to_f}
+
+      timespan=likelihood_probs.length * @likelihood_res[i]
+      @likelihood_end[i] = Time.mktime(likelihood_start+timespan)
+
+      labels=likelihood_probs.length.times.collect { |x| (x * @likelihood_res[i] +likelihood_start).round}
+
+      max_likelihood[i]=likelihood_probs.max
+
+      tmp_data=[]
+
+      likelihood_probs.each_with_index do |likelihood,index|
+        if index==0
+          tmp_data.push('{name: "' + sample.lab.lab_code.to_s + '-' + sample.lab_nr.to_s + '", x: ' + (Time.mktime(labels[index]).to_i*1000).to_s + ',y:' + likelihood.to_s + '}')
+        else
+          tmp_data.push('{x: ' + (Time.mktime(labels[index]).to_i*1000).to_s + ', y:' + likelihood.to_s + '}')
+        end
+      end
+
+      # @data[i]=likelihood_probs
+      @data[i]=tmp_data
+
+      result_one_sigma=@graph.scan(/#{Regexp.escape(sample_prefix)}likelihood.range\[1\](.*);/)
+
+      result_one_sigma=result_one_sigma.collect{|x| x.to_s[/\[.*?\].*\[(.*?)\]/,1]}
+
+      one_sigma_dist=Array.new
+      counter=0
+      result_one_sigma.each do |range|
+        unless range.blank?
+          range = range.split(",").map{|value| value.to_f}
+          one_sigma_dist[counter] = labels.map{|label| label.between?(range[0],range[1])}
+          counter = counter + 1
+        end
+      end
+
+      one_sigma_prob=Array.new
+      one_sigma_dist.transpose.each_with_index do |one_sigma,index|
+        one_sigma_prob[index]=one_sigma.include?(true) ? -(max_likelihood[i]/10) : 'null'
+      end
+
+      @one_sigma_range[i] = one_sigma_prob
+
+      result_two_sigma=@graph.scan(/#{Regexp.escape(sample_prefix)}likelihood.range\[2\](.*);/)
+      result_two_sigma=result_two_sigma.collect{|x| x.to_s[/\[.*?\].*\[(.*?)\]/,1]}
+
+      two_sigma_dist=Array.new
+      counter=0
+      result_two_sigma.each do |range|
+        unless range.blank?
+          range = range.split(",").map{|value| value.to_f}
+          two_sigma_dist[counter] = labels.map{|label| label.between?(range[0],range[1])}
+          counter = counter + 1
+        end
+      end
+      two_sigma_prob=Array.new
+      two_sigma_dist.transpose.each_with_index do |two_sigma,index|
+        two_sigma_prob[index]=two_sigma.include?(true) ? -(max_likelihood[i]/20) : 'null'
+      end
+
+      @two_sigma_range[i] = two_sigma_prob
+
+    end
+
+    @curve=@graph[/(calib\[0\].ref=\")(.*)(;\";)/,2]
+
+    user_files_mask = File.join("#{Rails.root}/tmp/radon_calib*")
+
+    user_files = Dir.glob(user_files_mask)
+
+    user_files.each do |file_location|
+      File.delete(file_location)
+    end
+
+    @max_data=max_likelihood.max
+
+    render :layout => false
+
+  end
+
+  def calibrate_sum
+    # params[:ids]=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
+    order=params[:sort_by]
+    @samples = Sample.order(order).where(id: params[:ids])
+    # @sample_names_string = @samples.map(&:name).to_sentence
+    out="Options(){RawData=TRUE};Plot(){Sum(){"
+    @samples.each do |sample|
+      out << "R_Date(\"#{sample.name}\",#{sample.bp},#{sample.std});"
+    end
+    out << "};};"
+    File.open('tmp/radon_calib.oxcal', 'w') {|f| f.write(out) }
+    `vendor/oxcal/OxCalLinux tmp/radon_calib.oxcal`
+    @log = File.read('tmp/radon_calib.log')
+    @graph = File.read('tmp/radon_calib.js')
+    @log=@log.split("\n")[6..-1].join("\n")
+    result_lines=@log.scan(/\n/).length
+    @result_lines=result_lines
+    likelihood_start = @graph[/(ocd\[2\].likelihood.start=)(.*)(;)/,2].to_f
+    # @likelihood_start=Time.local(likelihood_start,1,1)
+    @likelihood_start=Time.mktime(likelihood_start)
+    @likelihood_res = @graph[/(ocd\[2\].likelihood.resolution=)(.*)(;)/,2].to_f
+
+    likelihood_prob_string=@graph[/(ocd\[2\].likelihood.prob=\[)(.*)(\];)/,2]
+    likelihood_prob_norm=@graph[/(ocd\[2\].likelihood.probNorm=)(.*)(;)/,2]
+    likelihood_probs=likelihood_prob_string.split(', ').map{|prob| prob.to_f*likelihood_prob_norm.to_f}
+    calib_cal_string=@graph[/(calib\[0\].rawcal=\[)(.*)(\];)/,2]
+    @calib_cal=calib_cal_string.split(',').map{|prob| prob.to_f}
+    calib_bp_string=@graph[/(calib\[0\].rawbp=\[)(.*)(\];)/,2]
+    @calib_bp=calib_bp_string.split(',').map{|prob| prob.to_f}
+    calib_sigma_string=@graph[/(calib\[0\].rawsigma=\[)(.*)(\];)/,2]
+    @calib_sigma=calib_sigma_string.split(',').map{|prob| prob.to_f}
+
+    timespan=likelihood_probs.length * @likelihood_res
+    @likelihood_end = Time.mktime(likelihood_start+timespan)
+
+    @calib_data=Array.new
+    @calib_data[0]=@calib_cal
+    @calib_data[1]=@calib_bp
+    @calib_data[2]=@calib_bp.zip(@calib_sigma).map{ |pair| pair[0] + pair[1] }
+    @calib_data[3]=@calib_bp.zip(@calib_sigma).map{ |pair| pair[0] - pair[1] }
+    @calib_data=@calib_data.transpose
+
+    @calib_data_out=String.new
+    calib_data_out_tmp=Array.new
+    calib_upper_out_tmp=Array.new
+    calib_lower_out_tmp=Array.new
+
+    @calib_data.each do |a|
+     if ((a[0]>=likelihood_start) && ((likelihood_start + timespan) >=a[0]))
+       calib_data_out_tmp.push('[' + (Time.mktime(a[0]).to_i*1000).to_s + ', ' + a[1].to_s + ']')
+       calib_upper_out_tmp.push('[' + (Time.mktime(a[0]).to_i*1000).to_s + ', ' + a[2].to_s + ']')
+       calib_lower_out_tmp.push('[' + (Time.mktime(a[0]).to_i*1000).to_s + ', ' + a[3].to_s + ']')
+     end
+    end
+    @calib_data_out=calib_data_out_tmp.join(',')
+    @calib_upper_out=calib_upper_out_tmp.join(',')
+    @calib_lower_out=calib_lower_out_tmp.join(',')
+
+    @data=likelihood_probs
+
+    labels=likelihood_probs.length.times.collect { |x| (x * @likelihood_res +likelihood_start).round}
+
+    result_one_sigma=@graph.scan(/ocd\[2\].likelihood.range\[1\](.*);/)
+    result_one_sigma=result_one_sigma.collect{|x| x.to_s[/\[.*?\].*\[(.*?)\]/,1]}
+    one_sigma_dist=Array.new
+    counter=0
+    result_one_sigma.each do |range|
+      unless range.blank?
+        range = range.split(",").map{|value| value.to_f}
+        one_sigma_dist[counter] = labels.map{|label| label.between?(range[0],range[1])}
+        counter = counter + 1
+      end
+    end
+    one_sigma_prob=Array.new
+    one_sigma_dist.transpose.each_with_index do |one_sigma,i|
+      one_sigma_prob[i]=one_sigma.include?(true) ? -(likelihood_probs.max/10) : 'null'
+    end
+
+    @one_sigma_range = one_sigma_prob
+
+    result_two_sigma=@graph.scan(/ocd\[2\].likelihood.range\[2\](.*);/)
+    result_two_sigma=result_two_sigma.collect{|x| x.to_s[/\[.*?\].*\[(.*?)\]/,1]}
+
+    two_sigma_dist=Array.new
+    counter=0
+    result_two_sigma.each do |range|
+      unless range.blank?
+        range = range.split(",").map{|value| value.to_f}
+        two_sigma_dist[counter] = labels.map{|label| label.between?(range[0],range[1])}
+        counter = counter + 1
+      end
+    end
+    two_sigma_prob=Array.new
+    two_sigma_dist.transpose.each_with_index do |two_sigma,i|
+      two_sigma_prob[i]=two_sigma.include?(true) ? -(likelihood_probs.max/20) : 'null'
+    end
+
+    @two_sigma_range = two_sigma_prob
+
+    @curve=@graph[/(calib\[0\].ref=\")(.*)(;\";)/,2]
+
+    user_files_mask = File.join("#{Rails.root}/tmp/radon_calib*")
+
+    user_files = Dir.glob(user_files_mask)
+
+    user_files.each do |file_location|
+      File.delete(file_location)
+    end
+
+    render :layout => false
+
+  end
+
+
+  def export_chart
+    # require 'active_support/secure_random'
+    # create an SVG image
+    # based on Highcharts index.php
+    batik_path = Rails.root.to_s() + '/vendor/batik/batik-rasterizer.jar'
+
+    svg = params[:svg]
+    filename = params[:filename].blank? ? "chart" : params[:filename]
+
+    if params[:type] == 'image/png'
+      type = '-m image/png';
+      ext = 'png'
+    elsif params[:type] == 'image/jpeg'
+      type = '-m image/jpeg'
+      ext = 'jpg'
+    elsif params[:type]  == 'application/pdf'
+      type = '-m application/pdf'
+      ext = 'pdf'
+    elsif params[:type]  == 'image/svg+xml'
+      type = '-m image/svg+xml'
+      ext = 'svg'
+    else
+      show_error "unknown image type: #{params[:type]}"
+    end
+
+    # two random file names - one for Batik to read (with SVG XML) and one for it to write to
+    tempname = SecureRandom.hex(16)
+    outfile = "tmp/out_#{tempname}.#{ext}"
+    infile = "tmp/in_#{tempname}.svg"
+    tmppngfile = "tmp/#{tempname}.png"
+    width = "-w #{params[:width]}" if params[:width]
+
+    File.open(infile, 'w') {|f| f.write(svg) }          # SVG definition for Batik to read
+
+     # do the conversion
+    if (params[:type]  == 'image/svg+xml')
+      cmd = "cp #{infile} #{outfile}"
+      # logger.info(cmd)
+      rsp = system(cmd)
+    elsif (params[:type]  == 'image/jpeg')
+      cmd = "inkscape -f #{infile} #{width} -e #{tmppngfile}"
+      # logger.info(cmd)
+      rsp = system(cmd)
+      cmd = "convert #{tmppngfile} #{outfile}"
+      # logger.info(cmd)
+      rsp = rsp & system(cmd)
+      File.delete(tmppngfile)
+    elsif (params[:type]  == 'image/png')
+      cmd = "inkscape -f #{infile} #{width} -e #{outfile}"
+      # logger.info(cmd)
+      rsp = system(cmd)
+    elsif (params[:type]  == 'application/pdf')
+      cmd = "inkscape -f #{infile} -A #{outfile}"
+      # logger.info(cmd)
+      rsp = system(cmd)
+    end
+
+     # For now, rely on existence and size of output file as an idicator of success
+     fs = File.size?( outfile)
+     if fs.nil? || fs < 10
+       render :text => "Unable to export image; #{rsp}", :status => 500
+    else
+      File.open(outfile, 'r') do |f|
+        send_data f.read, :type => params[:type], :filename=> "#{filename}.#{ext}", :disposition => 'attachment'
+      end
+     end
+
+     File.delete( infile, outfile)
+  end
+
 end
