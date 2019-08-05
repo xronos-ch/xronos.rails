@@ -6,11 +6,11 @@ Rails.application.routes.draw do
   resources :typochronological_units
   resources :periods
   resources :c14_measurements do
-    collection do
-      get :calibrate_multi
-      get :calibrate
-      get :calibrate_sum
-      post :export_chart
+    member do
+      get 'calibrate_multi'
+      get 'calibrate'
+      get 'calibrate_sum'
+      post 'export_chart'
     end
   end
   devise_for :users

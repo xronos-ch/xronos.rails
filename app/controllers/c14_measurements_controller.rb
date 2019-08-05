@@ -79,7 +79,7 @@ class C14MeasurementsController < ApplicationController
   ################################
 
   def calibrate
-    @c14_measurement = C14Measurement.with_permissions_to(:show).find(params[:id])
+    @c14_measurement = C14Measurement.find(params[:id])
     out="Options(){RawData=TRUE};Plot(){R_Date(\"#{@c14_measurement.id}\",#{@c14_measurement.bp},#{@c14_measurement.std});};"
     File.open('tmp/radon_calib.oxcal', 'w') {|f| f.write(out) }
     `vendor/oxcal/OxCalLinux tmp/radon_calib.oxcal`

@@ -1,7 +1,7 @@
 class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
   extend Forwardable
 
-  def_delegators :@view, :link_to, :calibrate_c14_measurements_path
+  def_delegators :@view, :link_to, :calibrate_c14_measurement_path
   def_delegators :@view, :link_to, :edit_arch_object_path
   def_delegators :@view, :best_in_place
 
@@ -36,7 +36,7 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
       {
         "select": "",
         "edit": link_to("edit", edit_arch_object_path(record.arch_object_id)),
-        "calibrate": link_to("calibrate", calibrate_c14_measurements_path(record.c14_measurement_id)),
+        "calibrate": link_to("calibrate", calibrate_c14_measurement_path(record.c14_measurement_id)),
         "labnr": best_in_place(Measurement.find(record.measurement_id), :labnr),
         "year": best_in_place(Measurement.find(record.measurement_id), :year),
         "site": best_in_place(Site.find(record.site_id), :name),
