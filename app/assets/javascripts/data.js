@@ -35,6 +35,16 @@ jQuery(document).ready(function() {
       {"data": "feature"},
       {"data": "material"},
       {"data": "species"}
+    ],
+    "dom": 'Bfrtip',
+    "buttons": [
+      {
+        "text": 'Get selected data',
+        "action": function () {
+          var count = table.rows( { selected: true } ).count();
+          alert(count);
+        }
+      }
     ]
     // pagingType is optional, if you want full pagination controls.
     // Check dataTables documentation to learn more about
