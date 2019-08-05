@@ -16,7 +16,7 @@
 // require datatables/extensions/RowGroup/dataTables.rowGroup
 // require datatables/extensions/RowReorder/dataTables.rowReorder
 // require datatables/extensions/Scroller/dataTables.scroller
-// require datatables/extensions/Select/dataTables.select
+//= require datatables/extensions/Select/dataTables.select
 
 //Global setting and initializer
 

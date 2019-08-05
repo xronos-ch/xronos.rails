@@ -13,7 +13,7 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
     # Declare strings in this format: ModelName.column_name
     # or in aliased_join_table.column_name format
     @view_columns ||= {
-      select: {},
+      select: { source: "Measurement.id" },
       edit: { source: "ArchObject.id" },
       labnr: { source: "Measurement.labnr", cond: :like },
       year: { source: "Measurement.year", cond: :like },

@@ -10,18 +10,20 @@ jQuery(document).ready(function() {
     "pagingType": "full_numbers",
     "columnDefs": [
       {
-       'targets': 0,
-       'searchable': false,
-       'orderable': false,
-       'className': 'dt-body-center',
-       render: function (data, type, full, meta){
-         return '<input type="checkbox" class="checkbox" name="id[]" value="' + $('<div/>').text(data).html() + '">';
-       }
+       "targets": 0,
+       "data": null,
+       "searchable": false,
+       "defaultContent": '',
+       "orderable": false,
+       "className": "select-checkbox"
      }
-   ],
-    "select": {"style": "multi"},
+    ],
+    "select": {
+      "style": "multi",
+      "selector": "td:first-child"
+    },
     "columns": [
-      {"data": "edit"},
+      {"data": "select"},
       {"data": "edit"},
       {"data": "labnr"},
       {"data": "year"},
@@ -33,7 +35,7 @@ jQuery(document).ready(function() {
       {"data": "feature"},
       {"data": "material"},
       {"data": "species"}
-      ]
+    ]
     // pagingType is optional, if you want full pagination controls.
     // Check dataTables documentation to learn more about
     // available options.
