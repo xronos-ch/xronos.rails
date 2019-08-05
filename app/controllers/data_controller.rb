@@ -119,13 +119,14 @@ class DataController < ApplicationController
 
     # general dataset preparation
     @all_measurements = Measurement.left_joins(
-      sample: {arch_object: [{site_phase: [:site_type, site: [:country]]}, {on_site_object_position: :feature_type}, :material, :species]}
+      :c14_measurement, sample: {arch_object: [{site_phase: [:site_type, site: [:country]]}, {on_site_object_position: :feature_type}, :material, :species]}
     ).select(
       "
       arch_objects.id as arch_object_id,
       measurements.id as measurement_id,
       measurements.labnr as labnr,
       measurements.year as year,
+      c14_measurements.id as c14_measurement_id,
       sites.id as site_id,
       sites.name as site,
       site_types.id as site_type_id,

@@ -25,6 +25,7 @@ jQuery(document).ready(function() {
     "columns": [
       {"data": "select"},
       {"data": "edit"},
+      {"data": "calibrate"},
       {"data": "labnr"},
       {"data": "year"},
       {"data": "site"},
