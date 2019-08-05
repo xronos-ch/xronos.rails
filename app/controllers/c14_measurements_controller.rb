@@ -79,8 +79,8 @@ class C14MeasurementsController < ApplicationController
   ################################
 
   def calibrate
-    @sample = Sample.with_permissions_to(:show).find(params[:id])
-    out="Options(){RawData=TRUE};Plot(){R_Date(\"#{@sample.name}\",#{@sample.bp},#{@sample.std});};"
+    @c14_measurement = C14Measurement.with_permissions_to(:show).find(params[:id])
+    out="Options(){RawData=TRUE};Plot(){R_Date(\"#{@c14_measurement.id}\",#{@c14_measurement.bp},#{@c14_measurement.std});};"
     File.open('tmp/radon_calib.oxcal', 'w') {|f| f.write(out) }
     `vendor/oxcal/OxCalLinux tmp/radon_calib.oxcal`
     @log = File.read('tmp/radon_calib.log')
@@ -183,18 +183,18 @@ class C14MeasurementsController < ApplicationController
   def calibrate_multi
     # params[:ids]=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
     order=params[:sort_by]
-    @samples = Sample.order(order).where(id: params[:ids])
+    @c14_measurements = C14Measurement.order(order).where(id: params[:ids])
 
     out="Options(){RawData=TRUE};Plot(){"
-    @samples.each do |sample|
-      out << "R_Date(\"#{sample.name}\",#{sample.bp},#{sample.std});"
+    @c14_measurements.each do |c14_measurement|
+      out << "R_Date(\"#{c14_measurement.id}\",#{c14_measurement.bp},#{c14_measurement.std});"
     end
     out << "};"
     File.open('tmp/radon_calib.oxcal', 'w') {|f| f.write(out) }
     `vendor/oxcal/OxCalLinux tmp/radon_calib.oxcal`
 
     @graph = File.read('tmp/radon_calib.js')
-    first_sample_number=2
+    first_c14_measurement_number=2
     @likelihood_start=[]
     @likelihood_res=[]
     @data=[]
@@ -203,16 +203,16 @@ class C14MeasurementsController < ApplicationController
     @two_sigma_range=[]
     max_likelihood=[]
 
-    @samples.each_with_index do |sample,i|
-      sample_prefix="ocd[#{(i+first_sample_number).to_s}]."
+    @c14_measurements.each_with_index do |c14_measurement,i|
+      c14_measurement_prefix="ocd[#{(i+first_c14_measurement_number).to_s}]."
 
-      likelihood_start = @graph[/(#{Regexp.escape(sample_prefix)}likelihood.start=)(.*)(;)/,2].to_f
+      likelihood_start = @graph[/(#{Regexp.escape(c14_measurement_prefix)}likelihood.start=)(.*)(;)/,2].to_f
 
       @likelihood_start[i]=Time.mktime(likelihood_start)
-      @likelihood_res[i] = @graph[/(#{Regexp.escape(sample_prefix)}likelihood.resolution=)(.*)(;)/,2].to_f
+      @likelihood_res[i] = @graph[/(#{Regexp.escape(c14_measurement_prefix)}likelihood.resolution=)(.*)(;)/,2].to_f
 
-      likelihood_prob_string=@graph[/(#{Regexp.escape(sample_prefix)}likelihood.prob=\[)(.*)(\];)/,2]
-      likelihood_prob_norm=@graph[/(#{Regexp.escape(sample_prefix)}likelihood.probNorm=)(.*)(;)/,2]
+      likelihood_prob_string=@graph[/(#{Regexp.escape(c14_measurement_prefix)}likelihood.prob=\[)(.*)(\];)/,2]
+      likelihood_prob_norm=@graph[/(#{Regexp.escape(c14_measurement_prefix)}likelihood.probNorm=)(.*)(;)/,2]
       likelihood_probs=likelihood_prob_string.split(', ').map{|prob| prob.to_f*likelihood_prob_norm.to_f}
 
       timespan=likelihood_probs.length * @likelihood_res[i]
@@ -226,7 +226,8 @@ class C14MeasurementsController < ApplicationController
 
       likelihood_probs.each_with_index do |likelihood,index|
         if index==0
-          tmp_data.push('{name: "' + sample.lab.lab_code.to_s + '-' + sample.lab_nr.to_s + '", x: ' + (Time.mktime(labels[index]).to_i*1000).to_s + ',y:' + likelihood.to_s + '}')
+          #tmp_data.push('{id: "' + c14_measurement.lab.lab_code.to_s + '-' + c14_measurement.lab_nr.to_s + '", x: ' + (Time.mktime(labels[index]).to_i*1000).to_s + ',y:' + likelihood.to_s + '}')
+          tmp_data.push('{id: "' + 'huhu' + '", x: ' + (Time.mktime(labels[index]).to_i*1000).to_s + ',y:' + likelihood.to_s + '}')
         else
           tmp_data.push('{x: ' + (Time.mktime(labels[index]).to_i*1000).to_s + ', y:' + likelihood.to_s + '}')
         end
@@ -235,7 +236,7 @@ class C14MeasurementsController < ApplicationController
       # @data[i]=likelihood_probs
       @data[i]=tmp_data
 
-      result_one_sigma=@graph.scan(/#{Regexp.escape(sample_prefix)}likelihood.range\[1\](.*);/)
+      result_one_sigma=@graph.scan(/#{Regexp.escape(c14_measurement_prefix)}likelihood.range\[1\](.*);/)
 
       result_one_sigma=result_one_sigma.collect{|x| x.to_s[/\[.*?\].*\[(.*?)\]/,1]}
 
@@ -256,7 +257,7 @@ class C14MeasurementsController < ApplicationController
 
       @one_sigma_range[i] = one_sigma_prob
 
-      result_two_sigma=@graph.scan(/#{Regexp.escape(sample_prefix)}likelihood.range\[2\](.*);/)
+      result_two_sigma=@graph.scan(/#{Regexp.escape(c14_measurement_prefix)}likelihood.range\[2\](.*);/)
       result_two_sigma=result_two_sigma.collect{|x| x.to_s[/\[.*?\].*\[(.*?)\]/,1]}
 
       two_sigma_dist=Array.new
@@ -296,11 +297,11 @@ class C14MeasurementsController < ApplicationController
   def calibrate_sum
     # params[:ids]=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
     order=params[:sort_by]
-    @samples = Sample.order(order).where(id: params[:ids])
-    # @sample_names_string = @samples.map(&:name).to_sentence
+    @c14_measurements = C14Measurement.order(order).where(id: params[:ids])
+    # @c14_measurement_ids_string = @c14_measurements.map(&:id).to_sentence
     out="Options(){RawData=TRUE};Plot(){Sum(){"
-    @samples.each do |sample|
-      out << "R_Date(\"#{sample.name}\",#{sample.bp},#{sample.std});"
+    @c14_measurements.each do |c14_measurement|
+      out << "R_Date(\"#{c14_measurement.id}\",#{c14_measurement.bp},#{c14_measurement.std});"
     end
     out << "};};"
     File.open('tmp/radon_calib.oxcal', 'w') {|f| f.write(out) }
