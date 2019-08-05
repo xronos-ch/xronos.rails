@@ -59,8 +59,7 @@ $(document).ready(function() {
     },
     series: [{
       type: 'area',
-      //name: '<%=@c14_measurement.lab.lab_code + '-' + @c14_measurement.lab_nr%>',
-			name: 'test name',
+      name: '<%= 'test ' + @c14_measurement.id.to_s %>',
       pointInterval: <%= @likelihood_res.to_i.year * 1000 %>,
       pointStart: <%= @likelihood_start.to_i * 1000 %>,
       data: [<%=@data.join(", ")%>],
@@ -112,7 +111,7 @@ $(document).ready(function() {
          }
     },
     title: {
-      // text: '<%=@c14_measurement.lab.lab_code + '-' + @c14_measurement.lab_nr + ' (' + @c14_measurement.bp.to_s + ' ± ' + @c14_measurement.std.to_s + ')'%>',
+      text: '<%= 'test ' + ' (' + @c14_measurement.bp.to_s + ' ± ' + @c14_measurement.std.to_s + ')'%>',
 			text: 'test title',
 			align: 'right',
       x: -70
