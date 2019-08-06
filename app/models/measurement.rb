@@ -6,11 +6,9 @@ class Measurement < ApplicationRecord
   accepts_nested_attributes_for :c14_measurement, reject_if: :all_blank
   validates_associated :c14_measurement
 
-  has_many :references_measurements, :dependent => :destroy
-  has_many :references, through: :references_measurements
-  accepts_nested_attributes_for :references_measurements, reject_if: :all_blank, :allow_destroy => true
-  accepts_nested_attributes_for :references
-  validates_associated :references_measurements
+  has_and_belongs_to_many :references
+  accepts_nested_attributes_for :references, reject_if: :all_blank
+  validates_associated :references
 
   def self.to_csv
     CSV.generate do |csv|

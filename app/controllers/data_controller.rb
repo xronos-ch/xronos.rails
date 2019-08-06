@@ -118,9 +118,7 @@ class DataController < ApplicationController
     ##### select data #####
 
     # general dataset preparation
-    @all_measurements = Measurement.left_joins(
-      :c14_measurement, :references, :lab, sample: {arch_object: [{site_phase: [:site_type, {site: [:country, :fell_phases]}, :periods, :typochronological_units, :ecochronological_units]}, {on_site_object_position: :feature_type}, :material, :species]}
-    ).select(
+    @all_measurements = Measurement.left_joins( :c14_measurement, :references, :lab, sample: {arch_object: [{site_phase: [:site_type, {site: [:country, :fell_phases]}, :periods, :typochronological_units, :ecochronological_units]}, {on_site_object_position: :feature_type}, :material, :species]} ).select(
       "
       arch_objects.id as arch_object_id,
       measurements.id as measurement_id,
@@ -143,18 +141,22 @@ class DataController < ApplicationController
       group_concat(distinct typochronological_units.name) as typochronological_units_names,
       ecochronological_units.id as ecochronological_unit_id,
       group_concat(distinct ecochronological_units.name) as ecochronological_units_names,
-      sites.lat as lat,
-      sites.lng as lng,
-      countries.id as country_id,
-      countries.name as country,
       materials.id as material_id,
       materials.name as material,
       species.id as species_id,
-      species.name as species
+      species.name as species,
+      countries.id as country_id,
+      countries.name as country,
+      sites.lat as lat,
+      sites.lng as lng,
+      `references`.id as reference_id,
+      group_concat(distinct `references`.short_ref) as references_short_refs
       "
     ).all
 
-    # group_concat(periods.name, ', ') has to be replaced with string_agg(periods.name, ', ') for postgres in production
+    # group_concat(distinct references.short_ref) as references_short_refs
+
+    # group_concat has to be replaced with string_agg for postgres in production
 
     @selected_measurements = @all_measurements
 

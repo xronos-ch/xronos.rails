@@ -18,7 +18,6 @@ class MeasurementsController < ApplicationController
   def new
     @measurement = Measurement.new
     @measurement.references.build
-    @measurement.references_measurements.build
   end
 
   # GET /measurements/1/edit
@@ -95,16 +94,11 @@ class MeasurementsController < ApplicationController
           :active,
           :_destroy
         ],
-        :references_measurements_attributes => [
+        :references_attributes => [
           :id,
-          :page,
-          :_destroy,
-          :reference_attributes => [
-            :id,
-            :short_ref,
-            :bibtex,
-            :_destroy
-          ]
+          :short_ref,
+          :bibtex,
+          :_destroy
         ]
       )
     end

@@ -29,11 +29,12 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
       period: { source: "Period.name", cond: :like },
       typochronological_unit: { source: "TypochronologicalUnit.name", cond: :like },
       ecochronological_unit: { source: "EcochronologicalUnit.name", cond: :like },
+      material: { source: "Material.name", cond: :like },
+      species: { source: "Measurement.species", cond: :like },
+      country: { source: "Country.name", cond: :like },
       lat: { source: "Site.lat", cond: :like },
       lng: { source: "Site.lng", cond: :like },
-      country: { source: "Country.name", cond: :like },
-      material: { source: "Material.name", cond: :like },
-      species: { source: "Measurement.species", cond: :like }
+      short_ref: { source: "Reference.short_ref", cond: :like }
     }
   end
 
@@ -56,11 +57,12 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
         "period": record.periods_names, #Period.where(:id => record.period_id).pluck(:name).join(', '),
         "typochronological_unit": record.typochronological_units_names,
         "ecochronological_unit": record.ecochronological_units_names,
+        "material": best_in_place(Material.find(record.material_id), :name),
+        "species": best_in_place(Species.find(record.species_id), :name),
+        "country": best_in_place(Country.find(record.country_id), :name),
         "lat": best_in_place(Site.find(record.site_id), :lat),
         "lng": best_in_place(Site.find(record.site_id), :lng),
-        "country": best_in_place(Country.find(record.country_id), :name),
-        "material": best_in_place(Material.find(record.material_id), :name),
-        "species": best_in_place(Species.find(record.species_id), :name)
+        "short_ref": record.references_short_refs
       }
     end
   end

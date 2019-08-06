@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_06_081007) do
+ActiveRecord::Schema.define(version: 2019_08_06_141434) do
 
   create_table "arch_objects", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -96,6 +96,12 @@ ActiveRecord::Schema.define(version: 2019_08_06_081007) do
     t.index ["sample_id"], name: "index_measurements_on_sample_id"
   end
 
+  create_table "measurements_references", id: false, force: :cascade do |t|
+    t.integer "measurement_id", null: false
+    t.integer "reference_id", null: false
+    t.index ["measurement_id", "reference_id"], name: "index_mr"
+  end
+
   create_table "on_site_object_positions", force: :cascade do |t|
     t.string "feature"
     t.string "site_grid_square"
@@ -137,16 +143,6 @@ ActiveRecord::Schema.define(version: 2019_08_06_081007) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "short_ref"
-  end
-
-  create_table "references_measurements", force: :cascade do |t|
-    t.integer "reference_id"
-    t.integer "measurement_id"
-    t.string "page"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["measurement_id"], name: "index_references_measurements_on_measurement_id"
-    t.index ["reference_id"], name: "index_references_measurements_on_reference_id"
   end
 
   create_table "samples", force: :cascade do |t|

@@ -38,11 +38,12 @@ jQuery(document).ready(function() {
       {"data": "period"},
       {"data": "typochronological_unit"},
       {"data": "ecochronological_unit"},
+      {"data": "material"},
+      {"data": "species"},
+      {"data": "country"},
       {"data": "lat"},
       {"data": "lng"},
-      {"data": "country"},
-      {"data": "material"},
-      {"data": "species"}
+      {"data": "short_ref"},
     ],
     "dom": 'Bfrtip',
     "buttons": [

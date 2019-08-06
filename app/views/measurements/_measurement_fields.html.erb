@@ -9,7 +9,7 @@
     <b><%= f.label :c14_measurement %></b>
   </div>
   <div class="field_master">
-    <%= f.fields_for :c14_measurement, C14Measurement.new do |c14_measurement| %>
+    <%= f.fields_for :c14_measurement, f.object.c14_measurement || C14Measurement.new do |c14_measurement| %>
       <%= render 'c14_measurements/c14_measurement_fields', :f => c14_measurement %>
     <% end %>
   </div>
@@ -27,14 +27,14 @@
   </div>
 
   <div class="field_master_top">
-    <b><%= f.label :references_measurements %></b>
+    <b><%= f.label :references %></b>
   </div>
-  <div class="field_master">
-    <%= f.fields_for :references_measurements do |references_measurement| %>
-      <%= render 'measurements/references_measurement_fields', :f => references_measurement %>
+    <div class="field_master">
+    <%= f.fields_for :references do |reference| %>
+      <%= render 'references/reference_fields_ass', :f => reference %>
     <% end %>
     <div class='links'>
-      <%= fa_icon "plus" %> <%= link_to_add_association 'add reference', f, :references_measurements, partial: 'measurements/references_measurement_fields' %>
+      <%= fa_icon "plus" %> <%= link_to_add_association 'add reference', f, :references, partial: 'references/reference_fields_ass' %>
     </div>
   </div>
 
