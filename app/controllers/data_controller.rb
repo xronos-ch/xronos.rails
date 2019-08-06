@@ -137,6 +137,12 @@ class DataController < ApplicationController
       site_types.name as site_type,
       on_site_object_positions.id as on_site_object_position_id,
       on_site_object_positions.feature as feature,
+      periods.id as period_id,
+      group_concat(periods.name, ', ') as period_name,
+      typochronological_units.id as typochronological_unit_id,
+      typochronological_units.name as typochronological_unit_name,
+      ecochronological_units.id as ecochronological_unit_id,
+      ecochronological_units.name as ecochronological_unit_name,
       sites.lat as lat,
       sites.lng as lng,
       countries.id as country_id,
@@ -147,6 +153,8 @@ class DataController < ApplicationController
       species.name as species
       "
     ).all
+
+    # group_concat(periods.name, ', ') has to be replaced with string_agg(periods.name, ', ') for postgres in production
 
     @selected_measurements = @all_measurements
 
