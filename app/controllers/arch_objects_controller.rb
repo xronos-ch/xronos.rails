@@ -86,14 +86,40 @@ class ArchObjectsController < ApplicationController
           :name,
           :approx_start_time,
           :approx_end_time,
+          :side_id,
+          :site_type_id,
           :_destroy,
-          :site_id,
-          :periods_attributes => [
+          :site_attributes => [
+            :id,
+            :name,
+            :lat,
+            :lon,
+            :country_id,
+            :country_attributes => [
               :id,
               :name,
-              :approx_start_time,
-              :approx_end_time,
               :_destroy
+            ],
+            :fell_phases_attributes => [
+              :id,
+              :name,
+              :start_time,
+              :end_time,
+              :_destroy
+            ],
+          ],
+          :site_type_attributes => [
+            :id,
+            :name,
+            :description,
+            :_destroy
+          ],
+          :periods_attributes => [
+            :id,
+            :name,
+            :approx_start_time,
+            :approx_end_time,
+            :_destroy
           ],
           :typochronological_units_attributes => [
               :id,
@@ -108,33 +134,6 @@ class ArchObjectsController < ApplicationController
               :approx_start_time,
               :approx_end_time,
               :_destroy
-          ],
-          :site_attributes => [
-            :id,
-            :name,
-            :lat,
-            :lng,
-            :_destroy,
-            :site_type_id,
-            :country_id,
-            :site_type_attributes => [
-              :id,
-              :name,
-              :description,
-              :_destroy
-            ],
-            :country_attributes => [
-              :id,
-              :name,
-              :_destroy
-            ],
-            :fell_phase_attributes => [
-              :id,
-              :name,
-              :start_time,
-              :end_time,
-              :_destroy
-            ]
           ]
         ],
         :material_attributes => [
