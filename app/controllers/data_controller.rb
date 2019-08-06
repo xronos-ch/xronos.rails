@@ -125,7 +125,6 @@ class DataController < ApplicationController
       arch_objects.id as arch_object_id,
       measurements.id as measurement_id,
       measurements.labnr as labnr,
-      measurements.year as year,
       c14_measurements.id as c14_measurement_id,
       c14_measurements.bp as bp,
       c14_measurements.std as std,

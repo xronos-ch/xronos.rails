@@ -126,7 +126,6 @@ class ArchObjectsController < ApplicationController
             :country_attributes => [
               :id,
               :name,
-              :abbreviation,
               :_destroy
             ],
             :fell_phase_attributes => [
@@ -170,7 +169,6 @@ class ArchObjectsController < ApplicationController
           :_destroy,
           :measurements_attributes => [
             :id,
-            :year,
             :labnr,
             :lab_id,
             :_destroy,
@@ -192,6 +190,17 @@ class ArchObjectsController < ApplicationController
               :name,
               :active,
               :_destroy
+            ],
+            :references_measurements_attributes => [
+              :id,
+              :page,
+              :_destroy,
+              :reference_attributes => [
+                :id,
+                :short_ref,
+                :bibtex,
+                :_destroy
+              ]
             ]
           ]
         ]

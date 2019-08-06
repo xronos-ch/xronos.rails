@@ -74,7 +74,6 @@ class MeasurementsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def measurement_params
       params.require(:measurement).permit(
-        :year,
         :labnr,
         :sample_id,
         :lab_id,
@@ -90,12 +89,19 @@ class MeasurementsController < ApplicationController
           :method,
           :_destroy
         ],
+        :lab_attributes => [
+          :id,
+          :name,
+          :active,
+          :_destroy
+        ],
         :references_measurements_attributes => [
           :id,
           :page,
           :_destroy,
           :reference_attributes => [
             :id,
+            :short_ref,
             :bibtex,
             :_destroy
           ]

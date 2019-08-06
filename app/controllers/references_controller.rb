@@ -71,6 +71,6 @@ class ReferencesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def reference_params
-      params.require(:reference).permit(:bibtex)
+      params.require(:reference).permit(:short_ref, :bibtex)
     end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_30_094317) do
+ActiveRecord::Schema.define(version: 2019_08_06_081007) do
 
   create_table "arch_objects", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -35,7 +35,6 @@ ActiveRecord::Schema.define(version: 2019_07_30_094317) do
 
   create_table "countries", force: :cascade do |t|
     t.string "name"
-    t.string "abbreviation"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -86,7 +85,6 @@ ActiveRecord::Schema.define(version: 2019_07_30_094317) do
   end
 
   create_table "measurements", force: :cascade do |t|
-    t.integer "year"
     t.string "labnr"
     t.integer "sample_id"
     t.integer "lab_id"
@@ -138,6 +136,7 @@ ActiveRecord::Schema.define(version: 2019_07_30_094317) do
     t.text "bibtex"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "short_ref"
   end
 
   create_table "references_measurements", force: :cascade do |t|

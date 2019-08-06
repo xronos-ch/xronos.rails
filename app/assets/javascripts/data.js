@@ -27,7 +27,6 @@ jQuery(document).ready(function() {
       {"data": "edit"},
       {"data": "calibrate"},
       {"data": "labnr"},
-      {"data": "year"},
       {"data": "bp"},
       {"data": "std"},
       {"data": "cal_bp"},
