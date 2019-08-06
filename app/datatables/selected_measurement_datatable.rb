@@ -22,11 +22,13 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
       std: { source: "C14Measurement.std", cond: :like },
       cal_bp: { source: "C14Measurement.cal_bp", cond: :like },
       cal_std: { source: "C14Measurement.cal_std", cond: :like },
+      delta_c13: { source: "C14Measurement.delta_c13", cond: :like },
+      site: { source: "Site.name", cond: :like },
       site_type: { source: "SiteType.name", cond: :like },
+      feature: { source: "OnSiteObjectPosition.feature", cond: :like },
       lat: { source: "Site.lat", cond: :like },
       lng: { source: "Site.lng", cond: :like },
       country: { source: "Country.name", cond: :like },
-      feature: { source: "OnSiteObjectPosition.feature", cond: :like },
       material: { source: "Material.name", cond: :like },
       species: { source: "Measurement.species", cond: :like }
     }
@@ -44,12 +46,13 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
         "std": best_in_place(C14Measurement.find(record.c14_measurement_id), :std),
         "cal_bp": best_in_place(C14Measurement.find(record.c14_measurement_id), :cal_bp),
         "cal_std": best_in_place(C14Measurement.find(record.c14_measurement_id), :cal_std),
+        "delta_c13": best_in_place(C14Measurement.find(record.c14_measurement_id), :delta_c13),
         "site": best_in_place(Site.find(record.site_id), :name),
         "site_type": best_in_place(SiteType.find(record.site_type_id), :name),
+        "feature": best_in_place(OnSiteObjectPosition.find(record.on_site_object_position_id), :feature),
         "lat": best_in_place(Site.find(record.site_id), :lat),
         "lng": best_in_place(Site.find(record.site_id), :lng),
         "country": best_in_place(Country.find(record.country_id), :name),
-        "feature": best_in_place(OnSiteObjectPosition.find(record.on_site_object_position_id), :feature),
         "material": best_in_place(Material.find(record.material_id), :name),
         "species": best_in_place(Species.find(record.species_id), :name)
       }
