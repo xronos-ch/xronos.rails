@@ -18,6 +18,8 @@ class SitePhasesController < ApplicationController
     @site_phase.periods.build
     @site_phase.typochronological_units.build
     @site_phase.ecochronological_units.build
+    @site_phase.build_site
+    @site_phase.build_site_type
   end
 
   # GET /site_phases/1/edit
@@ -73,10 +75,32 @@ class SitePhasesController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def site_phase_params
       params.require(:site_phase).permit(
+        :id,
         :name,
         :approx_start_time,
         :approx_end_time,
+        :side_id,
         :site_type_id,
+        :_destroy,
+        :site_attributes => [
+          :id,
+          :name,
+          :lat,
+          :lon,
+          :country_id,
+          :country_attributes => [
+            :id,
+            :name,
+            :_destroy
+          ],
+          :fell_phases_attributes => [
+            :id,
+            :name,
+            :start_time,
+            :end_time,
+            :_destroy
+          ],
+        ],
         :site_type_attributes => [
           :id,
           :name,
