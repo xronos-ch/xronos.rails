@@ -1,4 +1,5 @@
 class ArchObjectsController < ApplicationController
+
   load_and_authorize_resource
 
   before_action :set_arch_object, only: [:show, :edit, :update, :destroy]
@@ -93,7 +94,7 @@ class ArchObjectsController < ApplicationController
             :id,
             :name,
             :lat,
-            :lon,
+            :lng,
             :country_id,
             :country_attributes => [
               :id,
@@ -169,10 +170,10 @@ class ArchObjectsController < ApplicationController
           :measurements_attributes => [
             :id,
             :labnr,
+            :sample_id,
             :lab_id,
-            :_destroy,
             :c14_measurement_id,
-            :lab_id,
+            :_destroy,
             :c14_measurement_attributes => [
               :id,
               :bp,
@@ -190,16 +191,11 @@ class ArchObjectsController < ApplicationController
               :active,
               :_destroy
             ],
-            :references_measurements_attributes => [
+            :references_attributes => [
               :id,
-              :page,
-              :_destroy,
-              :reference_attributes => [
-                :id,
-                :short_ref,
-                :bibtex,
-                :_destroy
-              ]
+              :short_ref,
+              :bibtex,
+              :_destroy
             ]
           ]
         ]

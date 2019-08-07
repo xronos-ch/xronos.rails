@@ -86,7 +86,7 @@ class SitePhasesController < ApplicationController
           :id,
           :name,
           :lat,
-          :lon,
+          :lng,
           :country_id,
           :country_attributes => [
             :id,
