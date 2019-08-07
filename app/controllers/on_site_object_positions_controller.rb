@@ -17,6 +17,7 @@ class OnSiteObjectPositionsController < ApplicationController
   # GET /on_site_object_positions/new
   def new
     @on_site_object_position = OnSiteObjectPosition.new
+    @on_site_object_position.build_feature_type
   end
 
   # GET /on_site_object_positions/1/edit
@@ -71,6 +72,22 @@ class OnSiteObjectPositionsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def on_site_object_position_params
-      params.require(:on_site_object_position).permit(:feature, :feature_type_id, :site_grid_square, :coord_reference_system, :coord_X, :coord_Y, :coord_Z)
+      params.require(:on_site_object_position).permit(
+        :id,
+        :feature,
+        :site_grid_square,
+        :coord_reference_system,
+        :coord_X,
+        :coord_Y,
+        :coord_Z,
+        :_destroy,
+        :feature_type_id,
+        :feature_type_attributes => [
+          :id,
+          :name,
+          :description,
+          :_destroy
+        ]
+      )
     end
 end
