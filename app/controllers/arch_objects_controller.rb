@@ -1,5 +1,4 @@
 class ArchObjectsController < ApplicationController
-
   load_and_authorize_resource
 
   before_action :set_arch_object, only: [:show, :edit, :update, :destroy]
@@ -97,6 +96,7 @@ class ArchObjectsController < ApplicationController
             :name,
             :lat,
             :lng,
+            :_destroy,
             :country_id,
             :country_attributes => [
               :id,
@@ -109,7 +109,7 @@ class ArchObjectsController < ApplicationController
               :start_time,
               :end_time,
               :_destroy
-            ],
+            ]
           ],
           :site_type_attributes => [
             :id,

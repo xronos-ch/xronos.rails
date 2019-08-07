@@ -1,4 +1,6 @@
 class SitePhasesController < ApplicationController
+  load_and_authorize_resource
+
   before_action :set_site_phase, only: [:show, :edit, :update, :destroy]
 
   # GET /site_phases
@@ -87,6 +89,7 @@ class SitePhasesController < ApplicationController
           :name,
           :lat,
           :lng,
+          :_destroy,
           :country_id,
           :country_attributes => [
             :id,
@@ -99,7 +102,7 @@ class SitePhasesController < ApplicationController
             :start_time,
             :end_time,
             :_destroy
-          ],
+          ]
         ],
         :site_type_attributes => [
           :id,

@@ -24,6 +24,7 @@ class SitesController < ApplicationController
   # GET /sites/new
   def new
     @site = Site.new
+    @site.build_country
   end
 
   # GET /sites/1/edit
@@ -78,6 +79,25 @@ class SitesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def site_params
-      params.require(:site).permit(:name, :lat, :lng, :country_id)
+      params.require(:site).permit(
+        :id,
+        :name,
+        :lat,
+        :lng,
+        :_destroy,
+        :country_id,
+        :country_attributes => [
+          :id,
+          :name,
+          :_destroy
+        ],
+        :fell_phases_attributes => [
+          :id,
+          :name,
+          :start_time,
+          :end_time,
+          :_destroy
+        ]
+      )
     end
 end
