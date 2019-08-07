@@ -3,6 +3,7 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
 
   def_delegators :@view, :link_to, :calibrate_c14_measurement_path
   def_delegators :@view, :link_to, :edit_arch_object_path
+  def_delegators :@view, :link_to, :edit_lab_path
   def_delegators :@view, :best_in_place
 
   def initialize(params, opts = {})
@@ -54,7 +55,7 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
         "cal_bp": best_in_place(C14Measurement.find(record.c14_measurement_id), :cal_bp),
         "cal_std": best_in_place(C14Measurement.find(record.c14_measurement_id), :cal_std),
         "delta_c13": best_in_place(C14Measurement.find(record.c14_measurement_id), :delta_c13),
-        "lab_name": record.lab_name,
+        "lab_name": link_to(record.lab_name, edit_lab_path(record.lab_id)),
         "site": best_in_place(Site.find(record.site_id), :name),
         "site_type": record.site_type,
         "site_phase": record.site_phase,
