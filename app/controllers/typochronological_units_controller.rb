@@ -1,4 +1,6 @@
 class TypochronologicalUnitsController < ApplicationController
+  load_and_authorize_resource
+
   before_action :set_typochronological_unit, only: [:show, :edit, :update, :destroy]
 
   # GET /typochronological_units

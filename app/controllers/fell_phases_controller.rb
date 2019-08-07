@@ -1,4 +1,6 @@
 class FellPhasesController < ApplicationController
+  load_and_authorize_resource
+
   before_action :set_fell_phase, only: [:show, :edit, :update, :destroy]
 
   # GET /fell_phases

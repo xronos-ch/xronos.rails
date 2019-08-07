@@ -1,4 +1,6 @@
 class EcochronologicalUnitsController < ApplicationController
+  load_and_authorize_resource
+
   before_action :set_ecochronological_unit, only: [:show, :edit, :update, :destroy]
 
   # GET /ecochronological_units

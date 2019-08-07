@@ -24,8 +24,8 @@ class SitesController < ApplicationController
   # GET /sites/new
   def new
     @site = Site.new
-    @site.build_country
     @site.fell_phases.build
+    @site.build_country
   end
 
   # GET /sites/1/edit
