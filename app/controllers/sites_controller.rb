@@ -25,6 +25,7 @@ class SitesController < ApplicationController
   def new
     @site = Site.new
     @site.build_country
+    @site.fell_phases.build
   end
 
   # GET /sites/1/edit
