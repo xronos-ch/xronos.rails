@@ -1,9 +1,13 @@
 class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
   extend Forwardable
 
-  def_delegators :@view, :link_to, :calibrate_c14_measurement_path
   def_delegators :@view, :link_to, :edit_arch_object_path
-  def_delegators :@view, :link_to, :edit_lab_path
+  def_delegators :@view, :link_to, :calibrate_c14_measurement_path
+  def_delegators :@view, :link_to, :lab_path
+  def_delegators :@view, :link_to, :site_path
+  def_delegators :@view, :link_to, :site_phase_path
+  def_delegators :@view, :link_to, :site_type_path
+  def_delegators :@view, :link_to, :feature_type_path
   def_delegators :@view, :best_in_place
 
   def initialize(params, opts = {})
@@ -55,12 +59,12 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
         "cal_bp": best_in_place(C14Measurement.find(record.c14_measurement_id), :cal_bp),
         "cal_std": best_in_place(C14Measurement.find(record.c14_measurement_id), :cal_std),
         "delta_c13": best_in_place(C14Measurement.find(record.c14_measurement_id), :delta_c13),
-        "lab_name": link_to(record.lab_name, edit_lab_path(record.lab_id)),
-        "site": best_in_place(Site.find(record.site_id), :name),
-        "site_type": record.site_type,
-        "site_phase": record.site_phase,
+        "lab_name": link_to(record.lab_name, lab_path(record.lab_id)),
+        "site": link_to(record.site, site_path(record.site_id)),
+        "site_phase": link_to(record.site_phase, site_phase_path(record.site_phase_id)),
+        "site_type": link_to(record.site_type, site_type_path(record.site_type_id)),
         "feature": best_in_place(OnSiteObjectPosition.find(record.on_site_object_position_id), :feature),
-        "feature_type": record.feature_type,
+        "feature_type": record.feature_type,#link_to(record.feature_type, feature_type_path(record.feature_type_id)),
         "period": record.periods_names,
         "typochronological_unit": record.typochronological_units_names,
         "ecochronological_unit": record.ecochronological_units_names,

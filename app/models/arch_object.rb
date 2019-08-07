@@ -14,7 +14,7 @@ class ArchObject < ApplicationRecord
   validates_associated :species
 
   belongs_to :on_site_object_position, optional: true
-  accepts_nested_attributes_for :on_site_object_position, reject_if: :all_blank
+  accepts_nested_attributes_for :on_site_object_position, :reject_if => proc { |attributes| attributes.all? { |key, value| key == "_destroy" || value.blank? || (value.is_a?(Hash) && value.values.all?(&:blank?)) } }
   validates_associated :on_site_object_position
 
 	has_many :samples, inverse_of: :arch_object
