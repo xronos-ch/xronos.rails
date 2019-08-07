@@ -86,7 +86,7 @@ class ArchObjectsController < ApplicationController
           :name,
           :approx_start_time,
           :approx_end_time,
-          :side_id,
+          :site_id,
           :site_type_id,
           :_destroy,
           :site_attributes => [
