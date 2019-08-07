@@ -32,7 +32,7 @@ jQuery(document).ready(function() {
       {"data": "cal_bp"},
       {"data": "cal_std"},
       {"data": "delta_c13"},
-      {"data": "lab"},
+      {"data": "lab_name"},
       {"data": "site"},
       {"data": "site_phase"},
       {"data": "site_type"},

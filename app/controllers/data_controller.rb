@@ -130,7 +130,7 @@ class DataController < ApplicationController
       c14_measurements.cal_std as cal_std,
       c14_measurements.delta_c13 as delta_c13,
       labs.id as lab_id,
-      labs.name as lab,
+      labs.name as lab_name,
       sites.id as site_id,
       sites.name as site,
       site_phases.id as site_phase_id,
