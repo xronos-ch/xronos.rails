@@ -18,6 +18,8 @@ class MeasurementsController < ApplicationController
   def new
     @measurement = Measurement.new
     @measurement.references.build
+    @measurement.build_lab
+    @measurement.build_c14_measurement
   end
 
   # GET /measurements/1/edit
@@ -73,7 +75,9 @@ class MeasurementsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def measurement_params
       params.require(:measurement).permit(
+        :id,
         :labnr,
+        :_destroy,
         :sample_id,
         :lab_id,
         :c14_measurement_id,

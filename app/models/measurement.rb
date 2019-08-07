@@ -1,7 +1,10 @@
 class Measurement < ApplicationRecord
   belongs_to :sample
+
   belongs_to :lab, optional: true
+  accepts_nested_attributes_for :lab, reject_if: :all_blank, allow_destroy: true
   validates_associated :lab
+
   belongs_to :c14_measurement, optional: true
   accepts_nested_attributes_for :c14_measurement, reject_if: :all_blank
   validates_associated :c14_measurement

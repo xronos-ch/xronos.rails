@@ -1,4 +1,7 @@
 class Lab < ApplicationRecord
-  has_many :measurements
+
   validates :name, presence: true
+
+  has_many :measurements, inverse_of: :lab
+
 end
