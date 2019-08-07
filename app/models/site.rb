@@ -1,4 +1,5 @@
 class Site < ApplicationRecord
+
   validates :name, presence: true
 
   has_many :site_phases, inverse_of: :site
@@ -10,4 +11,5 @@ class Site < ApplicationRecord
   has_many :fell_phases, inverse_of: :site
   accepts_nested_attributes_for :fell_phases, reject_if: :all_blank, allow_destroy: true
   validates_associated :fell_phases
+
 end

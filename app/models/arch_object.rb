@@ -1,10 +1,8 @@
 class ArchObject < ApplicationRecord
-	has_many :samples, inverse_of: :arch_object
-  accepts_nested_attributes_for :samples, reject_if: :all_blank, allow_destroy: true
-  validates_associated :samples
+
 
   belongs_to :site_phase, optional: true
-  accepts_nested_attributes_for :site_phase, reject_if: :all_blank
+  accepts_nested_attributes_for :site_phase, :reject_if => proc { |attributes| attributes.all? { |key, value| key == "_destroy" || value.blank? || (value.is_a?(Hash) && value.values.all?(&:blank?)) } }
   validates_associated :site_phase
 
   belongs_to :material, optional: true
@@ -18,4 +16,9 @@ class ArchObject < ApplicationRecord
   belongs_to :on_site_object_position, optional: true
   accepts_nested_attributes_for :on_site_object_position, reject_if: :all_blank
   validates_associated :on_site_object_position
+
+	has_many :samples, inverse_of: :arch_object
+	accepts_nested_attributes_for :samples, reject_if: :all_blank, allow_destroy: true
+	validates_associated :samples
+
 end

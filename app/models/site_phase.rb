@@ -1,10 +1,11 @@
 class SitePhase < ApplicationRecord
+
   validates :name, presence: true
 
   has_many :arch_objects, inverse_of: :site_phase
 
   belongs_to :site
-  accepts_nested_attributes_for :site, reject_if: :all_blank
+  accepts_nested_attributes_for :site, :reject_if => proc { |attributes| attributes.all? { |key, value| key == "_destroy" || value.blank? || (value.is_a?(Hash) && value.values.all?(&:blank?)) } }
   validates_associated :site
 
   has_and_belongs_to_many :periods
@@ -22,4 +23,5 @@ class SitePhase < ApplicationRecord
   belongs_to :site_type, optional: true
   accepts_nested_attributes_for :site_type, reject_if: :all_blank, allow_destroy: true
   validates_associated :site_type
+
 end
