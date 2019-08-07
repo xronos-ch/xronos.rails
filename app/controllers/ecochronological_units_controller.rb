@@ -69,6 +69,6 @@ class EcochronologicalUnitsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def ecochronological_unit_params
-      params.require(:ecochronological_unit).permit(:name, :approx_start_time, :approx_end_time)
+      params.require(:ecochronological_unit).permit(:name, :approx_start_time, :approx_end_time, :parent_id)
     end
 end

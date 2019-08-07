@@ -69,6 +69,6 @@ class TypochronologicalUnitsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def typochronological_unit_params
-      params.require(:typochronological_unit).permit(:name, :approx_start_time, :approx_end_time)
+      params.require(:typochronological_unit).permit(:name, :approx_start_time, :approx_end_time, :parent_id)
     end
 end

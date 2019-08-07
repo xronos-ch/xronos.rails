@@ -69,6 +69,6 @@ class PeriodsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def period_params
-      params.require(:period).permit(:name, :approx_start_time, :approx_end_time)
+      params.require(:period).permit(:name, :approx_start_time, :approx_end_time, :parent_id)
     end
 end
