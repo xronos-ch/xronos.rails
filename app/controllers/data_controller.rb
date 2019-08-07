@@ -141,11 +141,8 @@ class DataController < ApplicationController
       on_site_object_positions.feature as feature,
       feature_types.id as feature_type_id,
       feature_types.name as feature_type,
-      periods.id as period_id,
       group_concat(distinct periods.name) as periods_names,
-      typochronological_units.id as typochronological_unit_id,
       group_concat(distinct typochronological_units.name) as typochronological_units_names,
-      ecochronological_units.id as ecochronological_unit_id,
       group_concat(distinct ecochronological_units.name) as ecochronological_units_names,
       materials.id as material_id,
       materials.name as material,
@@ -156,11 +153,9 @@ class DataController < ApplicationController
       sites.lat as lat,
       sites.lng as lng,
       `references`.id as reference_id,
-      group_concat(distinct `references`.short_ref) as references_short_refs
+       group_concat(distinct `references`.short_ref) as references_short_refs
       "
-    ).all
-
-    # group_concat(distinct references.short_ref) as references_short_refs
+    ).group("measurements.id").all
 
     # group_concat has to be replaced with string_agg for postgres in production
 
