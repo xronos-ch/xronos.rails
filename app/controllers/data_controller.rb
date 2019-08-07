@@ -133,6 +133,8 @@ class DataController < ApplicationController
       labs.name as lab,
       sites.id as site_id,
       sites.name as site,
+      site_phases.id as site_phase_id,
+      site_phases.name as site_phase,
       site_types.id as site_type_id,
       site_types.name as site_type,
       on_site_object_positions.id as on_site_object_position_id,

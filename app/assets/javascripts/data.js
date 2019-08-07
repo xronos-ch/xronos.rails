@@ -34,6 +34,7 @@ jQuery(document).ready(function() {
       {"data": "delta_c13"},
       {"data": "lab"},
       {"data": "site"},
+      {"data": "site_phase"},
       {"data": "site_type"},
       {"data": "feature"},
       {"data": "feature_type"},
