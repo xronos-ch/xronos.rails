@@ -30,6 +30,20 @@ simple_cal <- do.call(rbind, simple_cal_list)
 
 time <- format(Sys.time(), "%y-%d-%m %H:%M:%OS6")
 
+#### static tables ####
+
+# countries
+countries_cur <- DBI::dbReadTable(con, "countries") %>% tibble::as_tibble()
+
+country_names <- unique(countrycode::codelist$iso.name.en) %>% na.omit()
+countries <- tibble::tibble(
+  id = 1:length(country_names),
+  name = unique(countrycode::codelist$iso.name.en) %>% na.omit(),
+  created_at = time,
+  updated_at = time
+)
+DBI::dbWriteTable(con, "countries", countries, overwrite = T)
+
 #### tables ####
 
 c14_measurements_cur <- DBI::dbReadTable(con, "c14_measurements") %>% tibble::as_tibble()
@@ -46,6 +60,11 @@ c14_measurements_add <- tibble::tibble(
   updated_at = time
 )
 
+
+
+feature_types_cur <- DBI::dbReadTable(con, "feature_types") %>% tibble::as_tibble()
+
+feature_types
 
 
 
