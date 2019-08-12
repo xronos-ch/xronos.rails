@@ -208,3 +208,5 @@ site_phases_add <- tibble::tibble(
 ) %>% add_time_columns()
 
 DBI::dbWriteTable(con, "site_phases", site_phases_add, append = T)
+
+
