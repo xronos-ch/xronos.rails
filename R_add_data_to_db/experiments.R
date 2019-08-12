@@ -28,6 +28,9 @@ simple_cal_list <- pbapply::pblapply(imp$calprobdistr, function(x) {
 
 simple_cal <- do.call(rbind, simple_cal_list)
 
+#### make connection to database ####
+con <- DBI::dbConnect(RSQLite::SQLite(), dbname = "agora/xronos.rails/db/development.sqlite3")
+
 #### static tables ####
 
 # countries
@@ -91,12 +94,18 @@ imp_refs <- imp$shortref %>% unique %>%
   unlist %>%
   trimws()
 
-# references_add <- tibble::tibble(
-#   id = 
-# ) %>%
-#   add_time_columns(
-#     get_time()
-#   )
+references_add <- tibble::tibble(
+  id = seq(start_id, start_id + length(imp_refs) - 1),
+  name = imp_refs
+) %>%
+  add_time_columns(
+    get_time()
+  )
 
+measurements_references <- tibble::tibble(
+  reference_id = references_add$id,
+  measurement_id = references_add$name %>% pbapply::pblapply(function(x) {
+    grep(x, imp$shortref)
+  })
+) %>% tidyr::unnest()
 
-con <- DBI::dbConnect(RSQLite::SQLite(), dbname = "agora/xronos.rails/db/development.sqlite3")
