@@ -33,8 +33,7 @@ time <- format(Sys.time(), "%y-%d-%m %H:%M:%OS6")
 #### static tables ####
 
 # countries
-countries_cur <- DBI::dbReadTable(con, "countries") %>% tibble::as_tibble()
-
+#countries_cur <- DBI::dbReadTable(con, "countries") %>% tibble::as_tibble()
 country_names <- unique(countrycode::codelist$iso.name.en) %>% na.omit()
 countries <- tibble::tibble(
   id = 1:length(country_names),
@@ -53,14 +52,16 @@ create table countries(
 )
 " %>% gsub("\\n", "", .)
 DBI::dbSendStatement(con, s)
-
 DBI::dbWriteTable(con, "countries", countries, append = T)
 
 #### tables ####
 
 c14_measurements_cur <- DBI::dbReadTable(con, "c14_measurements") %>% tibble::as_tibble()
 
+start_id <- (c14_measurements_cur$id %>% max) + 1
+
 c14_measurements_add <- tibble::tibble(
+  id = seq(start_id, start_id + nrow(imp) - 1),
   bp = imp$c14age,
   std = imp$c14std,
   cal_bp = simple_cal$bp,
@@ -72,6 +73,7 @@ c14_measurements_add <- tibble::tibble(
   updated_at = time
 )
 
+DBI::dbWriteTable(con, "c14_measurements", c14_measurements_add, append = T)
 
 
 feature_types_cur <- DBI::dbReadTable(con, "feature_types") %>% tibble::as_tibble()
