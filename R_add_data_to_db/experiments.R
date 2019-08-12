@@ -125,4 +125,28 @@ periods_add <- tibble::tibble(
   parent_id = NA,
 ) %>% add_time_columns()
 
-DBI::dbWriteTable(con, "references", references_add, append = T)
+DBI::dbWriteTable(con, "periods", periods_add, append = T)
+
+# on_site_object_positions
+# on_site_object_positions_cur <- get_table("on_site_object_positions", con)
+# 
+# unique_features <- unique(imp$feature) %>% na.omit()
+# 
+# on_site_object_positions_add <- tibble::tibble(
+#   feature = unique_features,
+#   approx_start_time = NA,
+#   approx_end_time = NA,
+#   parent_id = NA,
+# ) %>% add_time_columns()
+
+# materials
+materials_cur <- get_table("materials", con)
+
+unique_materials <- unique(imp$material) %>% na.omit()
+
+materials_add <- tibble::tibble(
+  name = unique_materials[!(unique_materials %in% materials_cur$name)],
+) %>% add_time_columns()
+
+DBI::dbWriteTable(con, "materials", materials_add, append = T)
+
