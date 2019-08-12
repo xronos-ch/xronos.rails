@@ -42,7 +42,19 @@ countries <- tibble::tibble(
   created_at = time,
   updated_at = time
 )
-DBI::dbWriteTable(con, "countries", countries, overwrite = T)
+
+DBI::dbRemoveTable(con, "countries")
+s <- "
+create table countries(
+  id PRIMARY KEY NOT NULL,
+  name,
+  created_at NOT NULL,
+  updated_at NOT NULL
+)
+" %>% gsub("\\n", "", .)
+DBI::dbSendStatement(con, s)
+
+DBI::dbWriteTable(con, "countries", countries, append = T)
 
 #### tables ####
 
