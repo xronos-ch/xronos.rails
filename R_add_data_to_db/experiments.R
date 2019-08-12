@@ -127,6 +127,20 @@ periods_add <- tibble::tibble(
 
 DBI::dbWriteTable(con, "periods", periods_add, append = T)
 
+# typochronological_units
+typochronological_units_cur <- get_table("typochronological_units", con)
+
+unique_typochronological_units <- unique(imp$culture) %>% na.omit()
+
+typochronological_units_add <- tibble::tibble(
+  name = unique_typochronological_units[!(unique_typochronological_units %in% typochronological_units_cur$name)],
+  approx_start_time = NA,
+  approx_end_time = NA,
+  parent_id = NA,
+) %>% add_time_columns()
+
+DBI::dbWriteTable(con, "typochronological_units", typochronological_units_add, append = T)
+
 # on_site_object_positions
 # on_site_object_positions_cur <- get_table("on_site_object_positions", con)
 # 
@@ -150,3 +164,21 @@ materials_add <- tibble::tibble(
 
 DBI::dbWriteTable(con, "materials", materials_add, append = T)
 
+# sites
+sites_cur <- get_table("sites", con)
+
+unique_sites <- imp %>% dplyr::select(site, lat, lon) %>% unique %>%
+  dplyr::filter(
+    !(site %in% sites_cur$name),
+  )
+
+sites_add <- tibble::tibble(
+  name = unique_sites$site,
+  lat = unique_sites$lat,
+  lng = unique_sites$lon,
+  country_id = NA
+) %>% add_time_columns()
+
+DBI::dbWriteTable(con, "sites", sites_add, append = T)
+
+# site_phases
