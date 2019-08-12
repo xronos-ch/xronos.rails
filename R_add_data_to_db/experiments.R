@@ -167,7 +167,12 @@ DBI::dbWriteTable(con, "materials", materials_add, append = T)
 # sites
 sites_cur <- get_table("sites", con)
 
-unique_sites <- imp %>% dplyr::select(site, lat, lon) %>% unique %>%
+unique_sites <- imp %>% dplyr::select(site, lat, lon) %>% 
+  dplyr::group_by(site) %>%
+  dplyr::summarise(
+    lat = mean(lat),
+    lon = mean(lon)
+  ) %>%
   dplyr::filter(
     !(site %in% sites_cur$name),
   )
@@ -182,3 +187,24 @@ sites_add <- tibble::tibble(
 DBI::dbWriteTable(con, "sites", sites_add, append = T)
 
 # site_phases
+site_phases_cur <- get_table("site_phases", con)
+sites_cur <- get_table("sites", con)
+
+unique_site_phases <- imp %>% dplyr::select(site) %>% unique %>%
+  dplyr::filter(
+    !(site %in% site_phases_cur$name),
+  )
+
+site_ids <- sapply(unique_site_phases$site, function(x) {
+  sites_cur[x == sites_cur$name, ]$id
+}) %>% unlist()
+
+site_phases_add <- tibble::tibble(
+  name = unique_site_phases$site,
+  approx_start_time = NA,
+  approx_end_time = NA,
+  site_id = site_ids,
+  site_type_id = NA,
+) %>% add_time_columns()
+
+DBI::dbWriteTable(con, "site_phases", site_phases_add, append = T)
