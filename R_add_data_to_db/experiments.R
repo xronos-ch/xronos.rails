@@ -1,3 +1,8 @@
+get_table <- function(x, con) { DBI::dbReadTable(con, x) %>% tibble::as_tibble() }
+get_start_id <- function(x) { (x$id %>% max) + 1 }
+add_time_columns <- function(x, time = get_time()) { x %>% dplyr::mutate(created_at = time, updated_at = time) }
+get_time <- function() { format(Sys.time(), "%y-%d-%m %H:%M:%OS6") }
+
 #### data preparation #### 
 
 imp <- c14bazAAR::get_aDRAC()
@@ -31,10 +36,9 @@ simple_cal <- do.call(rbind, simple_cal_list)
 #### make connection to database ####
 con <- DBI::dbConnect(RSQLite::SQLite(), dbname = "agora/xronos.rails/db/development.sqlite3")
 
-#### static tables ####
+#### tables ####
 
 # countries
-#countries_cur <- DBI::dbReadTable(con, "countries") %>% tibble::as_tibble()
 country_names <- unique(countrycode::codelist$iso.name.en) %>% na.omit()
 countries <- tibble::tibble(
   id = 1:length(country_names),
@@ -54,13 +58,6 @@ create table countries(
 " %>% gsub("\\n", "", .)
 DBI::dbSendStatement(con, s)
 DBI::dbWriteTable(con, "countries", countries, append = T)
-
-#### tables ####
-
-get_table <- function(x, con) { DBI::dbReadTable(con, x) %>% tibble::as_tibble() }
-get_start_id <- function(x) { (x$id %>% max) + 1 }
-add_time_columns <- function(x, time) { x %>% dplyr::mutate(created_at = time, updated_at = time) }
-get_time <- function() { format(Sys.time(), "%y-%d-%m %H:%M:%OS6") }
 
 # c14_measurements
 c14_measurements_cur <- DBI::dbReadTable(con, "c14_measurements") %>% tibble::as_tibble()
@@ -85,27 +82,30 @@ DBI::dbWriteTable(con, "c14_measurements", c14_measurements_add, append = T)
 
 # references
 references_cur <- get_table("references", con)
-start_id <- get_start_id(references_cur)
 
-imp_refs <- imp$shortref %>% unique %>%
+imp_refs <- imp$shortref %>% 
+  unique %>%
   gsub("\\:[^;]+(\\;|$)", ";", .) %>%
   gsub("\\;$", "", .) %>%
   strsplit(., ";") %>%
   unlist %>%
-  trimws()
+  trimws() %>%
+  unique
 
 references_add <- tibble::tibble(
-  id = seq(start_id, start_id + length(imp_refs) - 1),
-  name = imp_refs
-) %>%
-  add_time_columns(
-    get_time()
-  )
+  short_ref = imp_refs[!(imp_refs %in% references_cur$short_ref)]
+) %>% add_time_columns()
+
+DBI::dbWriteTable(con, "references", references_add, append = T)
+
 
 measurements_references <- tibble::tibble(
   reference_id = references_add$id,
   measurement_id = references_add$name %>% pbapply::pblapply(function(x) {
     grep(x, imp$shortref)
   })
-) %>% tidyr::unnest()
+) %>% tidyr::unnest() %>%
+  add_time_columns(
+    get_time()
+  )
 
