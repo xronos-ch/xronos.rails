@@ -98,14 +98,31 @@ references_add <- tibble::tibble(
 
 DBI::dbWriteTable(con, "references", references_add, append = T)
 
+# references_cur <- get_table("references", con)
+# 
+# measurements_references <- tibble::tibble(
+#   reference_id = references_add$id,
+#   measurement_id = references_add$name %>% pbapply::pblapply(function(x) {
+#     grep(x, imp$shortref)
+#   })
+# ) %>% tidyr::unnest() %>%
+#   add_time_columns(
+#     get_time()
+#   )
 
-measurements_references <- tibble::tibble(
-  reference_id = references_add$id,
-  measurement_id = references_add$name %>% pbapply::pblapply(function(x) {
-    grep(x, imp$shortref)
-  })
-) %>% tidyr::unnest() %>%
-  add_time_columns(
-    get_time()
-  )
+# labs
+labs_cur <- get_table("labs", con)
 
+# periods
+periods_cur <- get_table("periods", con)
+
+unique_periods <- unique(imp$period) %>% na.omit()
+
+periods_add <- tibble::tibble(
+  name = unique_periods[!(unique_periods %in% periods_cur$name)],
+  approx_start_time = NA,
+  approx_end_time = NA,
+  parent_id = NA,
+) %>% add_time_columns()
+
+DBI::dbWriteTable(con, "references", references_add, append = T)
