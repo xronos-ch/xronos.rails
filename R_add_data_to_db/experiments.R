@@ -28,8 +28,6 @@ simple_cal_list <- pbapply::pblapply(imp$calprobdistr, function(x) {
 
 simple_cal <- do.call(rbind, simple_cal_list)
 
-time <- format(Sys.time(), "%y-%d-%m %H:%M:%OS6")
-
 #### static tables ####
 
 # countries
@@ -56,6 +54,12 @@ DBI::dbWriteTable(con, "countries", countries, append = T)
 
 #### tables ####
 
+get_table <- function(x, con) { DBI::dbReadTable(con, x) %>% tibble::as_tibble() }
+get_start_id <- function(x) { (x$id %>% max) + 1 }
+add_time_columns <- function(x, time) { x %>% dplyr::mutate(created_at = time, updated_at = time) }
+get_time <- function() { format(Sys.time(), "%y-%d-%m %H:%M:%OS6") }
+
+# c14_measurements
 c14_measurements_cur <- DBI::dbReadTable(con, "c14_measurements") %>% tibble::as_tibble()
 
 start_id <- (c14_measurements_cur$id %>% max) + 1
@@ -68,39 +72,31 @@ c14_measurements_add <- tibble::tibble(
   cal_std = simple_cal$std,
   delta_c13 = imp$c13val,
   delta_c13_std = NA_real_,
-  method = NA_character_,
-  created_at = time,
-  updated_at = time
-)
+  method = NA_character_
+) %>%
+  add_time_columns(
+    get_time()
+  )
 
 DBI::dbWriteTable(con, "c14_measurements", c14_measurements_add, append = T)
 
+# references
+references_cur <- get_table("references", con)
+start_id <- get_start_id(references_cur)
 
-feature_types_cur <- DBI::dbReadTable(con, "feature_types") %>% tibble::as_tibble()
+imp_refs <- imp$shortref %>% unique %>%
+  gsub("\\:[^;]+(\\;|$)", ";", .) %>%
+  gsub("\\;$", "", .) %>%
+  strsplit(., ";") %>%
+  unlist %>%
+  trimws()
 
-feature_types
-
+# references_add <- tibble::tibble(
+#   id = 
+# ) %>%
+#   add_time_columns(
+#     get_time()
+#   )
 
 
 con <- DBI::dbConnect(RSQLite::SQLite(), dbname = "agora/xronos.rails/db/development.sqlite3")
-
-
-
-DBI::dbListTables(con)
-DBI::dbListFields(con, "species")
-DBI::dbReadTable(con, "species")
-
-
-
-
-DBI::dbAppendTable(
-  con, "species", 
-  tibble::tibble(
-    id = 6,
-    name = "Husten",
-    created_at = time,
-    updated_at = time
-  )
-)
-
-DBI::dbDisconnect(con)
