@@ -1,7 +1,5 @@
 get_table <- function(x, con) { DBI::dbReadTable(con, x) %>% tibble::as_tibble() }
 get_start_id <- function(x) { (x$id %>% max) + 1 }
-add_time_columns <- function(x, time = get_time()) { x %>% dplyr::mutate(created_at = time, updated_at = time) }
-get_time <- function() { format(Sys.time(), "%y-%d-%m %H:%M:%OS6") }
 
 #### data preparation #### 
 
@@ -297,9 +295,14 @@ get_new_id <- function(id_vector) {
   return(id)
 }
 
+add_time_columns <- function(x, time = get_time()) { x %>% dplyr::mutate(created_at = time, updated_at = time) }
+get_time <- function() { format(Sys.time(), "%y-%d-%m %H:%M:%OS6") }
+
 for (i in 1:nrow(imp)) {
   cur <- imp[i,]
 
+  #### preparing variables ####
+  
   # arch_objects
   arch_objects_cur <- get_table("arch_objects", con)
   arch_objects.id <- get_new_id(arch_objects_cur$id)
@@ -317,6 +320,30 @@ for (i in 1:nrow(imp)) {
   }
   measurements.id <- measurements.id_lookup$id
 
+  # references
+  references_cur <- get_table("references", con)
+  references.short_refs <- cur$shortref %>% 
+    gsub("\\:[^;]+(\\;|$)", ";", .) %>%
+    gsub("\\;$", "", .) %>%
+    strsplit(., ";") %>%
+    unlist %>%
+    trimws()
+  references.shoud_be_createds <- sapply(
+    references.short_ref, 
+    function(x, y) {
+      !is.na(x) & !exists_in_db(x, y)
+    },
+    y = references_cur$short_ref
+  )
+  references.ids <- sapply(
+    references.short_ref, 
+    function(x, y, z) {
+      get_id(x, y, z)
+    },
+    y = references_cur$short_ref,
+    z = references_cur$id
+  )
+  
   # c14_measurements
   c14_measurements_cur <- get_table("c14_measurements", con)
   c14_measurements.bp <- cur$c14age
@@ -371,33 +398,70 @@ for (i in 1:nrow(imp)) {
   countries.should_be_created <- FALSE
   countries.id <- get_id(countries.name, countries_cur$name, countries_cur$id)
   
-  # references
-  references_cur <- get_table("references", con)
-  references.short_refs <- cur$shortref %>% 
-    gsub("\\:[^;]+(\\;|$)", ";", .) %>%
-    gsub("\\;$", "", .) %>%
-    strsplit(., ";") %>%
-    unlist %>%
-    trimws()
-  references.shoud_be_createds <- sapply(
-    references.short_ref, 
-    function(x, y) {
-      !is.na(x) & !exists_in_db(x, y)
-    },
-    y = references_cur$short_ref
-  )
-  references.ids <- sapply(
-    references.short_ref, 
-    function(x, y, z) {
-      get_id(x, y, z)
-    },
-    y = references_cur$short_ref,
-    z = references_cur$id
-  )
-        
   #### writing tables ####
   
-  #DBI::dbWriteTable(con, "site_phases_typochronological_units", typochronological_units_site_phases_new, append = T)
+  # arch_objects
+  DBI::dbWriteTable(
+    con, "arch_objects", 
+    tibble::tibble(
+      id = arch_objects.id,
+      materials_id = materials.id,
+      species_id = NA,
+      on_site_object_positions_id = on_site_object_positions.id,
+      site_phase_id = site_phases.id
+    ) %>% add_time_columns(),
+    append = T
+  )
 
+  # samples
+  DBI::dbWriteTable(
+    con, "samples", 
+    tibble::tibble(
+      id = samples.id,
+      arch_objects_id = arch_objects.id
+    ) %>% add_time_columns(),
+    append = T
+  )
+  
+  # measurements
+  DBI::dbWriteTable(
+    con, "measurements", 
+    tibble::tibble(
+      id = measurements.id,
+      labnr = measurements.labnr,
+      sample_id = samples.id,
+      lab_id = NA,
+      c14_measurement_id = c14_measurements.id
+    ) %>% add_time_columns(),
+    append = T
+  )
+  
+  # c14_measurements
+  DBI::dbWriteTable(
+    con, "c14_measurements", 
+    tibble::tibble(
+      id = c14_measurements.id,
+      bp = c14_measurements.bp,
+      std = c14_measurements.std,
+      cal_bp = c14_measurements.cal_bp,
+      cal_std = c14_measurements.cal_std,
+      delta_c13 = c14_measurements.delta_c13,
+      delta_c13_std = NA,
+      method = NA
+    ) %>% add_time_columns(),
+    append = T
+  )
+  
+  # references
+  DBI::dbWriteTable(
+    con, "references", 
+    tibble::tibble(
+      id = references.ids,
+      short_ref = references.short_refs,
+      bibtex = NA
+    ) %>% add_time_columns(),
+    append = T
+  )
+  
 }
 
