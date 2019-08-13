@@ -271,50 +271,75 @@ measurements_add <- tibble::tibble(
 
 get_id <- function(new_value, old_vector, id_vector) {
   if ( new_value %in% old_vector ) {
-    sites.id <- id_vector[new_value == old_vector][1]
+    exists <- TRUE
+    id <- id_vector[new_value == old_vector][1]
   } else if ( length(old_vector) > 0 ) {
-    sites.id <- max(id_vector) + 1
+    exists <- FALSE
+    id <- max(id_vector) + 1
   } else {
-    sites.id <- 0
+    exists <- FALSE
+    id <- 0
   }
-  return(sites.id)
+  return(list(exists = exists, id = id))
 }
 
 for (i in 1:nrow(imp)) {
   cur <- imp[i,]
   
+  # measurements
+  measurements_cur <- get_table("measurements", con)
   measurements.labnr <- cur$labnr
+  measurements.id_lookup <- get_id(measurements.labnr, measurements_cur$labnr, measurements_cur$id)
+  if (measurements.id_lookup$exists) {
+    next
+  }
+  measurements.id <- measurements.id_lookup$id
+
+  # c14_measurements
+  c14_measurements_cur <- get_table("c14_measurements", con)
   c14_measurements.bp <- cur$c14age
   c14_measurements.std <- cur$c14std
   c14_measurements.cal_bp <- cur$cal_bp
   c14_measurements.cal_std <- cur$cal_std
   c14_measurements.delta_c13 <- cur$c13val
+  c14_measurements.id <- get_id(NA, c(), c14_measurements_cur$id)$id
   
   # sites
   sites_cur <- get_table("sites", con)
   sites.name <- cur$site
   sites.lat <- cur$lat
   sites.lng <- cur$lon
-  sites.id <- get_id(sites.name, sites_cur$name, sites_cur$id)
-  
+  sites.id <- get_id(sites.name, sites_cur$name, sites_cur$id)$id
+
+  # periods
   periods_cur <- get_table("periods", con)
   periods.name <- cur$period
-  periods.id <- get_id(periods.name, periods_cur$name, periods_cur$id)
+  periods.id <- get_id(periods.name, periods_cur$name, periods_cur$id)$id
 
+  # typochronological units
   typochronological_units_cur <- get_table("typochronological_units", con)  
   typochronological_units.name <- cur$culture
-  typochronological_units.id <- get_id(typochronological_units.name, typochronological_units_cur$name, typochronological_units_cur$id)
+  typochronological_units.id <- get_id(typochronological_units.name, typochronological_units_cur$name, typochronological_units_cur$id)$id
   
+  # materials
   materials_cur <- get_table("materials", con)
   materials.name <- cur$material
-  materials.id <- get_id(materials.name, materials_cur$name, materials_cur$id)
-  
+  materials.id <- get_id(materials.name, materials_cur$name, materials_cur$id)$id
+
+  # countries
   countries_cur <- get_table("countries", con)
   countries.name <- cur$country
-  countries.id <- get_id(countries.name, countries_cur$name, countries_cur$id)
+  countries.id <- get_id(countries.name, countries_cur$name, countries_cur$id)$id
   
+  # references
   references_cur <- get_table("references", con)
-  references.short_ref <- cur$shortref
+  references.short_refs <- cur$shortref %>% 
+    gsub("\\:[^;]+(\\;|$)", ";", .) %>%
+    gsub("\\;$", "", .) %>%
+    strsplit(., ";") %>%
+    unlist %>%
+    trimws()
+  
 
 }
 
