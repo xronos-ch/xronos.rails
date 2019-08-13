@@ -75,6 +75,15 @@ exists_in_db <- function(new_value, old_vector) {
   return(exists)
 }
 
+get_new_id <- function(id_vector) {
+  if ( length(id_vector) > 0 ) {
+    id <- max(id_vector) + 1
+  } else {
+    id <- 0
+  }
+  return(id)
+}
+
 get_id <- function(new_value, old_vector, id_vector) {
   if ( is.na(new_value) ) {
     id <- NA
@@ -82,15 +91,6 @@ get_id <- function(new_value, old_vector, id_vector) {
     id <- id_vector[new_value == old_vector][1]
   } else {
     id <- get_new_id(id_vector)
-  }
-  return(id)
-}
-
-get_new_id <- function(id_vector) {
-  if ( length(id_vector) > 0 ) {
-    id <- max(id_vector) + 1
-  } else {
-    id <- 0
   }
   return(id)
 }
@@ -189,13 +189,14 @@ for (i in 1:nrow(imp)) {
     con, "arch_objects", 
     tibble::tibble(
       id = arch_objects.id,
-      materials_id = materials.id,
+      material_id = materials.id,
       species_id = NA,
-      on_site_object_positions_id = on_site_object_positions.id,
+      on_site_object_position_id = on_site_object_positions.id,
       site_phase_id = site_phases.id
     ) %>% 
       add_time_columns() %>% 
-      dplyr::filter(!is.na(id)),
+      dplyr::filter(!is.na(id)) %>%
+      dplyr::filter(!(id %in% arch_objects_cur$id)),
     append = T
   )
 
@@ -204,10 +205,11 @@ for (i in 1:nrow(imp)) {
     con, "samples", 
     tibble::tibble(
       id = samples.id,
-      arch_objects_id = arch_objects.id
+      arch_object_id = arch_objects.id
     ) %>% 
       add_time_columns() %>% 
-      dplyr::filter(!is.na(id)),
+      dplyr::filter(!is.na(id)) %>%
+      dplyr::filter(!(id %in% samples_cur$id)),
     append = T
   )
   
@@ -222,7 +224,8 @@ for (i in 1:nrow(imp)) {
       c14_measurement_id = c14_measurements.id
     ) %>% 
       add_time_columns() %>% 
-      dplyr::filter(!is.na(id)),
+      dplyr::filter(!is.na(id)) %>%
+      dplyr::filter(!(id %in% measurements_cur$id)),
     append = T
   )
   
@@ -240,7 +243,8 @@ for (i in 1:nrow(imp)) {
       method = NA
     ) %>% 
       add_time_columns() %>% 
-      dplyr::filter(!is.na(id)),
+      dplyr::filter(!is.na(id)) %>%
+      dplyr::filter(!(id %in% c14_measurements_cur$id)),
     append = T
   )
 
@@ -253,7 +257,8 @@ for (i in 1:nrow(imp)) {
       bibtex = NA
     ) %>% 
       add_time_columns() %>% 
-      dplyr::filter(!is.na(id)),
+      dplyr::filter(!is.na(id)) %>%
+      dplyr::filter(!(id %in% references_cur$id)),
     append = T
   )
   
@@ -280,7 +285,8 @@ for (i in 1:nrow(imp)) {
       site_type_id = NA
     ) %>% 
       add_time_columns() %>% 
-      dplyr::filter(!is.na(id)),
+      dplyr::filter(!is.na(id)) %>%
+      dplyr::filter(!(id %in% site_phases_cur$id)),
     append = T
   )
   
@@ -295,13 +301,14 @@ for (i in 1:nrow(imp)) {
       parent_id = NA 
     ) %>% 
       add_time_columns() %>% 
-      dplyr::filter(!is.na(id)),
+      dplyr::filter(!is.na(id)) %>%
+      dplyr::filter(!(id %in% periods_cur$id)),
     append = T
   )
   
   # periods_site_phases
   DBI::dbWriteTable(
-    con, "measurements_references", 
+    con, "periods_site_phases", 
     tibble::tibble(
       site_phase_id = site_phases.id,
       period_id = periods.id
@@ -321,7 +328,8 @@ for (i in 1:nrow(imp)) {
       parent_id = NA 
     ) %>% 
       add_time_columns() %>% 
-      dplyr::filter(!is.na(id)),
+      dplyr::filter(!is.na(id)) %>%
+      dplyr::filter(!(id %in% typochronological_units_cur$id)),
     append = T
   )
   
@@ -330,9 +338,9 @@ for (i in 1:nrow(imp)) {
     con, "site_phases_typochronological_units", 
     tibble::tibble(
       site_phase_id = site_phases.id,
-      period_id = typochronological_units.id
+      typochronological_unit_id = typochronological_units.id
     )  %>% 
-      dplyr::filter(!is.na(site_phases.id) & !is.na(period_id)),
+      dplyr::filter(!is.na(site_phase_id) & !is.na(typochronological_unit_id)),
     append = T
   )
   
@@ -347,7 +355,8 @@ for (i in 1:nrow(imp)) {
       country_id = countries.id
     ) %>% 
       add_time_columns() %>% 
-      dplyr::filter(!is.na(id)),
+      dplyr::filter(!is.na(id)) %>%
+      dplyr::filter(!(id %in% sites_cur$id)),
     append = T
   )
   
@@ -359,7 +368,8 @@ for (i in 1:nrow(imp)) {
       name = countries.name
     ) %>% 
       add_time_columns() %>% 
-      dplyr::filter(!is.na(id)),
+      dplyr::filter(!is.na(id)) %>%
+      dplyr::filter(!(id %in% countries_cur$id)),
     append = T
   )
   
@@ -369,14 +379,15 @@ for (i in 1:nrow(imp)) {
     tibble::tibble(
       id = on_site_object_positions.id,
       feature = on_site_object_positions.feature,
-      coord_reference_sytem = NA,
+      coord_reference_system = NA,
       coord_X = NA,
       coord_Y = NA,
       coord_Z = NA,
       feature_type_id = NA
     ) %>% 
       add_time_columns() %>% 
-      dplyr::filter(!is.na(id)),
+      dplyr::filter(!is.na(id)) %>%
+      dplyr::filter(!(id %in% on_site_object_positions_cur$id)),
     append = T
   )
   
@@ -388,9 +399,12 @@ for (i in 1:nrow(imp)) {
       name = materials.name
     ) %>% 
       add_time_columns() %>% 
-      dplyr::filter(!is.na(id)),
+      dplyr::filter(!is.na(id)) %>%
+      dplyr::filter(!(id %in% materials_cur$id)),
     append = T
   )
   
 }
+
+DBI::dbDisconnect(con)
 
