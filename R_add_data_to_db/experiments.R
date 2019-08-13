@@ -269,18 +269,23 @@ measurements_add <- tibble::tibble(
 #### alternative approach ####
 ##############################
 
-get_id <- function(new_value, old_vector, id_vector) {
+exists_in_db <- function(new_value, old_vector) {
+  exists <- FALSE
   if ( new_value %in% old_vector ) {
     exists <- TRUE
+  }
+  return(exists)
+}
+
+get_id <- function(new_value, old_vector, id_vector) {
+  if ( exists_in_db(new_value, old_vector) ) {
     id <- id_vector[new_value == old_vector][1]
   } else if ( length(old_vector) > 0 ) {
-    exists <- FALSE
     id <- max(id_vector) + 1
   } else {
-    exists <- FALSE
     id <- 0
   }
-  return(list(exists = exists, id = id))
+  return(id)
 }
 
 for (i in 1:nrow(imp)) {
@@ -290,7 +295,7 @@ for (i in 1:nrow(imp)) {
   measurements_cur <- get_table("measurements", con)
   measurements.labnr <- cur$labnr
   measurements.id_lookup <- get_id(measurements.labnr, measurements_cur$labnr, measurements_cur$id)
-  if (measurements.id_lookup$exists) {
+  if (exists_in_db(measurements.labnr, measurements_cur$labnr)) {
     next
   }
   measurements.id <- measurements.id_lookup$id
@@ -302,15 +307,21 @@ for (i in 1:nrow(imp)) {
   c14_measurements.cal_bp <- cur$cal_bp
   c14_measurements.cal_std <- cur$cal_std
   c14_measurements.delta_c13 <- cur$c13val
-  c14_measurements.id <- get_id(NA, c(), c14_measurements_cur$id)$id
+  c14_measurements.id <- get_id(NA, c(), c14_measurements_cur$id)
   
   # sites
   sites_cur <- get_table("sites", con)
   sites.name <- cur$site
   sites.lat <- cur$lat
   sites.lng <- cur$lon
-  sites.id <- get_id(sites.name, sites_cur$name, sites_cur$id)$id
+  sites.should_be_created <- !is.na(sites.name) & !exists_in_db
+  sites.id <- get_id(sites.name, sites_cur$name, sites_cur$id)
 
+  # on_site_object_positions
+  on_site_object_positions_cur <- get_table("on_site_object_positions", con)
+  on_site_object_positions.feature <- cur$feature
+  get_id(on_site_object_positions.feature, on_site_object_positions_cur$feature, on_site_object_positions_cur$id)$id
+  
   # periods
   periods_cur <- get_table("periods", con)
   periods.name <- cur$period
@@ -340,6 +351,9 @@ for (i in 1:nrow(imp)) {
     unlist %>%
     trimws()
   
+  #### writing tables ####
+  
+  #DBI::dbWriteTable(con, "site_phases_typochronological_units", typochronological_units_site_phases_new, append = T)
 
 }
 
