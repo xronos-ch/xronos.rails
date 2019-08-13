@@ -320,6 +320,16 @@ for (i in 1:nrow(imp)) {
   }
   measurements.id <- measurements.id_lookup$id
 
+  # c14_measurements
+  c14_measurements_cur <- get_table("c14_measurements", con)
+  c14_measurements.bp <- cur$c14age
+  c14_measurements.std <- cur$c14std
+  c14_measurements.cal_bp <- cur$cal_bp
+  c14_measurements.cal_std <- cur$cal_std
+  c14_measurements.delta_c13 <- cur$c13val
+  sites.should_be_created <- TRUE
+  c14_measurements.id <- get_id(NA, c(), c14_measurements_cur$id)
+  
   # references
   references_cur <- get_table("references", con)
   references.short_refs <- cur$shortref %>% 
@@ -344,15 +354,23 @@ for (i in 1:nrow(imp)) {
     z = references_cur$id
   )
   
-  # c14_measurements
-  c14_measurements_cur <- get_table("c14_measurements", con)
-  c14_measurements.bp <- cur$c14age
-  c14_measurements.std <- cur$c14std
-  c14_measurements.cal_bp <- cur$cal_bp
-  c14_measurements.cal_std <- cur$cal_std
-  c14_measurements.delta_c13 <- cur$c13val
-  sites.should_be_created <- TRUE
-  c14_measurements.id <- get_id(NA, c(), c14_measurements_cur$id)
+  # site_phases
+  site_phases_cur <- get_table("site_phases", con)
+  site_phases.name <- cur$site
+  site_phases.should_be_created <- !is.na(site_phases.name) & !exists_in_db(site_phases.name, site_phases_cur$name)
+  site_phases.id <- get_id(site_phases.name, site_phases_cur$name, site_phases_cur$id)
+  
+  # periods
+  periods_cur <- get_table("periods", con)
+  periods.name <- cur$period
+  periods.should_be_created <- !is.na(periods.name) & !exists_in_db(periods.name, periods_cur$name)
+  periods.id <- get_id(periods.name, periods_cur$name, periods_cur$id)
+  
+  # typochronological units
+  typochronological_units_cur <- get_table("typochronological_units", con)  
+  typochronological_units.name <- cur$culture
+  typochronological_units.should_be_created <- !is.na(typochronological_units.name) & !exists_in_db(typochronological_units.name, typochronological_units_cur$name)
+  typochronological_units.id <- get_id(typochronological_units.name, typochronological_units_cur$name, typochronological_units_cur$id)
   
   # sites
   sites_cur <- get_table("sites", con)
@@ -362,11 +380,11 @@ for (i in 1:nrow(imp)) {
   sites.should_be_created <- !is.na(sites.name) & !exists_in_db(sites.name, sites_cur$name)
   sites.id <- get_id(sites.name, sites_cur$name, sites_cur$id)
 
-  # site_phases
-  site_phases_cur <- get_table("site_phases", con)
-  site_phases.name <- cur$site
-  site_phases.should_be_created <- !is.na(site_phases.name) & !exists_in_db(site_phases.name, site_phases_cur$name)
-  site_phases.id <- get_id(site_phases.name, site_phases_cur$name, site_phases_cur$id)
+  # countries
+  countries_cur <- get_table("countries", con)
+  countries.name <- cur$country_final
+  countries.should_be_created <- FALSE
+  countries.id <- get_id(countries.name, countries_cur$name, countries_cur$id)
   
   # on_site_object_positions
   on_site_object_positions_cur <- get_table("on_site_object_positions", con)
@@ -374,30 +392,12 @@ for (i in 1:nrow(imp)) {
   on_site_object_positions.should_be_created <- !is.na(sites.name)
   on_site_object_positions.id <- get_new_id(on_site_object_positions_cur$id)
   
-  # periods
-  periods_cur <- get_table("periods", con)
-  periods.name <- cur$period
-  periods.should_be_created <- !is.na(periods.name) & !exists_in_db(periods.name, periods_cur$name)
-  periods.id <- get_id(periods.name, periods_cur$name, periods_cur$id)
-
-  # typochronological units
-  typochronological_units_cur <- get_table("typochronological_units", con)  
-  typochronological_units.name <- cur$culture
-  typochronological_units.should_be_created <- !is.na(typochronological_units.name) & !exists_in_db(typochronological_units.name, typochronological_units_cur$name)
-  typochronological_units.id <- get_id(typochronological_units.name, typochronological_units_cur$name, typochronological_units_cur$id)
-  
   # materials
   materials_cur <- get_table("materials", con)
   materials.name <- cur$material
   materials.should_be_created <- !is.na(materials.name) & !exists_in_db(materials.name, materials_cur$name)
   materials.id <- get_id(materials.name, materials_cur$name, materials_cur$id)
 
-  # countries
-  countries_cur <- get_table("countries", con)
-  countries.name <- cur$country_final
-  countries.should_be_created <- FALSE
-  countries.id <- get_id(countries.name, countries_cur$name, countries_cur$id)
-  
   #### writing tables ####
   
   # arch_objects
@@ -459,6 +459,124 @@ for (i in 1:nrow(imp)) {
       id = references.ids,
       short_ref = references.short_refs,
       bibtex = NA
+    ) %>% add_time_columns(),
+    append = T
+  )
+  
+  # measurements_references
+  DBI::dbWriteTable(
+    con, "measurements_references", 
+    tibble::tibble(
+      measurement_id = measurements.id,
+      reference_id = references.ids
+    ),
+    append = T
+  )
+  
+  # site_phases
+  DBI::dbWriteTable(
+    con, "site_phases", 
+    tibble::tibble(
+      id = site_phases.id,
+      name = site_phases.name,
+      approx_start_time = NA,
+      approx_end_time = NA,
+      site_id = sites.id,
+      site_type_id = NA
+    ) %>% add_time_columns(),
+    append = T
+  )
+  
+  # periods
+  DBI::dbWriteTable(
+    con, "periods", 
+    tibble::tibble(
+      id = periods.id,
+      name = periods.name,
+      approx_start_time = NA,
+      approx_end_time = NA,
+      parent_id = NA 
+    ) %>% add_time_columns(),
+    append = T
+  )
+  
+  # periods_site_phases
+  DBI::dbWriteTable(
+    con, "measurements_references", 
+    tibble::tibble(
+      site_phase_id = site_phases.id,
+      period_id = periods.id
+    ),
+    append = T
+  )
+  
+  # typochronological_units
+  DBI::dbWriteTable(
+    con, "typochronological_units", 
+    tibble::tibble(
+      id = typochronological_units.id,
+      name = typochronological_units.name,
+      approx_start_time = NA,
+      approx_end_time = NA,
+      parent_id = NA 
+    ) %>% add_time_columns(),
+    append = T
+  )
+  
+  # site_phases_typochronological_units
+  DBI::dbWriteTable(
+    con, "site_phases_typochronological_units", 
+    tibble::tibble(
+      site_phase_id = site_phases.id,
+      period_id = typochronological_units.id
+    ),
+    append = T
+  )
+  
+  # sites
+  DBI::dbWriteTable(
+    con, "sites", 
+    tibble::tibble(
+      id = sites.id,
+      name = sites.name,
+      lat = sites.lat,
+      lng = sites.lng,
+      country_id = countries.id
+    ) %>% add_time_columns(),
+    append = T
+  )
+  
+  # countries
+  DBI::dbWriteTable(
+    con, "countries", 
+    tibble::tibble(
+      id = countries.id,
+      name = countries.name
+    ) %>% add_time_columns(),
+    append = T
+  )
+  
+  # on_site_object_positions
+  DBI::dbWriteTable(
+    con, "on_site_object_positions", 
+    tibble::tibble(
+      id = on_site_object_positions.id,
+      feature = on_site_object_positions.feature,
+      coord_reference_sytem = NA,
+      coord_X = NA,
+      coord_Y = NA,
+      coord_Z = NA,
+      feature_type_id = NA
+    ) %>% add_time_columns(),
+    append = T
+  )
+  
+  # materials
+  DBI::dbWriteTable(
+    con, "materials", 
+    tibble::tibble(
+      id = materials.id,
+      name = materials.name
     ) %>% add_time_columns(),
     append = T
   )
