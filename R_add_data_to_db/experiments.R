@@ -38,13 +38,15 @@ imp %<>% dplyr::mutate(
   cal_std = simple_cal$std
 ) 
 
+imp %<>% c14bazAAR::finalize_country_name()
+
 #### make connection to database ####
 con <- DBI::dbConnect(RSQLite::SQLite(), dbname = "agora/xronos.rails/db/development.sqlite3")
 
 #### tables ####
 
 # countries
-country_names <- unique(countrycode::codelist$iso.name.en) %>% na.omit()
+country_names <- unique(countrycode::codelist$country.name.en) %>% na.omit()
 countries <- tibble::tibble(
   id = 1:length(country_names),
   name = unique(countrycode::codelist$iso.name.en) %>% na.omit(),
@@ -280,7 +282,14 @@ exists_in_db <- function(new_value, old_vector) {
 get_id <- function(new_value, old_vector, id_vector) {
   if ( exists_in_db(new_value, old_vector) ) {
     id <- id_vector[new_value == old_vector][1]
-  } else if ( length(old_vector) > 0 ) {
+  } else {
+    id <- get_new_id(id_vector)
+  }
+  return(id)
+}
+
+get_new_id <- function(id_vector) {
+  if ( length(id_vector) > 0 ) {
     id <- max(id_vector) + 1
   } else {
     id <- 0
@@ -290,6 +299,14 @@ get_id <- function(new_value, old_vector, id_vector) {
 
 for (i in 1:nrow(imp)) {
   cur <- imp[i,]
+
+  # arch_objects
+  arch_objects_cur <- get_table("arch_objects", con)
+  arch_objects.id <- get_new_id(arch_objects_cur$id)
+
+  # samples
+  samples_cur <- get_table("samples", con)
+  samples.id <- get_new_id(samples_cur$id)
   
   # measurements
   measurements_cur <- get_table("measurements", con)
@@ -307,6 +324,7 @@ for (i in 1:nrow(imp)) {
   c14_measurements.cal_bp <- cur$cal_bp
   c14_measurements.cal_std <- cur$cal_std
   c14_measurements.delta_c13 <- cur$c13val
+  sites.should_be_created <- TRUE
   c14_measurements.id <- get_id(NA, c(), c14_measurements_cur$id)
   
   # sites
@@ -314,33 +332,44 @@ for (i in 1:nrow(imp)) {
   sites.name <- cur$site
   sites.lat <- cur$lat
   sites.lng <- cur$lon
-  sites.should_be_created <- !is.na(sites.name) & !exists_in_db
+  sites.should_be_created <- !is.na(sites.name) & !exists_in_db(sites.name, sites_cur$name)
   sites.id <- get_id(sites.name, sites_cur$name, sites_cur$id)
 
+  # site_phases
+  site_phases_cur <- get_table("site_phases", con)
+  site_phases.name <- cur$site
+  site_phases.should_be_created <- !is.na(site_phases.name) & !exists_in_db(site_phases.name, site_phases_cur$name)
+  site_phases.id <- get_id(site_phases.name, site_phases_cur$name, site_phases_cur$id)
+  
   # on_site_object_positions
   on_site_object_positions_cur <- get_table("on_site_object_positions", con)
   on_site_object_positions.feature <- cur$feature
-  get_id(on_site_object_positions.feature, on_site_object_positions_cur$feature, on_site_object_positions_cur$id)$id
+  on_site_object_positions.should_be_created <- !is.na(sites.name)
+  on_site_object_positions.id <- get_new_id(on_site_object_positions_cur$id)
   
   # periods
   periods_cur <- get_table("periods", con)
   periods.name <- cur$period
-  periods.id <- get_id(periods.name, periods_cur$name, periods_cur$id)$id
+  periods.should_be_created <- !is.na(periods.name) & !exists_in_db(periods.name, periods_cur$name)
+  periods.id <- get_id(periods.name, periods_cur$name, periods_cur$id)
 
   # typochronological units
   typochronological_units_cur <- get_table("typochronological_units", con)  
   typochronological_units.name <- cur$culture
-  typochronological_units.id <- get_id(typochronological_units.name, typochronological_units_cur$name, typochronological_units_cur$id)$id
+  typochronological_units.should_be_created <- !is.na(typochronological_units.name) & !exists_in_db(typochronological_units.name, typochronological_units_cur$name)
+  typochronological_units.id <- get_id(typochronological_units.name, typochronological_units_cur$name, typochronological_units_cur$id)
   
   # materials
   materials_cur <- get_table("materials", con)
   materials.name <- cur$material
-  materials.id <- get_id(materials.name, materials_cur$name, materials_cur$id)$id
+  materials.should_be_created <- !is.na(materials.name) & !exists_in_db(materials.name, materials_cur$name)
+  materials.id <- get_id(materials.name, materials_cur$name, materials_cur$id)
 
   # countries
   countries_cur <- get_table("countries", con)
-  countries.name <- cur$country
-  countries.id <- get_id(countries.name, countries_cur$name, countries_cur$id)$id
+  countries.name <- cur$country_final
+  countries.should_be_created <- FALSE
+  countries.id <- get_id(countries.name, countries_cur$name, countries_cur$id)
   
   # references
   references_cur <- get_table("references", con)
@@ -350,7 +379,22 @@ for (i in 1:nrow(imp)) {
     strsplit(., ";") %>%
     unlist %>%
     trimws()
-  
+  references.shoud_be_createds <- sapply(
+    references.short_ref, 
+    function(x, y) {
+      !is.na(x) & !exists_in_db(x, y)
+    },
+    y = references_cur$short_ref
+  )
+  references.ids <- sapply(
+    references.short_ref, 
+    function(x, y, z) {
+      get_id(x, y, z)
+    },
+    y = references_cur$short_ref,
+    z = references_cur$id
+  )
+        
   #### writing tables ####
   
   #DBI::dbWriteTable(con, "site_phases_typochronological_units", typochronological_units_site_phases_new, append = T)
