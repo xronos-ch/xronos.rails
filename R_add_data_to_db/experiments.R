@@ -98,21 +98,6 @@ references_add <- tibble::tibble(
 
 DBI::dbWriteTable(con, "references", references_add, append = T)
 
-# references_cur <- get_table("references", con)
-# 
-# measurements_references <- tibble::tibble(
-#   reference_id = references_add$id,
-#   measurement_id = references_add$name %>% pbapply::pblapply(function(x) {
-#     grep(x, imp$shortref)
-#   })
-# ) %>% tidyr::unnest() %>%
-#   add_time_columns(
-#     get_time()
-#   )
-
-# labs
-labs_cur <- get_table("labs", con)
-
 # periods
 periods_cur <- get_table("periods", con)
 
@@ -140,18 +125,6 @@ typochronological_units_add <- tibble::tibble(
 ) %>% add_time_columns()
 
 DBI::dbWriteTable(con, "typochronological_units", typochronological_units_add, append = T)
-
-# on_site_object_positions
-# on_site_object_positions_cur <- get_table("on_site_object_positions", con)
-# 
-# unique_features <- unique(imp$feature) %>% na.omit()
-# 
-# on_site_object_positions_add <- tibble::tibble(
-#   feature = unique_features,
-#   approx_start_time = NA,
-#   approx_end_time = NA,
-#   parent_id = NA,
-# ) %>% add_time_columns()
 
 # materials
 materials_cur <- get_table("materials", con)
@@ -231,4 +204,58 @@ periods_site_phases_new <- rbind(pe_sp_ids, periods_site_phases_cur) %>% unique
 
 DBI::dbWriteTable(con, "periods_site_phases", periods_site_phases_new, append = T)
 
+# typochronological units and site_phases
+typochronological_units_cur <- get_table("typochronological_units", con)
+site_phases_cur <- get_table("site_phases", con)
+typochronological_units_site_phases_cur <- get_table("site_phases_typochronological_units", con)
+
+ty_sp_names <- imp %>% dplyr::select(site, culture) %>%
+  dplyr::filter(
+    !is.na(site) & !is.na(culture)
+  )
+
+ty <- typochronological_units_cur %>% dplyr::select(id, name)
+sp <- site_phases_cur %>% dplyr::select(id, name)
+
+ty_sp_ids <- tibble::tibble(
+  site_phase_id = sapply(ty_sp_names$site, function(x) { sp$id[x == sp$name] }),
+  typochronological_unit_id = sapply(ty_sp_names$culture, function(x) { ty$id[x == ty$name] })
+)
+
+typochronological_units_site_phases_new <- rbind(ty_sp_ids, typochronological_units_site_phases_cur) %>% unique
+
+DBI::dbWriteTable(con, "site_phases_typochronological_units", typochronological_units_site_phases_new, append = T)
+
+# measurements
+measurements_cur <- get_table("measurements", con)
+
+measurements_add <- tibble::tibble(
+  labnr = imp$labnr,
+  sample_id = NA,
+  lab_id = NA,
+  c14_measurement_id = NA
+) %>% add_time_columns()
+
+# on_site_object_positions
+# on_site_object_positions_cur <- get_table("on_site_object_positions", con)
 # 
+# unique_features <- unique(imp$feature) %>% na.omit()
+# 
+# on_site_object_positions_add <- tibble::tibble(
+#   feature = unique_features,
+#   approx_start_time = NA,
+#   approx_end_time = NA,
+#   parent_id = NA,
+# ) %>% add_time_columns()
+
+# references_cur <- get_table("references", con)
+# 
+# measurements_references <- tibble::tibble(
+#   reference_id = references_add$id,
+#   measurement_id = references_add$name %>% pbapply::pblapply(function(x) {
+#     grep(x, imp$shortref)
+#   })
+# ) %>% tidyr::unnest() %>%
+#   add_time_columns(
+#     get_time()
+#   )
