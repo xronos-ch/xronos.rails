@@ -230,3 +230,5 @@ pe_sp_ids <- tibble::tibble(
 periods_site_phases_new <- rbind(pe_sp_ids, periods_site_phases_cur) %>% unique
 
 DBI::dbWriteTable(con, "periods_site_phases", periods_site_phases_new, append = T)
+
+# 
