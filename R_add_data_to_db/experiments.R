@@ -33,6 +33,11 @@ simple_cal_list <- pbapply::pblapply(imp$calprobdistr, function(x) {
 
 simple_cal <- do.call(rbind, simple_cal_list)
 
+imp %<>% dplyr::mutate(
+  cal_bp = simple_cal$bp,
+  cal_std = simple_cal$std
+) 
+
 #### make connection to database ####
 con <- DBI::dbConnect(RSQLite::SQLite(), dbname = "agora/xronos.rails/db/development.sqlite3")
 
@@ -259,3 +264,57 @@ measurements_add <- tibble::tibble(
 #   add_time_columns(
 #     get_time()
 #   )
+
+##############################
+#### alternative approach ####
+##############################
+
+get_id <- function(new_value, old_vector, id_vector) {
+  if ( new_value %in% old_vector ) {
+    sites.id <- id_vector[new_value == old_vector][1]
+  } else if ( length(old_vector) > 0 ) {
+    sites.id <- max(id_vector) + 1
+  } else {
+    sites.id <- 0
+  }
+  return(sites.id)
+}
+
+for (i in 1:nrow(imp)) {
+  cur <- imp[i,]
+  
+  measurements.labnr <- cur$labnr
+  c14_measurements.bp <- cur$c14age
+  c14_measurements.std <- cur$c14std
+  c14_measurements.cal_bp <- cur$cal_bp
+  c14_measurements.cal_std <- cur$cal_std
+  c14_measurements.delta_c13 <- cur$c13val
+  
+  # sites
+  sites_cur <- get_table("sites", con)
+  sites.name <- cur$site
+  sites.lat <- cur$lat
+  sites.lng <- cur$lon
+  sites.id <- get_id(sites.name, sites_cur$name, sites_cur$id)
+  
+  periods_cur <- get_table("periods", con)
+  periods.name <- cur$period
+  periods.id <- get_id(periods.name, periods_cur$name, periods_cur$id)
+
+  typochronological_units_cur <- get_table("typochronological_units", con)  
+  typochronological_units.name <- cur$culture
+  typochronological_units.id <- get_id(typochronological_units.name, typochronological_units_cur$name, typochronological_units_cur$id)
+  
+  materials_cur <- get_table("materials", con)
+  materials.name <- cur$material
+  materials.id <- get_id(materials.name, materials_cur$name, materials_cur$id)
+  
+  countries_cur <- get_table("countries", con)
+  countries.name <- cur$country
+  countries.id <- get_id(countries.name, countries_cur$name, countries_cur$id)
+  
+  references_cur <- get_table("references", con)
+  references.short_ref <- cur$shortref
+
+}
+
