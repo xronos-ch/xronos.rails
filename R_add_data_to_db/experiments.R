@@ -278,7 +278,9 @@ exists_in_db <- function(new_value, old_vector) {
 }
 
 get_id <- function(new_value, old_vector, id_vector) {
-  if ( exists_in_db(new_value, old_vector) ) {
+  if ( is.na(new_value) ) {
+    id <- NA
+  } else if ( exists_in_db(new_value, old_vector) ) {
     id <- id_vector[new_value == old_vector][1]
   } else {
     id <- get_new_id(id_vector)
@@ -314,11 +316,10 @@ for (i in 1:nrow(imp)) {
   # measurements
   measurements_cur <- get_table("measurements", con)
   measurements.labnr <- cur$labnr
-  measurements.id_lookup <- get_id(measurements.labnr, measurements_cur$labnr, measurements_cur$id)
-  if (exists_in_db(measurements.labnr, measurements_cur$labnr)) {
+  if (is.na(measurements.labnr) | exists_in_db(measurements.labnr, measurements_cur$labnr)) {
     next
   }
-  measurements.id <- measurements.id_lookup$id
+  measurements.id <- get_id(measurements.labnr, measurements_cur$labnr, measurements_cur$id)
 
   # c14_measurements
   c14_measurements_cur <- get_table("c14_measurements", con)
@@ -327,8 +328,7 @@ for (i in 1:nrow(imp)) {
   c14_measurements.cal_bp <- cur$cal_bp
   c14_measurements.cal_std <- cur$cal_std
   c14_measurements.delta_c13 <- cur$c13val
-  sites.should_be_created <- TRUE
-  c14_measurements.id <- get_id(NA, c(), c14_measurements_cur$id)
+  c14_measurements.id <- get_new_id(c14_measurements_cur$id)
   
   # references
   references_cur <- get_table("references", con)
@@ -338,13 +338,6 @@ for (i in 1:nrow(imp)) {
     strsplit(., ";") %>%
     unlist %>%
     trimws()
-  references.shoud_be_createds <- sapply(
-    references.short_ref, 
-    function(x, y) {
-      !is.na(x) & !exists_in_db(x, y)
-    },
-    y = references_cur$short_ref
-  )
   references.ids <- sapply(
     references.short_ref, 
     function(x, y, z) {
@@ -357,19 +350,16 @@ for (i in 1:nrow(imp)) {
   # site_phases
   site_phases_cur <- get_table("site_phases", con)
   site_phases.name <- cur$site
-  site_phases.should_be_created <- !is.na(site_phases.name) & !exists_in_db(site_phases.name, site_phases_cur$name)
   site_phases.id <- get_id(site_phases.name, site_phases_cur$name, site_phases_cur$id)
   
   # periods
   periods_cur <- get_table("periods", con)
   periods.name <- cur$period
-  periods.should_be_created <- !is.na(periods.name) & !exists_in_db(periods.name, periods_cur$name)
   periods.id <- get_id(periods.name, periods_cur$name, periods_cur$id)
   
   # typochronological units
   typochronological_units_cur <- get_table("typochronological_units", con)  
   typochronological_units.name <- cur$culture
-  typochronological_units.should_be_created <- !is.na(typochronological_units.name) & !exists_in_db(typochronological_units.name, typochronological_units_cur$name)
   typochronological_units.id <- get_id(typochronological_units.name, typochronological_units_cur$name, typochronological_units_cur$id)
   
   # sites
@@ -377,25 +367,21 @@ for (i in 1:nrow(imp)) {
   sites.name <- cur$site
   sites.lat <- cur$lat
   sites.lng <- cur$lon
-  sites.should_be_created <- !is.na(sites.name) & !exists_in_db(sites.name, sites_cur$name)
   sites.id <- get_id(sites.name, sites_cur$name, sites_cur$id)
 
   # countries
   countries_cur <- get_table("countries", con)
   countries.name <- cur$country_final
-  countries.should_be_created <- FALSE
   countries.id <- get_id(countries.name, countries_cur$name, countries_cur$id)
   
   # on_site_object_positions
   on_site_object_positions_cur <- get_table("on_site_object_positions", con)
   on_site_object_positions.feature <- cur$feature
-  on_site_object_positions.should_be_created <- !is.na(sites.name)
   on_site_object_positions.id <- get_new_id(on_site_object_positions_cur$id)
   
   # materials
   materials_cur <- get_table("materials", con)
   materials.name <- cur$material
-  materials.should_be_created <- !is.na(materials.name) & !exists_in_db(materials.name, materials_cur$name)
   materials.id <- get_id(materials.name, materials_cur$name, materials_cur$id)
 
   #### writing tables ####
@@ -409,7 +395,9 @@ for (i in 1:nrow(imp)) {
       species_id = NA,
       on_site_object_positions_id = on_site_object_positions.id,
       site_phase_id = site_phases.id
-    ) %>% add_time_columns(),
+    ) %>% 
+      add_time_columns() %>% 
+      dplyr::filter(!is.na(id)),
     append = T
   )
 
@@ -419,7 +407,9 @@ for (i in 1:nrow(imp)) {
     tibble::tibble(
       id = samples.id,
       arch_objects_id = arch_objects.id
-    ) %>% add_time_columns(),
+    ) %>% 
+      add_time_columns() %>% 
+      dplyr::filter(!is.na(id)),
     append = T
   )
   
@@ -432,7 +422,9 @@ for (i in 1:nrow(imp)) {
       sample_id = samples.id,
       lab_id = NA,
       c14_measurement_id = c14_measurements.id
-    ) %>% add_time_columns(),
+    ) %>% 
+      add_time_columns() %>% 
+      dplyr::filter(!is.na(id)),
     append = T
   )
   
@@ -448,10 +440,12 @@ for (i in 1:nrow(imp)) {
       delta_c13 = c14_measurements.delta_c13,
       delta_c13_std = NA,
       method = NA
-    ) %>% add_time_columns(),
+    ) %>% 
+      add_time_columns() %>% 
+      dplyr::filter(!is.na(id)),
     append = T
   )
-  
+
   # references
   DBI::dbWriteTable(
     con, "references", 
@@ -459,7 +453,9 @@ for (i in 1:nrow(imp)) {
       id = references.ids,
       short_ref = references.short_refs,
       bibtex = NA
-    ) %>% add_time_columns(),
+    ) %>% 
+      add_time_columns() %>% 
+      dplyr::filter(!is.na(id)),
     append = T
   )
   
@@ -469,7 +465,8 @@ for (i in 1:nrow(imp)) {
     tibble::tibble(
       measurement_id = measurements.id,
       reference_id = references.ids
-    ),
+    ) %>% 
+      dplyr::filter(!is.na(measurement_id) & !is.na(reference_id)),
     append = T
   )
   
@@ -483,7 +480,9 @@ for (i in 1:nrow(imp)) {
       approx_end_time = NA,
       site_id = sites.id,
       site_type_id = NA
-    ) %>% add_time_columns(),
+    ) %>% 
+      add_time_columns() %>% 
+      dplyr::filter(!is.na(id)),
     append = T
   )
   
@@ -496,7 +495,9 @@ for (i in 1:nrow(imp)) {
       approx_start_time = NA,
       approx_end_time = NA,
       parent_id = NA 
-    ) %>% add_time_columns(),
+    ) %>% 
+      add_time_columns() %>% 
+      dplyr::filter(!is.na(id)),
     append = T
   )
   
@@ -506,7 +507,8 @@ for (i in 1:nrow(imp)) {
     tibble::tibble(
       site_phase_id = site_phases.id,
       period_id = periods.id
-    ),
+    ) %>% 
+      dplyr::filter(!is.na(site_phase_id) & !is.na(period_id)),
     append = T
   )
   
@@ -519,7 +521,9 @@ for (i in 1:nrow(imp)) {
       approx_start_time = NA,
       approx_end_time = NA,
       parent_id = NA 
-    ) %>% add_time_columns(),
+    ) %>% 
+      add_time_columns() %>% 
+      dplyr::filter(!is.na(id)),
     append = T
   )
   
@@ -529,7 +533,8 @@ for (i in 1:nrow(imp)) {
     tibble::tibble(
       site_phase_id = site_phases.id,
       period_id = typochronological_units.id
-    ),
+    )  %>% 
+      dplyr::filter(!is.na(site_phases.id) & !is.na(period_id)),
     append = T
   )
   
@@ -542,7 +547,9 @@ for (i in 1:nrow(imp)) {
       lat = sites.lat,
       lng = sites.lng,
       country_id = countries.id
-    ) %>% add_time_columns(),
+    ) %>% 
+      add_time_columns() %>% 
+      dplyr::filter(!is.na(id)),
     append = T
   )
   
@@ -552,7 +559,9 @@ for (i in 1:nrow(imp)) {
     tibble::tibble(
       id = countries.id,
       name = countries.name
-    ) %>% add_time_columns(),
+    ) %>% 
+      add_time_columns() %>% 
+      dplyr::filter(!is.na(id)),
     append = T
   )
   
@@ -567,7 +576,9 @@ for (i in 1:nrow(imp)) {
       coord_Y = NA,
       coord_Z = NA,
       feature_type_id = NA
-    ) %>% add_time_columns(),
+    ) %>% 
+      add_time_columns() %>% 
+      dplyr::filter(!is.na(id)),
     append = T
   )
   
@@ -577,7 +588,9 @@ for (i in 1:nrow(imp)) {
     tibble::tibble(
       id = materials.id,
       name = materials.name
-    ) %>% add_time_columns(),
+    ) %>% 
+      add_time_columns() %>% 
+      dplyr::filter(!is.na(id)),
     append = T
   )
   
