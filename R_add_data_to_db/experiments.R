@@ -209,4 +209,24 @@ site_phases_add <- tibble::tibble(
 
 DBI::dbWriteTable(con, "site_phases", site_phases_add, append = T)
 
+# periods and site_phases
+periods_cur <- get_table("periods", con)
+site_phases_cur <- get_table("site_phases", con)
+periods_site_phases_cur <- get_table("periods_site_phases", con)
 
+pe_sp_names <- imp %>% dplyr::select(site, period) %>%
+  dplyr::filter(
+    !is.na(site) & !is.na(period)
+  )
+
+pe <- periods_cur %>% dplyr::select(id, name)
+sp <- site_phases_cur %>% dplyr::select(id, name)
+
+pe_sp_ids <- tibble::tibble(
+  site_phase_id = sapply(pe_sp_names$site, function(x) { sp$id[x == sp$name] }),
+  period_id = sapply(pe_sp_names$period, function(x) { pe$id[x == pe$name] })
+)
+
+periods_site_phases_new <- rbind(pe_sp_ids, periods_site_phases_cur) %>% unique
+
+DBI::dbWriteTable(con, "periods_site_phases", periods_site_phases_new, append = T)
