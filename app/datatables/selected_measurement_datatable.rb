@@ -50,6 +50,7 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
     Rails.logger.debug records.first.to_yaml
     records.map do |record|
       {
+        "measurement_id": record.measurement_id,
         "select": "",
         "edit": link_to("edit", edit_arch_object_path(record.arch_object_id)),
         "calibrate": link_to("calibrate", calibrate_c14_measurement_path(record.c14_measurement_id)),

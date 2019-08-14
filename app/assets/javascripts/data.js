@@ -1,7 +1,23 @@
 jQuery(document).ready(function() {
   $('#selected_measurements-datatable').dataTable({
     "autoWidth": true,
-    "sDom": 'r<"H"lf><"datatable-scroll"t><"F"ip>',
+    "sDom": 'Br<"H"lf><"datatable-scroll"t><"F"ip>',
+    "buttons": [
+      {
+        extend: 'selected',
+        text: 'Show selected',
+        action: function ( e, dt, node, config ) {
+          var rows = dt.rows( { selected: true } ).count();
+          var selected_rows = dt.rows( {selected: true} ).data();
+          var selected_ids = [];
+          for (i=0; i < rows; i++) {
+            selected_ids.push(selected_rows[i].measurement_id);
+          };
+
+          alert(selected_ids);
+        }
+      }
+    ],
     "processing": true,
     "serverSide": true,
     "ajax": {
@@ -47,16 +63,6 @@ jQuery(document).ready(function() {
       {"data": "lat"},
       {"data": "lng"},
       {"data": "short_ref"},
-    ],
-    "dom": 'Bfrtip',
-    "buttons": [
-      {
-        "text": 'Get selected data',
-        "action": function () {
-          var count = table.rows( { selected: true } ).count();
-          alert(count);
-        }
-      }
     ]
     // pagingType is optional, if you want full pagination controls.
     // Check dataTables documentation to learn more about
