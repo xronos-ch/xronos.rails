@@ -5,7 +5,7 @@ jQuery(document).ready(function() {
     "buttons": [
       {
         extend: 'selected',
-        text: 'Show selected',
+        text: 'Only show selected',
         action: function ( e, dt, node, config ) {
           var rows = dt.rows( { selected: true } ).count();
           var selected_rows = dt.rows( {selected: true} ).data();
@@ -15,6 +15,38 @@ jQuery(document).ready(function() {
           };
 
           alert(selected_ids);
+
+          $.ajax({
+              type: "get",
+              url: '/data/index',
+              dataType: 'json',
+              data: { manual_table_selection: JSON.stringify(selected_ids) },
+              success: function(data) {
+                return location.reload();
+              },
+              error: function(e) {
+                alert("Oops! An error occurred, please try again");
+                return console.log(e);
+              }
+          });
+        }
+      },
+      {
+        text: 'Disable selection',
+        action: function () {
+          $.ajax({
+              type: "get",
+              url: '/data/index',
+              dataType: 'json',
+              data: { turn_off_manual_table_selection: JSON.stringify(true) },
+              success: function(data) {
+                return location.reload();
+              },
+              error: function(e) {
+                alert("Oops! An error occurred, please try again");
+                return console.log(e);
+              }
+          });
         }
       }
     ],

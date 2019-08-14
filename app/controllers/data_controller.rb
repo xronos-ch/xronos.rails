@@ -113,6 +113,19 @@ class DataController < ApplicationController
       session[:spatial_lasso_selection] = nil;
     end
 
+    # manual table manual_table_selection
+    if params[:manual_table_selection].present?
+      manual_table_selection = Array.new;
+      unless params[:manual_table_selection].nil?
+        manual_table_selection = JSON.parse(params[:manual_table_selection]);
+      end
+      session[:manual_table_selection] = manual_table_selection
+    end
+
+    if params[:turn_off_manual_table_selection].present?
+      session[:manual_table_selection] = nil;
+    end
+
 
 
     ##### select data #####
@@ -214,6 +227,13 @@ class DataController < ApplicationController
     unless session[:spatial_lasso_selection].nil?
        @selected_measurements = @selected_measurements.where(
           "sites.id IN (?)", session[:spatial_lasso_selection]
+       ).all
+    end
+
+    # manual table selection
+    unless session[:manual_table_selection].nil?
+       @selected_measurements = @selected_measurements.where(
+          "measurements.id IN (?)", session[:manual_table_selection]
        ).all
     end
 

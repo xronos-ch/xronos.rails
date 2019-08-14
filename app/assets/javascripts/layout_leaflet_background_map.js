@@ -92,12 +92,12 @@ document.addEventListener('DOMContentLoaded',function(){
             dataType: 'json',
             data: { spatial_lasso_selection: JSON.stringify(lasso_selected_sites) },
             success: function(data) {
-            return location.reload();
+              return location.reload();
             },
             error: function(e) {
-            alert("Oops! An error occurred, please try again");
-            return console.log(e);
-          }
+              alert("Oops! An error occurred, please try again");
+              return console.log(e);
+            }
         });
 
         //lai.style.display = "block";
