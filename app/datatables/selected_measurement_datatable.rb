@@ -53,7 +53,7 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
         "measurement_id": record.measurement_id,
         "select": "",
         "edit": link_to("edit", edit_arch_object_path(record.arch_object_id)),
-        "calibrate": link_to("calibrate", calibrate_c14_measurement_path(record.c14_measurement_id)),
+        "calibrate": link_to("calibrate", calibrate_c14_measurement_path(record.c14_measurement_id), 'calibration-popup' => true ),
         "labnr": best_in_place(Measurement.find(record.measurement_id), :labnr),
         "bp": best_in_place(C14Measurement.find(record.c14_measurement_id), :bp),
         "std": best_in_place(C14Measurement.find(record.c14_measurement_id), :std),

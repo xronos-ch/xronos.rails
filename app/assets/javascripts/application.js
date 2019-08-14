@@ -28,3 +28,9 @@
 $(document).ready(function() {
   $("#dttb").dataTable();
 });
+
+// special popup window for calibration results
+$('a[calibration-popup]').live('click', function(e) {
+  window.open( $(this).attr('href'), "Calibration", "height=600,width=900,titlebar=0,resizable=yes,scrollbars=yes,status=yes");
+  e.preventDefault();
+});
