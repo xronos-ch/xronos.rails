@@ -49,7 +49,6 @@ jQuery(document).ready(function() {
       {
         extend: 'selected',
         text: 'Calibrate selected',
-        attr: {'calibration-popup': true},
         action: function ( e, dt, node, config ) {
           var rows = dt.rows( { selected: true } ).count();
           var selected_rows = dt.rows( {selected: true} ).data();
@@ -64,6 +63,19 @@ jQuery(document).ready(function() {
           }
         }
       },
+      {
+        extend: 'selected',
+        text: 'Sum calibration of selected dates',
+        action: function ( e, dt, node, config ) {
+          var rows = dt.rows( { selected: true } ).count();
+          var selected_rows = dt.rows( {selected: true} ).data();
+          var values = '';
+          for (i=0; i < rows; i++) {
+            values = values + 'ids[]=' + selected_rows[i].c14_measurement_id + '&';
+          };
+          window.open('/c14_measurements/1/calibrate_sum?' + values, 'Calibration', 'height=800,width=1000,resizable=yes,scrollbars=yes,status=yes');
+        }
+      }
     ],
     "processing": true,
     "serverSide": true,
