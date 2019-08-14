@@ -213,7 +213,7 @@ class DataController < ApplicationController
     # lasso
     unless session[:spatial_lasso_selection].nil?
        @selected_measurements = @selected_measurements.where(
-        "measurements.id IN (?)", session[:spatial_lasso_selection]
+          "sites.id IN (?)", session[:spatial_lasso_selection]
        ).all
     end
 

@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded',function(){
 				fillColor: "black",
 				fillOpacity: 0.5,
 				radius: 1000,
-				measurement_id: sites[i].measurement_id
+				site_id: sites[i].site_id
 			}
 		).bindPopup('Site: ' + sites[i].site + '<br>' + '<a href="/sites/' + sites[i].site_id  + '"> View site </a>');
 	}
@@ -80,17 +80,17 @@ document.addEventListener('DOMContentLoaded',function(){
           }
         });
 
-        const lasso_selected_measurements = new Array(layers.length)
-        for (var i = 0; i < lasso_selected_measurements.length; i++) {
-          lasso_selected_measurements[i] = layers[i].options.measurement_id
+        const lasso_selected_sites = new Array(layers.length)
+        for (var i = 0; i < lasso_selected_sites.length; i++) {
+          lasso_selected_sites[i] = layers[i].options.site_id
         }
 
-        //alert(JSON.stringify(lasso_selected_measurements));
+        //alert(JSON.stringify(lasso_selected_sites));
         $.ajax({
             type: "get",
             url: '/data/index',
             dataType: 'json',
-            data: { spatial_lasso_selection: JSON.stringify(lasso_selected_measurements) },
+            data: { spatial_lasso_selection: JSON.stringify(lasso_selected_sites) },
             success: function(data) {
             return location.reload();
             },
