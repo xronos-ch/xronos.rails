@@ -1,25 +1,29 @@
 document.addEventListener('DOMContentLoaded',function(){
 
-    // #### map ####
+  // #### map ####
 
-    // define base map
-    const map = L.map('background_map').setView([45, 7], 3);
-    L.tileLayer('https://maps.heigit.org/openmapsurfer/tiles/roads/webmercator/{z}/{x}/{y}.png', {
-      attribution: 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> | Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      maxZoom: 18,
-      id: 'mapbox.streets',
-      accessToken: 'your.mapbox.access.token'
-    }).addTo(map);
+  // define base map
+  const map = L.map('background_map');
+  L.tileLayer('https://maps.heigit.org/openmapsurfer/tiles/roads/webmercator/{z}/{x}/{y}.png', {
+    attribution: 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> | Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 18,
+    id: 'mapbox.streets',
+    accessToken: 'your.mapbox.access.token'
+  }).addTo(map);
 
-    // load markers
-    var sel = JSON.parse(gon.selected_measurements);
+  if (!map.restoreView()) {
+      map.setView([45, 7], 3);
+  }
 
-    const markers = new Array(sel.length)
-	for (var i = 0; i < markers.length; i++) { 
+  // load markers
+  var sel = JSON.parse(gon.selected_measurements);
+
+  const markers = new Array(sel.length)
+	for (var i = 0; i < markers.length; i++) {
 		markers[i] = L.circle(
 			[sel[i].lat, sel[i].lng], {
-				color: 'blue',
-				fillColor: 'blue',
+				color: 'black',
+				fillColor: "black",
 				fillOpacity: 0.5,
 				radius: 1000,
 				measurement_id: sel[i].measurement_id
@@ -49,7 +53,7 @@ document.addEventListener('DOMContentLoaded',function(){
           if (layer instanceof L.Marker) {
               layer.setIcon(new L.Icon.Default());
           } else if (layer instanceof L.Path) {
-              layer.setStyle({ color: 'blue' });
+              layer.setStyle({ color: 'black' });
           }
       });
     }
@@ -133,3 +137,55 @@ document.addEventListener('DOMContentLoaded',function(){
     });
 
 });
+
+// https://github.com/makinacorpus/Leaflet.RestoreView
+(function() {
+    var RestoreViewMixin = {
+        restoreView: function () {
+            if (!storageAvailable('localStorage')) {
+                return false;
+            }
+            var storage = window.localStorage;
+            if (!this.__initRestore) {
+                this.on('moveend', function (e) {
+                    if (!this._loaded)
+                        return;  // Never access map bounds if view is not set.
+
+                    var view = {
+                        lat: this.getCenter().lat,
+                        lng: this.getCenter().lng,
+                        zoom: this.getZoom()
+                    };
+                    storage['mapView'] = JSON.stringify(view);
+                }, this);
+                this.__initRestore = true;
+            }
+
+            var view = storage['mapView'];
+            try {
+                view = JSON.parse(view || '');
+                this.setView(L.latLng(view.lat, view.lng), view.zoom, true);
+                return true;
+            }
+            catch (err) {
+                return false;
+            }
+        }
+    };
+
+    function storageAvailable(type) {
+        try {
+            var storage = window[type],
+                x = '__storage_test__';
+            storage.setItem(x, x);
+            storage.removeItem(x);
+            return true;
+        }
+        catch(e) {
+            console.warn("Your browser blocks access to " + type);
+            return false;
+        }
+    }
+
+    L.Map.include(RestoreViewMixin);
+})();
