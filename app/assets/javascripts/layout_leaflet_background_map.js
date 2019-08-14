@@ -12,23 +12,34 @@ document.addEventListener('DOMContentLoaded',function(){
   }).addTo(map);
 
   if (!map.restoreView()) {
-      map.setView([45, 7], 3);
+    map.setView([45, 7], 3);
   }
 
-  // load markers
+  // load data
   var sel = JSON.parse(gon.selected_measurements);
 
-  const markers = new Array(sel.length)
+  // reduce selection to sites
+  const sel_reduced_to_site = new Array(sel.length)
+  for (var i = 0; i < sel_reduced_to_site.length; i++) {
+    sel_reduced_to_site[i] = {site_id: sel[i].site_id, site: sel[i].site, lat: sel[i].lat, lng: sel[i].lng}
+  }
+  // https://gist.github.com/juliovedovatto/f4ac657e5d28e060c791f5ef27b13341
+  var sites = sel_reduced_to_site.map(JSON.stringify).reverse() // convert to JSON string the array content, then reverse it (to check from end to beginning)
+    .filter(function(item, index, arr){ return arr.indexOf(item, index + 1) === -1; }) // check if there is any occurence of the item in whole array
+    .reverse().map(JSON.parse) // revert it to original state
+
+  // prepare markers
+  const markers = new Array(sites.length)
 	for (var i = 0; i < markers.length; i++) {
 		markers[i] = L.circle(
-			[sel[i].lat, sel[i].lng], {
+			[sites[i].lat, sites[i].lng], {
 				color: 'black',
 				fillColor: "black",
 				fillOpacity: 0.5,
 				radius: 1000,
-				measurement_id: sel[i].measurement_id
+				measurement_id: sites[i].measurement_id
 			}
-		).bindPopup("I am a circle: " + sel[i].measurement_id);
+		).bindPopup('Site: ' + sites[i].site + '<br>' + '<a href="/sites/' + sites[i].site_id  + '"> View site </a>');
 	}
 
 	const layers = [
