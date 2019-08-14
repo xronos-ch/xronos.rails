@@ -53,27 +53,15 @@ jQuery(document).ready(function() {
         action: function ( e, dt, node, config ) {
           var rows = dt.rows( { selected: true } ).count();
           var selected_rows = dt.rows( {selected: true} ).data();
-          var values = '';
-          for (i=0; i < rows; i++) {
-            values = values + 'ids[]=' + selected_rows[i].c14_measurement_id + '&';
-          };
-
-          newwindow = window.open('/c14_measurements/1/calibrate_multi?' + values, 'name', 'height=800,width=1000,resizable=yes,scrollbars=yes,status=yes');
-
-          //alert(selected_ids);
-          //$.ajax({
-          //    type: "get",
-          //    url: 'c14_measurements/calibrate_multi',
-          //    dataType: 'json',
-          //    data: { values },
-          //    success: function(data) {
-          //      return location.reload();
-          //    },
-          //    error: function(e) {
-          //      alert("Oops! An error occurred, please try again");
-          //      return console.log(e);
-          //    }
-          //});
+          if (selected_rows.length > 1) {
+            var values = '';
+            for (i=0; i < rows; i++) {
+              values = values + 'ids[]=' + selected_rows[i].c14_measurement_id + '&';
+            };
+            window.open('/c14_measurements/1/calibrate_multi?' + values, 'Calibration', 'height=800,width=1000,resizable=yes,scrollbars=yes,status=yes');
+          } else {
+            window.open('/c14_measurements/' + selected_rows[0].c14_measurement_id + '/calibrate', 'Calibration', 'height=800,width=1000,resizable=yes,scrollbars=yes,status=yes');
+          }
         }
       },
     ],
