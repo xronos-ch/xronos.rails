@@ -262,13 +262,13 @@ main.big {
   position: fixed;
   top: 0;
   right: 0;
-  width: 10vw;
+  width: 12vw;
   height: 100vh;
   background: rgba(0, 0, 0, 0.9);
   transition: all 500ms ease-in-out;
   clip-path: circle(30px at calc(100% - 65px) calc(100% - 125px));
   visibility: hidden;
-  padding: 30px;
+  padding: 10px;
   color: white;
 }
 
@@ -278,15 +278,12 @@ main.big {
 }
 
 #right_window_body {
-  background-color: rgba(50, 50, 50, 0.50);
-  clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
-  margin: 10px 0px 10px 0px;
-  padding: 10px 10px 5px 20px;
+  padding: 5px 5px 5px 5px;
   color: white;
 }
 
 #right_window_body input {
-  width: 95%;
+  width: 100%;
 }
 
 // dropdown multiselect
