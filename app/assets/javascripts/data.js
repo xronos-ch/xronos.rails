@@ -4,6 +4,12 @@ jQuery(document).ready(function() {
     "sDom": 'Br<"H"lf><"datatable-scroll"t><"F"ip>',
     "buttons": [
       {
+        text: 'Add new archaeological object with dates',
+        action: function () {
+          window.open("/arch_objects/new");
+        }
+      },
+      {
         extend: 'selected',
         text: 'Only show selected',
         action: function ( e, dt, node, config ) {
@@ -74,6 +80,12 @@ jQuery(document).ready(function() {
             values = values + 'ids[]=' + selected_rows[i].c14_measurement_id + '&';
           };
           window.open('/c14_measurements/1/calibrate_sum?' + values, 'Calibration', 'height=800,width=1000,resizable=yes,scrollbars=yes,status=yes');
+        }
+      },
+      {
+        text: 'Download current table as .csv file',
+        action: function () {
+          window.open("?format=csv");
         }
       }
     ],
