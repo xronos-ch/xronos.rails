@@ -40,6 +40,16 @@ class DataController < ApplicationController
     redirect_to :root
   end
 
+  def turn_off_lasso
+    session[:spatial_lasso_selection] = nil
+    redirect_to :root
+  end
+
+  def reset_manual_table_selection
+    session[:manual_table_selection] = nil
+    redirect_to :root
+  end
+
   def index
 
     #### update session ####
@@ -109,10 +119,6 @@ class DataController < ApplicationController
       session[:spatial_lasso_selection] = spatial_lasso_selection
     end
 
-    if params[:turn_off_lasso].present?
-      session[:spatial_lasso_selection] = nil;
-    end
-
     # manual table manual_table_selection
     if params[:manual_table_selection].present?
       manual_table_selection = Array.new;
@@ -120,10 +126,6 @@ class DataController < ApplicationController
         manual_table_selection = JSON.parse(params[:manual_table_selection]);
       end
       session[:manual_table_selection] = manual_table_selection
-    end
-
-    if params[:turn_off_manual_table_selection].present?
-      session[:manual_table_selection] = nil;
     end
 
 

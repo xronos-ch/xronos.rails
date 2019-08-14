@@ -35,6 +35,8 @@ Rails.application.routes.draw do
   get '/api' => 'pages#api'
   get '/about' => 'pages#about'
   get '/resetfilter', :to=>'data#reset_filter_session_variable'
+  get '/turn_off_lasso', :to=>'data#turn_off_lasso'
+  get '/reset_manual_table_selection', :to=>'data#reset_manual_table_selection'
   post 'data/activate_right_window'
   post 'data/deactivate_right_window'
   post 'data/activate_left_window'

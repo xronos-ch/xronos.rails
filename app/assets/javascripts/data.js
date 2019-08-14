@@ -14,8 +14,7 @@ jQuery(document).ready(function() {
             selected_ids.push(selected_rows[i].measurement_id);
           };
 
-          alert(selected_ids);
-
+          //alert(selected_ids);
           $.ajax({
               type: "get",
               url: '/data/index',
@@ -36,9 +35,7 @@ jQuery(document).ready(function() {
         action: function () {
           $.ajax({
               type: "get",
-              url: '/data/index',
-              dataType: 'json',
-              data: { turn_off_manual_table_selection: JSON.stringify(true) },
+              url: '/reset_manual_table_selection',
               success: function(data) {
                 return location.reload();
               },

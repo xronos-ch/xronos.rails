@@ -131,9 +131,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
         $.ajax({
             type: "get",
-            url: '/data/index',
-            dataType: 'json',
-            data: { turn_off_lasso: JSON.stringify(true) },
+            url: '/turn_off_lasso',
             success: function(data) {
                 return location.reload();
             },
