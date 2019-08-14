@@ -7,8 +7,8 @@ Rails.application.routes.draw do
   resources :periods
   resources :c14_measurements do
     member do
-      get 'calibrate_multi'
       get 'calibrate'
+      get 'calibrate_multi'
       get 'calibrate_sum'
       post 'export_chart'
     end

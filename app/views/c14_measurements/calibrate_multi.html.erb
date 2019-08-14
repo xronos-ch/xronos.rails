@@ -62,7 +62,6 @@ handles=[]
          maxPadding: 0.95
       }
   "
-  <%- # handles[i]=" <li style='position: relative; cursor: move;' id='#{i}'>#{@c14_measurements[i].lab.lab_code + '-' + @c14_measurements[i].lab_nr}</li>  " -%>
 
 end
 series_string=series.reverse.join(',').html_safe
@@ -71,9 +70,6 @@ handles_string = "
 <div style='width: 10%;float:left;'>
 <p style='color: #dddddd;'>◀ Use these buttons for export/print</p>
 <h2 style='color: #dddddd;'>Sort</h2>
-#{link_to "Sort by BP &#x25B2; <br>".html_safe, url_for(params.merge({:sort_by => 'bp desc'})), {:style => 'color: #dddddd;'}}
-#{link_to "Sort by BP &#x25BC; <br>".html_safe, url_for(params.merge({:sort_by => 'bp asc'})), {:style => 'color: #dddddd;'}}
-#{link_to "Sort by Id", url_for(params.merge({:sort_by => 'id'})), {:style => 'color: #dddddd;'}}
 <h2 style='color: #dddddd;'>Sort manually</h2>
 <p style='color:#dddddd;'>Drag and drop the buttons below to determine the order of the plot:</p>
 <ul id='sortable' style='width:100%;'>" + handles.join('') + '</ul></div>'

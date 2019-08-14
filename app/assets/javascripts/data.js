@@ -45,7 +45,37 @@ jQuery(document).ready(function() {
               }
           });
         }
-      }
+      },
+      {
+        extend: 'selected',
+        text: 'Calibrate selected',
+        attr: {'calibration-popup': true},
+        action: function ( e, dt, node, config ) {
+          var rows = dt.rows( { selected: true } ).count();
+          var selected_rows = dt.rows( {selected: true} ).data();
+          var values = '';
+          for (i=0; i < rows; i++) {
+            values = values + 'ids[]=' + selected_rows[i].c14_measurement_id + '&';
+          };
+
+          newwindow = window.open('/c14_measurements/1/calibrate_multi?' + values, 'name', 'height=800,width=1000,resizable=yes,scrollbars=yes,status=yes');
+
+          //alert(selected_ids);
+          //$.ajax({
+          //    type: "get",
+          //    url: 'c14_measurements/calibrate_multi',
+          //    dataType: 'json',
+          //    data: { values },
+          //    success: function(data) {
+          //      return location.reload();
+          //    },
+          //    error: function(e) {
+          //      alert("Oops! An error occurred, please try again");
+          //      return console.log(e);
+          //    }
+          //});
+        }
+      },
     ],
     "processing": true,
     "serverSide": true,

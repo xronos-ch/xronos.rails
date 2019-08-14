@@ -51,6 +51,7 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
     records.map do |record|
       {
         "measurement_id": record.measurement_id,
+        "c14_measurement_id": record.c14_measurement_id,
         "select": "",
         "edit": link_to("edit", edit_arch_object_path(record.arch_object_id)),
         "calibrate": link_to("calibrate", calibrate_c14_measurement_path(record.c14_measurement_id), 'calibration-popup' => true ),
