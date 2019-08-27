@@ -52,7 +52,15 @@ document.addEventListener('DOMContentLoaded',function(){
 				site_id: sites[i].site_id
 			}
 		).bindPopup(
-      '<input type="button" value="' + sites[i].site + '" onclick="window.location=\'' + '/sites/' + sites[i].site_id + '\';">'
+      'Site: ' + sites[i].site +
+      "<br>" +
+      '<button type="submit" onclick="window.location=\'' + '/sites/' + sites[i].site_id + '\';">' +
+        "<i class=\'fa fa-binoculars\'></i> Show site" +
+      "</button>" +
+      '<br>' +
+      '<button type="submit" onclick="window.location=\'' + '/?utf8=✓&query_site_name=' + sites[i].site + '\';">' +
+        "<i class=\'fa fa-filter\'></i> Measurements from this site" +
+      "</button>"
     );
 	}
 
