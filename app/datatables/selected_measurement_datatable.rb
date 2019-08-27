@@ -1,8 +1,6 @@
 class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
   extend Forwardable
 
-  def_delegators :@view, :link_to, :edit_arch_object_path
-  def_delegators :@view, :link_to, :calibrate_c14_measurement_path
   def_delegators :@view, :link_to, :lab_path
   def_delegators :@view, :link_to, :site_path
   def_delegators :@view, :link_to, :site_phase_path
@@ -20,8 +18,6 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
     # or in aliased_join_table.column_name format
     @view_columns ||= {
       select: { source: "Measurement.id" },
-      edit: { source: "ArchObject.id" },
-      calibrate: { source: "C14Measurement.id" },
       labnr: { source: "Measurement.labnr", cond: :like },
       bp: { source: "C14Measurement.bp", cond: :like },
       std: { source: "C14Measurement.std", cond: :like },
@@ -50,11 +46,10 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
     Rails.logger.debug records.first.to_yaml
     records.map do |record|
       {
+        "arch_object_id": record.arch_object_id,
         "measurement_id": record.measurement_id,
         "c14_measurement_id": record.c14_measurement_id,
         "select": "",
-        "edit": link_to("edit", edit_arch_object_path(record.arch_object_id)),
-        "calibrate": link_to("calibrate", calibrate_c14_measurement_path(record.c14_measurement_id), 'calibration-popup' => true ),
         "labnr": best_in_place(Measurement.find(record.measurement_id), :labnr),
         "bp": best_in_place(C14Measurement.find(record.c14_measurement_id), :bp),
         "std": best_in_place(C14Measurement.find(record.c14_measurement_id), :std),

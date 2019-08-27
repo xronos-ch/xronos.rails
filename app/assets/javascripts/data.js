@@ -10,6 +10,18 @@ jQuery(document).ready(function() {
         }
       },
       {
+        text: '<i class="fa fa-edit"></i> Edit date',
+        action: function ( e, dt, node, config ) {
+          var rows = dt.rows( { selected: true } ).count();
+          var selected_rows = dt.rows( {selected: true} ).data();
+          if (selected_rows.length > 1) {
+            alert("Only one date can be edited at once.")
+          } else {
+            window.open('/arch_objects/' + selected_rows[0].arch_object_id + '/edit');
+          }
+        }
+      },
+      {
         extend: 'selected',
         text: '<i class="fa fa-filter"></i> Manual filter',
         action: function ( e, dt, node, config ) {
@@ -111,8 +123,6 @@ jQuery(document).ready(function() {
     },
     "columns": [
       {"data": "select"},
-      {"data": "edit"},
-      {"data": "calibrate"},
       {"data": "labnr"},
       {"data": "bp"},
       {"data": "std"},
