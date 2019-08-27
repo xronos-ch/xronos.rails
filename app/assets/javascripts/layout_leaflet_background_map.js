@@ -28,6 +28,18 @@ document.addEventListener('DOMContentLoaded',function(){
     .filter(function(item, index, arr){ return arr.indexOf(item, index + 1) === -1; }) // check if there is any occurence of the item in whole array
     .reverse().map(JSON.parse) // revert it to original state
 
+  // sumcal function
+  /*function get_c14_measurement_ids(sel, site_id) {
+    var values = '';
+    for (i = 0; i < sel.length; i++) {
+      if (sel[i].site_id == site_id) {
+        values = values + 'ids[]=' + sel[i].c14_measurement_id + '&';
+      }
+    }
+    alert(values);
+    window.open('/c14_measurements/1/calibrate_sum?' + values, 'Calibration', 'height=800,width=1000,resizable=yes,scrollbars=yes,status=yes');
+  }*/
+
   // prepare markers
   const markers = new Array(sites.length)
 	for (var i = 0; i < markers.length; i++) {
@@ -39,7 +51,9 @@ document.addEventListener('DOMContentLoaded',function(){
 				radius: 1000,
 				site_id: sites[i].site_id
 			}
-		).bindPopup('Site: ' + sites[i].site + '<br>' + '<a href="/sites/' + sites[i].site_id  + '"> View site </a>');
+		).bindPopup(
+      '<input type="button" value="' + sites[i].site + '" onclick="window.location=\'' + '/sites/' + sites[i].site_id + '\';">'
+    );
 	}
 
 	const layers = [
