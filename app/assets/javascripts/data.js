@@ -99,6 +99,18 @@ jQuery(document).ready(function() {
         action: function () {
           window.open("?format=csv");
         }
+      },
+      {
+        text: '<i class="fa fa-circle"></i> Select all',
+        action: function ( e, dt, node, config ) {
+          dt.rows().select();
+        }
+      },
+      {
+        text: '<i class="fa fa-circle-o"></i> Select none',
+        action: function ( e, dt, node, config ) {
+          dt.rows().deselect();
+        }
       }
     ],
     "processing": true,
