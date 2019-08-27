@@ -4,14 +4,14 @@ jQuery(document).ready(function() {
     "sDom": 'Br<"H"lf><"datatable-scroll"t><"F"ip>',
     "buttons": [
       {
-        text: 'Add new archaeological object with dates',
+        text: '<i class="fa fa-plus"></i> New date',
         action: function () {
           window.open("/arch_objects/new");
         }
       },
       {
         extend: 'selected',
-        text: 'Only show selected',
+        text: '<i class="fa fa-filter"></i> Manual filter',
         action: function ( e, dt, node, config ) {
           var rows = dt.rows( { selected: true } ).count();
           var selected_rows = dt.rows( {selected: true} ).data();
@@ -37,7 +37,7 @@ jQuery(document).ready(function() {
         }
       },
       {
-        text: 'Disable selection',
+        text: 'Disable filter',
         action: function () {
           $.ajax({
               type: "get",
@@ -54,7 +54,7 @@ jQuery(document).ready(function() {
       },
       {
         extend: 'selected',
-        text: 'Calibrate selected',
+        text: '<i class="fa fa-line-chart"></i> Calibrate',
         action: function ( e, dt, node, config ) {
           var rows = dt.rows( { selected: true } ).count();
           var selected_rows = dt.rows( {selected: true} ).data();
@@ -71,7 +71,7 @@ jQuery(document).ready(function() {
       },
       {
         extend: 'selected',
-        text: 'Sum calibration of selected dates',
+        text: '<i class="fa fa-barcode"></i> Sum calibrate',
         action: function ( e, dt, node, config ) {
           var rows = dt.rows( { selected: true } ).count();
           var selected_rows = dt.rows( {selected: true} ).data();
@@ -83,7 +83,7 @@ jQuery(document).ready(function() {
         }
       },
       {
-        text: 'Download current table as .csv file',
+        text: '<i class="fa fa-download"></i> Download',
         action: function () {
           window.open("?format=csv");
         }
