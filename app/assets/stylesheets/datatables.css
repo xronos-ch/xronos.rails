@@ -60,7 +60,9 @@ table.dataTable {
     background-color: #333333;
   }
     table.dataTable tbody tr.selected {
-      background-color: #3e598f; }
+      background-color: #ffffff !important;
+      color: #000000;
+    }
   table.dataTable tbody th,
   table.dataTable tbody td {
     padding: 8px 10px;
