@@ -15,11 +15,51 @@ class Measurement < ApplicationRecord
 
   def self.to_csv
     CSV.generate do |csv|
-      csv << ["labnr", "site", "site_type", "lat", "lng", "country", "feature", "material", "species"]
+      csv << [
+        "labnr",
+        "bp",
+        "std",
+        "cal_bp",
+        "cal_std",
+        "delta_c13",
+        "lab_name",
+        "site",
+        "site_phase",
+        "site_type",
+        "feature",
+        "feature_type",
+        "periods",
+        "typochronological_units",
+        "ecochronological_units",
+        "material",
+        "species",
+        "country",
+        "lat",
+        "lng",
+        "references"
+      ]
       all.each do |item|
-        csv << [item.labnr] + [item.site] + [item.site_type] +
-            [item.lat] + [item.lng] + [item.country] + [item.feature] +
-            [item.material] + [item.species]
+        csv << [item.labnr] +
+          [item.bp] +
+          [item.std] +
+          [item.cal_bp] +
+          [item.cal_std] +
+          [item.delta_c13] +
+          [item.lab_name] +
+          [item.site] +
+          [item.site_phase] +
+          [item.site_type] +
+          [item.feature] +
+          [item.feature_type] +
+          [item.periods_names] +
+          [item.typochronological_units_names] +
+          [item.ecochronological_units_names] +
+          [item.material] +
+          [item.species] +
+          [item.country] +
+          [item.lat] +
+          [item.lng] +
+          [item.references_short_refs]
       end
     end
   end
