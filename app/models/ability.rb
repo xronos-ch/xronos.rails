@@ -5,15 +5,21 @@ class Ability
 
   def initialize(user)
     # Define abilities for the passed in user here.
-    
-    can :read, :all # permissions for every user, even if not logged in    
-    if user.present?  # additional permissions for logged in users (they can manage their posts)
+
+    # permissions for every user, even if not logged in
+    can :read, :all
+    can :calibrate, :all
+    can :calibrate_multi, :all
+    can :calibrate_sum, :all
+
+    # additional permissions for logged in users (they can manage their posts)
+    if user.present?
       can :create, :all
       if user.admin?  # additional permissions for administrators
         can :manage, :all
       end
     end
-    
+
     # The first argument to `can` is the action you are giving the user
     # permission to do.
     # If you pass :manage it will apply to every action. Other common actions
