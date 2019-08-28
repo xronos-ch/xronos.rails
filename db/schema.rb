@@ -126,7 +126,7 @@ ActiveRecord::Schema.define(version: 2019_08_06_141434) do
   create_table "periods_site_phases", id: false, force: :cascade do |t|
     t.integer "site_phase_id", null: false
     t.integer "period_id", null: false
-    t.index ["site_phase_id", "period_id"], name: "index_periods_site_phases_on_site_phase_id_and_period_id"
+    t.index ["site_phase_id", "period_id"], name: "index_spp"
   end
 
   create_table "physical_locations", force: :cascade do |t|
