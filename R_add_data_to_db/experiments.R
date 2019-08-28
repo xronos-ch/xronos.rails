@@ -36,7 +36,11 @@ imp %<>% dplyr::mutate(
 imp %<>% c14bazAAR::finalize_country_name()
 
 #### make connection to database ####
-con <- DBI::dbConnect(RSQLite::SQLite(), dbname = "agora/xronos.rails/db/development.sqlite3")
+con <- DBI::dbConnect(RSQLite::SQLite(), dbname = "~/agora/xronos.rails/db/development.sqlite3")
+
+#### helper functions ####
+add_time_columns <- function(x, time = get_time()) { x %>% dplyr::mutate(created_at = time, updated_at = time) }
+get_time <- function() { format(Sys.time(), "%y-%d-%m %H:%M:%OS6") }
 
 #### static (?) tables ####
 
@@ -44,10 +48,8 @@ con <- DBI::dbConnect(RSQLite::SQLite(), dbname = "agora/xronos.rails/db/develop
 country_names <- unique(countrycode::codelist$country.name.en) %>% na.omit()
 countries <- tibble::tibble(
   id = 1:length(country_names),
-  name = unique(countrycode::codelist$iso.name.en) %>% na.omit(),
-  created_at = time,
-  updated_at = time
-)
+  name = country_names
+) %>% add_time_columns()
 
 DBI::dbRemoveTable(con, "countries")
 s <- "
@@ -95,9 +97,6 @@ get_id <- function(new_value, old_vector, id_vector) {
   return(id)
 }
 
-add_time_columns <- function(x, time = get_time()) { x %>% dplyr::mutate(created_at = time, updated_at = time) }
-get_time <- function() { format(Sys.time(), "%y-%d-%m %H:%M:%OS6") }
-
 for (i in 1:nrow(imp)) {
   cur <- imp[i,]
 
@@ -136,14 +135,18 @@ for (i in 1:nrow(imp)) {
     strsplit(., ";") %>%
     unlist %>%
     trimws()
-  references.ids <- sapply(
-    references.short_ref, 
-    function(x, y, z) {
-      get_id(x, y, z)
-    },
-    y = references_cur$short_ref,
-    z = references_cur$id
-  )
+  
+  refcurref <- references_cur$short_ref
+  refcurid <- references_cur$id
+  references.ids <- c()
+  for (i in 1:length(references.short_refs)) {
+    nid <- get_id(references.short_refs[i], refcurref, refcurid)
+    references.ids <- append(references.ids, nid)
+    if (!is.na(nid)) {
+      refcurid <- append(refcurid, nid)
+      refcurref <- append(refcurref, references.short_refs[i])
+    }
+  }
   
   # site_phases
   site_phases_cur <- get_table("site_phases", con)
