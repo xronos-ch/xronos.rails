@@ -12,6 +12,9 @@
 
 ActiveRecord::Schema.define(version: 2019_08_06_141434) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "arch_objects", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -49,8 +52,8 @@ ActiveRecord::Schema.define(version: 2019_08_06_141434) do
   end
 
   create_table "ecochronological_units_site_phases", id: false, force: :cascade do |t|
-    t.integer "site_phase_id", null: false
-    t.integer "ecochronological_unit_id", null: false
+    t.bigint "site_phase_id", null: false
+    t.bigint "ecochronological_unit_id", null: false
     t.index ["site_phase_id", "ecochronological_unit_id"], name: "index_speu"
   end
 
@@ -97,8 +100,8 @@ ActiveRecord::Schema.define(version: 2019_08_06_141434) do
   end
 
   create_table "measurements_references", id: false, force: :cascade do |t|
-    t.integer "measurement_id", null: false
-    t.integer "reference_id", null: false
+    t.bigint "measurement_id", null: false
+    t.bigint "reference_id", null: false
     t.index ["measurement_id", "reference_id"], name: "index_mr"
   end
 
@@ -124,14 +127,14 @@ ActiveRecord::Schema.define(version: 2019_08_06_141434) do
   end
 
   create_table "periods_site_phases", id: false, force: :cascade do |t|
-    t.integer "site_phase_id", null: false
-    t.integer "period_id", null: false
+    t.bigint "site_phase_id", null: false
+    t.bigint "period_id", null: false
     t.index ["site_phase_id", "period_id"], name: "index_spp"
   end
 
   create_table "physical_locations", force: :cascade do |t|
-    t.integer "site_id"
-    t.integer "country_id"
+    t.bigint "site_id"
+    t.bigint "country_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["country_id"], name: "index_physical_locations_on_country_id"
@@ -162,8 +165,8 @@ ActiveRecord::Schema.define(version: 2019_08_06_141434) do
   end
 
   create_table "site_phases_typochronological_units", id: false, force: :cascade do |t|
-    t.integer "site_phase_id", null: false
-    t.integer "typochronological_unit_id", null: false
+    t.bigint "site_phase_id", null: false
+    t.bigint "typochronological_unit_id", null: false
     t.index ["site_phase_id", "typochronological_unit_id"], name: "index_sptu"
   end
 
@@ -211,4 +214,7 @@ ActiveRecord::Schema.define(version: 2019_08_06_141434) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "measurements", "c14_measurements"
+  add_foreign_key "measurements", "labs"
+  add_foreign_key "measurements", "samples"
 end

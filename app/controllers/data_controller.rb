@@ -177,9 +177,9 @@ class DataController < ApplicationController
       on_site_object_positions.feature as feature,
       feature_types.id as feature_type_id,
       feature_types.name as feature_type,
-      group_concat(distinct periods.name) as periods_names,
-      group_concat(distinct typochronological_units.name) as typochronological_units_names,
-      group_concat(distinct ecochronological_units.name) as ecochronological_units_names,
+      string_agg(distinct periods.name, ', ') as periods_names,
+      string_agg(distinct typochronological_units.name, ', ') as typochronological_units_names,
+      string_agg(distinct ecochronological_units.name, ', ') as ecochronological_units_names,
       materials.id as material_id,
       materials.name as material,
       species.id as species_id,
@@ -188,12 +188,12 @@ class DataController < ApplicationController
       countries.name as country,
       sites.lat as lat,
       sites.lng as lng,
-      `references`.id as reference_id,
-       group_concat(distinct `references`.short_ref) as references_short_refs
+      \"references\".id as reference_id,
+       string_agg(distinct \"references\".short_ref, ', ') as references_short_refs
       "
-    ).group("measurements.id").all
+    ).group("measurements.id", "arch_objects.id", "c14_measurements.id", "labs.id", "sites.id", "site_phases.id", "site_types.id", "on_site_object_positions.id", "feature_types.id", "materials.id", "species.id", "countries.id", '"references".id').all
 
-    # group_concat has to be replaced with string_agg for postgres in production
+    # string_agg has to be replaced with string_agg for postgres in production
 
     @selected_measurements = @all_measurements
 

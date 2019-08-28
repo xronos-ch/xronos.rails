@@ -11,11 +11,18 @@ imp %<>% add_simple_cal()
 imp %<>% c14bazAAR::finalize_country_name()
 
 #### make connection to database ####
-con <- DBI::dbConnect(RSQLite::SQLite(), dbname = "~/agora/xronos.rails/db/development.sqlite3")
+con <- DBI::dbConnect(
+  RPostgres::Postgres(), 
+  dbname = 'testdb', 
+  host = '127.0.0.1', # i.e. 'ec2-54-83-201-96.compute-1.amazonaws.com'
+  port = 5432, # or any other port specified by your DBA
+  user = 'ultimate_postgres',
+  password = 'nudelsalat'
+)
 
 #### helper functions ####
 add_time_columns <- function(x, time = get_time()) { x %>% dplyr::mutate(created_at = time, updated_at = time) }
-get_time <- function() { format(Sys.time(), "%y-%d-%m %H:%M:%OS6") }
+get_time <- function() { format(Sys.time(), "%Y-%m-%d %H:%M:%OS3") }
 
 #### static (?) tables ####
 
@@ -29,10 +36,10 @@ countries <- tibble::tibble(
 DBI::dbRemoveTable(con, "countries")
 s <- "
 create table countries(
-  id PRIMARY KEY NOT NULL,
-  name,
-  created_at NOT NULL,
-  updated_at NOT NULL
+  id integer NOT NULL PRIMARY KEY,
+  name character(100),
+  created_at timestamp NOT NULL,
+  updated_at timestamp NOT NULL
 )
 " %>% gsub("\\n", "", .)
 DBI::dbSendStatement(con, s)
@@ -191,22 +198,6 @@ for (i in 1:nrow(imp)) {
     append = T
   )
   
-  # measurements
-  DBI::dbWriteTable(
-    con, "measurements", 
-    tibble::tibble(
-      id = measurements.id,
-      labnr = measurements.labnr,
-      sample_id = samples.id,
-      lab_id = NA,
-      c14_measurement_id = c14_measurements.id
-    ) %>% 
-      add_time_columns() %>% 
-      dplyr::filter(!is.na(id)) %>%
-      dplyr::filter(!(id %in% measurements_cur$id)),
-    append = T
-  )
-  
   # c14_measurements
   DBI::dbWriteTable(
     con, "c14_measurements", 
@@ -223,6 +214,22 @@ for (i in 1:nrow(imp)) {
       add_time_columns() %>% 
       dplyr::filter(!is.na(id)) %>%
       dplyr::filter(!(id %in% c14_measurements_cur$id)),
+    append = T
+  )
+  
+  # measurements
+  DBI::dbWriteTable(
+    con, "measurements", 
+    tibble::tibble(
+      id = measurements.id,
+      labnr = measurements.labnr,
+      sample_id = samples.id,
+      lab_id = NA,
+      c14_measurement_id = c14_measurements.id
+    ) %>% 
+      add_time_columns() %>% 
+      dplyr::filter(!is.na(id)) %>%
+      dplyr::filter(!(id %in% measurements_cur$id)),
     append = T
   )
 
