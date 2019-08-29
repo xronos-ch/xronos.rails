@@ -208,7 +208,7 @@ class DataController < ApplicationController
     params["length"]  ||= -1
 
 
-		gon.selected_measurements = @selected_measurements.map { |measurement| measurement.sample.arch_object.site_phase.site}.uniq.to_json
+		gon.selected_measurements = @selected_measurements.map { |measurement| measurement.sample.arch_object.site_phase}.compact.map { |measurement| measurement.site}.uniq.to_json
 
     respond_to do |format|
       format.html

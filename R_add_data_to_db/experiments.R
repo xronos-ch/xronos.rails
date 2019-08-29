@@ -14,12 +14,12 @@ con <- DBI::dbConnect(
   host = '127.0.0.1',
   port = 5432,
   user = 'ultimate_postgres',
-  password = 'nudelsalat'
+  password = 'nudelbar'
 )
 
 #### write to db loop ####
-pb <- txtProgressBar(min = 1, max = nrow(imp), style = 3)
-for (i in 1:nrow(imp)) {
+#pb <- txtProgressBar(min = 1, max = nrow(imp), style = 3)
+for (i in 1:6) {
   
   # get one row of input table
   cur <- imp[i,]
@@ -207,6 +207,23 @@ for (i in 1:nrow(imp)) {
     "SELECT setval('materials_id_seq', (SELECT MAX(id) FROM materials));"
   )
   
+  # samples
+  DBI::dbWriteTable(
+    con, "samples", 
+    tibble::tibble(
+      id = samples.id,
+      arch_object_id = arch_objects.id
+    ) %>% 
+      add_time_columns() %>% 
+      dplyr::filter(!is.na(id)) %>%
+      dplyr::filter(!(id %in% samples_cur$id)),
+    append = T
+  )
+  DBI::dbExecute(
+    con,
+    "SELECT setval('samples_id_seq', (SELECT MAX(id) FROM samples));"
+  )
+  
   # measurements
   DBI::dbWriteTable(
     con, "measurements", 
@@ -298,6 +315,7 @@ for (i in 1:nrow(imp)) {
       site_id = sites.id,
       country_id = countries.id
     ) %>% 
+      add_time_columns() %>%
       dplyr::filter(!is.na(site_id) & !is.na(country_id)),
     append = T
   )
@@ -318,23 +336,6 @@ for (i in 1:nrow(imp)) {
   DBI::dbExecute(
     con,
     "SELECT setval('references_id_seq', (SELECT MAX(id) FROM \"references\"));"
-  )
-  
-  # samples
-  DBI::dbWriteTable(
-    con, "samples", 
-    tibble::tibble(
-      id = samples.id,
-      arch_object_id = arch_objects.id
-    ) %>% 
-      add_time_columns() %>% 
-      dplyr::filter(!is.na(id)) %>%
-      dplyr::filter(!(id %in% samples_cur$id)),
-    append = T
-  )
-  DBI::dbExecute(
-    con,
-    "SELECT setval('samples_id_seq', (SELECT MAX(id) FROM samples));"
   )
   
   # site_phases
@@ -444,10 +445,10 @@ for (i in 1:nrow(imp)) {
     "SELECT setval('typochronological_units_id_seq', (SELECT MAX(id) FROM typochronological_units));"
   )
   
-  setTxtProgressBar(pb, i)
+  #setTxtProgressBar(pb, i)
   
 }
-close(pb)
+#close(pb)
 
 DBI::dbDisconnect(con)
 
