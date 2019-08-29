@@ -25,7 +25,7 @@
             $("#edit_site_phase_link").click(function() { $(this).attr("href", "/site_phases/" + $("#arch_object_site_phase_id").val() + "/edit") });
           </script>
         </div>
-        <%= f.fields_for :site_phase, SitePhase.new do |site_phase| %>
+        <%= f.fields_for :site_phase do |site_phase| %>
           <%= render 'site_phases/site_phase_fields', :f => site_phase %>
         <% end %>
       </div>
