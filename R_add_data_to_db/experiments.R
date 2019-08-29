@@ -1,13 +1,9 @@
 source("helper_functions.R")
 
-#### data preparation #### 
-
+#### prepare data #### 
 imp <- c14bazAAR::get_aDRAC()
-
 imp %<>% c14bazAAR::calibrate(choices = "calprobdistr")
-
 imp %<>% add_simple_cal()
-
 imp %<>% c14bazAAR::finalize_country_name()
 
 #### make connection to database ####
@@ -15,73 +11,19 @@ con <- DBI::dbConnect(
   RPostgres::Postgres(), 
   dbname = 'testdb', 
   host = '127.0.0.1', # i.e. 'ec2-54-83-201-96.compute-1.amazonaws.com'
-  port = 5433, # or any other port specified by your DBA
+  port = 5432, # or any other port specified by your DBA
   user = 'ultimate_postgres',
   password = 'nudelsalat'
 )
 
-#### helper functions ####
-add_time_columns <- function(x, time = get_time()) { x %>% dplyr::mutate(created_at = time, updated_at = time) }
-get_time <- function() { format(Sys.time(), "%Y-%m-%d %H:%M:%OS3") }
-
-#### static (?) tables ####
-
-# countries
-country_names <- unique(countrycode::codelist$country.name.en) %>% na.omit()
-countries <- tibble::tibble(
-  id = 1:length(country_names),
-  name = country_names
-) %>% add_time_columns()
-
-DBI::dbRemoveTable(con, "countries")
-s <- "
-create table countries(
-  id integer NOT NULL PRIMARY KEY,
-  name character(100),
-  created_at timestamp NOT NULL,
-  updated_at timestamp NOT NULL
-)
-" %>% gsub("\\n", "", .)
-DBI::dbSendStatement(con, s)
-DBI::dbWriteTable(con, "countries", countries, append = T)
-
-#### helper functions ####
-
-get_table <- function(x, con) { 
-  DBI::dbReadTable(con, x) %>% tibble::as_tibble() 
-}
-
-exists_in_db <- function(new_value, old_vector) {
-  exists <- FALSE
-  if ( new_value %in% old_vector ) {
-    exists <- TRUE
-  }
-  return(exists)
-}
-
-get_new_id <- function(id_vector) {
-  if ( length(id_vector) > 0 ) {
-    id <- max(id_vector) + 1
-  } else {
-    id <- 0
-  }
-  return(id)
-}
-
-get_id <- function(new_value, old_vector, id_vector) {
-  if ( is.na(new_value) ) {
-    id <- NA
-  } else if ( exists_in_db(new_value, old_vector) ) {
-    id <- id_vector[new_value == old_vector][1]
-  } else {
-    id <- get_new_id(id_vector)
-  }
-  return(id)
-}
-
+#### write to db loop ####
+pb <- txtProgressBar(min = 1, max = nrow(imp), style = 3)
 for (i in 1:nrow(imp)) {
+  
+  # get one row of input table
   cur <- imp[i,]
 
+  
   #### preparing variables ####
   
   # arch_objects
@@ -167,6 +109,7 @@ for (i in 1:nrow(imp)) {
   materials.name <- cur$material
   materials.id <- get_id(materials.name, materials_cur$name, materials_cur$id)
 
+  
   #### writing tables ####
   
   # arch_objects
@@ -184,6 +127,10 @@ for (i in 1:nrow(imp)) {
       dplyr::filter(!(id %in% arch_objects_cur$id)),
     append = T
   )
+  DBI::dbExecute(
+    con,
+    "SELECT setval('arch_objects_id_seq', (SELECT MAX(id) FROM arch_objects));"
+  )
 
   # samples
   DBI::dbWriteTable(
@@ -196,6 +143,10 @@ for (i in 1:nrow(imp)) {
       dplyr::filter(!is.na(id)) %>%
       dplyr::filter(!(id %in% samples_cur$id)),
     append = T
+  )
+  DBI::dbExecute(
+    con,
+    "SELECT setval('samples_id_seq', (SELECT MAX(id) FROM samples));"
   )
   
   # c14_measurements
@@ -216,6 +167,10 @@ for (i in 1:nrow(imp)) {
       dplyr::filter(!(id %in% c14_measurements_cur$id)),
     append = T
   )
+  DBI::dbExecute(
+    con,
+    "SELECT setval('c14_measurements_id_seq', (SELECT MAX(id) FROM c14_measurements));"
+  )
   
   # measurements
   DBI::dbWriteTable(
@@ -232,6 +187,10 @@ for (i in 1:nrow(imp)) {
       dplyr::filter(!(id %in% measurements_cur$id)),
     append = T
   )
+  DBI::dbExecute(
+    con,
+    "SELECT setval('measurements_id_seq', (SELECT MAX(id) FROM measurements));"
+  )
 
   # references
   DBI::dbWriteTable(
@@ -245,6 +204,10 @@ for (i in 1:nrow(imp)) {
       dplyr::filter(!is.na(id)) %>%
       dplyr::filter(!(id %in% references_cur$id)),
     append = T
+  )
+  DBI::dbExecute(
+    con,
+    "SELECT setval('references_id_seq', (SELECT MAX(id) FROM \"references\"));"
   )
   
   # measurements_references
@@ -274,6 +237,10 @@ for (i in 1:nrow(imp)) {
       dplyr::filter(!(id %in% site_phases_cur$id)),
     append = T
   )
+  DBI::dbExecute(
+    con,
+    "SELECT setval('site_phases_id_seq', (SELECT MAX(id) FROM site_phases));"
+  )
   
   # periods
   DBI::dbWriteTable(
@@ -289,6 +256,10 @@ for (i in 1:nrow(imp)) {
       dplyr::filter(!is.na(id)) %>%
       dplyr::filter(!(id %in% periods_cur$id)),
     append = T
+  )
+  DBI::dbExecute(
+    con,
+    "SELECT setval('periods_id_seq', (SELECT MAX(id) FROM periods));"
   )
   
   # periods_site_phases
@@ -317,6 +288,10 @@ for (i in 1:nrow(imp)) {
       dplyr::filter(!(id %in% typochronological_units_cur$id)),
     append = T
   )
+  DBI::dbExecute(
+    con,
+    "SELECT setval('typochronological_units_id_seq', (SELECT MAX(id) FROM typochronological_units));"
+  )
   
   # site_phases_typochronological_units
   DBI::dbWriteTable(
@@ -344,6 +319,10 @@ for (i in 1:nrow(imp)) {
       dplyr::filter(!(id %in% sites_cur$id)),
     append = T
   )
+  DBI::dbExecute(
+    con,
+    "SELECT setval('sites_id_seq', (SELECT MAX(id) FROM sites));"
+  )
   
   # countries
   DBI::dbWriteTable(
@@ -356,6 +335,10 @@ for (i in 1:nrow(imp)) {
       dplyr::filter(!is.na(id)) %>%
       dplyr::filter(!(id %in% countries_cur$id)),
     append = T
+  )
+  DBI::dbExecute(
+    con,
+    "SELECT setval('countries_id_seq', (SELECT MAX(id) FROM countries));"
   )
   
   # on_site_object_positions
@@ -375,6 +358,10 @@ for (i in 1:nrow(imp)) {
       dplyr::filter(!(id %in% on_site_object_positions_cur$id)),
     append = T
   )
+  DBI::dbExecute(
+    con,
+    "SELECT setval('on_site_object_positions_id_seq', (SELECT MAX(id) FROM on_site_object_positions));"
+  )
   
   # materials
   DBI::dbWriteTable(
@@ -388,8 +375,15 @@ for (i in 1:nrow(imp)) {
       dplyr::filter(!(id %in% materials_cur$id)),
     append = T
   )
+  DBI::dbExecute(
+    con,
+    "SELECT setval('materials_id_seq', (SELECT MAX(id) FROM materials));"
+  )
+  
+  setTxtProgressBar(pb, i)
   
 }
+close(pb)
 
 DBI::dbDisconnect(con)
 
