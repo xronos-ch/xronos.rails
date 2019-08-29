@@ -25,7 +25,7 @@
             $("#edit_site_phase_link").click(function() { $(this).attr("href", "/site_phases/" + $("#arch_object_site_phase_id").val() + "/edit") });
           </script>
         </div>
-        <%= f.fields_for :site_phase, SitePhase.new do |site_phase| %>
+        <%= f.fields_for :site_phase do |site_phase| %>
           <%= render 'site_phases/site_phase_fields', :f => site_phase %>
         <% end %>
       </div>
@@ -43,7 +43,7 @@
             $("#edit_material_link").click(function() { $(this).attr("href", "/materials/" + $("#arch_object_material_id").val() + "/edit") });
           </script>
         </div>
-        <%= f.fields_for :material, Material.new do |material| %>
+        <%= f.fields_for :material do |material| %>
           <%= render 'materials/material_fields', :f => material %>
         <% end %>
       </div>
@@ -59,7 +59,7 @@
             $("#edit_species_link").click(function() { $(this).attr("href", "/species/" + $("#arch_object_species_id").val() + "/edit") });
           </script>
         </div>
-        <%= f.fields_for :species, Species.new do |species| %>
+        <%= f.fields_for :species do |species| %>
           <%= render 'species/species_fields', :f => species %>
         <% end %>
       </div>
@@ -75,7 +75,7 @@
             $("#edit_on_site_object_position_link").click(function() { $(this).attr("href", "/on_site_object_positions/" + $("#arch_object_on_site_object_position_id").val() + "/edit") });
           </script>
         </div>
-        <%= f.fields_for :on_site_object_position, OnSiteObjectPosition.new do |on_site_object_position| %>
+        <%= f.fields_for :on_site_object_position do |on_site_object_position| %>
           <%= render 'on_site_object_positions/on_site_object_position_fields', :f => on_site_object_position %>
         <% end %>
       </div>

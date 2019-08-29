@@ -58,7 +58,7 @@
     <div class="field">
       <%= f.collection_select :site_type_id, SiteType.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"}  %>
     </div>
-    <%= f.fields_for :site_type, SiteType.new do |site_type| %>
+    <%= f.fields_for :site_type do |site_type| %>
       <%= render 'site_types/site_type_fields', :f => site_type %>
     <% end %>
   </div>
@@ -70,7 +70,7 @@
     <div class="field">
       <%= f.collection_select :site_id, Site.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"}  %>
     </div>
-    <%= f.fields_for :site, Site.new do |site| %>
+    <%= f.fields_for :site do |site| %>
       <%= render 'sites/site_fields', :f => site %>
     <% end %>
   </div>

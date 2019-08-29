@@ -15,7 +15,7 @@ con <- DBI::dbConnect(
   RPostgres::Postgres(), 
   dbname = 'testdb', 
   host = '127.0.0.1', # i.e. 'ec2-54-83-201-96.compute-1.amazonaws.com'
-  port = 5432, # or any other port specified by your DBA
+  port = 5433, # or any other port specified by your DBA
   user = 'ultimate_postgres',
   password = 'nudelsalat'
 )
