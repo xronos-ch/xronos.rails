@@ -43,7 +43,6 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
   end
 
   def data
-    Rails.logger.debug records.first.to_yaml
     records.map do |record|
       {
         "arch_object_id": record.arch_object_id,
