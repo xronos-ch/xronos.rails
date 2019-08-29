@@ -60,7 +60,7 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
         "site": link_to(record.site, site_path(record.site_id)),
         "site_phase": link_to(record.site_phase, site_phase_path(record.site_phase_id)),
         "site_type": record.site_type,#link_to(record.site_type, site_type_path(record.site_type_id)),
-        "feature": best_in_place(OnSiteObjectPosition.find(record.on_site_object_position_id), :feature),
+        "feature": record.on_site_object_position_id.present? ? best_in_place(OnSiteObjectPosition.find(record.on_site_object_position_id), :feature) : record.on_site_object_position_id,
         "feature_type": record.feature_type,#link_to(record.feature_type, feature_type_path(record.feature_type_id)),
         "period": record.periods_names,
         "typochronological_unit": record.typochronological_units_names,
