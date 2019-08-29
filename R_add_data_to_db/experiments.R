@@ -1,7 +1,8 @@
 source("helper_functions.R")
 
 #### prepare data #### 
-imp <- c14bazAAR::get_aDRAC()
+#imp <- c14bazAAR::get_aDRAC()
+imp <- c14bazAAR::get_RADON()
 imp %<>% c14bazAAR::calibrate(choices = "calprobdistr")
 imp %<>% add_simple_cal()
 imp %<>% c14bazAAR::finalize_country_name()
@@ -10,8 +11,8 @@ imp %<>% c14bazAAR::finalize_country_name()
 con <- DBI::dbConnect(
   RPostgres::Postgres(), 
   dbname = 'testdb', 
-  host = '127.0.0.1', # i.e. 'ec2-54-83-201-96.compute-1.amazonaws.com'
-  port = 5432, # or any other port specified by your DBA
+  host = '127.0.0.1',
+  port = 5432,
   user = 'ultimate_postgres',
   password = 'nudelsalat'
 )
@@ -30,36 +31,60 @@ for (i in 1:nrow(imp)) {
   arch_objects_cur <- get_table("arch_objects", con)
   arch_objects.id <- get_new_id(arch_objects_cur$id)
 
-  # samples
-  samples_cur <- get_table("samples", con)
-  samples.id <- get_new_id(samples_cur$id)
-  
-  # measurements
-  measurements_cur <- get_table("measurements", con)
-  measurements.labnr <- cur$labnr
-  if (is.na(measurements.labnr) | exists_in_db(measurements.labnr, measurements_cur$labnr)) {
-    next
-  }
-  measurements.id <- get_id(measurements.labnr, measurements_cur$labnr, measurements_cur$id)
-
   # c14_measurements
   c14_measurements_cur <- get_table("c14_measurements", con)
   c14_measurements.bp <- cur$c14age
   c14_measurements.std <- cur$c14std
   c14_measurements.cal_bp <- cur$cal_bp
   c14_measurements.cal_std <- cur$cal_std
-  c14_measurements.delta_c13 <- cur$c13val
+  c14_measurements.delta_c13 <- if ("c13val" %in% colnames(cur)) { cur$c13val } else { NA }
+  c14_measurements.delta_c13_std <- NA
+  c14_measurements.method <- if ("method" %in% colnames(cur)) { cur$method } else { NA }
   c14_measurements.id <- get_new_id(c14_measurements_cur$id)
+  
+  # countries
+  countries_cur <- get_table("countries", con)
+  countries.name <- cur$country_final
+  countries.id <- get_id(countries.name, countries_cur$name, countries_cur$id)
+  
+  # materials
+  materials_cur <- get_table("materials", con)
+  materials.name <- if ("material" %in% colnames(cur)) { cur$material } else { NA }
+  materials.id <- get_id(materials.name, materials_cur$name, materials_cur$id)
+  
+  # measurements
+  measurements_cur <- get_table("measurements", con)
+  measurements.labnr <- if ("labnr" %in% colnames(cur)) { cur$labnr } else { NA }
+  if (is.na(measurements.labnr) | exists_in_db(measurements.labnr, measurements_cur$labnr)) {
+    next
+  }
+  measurements.id <- get_id(measurements.labnr, measurements_cur$labnr, measurements_cur$id)
+  
+  # on_site_object_positions
+  on_site_object_positions_cur <- get_table("on_site_object_positions", con)
+  on_site_object_positions.feature <- if ("feature" %in% colnames(cur)) { cur$feature } else { NA }
+  on_site_object_positions.id <- get_new_id(on_site_object_positions_cur$id)
+  
+  # periods
+  periods_cur <- get_table("periods", con)
+  periods.name <- if ("period" %in% colnames(cur)) { cur$period } else { NA }
+  periods.id <- get_id(periods.name, periods_cur$name, periods_cur$id)
   
   # references
   references_cur <- get_table("references", con)
-  references.short_refs <- cur$shortref %>% 
-    gsub("\\:[^;]+(\\;|$)", ";", .) %>%
-    gsub("\\;$", "", .) %>%
-    strsplit(., ";") %>%
-    unlist %>%
-    trimws()
-  
+  references.short_refs <- if ("shortref" %in% colnames(cur)) { 
+    if (cur$sourcedb == "aDRAC") {
+      cur$shortref %>% 
+        gsub("\\:[^;]+(\\;|$)", ";", .) %>%
+        gsub("\\;$", "", .) %>%
+        strsplit(., ";") %>%
+        unlist %>%
+        trimws()
+    } else {
+      NA
+    }
+  } else { NA }
+
   refcurref <- references_cur$short_ref
   refcurid <- references_cur$id
   references.ids <- c()
@@ -72,43 +97,36 @@ for (i in 1:nrow(imp)) {
     }
   }
   
+  # samples
+  samples_cur <- get_table("samples", con)
+  samples.id <- get_new_id(samples_cur$id)
+  
   # site_phases
   site_phases_cur <- get_table("site_phases", con)
-  site_phases.name <- cur$site
+  site_phases.name <- if ("site" %in% colnames(cur)) { cur$site } else { NA }
   site_phases.id <- get_id(site_phases.name, site_phases_cur$name, site_phases_cur$id)
   
-  # periods
-  periods_cur <- get_table("periods", con)
-  periods.name <- cur$period
-  periods.id <- get_id(periods.name, periods_cur$name, periods_cur$id)
-  
-  # typochronological units
-  typochronological_units_cur <- get_table("typochronological_units", con)  
-  typochronological_units.name <- cur$culture
-  typochronological_units.id <- get_id(typochronological_units.name, typochronological_units_cur$name, typochronological_units_cur$id)
+  # site_types
+  site_types_cur <- get_table("site_types", con)
+  site_types.name <- if ("sitetype" %in% colnames(cur)) { cur$sitetype } else { NA }
+  site_types.id <- get_id(site_types.name, site_types_cur$name, site_types_cur$id)
   
   # sites
   sites_cur <- get_table("sites", con)
-  sites.name <- cur$site
-  sites.lat <- cur$lat
-  sites.lng <- cur$lon
+  sites.name <- if ("site" %in% colnames(cur)) { cur$site } else { NA }
+  sites.lat <- if ("lat" %in% colnames(cur)) { cur$lat } else { NA }
+  sites.lng <- if ("lon" %in% colnames(cur)) { cur$lon } else { NA }
   sites.id <- get_id(sites.name, sites_cur$name, sites_cur$id)
-
-  # countries
-  countries_cur <- get_table("countries", con)
-  countries.name <- cur$country_final
-  countries.id <- get_id(countries.name, countries_cur$name, countries_cur$id)
   
-  # on_site_object_positions
-  on_site_object_positions_cur <- get_table("on_site_object_positions", con)
-  on_site_object_positions.feature <- cur$feature
-  on_site_object_positions.id <- get_new_id(on_site_object_positions_cur$id)
+  # species
+  species_cur <- get_table("species", con)
+  species.name <- if ("species" %in% colnames(cur)) { cur$species } else { NA }
+  species.id <- get_id(species.name, species_cur$name, species_cur$id)
   
-  # materials
-  materials_cur <- get_table("materials", con)
-  materials.name <- cur$material
-  materials.id <- get_id(materials.name, materials_cur$name, materials_cur$id)
-
+  # typochronological_units
+  typochronological_units_cur <- get_table("typochronological_units", con)
+  typochronological_units.name <- if ("culture" %in% colnames(cur)) { cur$culture } else { NA }
+  typochronological_units.id <- get_id(typochronological_units.name, typochronological_units_cur$name, typochronological_units_cur$id)
   
   #### writing tables ####
   
@@ -118,7 +136,7 @@ for (i in 1:nrow(imp)) {
     tibble::tibble(
       id = arch_objects.id,
       material_id = materials.id,
-      species_id = NA,
+      species_id = species.id,
       on_site_object_position_id = on_site_object_positions.id,
       site_phase_id = site_phases.id
     ) %>% 
@@ -132,23 +150,6 @@ for (i in 1:nrow(imp)) {
     "SELECT setval('arch_objects_id_seq', (SELECT MAX(id) FROM arch_objects));"
   )
 
-  # samples
-  DBI::dbWriteTable(
-    con, "samples", 
-    tibble::tibble(
-      id = samples.id,
-      arch_object_id = arch_objects.id
-    ) %>% 
-      add_time_columns() %>% 
-      dplyr::filter(!is.na(id)) %>%
-      dplyr::filter(!(id %in% samples_cur$id)),
-    append = T
-  )
-  DBI::dbExecute(
-    con,
-    "SELECT setval('samples_id_seq', (SELECT MAX(id) FROM samples));"
-  )
-  
   # c14_measurements
   DBI::dbWriteTable(
     con, "c14_measurements", 
@@ -159,8 +160,8 @@ for (i in 1:nrow(imp)) {
       cal_bp = c14_measurements.cal_bp,
       cal_std = c14_measurements.cal_std,
       delta_c13 = c14_measurements.delta_c13,
-      delta_c13_std = NA,
-      method = NA
+      delta_c13_std = c14_measurements.delta_c13_std,
+      method = c14_measurements.method
     ) %>% 
       add_time_columns() %>% 
       dplyr::filter(!is.na(id)) %>%
@@ -170,6 +171,40 @@ for (i in 1:nrow(imp)) {
   DBI::dbExecute(
     con,
     "SELECT setval('c14_measurements_id_seq', (SELECT MAX(id) FROM c14_measurements));"
+  )
+  
+  # countries
+  DBI::dbWriteTable(
+    con, "countries", 
+    tibble::tibble(
+      id = countries.id,
+      name = countries.name
+    ) %>% 
+      add_time_columns() %>% 
+      dplyr::filter(!is.na(id)) %>%
+      dplyr::filter(!(id %in% countries_cur$id)),
+    append = T
+  )
+  DBI::dbExecute(
+    con,
+    "SELECT setval('countries_id_seq', (SELECT MAX(id) FROM countries));"
+  )
+  
+  # materials
+  DBI::dbWriteTable(
+    con, "materials", 
+    tibble::tibble(
+      id = materials.id,
+      name = materials.name
+    ) %>% 
+      add_time_columns() %>% 
+      dplyr::filter(!is.na(id)) %>%
+      dplyr::filter(!(id %in% materials_cur$id)),
+    append = T
+  )
+  DBI::dbExecute(
+    con,
+    "SELECT setval('materials_id_seq', (SELECT MAX(id) FROM materials));"
   )
   
   # measurements
@@ -191,24 +226,6 @@ for (i in 1:nrow(imp)) {
     con,
     "SELECT setval('measurements_id_seq', (SELECT MAX(id) FROM measurements));"
   )
-
-  # references
-  DBI::dbWriteTable(
-    con, "references", 
-    tibble::tibble(
-      id = references.ids,
-      short_ref = references.short_refs,
-      bibtex = NA
-    ) %>% 
-      add_time_columns() %>% 
-      dplyr::filter(!is.na(id)) %>%
-      dplyr::filter(!(id %in% references_cur$id)),
-    append = T
-  )
-  DBI::dbExecute(
-    con,
-    "SELECT setval('references_id_seq', (SELECT MAX(id) FROM \"references\"));"
-  )
   
   # measurements_references
   DBI::dbWriteTable(
@@ -221,25 +238,26 @@ for (i in 1:nrow(imp)) {
     append = T
   )
   
-  # site_phases
+  # on_site_object_positions
   DBI::dbWriteTable(
-    con, "site_phases", 
+    con, "on_site_object_positions", 
     tibble::tibble(
-      id = site_phases.id,
-      name = site_phases.name,
-      approx_start_time = NA,
-      approx_end_time = NA,
-      site_id = sites.id,
-      site_type_id = NA
+      id = on_site_object_positions.id,
+      feature = on_site_object_positions.feature,
+      coord_reference_system = NA,
+      coord_X = NA,
+      coord_Y = NA,
+      coord_Z = NA,
+      feature_type_id = NA
     ) %>% 
       add_time_columns() %>% 
       dplyr::filter(!is.na(id)) %>%
-      dplyr::filter(!(id %in% site_phases_cur$id)),
+      dplyr::filter(!(id %in% on_site_object_positions_cur$id)),
     append = T
   )
   DBI::dbExecute(
     con,
-    "SELECT setval('site_phases_id_seq', (SELECT MAX(id) FROM site_phases));"
+    "SELECT setval('on_site_object_positions_id_seq', (SELECT MAX(id) FROM on_site_object_positions));"
   )
   
   # periods
@@ -273,24 +291,71 @@ for (i in 1:nrow(imp)) {
     append = T
   )
   
-  # typochronological_units
+  # physical_locations
   DBI::dbWriteTable(
-    con, "typochronological_units", 
+    con, "physical_locations", 
     tibble::tibble(
-      id = typochronological_units.id,
-      name = typochronological_units.name,
-      approx_start_time = NA,
-      approx_end_time = NA,
-      parent_id = NA 
+      site_id = sites.id,
+      country_id = countries.id
+    ) %>% 
+      dplyr::filter(!is.na(site_id) & !is.na(country_id)),
+    append = T
+  )
+  
+  # references
+  DBI::dbWriteTable(
+    con, "references", 
+    tibble::tibble(
+      id = references.ids,
+      short_ref = references.short_refs,
+      bibtex = NA
     ) %>% 
       add_time_columns() %>% 
       dplyr::filter(!is.na(id)) %>%
-      dplyr::filter(!(id %in% typochronological_units_cur$id)),
+      dplyr::filter(!(id %in% references_cur$id)),
     append = T
   )
   DBI::dbExecute(
     con,
-    "SELECT setval('typochronological_units_id_seq', (SELECT MAX(id) FROM typochronological_units));"
+    "SELECT setval('references_id_seq', (SELECT MAX(id) FROM \"references\"));"
+  )
+  
+  # samples
+  DBI::dbWriteTable(
+    con, "samples", 
+    tibble::tibble(
+      id = samples.id,
+      arch_object_id = arch_objects.id
+    ) %>% 
+      add_time_columns() %>% 
+      dplyr::filter(!is.na(id)) %>%
+      dplyr::filter(!(id %in% samples_cur$id)),
+    append = T
+  )
+  DBI::dbExecute(
+    con,
+    "SELECT setval('samples_id_seq', (SELECT MAX(id) FROM samples));"
+  )
+  
+  # site_phases
+  DBI::dbWriteTable(
+    con, "site_phases", 
+    tibble::tibble(
+      id = site_phases.id,
+      name = site_phases.name,
+      approx_start_time = NA,
+      approx_end_time = NA,
+      site_id = sites.id,
+      site_type_id = site_types.id
+    ) %>% 
+      add_time_columns() %>% 
+      dplyr::filter(!is.na(id)) %>%
+      dplyr::filter(!(id %in% site_phases_cur$id)),
+    append = T
+  )
+  DBI::dbExecute(
+    con,
+    "SELECT setval('site_phases_id_seq', (SELECT MAX(id) FROM site_phases));"
   )
   
   # site_phases_typochronological_units
@@ -302,6 +367,24 @@ for (i in 1:nrow(imp)) {
     )  %>% 
       dplyr::filter(!is.na(site_phase_id) & !is.na(typochronological_unit_id)),
     append = T
+  )
+  
+  # site_types
+  DBI::dbWriteTable(
+    con, "site_types", 
+    tibble::tibble(
+      id = site_types.id,
+      name = site_types.name,
+      description = NA
+    ) %>% 
+      add_time_columns() %>% 
+      dplyr::filter(!is.na(id)) %>%
+      dplyr::filter(!(id %in% site_types_cur$id)),
+    append = T
+  )
+  DBI::dbExecute(
+    con,
+    "SELECT setval('site_types_id_seq', (SELECT MAX(id) FROM site_types));"
   )
   
   # sites
@@ -324,60 +407,41 @@ for (i in 1:nrow(imp)) {
     "SELECT setval('sites_id_seq', (SELECT MAX(id) FROM sites));"
   )
   
-  # countries
+  # species
   DBI::dbWriteTable(
-    con, "countries", 
+    con, "species", 
     tibble::tibble(
-      id = countries.id,
-      name = countries.name
+      id = species.id,
+      name = species.name
     ) %>% 
       add_time_columns() %>% 
       dplyr::filter(!is.na(id)) %>%
-      dplyr::filter(!(id %in% countries_cur$id)),
+      dplyr::filter(!(id %in% species_cur$id)),
     append = T
   )
   DBI::dbExecute(
     con,
-    "SELECT setval('countries_id_seq', (SELECT MAX(id) FROM countries));"
+    "SELECT setval('species_id_seq', (SELECT MAX(id) FROM species));"
   )
   
-  # on_site_object_positions
+  # typochronological_units
   DBI::dbWriteTable(
-    con, "on_site_object_positions", 
+    con, "typochronological_units", 
     tibble::tibble(
-      id = on_site_object_positions.id,
-      feature = on_site_object_positions.feature,
-      coord_reference_system = NA,
-      coord_X = NA,
-      coord_Y = NA,
-      coord_Z = NA,
-      feature_type_id = NA
+      id = typochronological_units.id,
+      name = typochronological_units.name,
+      approx_start_time = NA,
+      approx_end_time = NA,
+      parent_id = NA 
     ) %>% 
       add_time_columns() %>% 
       dplyr::filter(!is.na(id)) %>%
-      dplyr::filter(!(id %in% on_site_object_positions_cur$id)),
+      dplyr::filter(!(id %in% typochronological_units_cur$id)),
     append = T
   )
   DBI::dbExecute(
     con,
-    "SELECT setval('on_site_object_positions_id_seq', (SELECT MAX(id) FROM on_site_object_positions));"
-  )
-  
-  # materials
-  DBI::dbWriteTable(
-    con, "materials", 
-    tibble::tibble(
-      id = materials.id,
-      name = materials.name
-    ) %>% 
-      add_time_columns() %>% 
-      dplyr::filter(!is.na(id)) %>%
-      dplyr::filter(!(id %in% materials_cur$id)),
-    append = T
-  )
-  DBI::dbExecute(
-    con,
-    "SELECT setval('materials_id_seq', (SELECT MAX(id) FROM materials));"
+    "SELECT setval('typochronological_units_id_seq', (SELECT MAX(id) FROM typochronological_units));"
   )
   
   setTxtProgressBar(pb, i)
