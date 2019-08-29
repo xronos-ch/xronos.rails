@@ -133,67 +133,7 @@ class DataController < ApplicationController
     ##### select data #####
 
     # general dataset preparation
-    @all_measurements = Measurement.left_joins(
-      :c14_measurement,
-      :references,
-      :lab,
-      sample: {
-        arch_object: [{
-          site_phase: [
-          :site_type, {
-            site: [:country, :fell_phases]
-          },
-          :periods,
-          :typochronological_units,
-          :ecochronological_units
-          ]
-        }, {
-          on_site_object_position: :feature_type
-        },
-        :material,
-        :species
-        ]
-      }
-    ).select(
-      "
-      arch_objects.id as arch_object_id,
-      measurements.id as measurement_id,
-      measurements.labnr as labnr,
-      c14_measurements.id as c14_measurement_id,
-      c14_measurements.bp as bp,
-      c14_measurements.std as std,
-      c14_measurements.cal_bp as cal_bp,
-      c14_measurements.cal_std as cal_std,
-      c14_measurements.delta_c13 as delta_c13,
-      labs.id as lab_id,
-      labs.name as lab_name,
-      sites.id as site_id,
-      sites.name as site,
-      site_phases.id as site_phase_id,
-      site_phases.name as site_phase,
-      site_types.id as site_type_id,
-      site_types.name as site_type,
-      on_site_object_positions.id as on_site_object_position_id,
-      on_site_object_positions.feature as feature,
-      feature_types.id as feature_type_id,
-      feature_types.name as feature_type,
-      string_agg(distinct periods.name, ', ') as periods_names,
-      string_agg(distinct typochronological_units.name, ', ') as typochronological_units_names,
-      string_agg(distinct ecochronological_units.name, ', ') as ecochronological_units_names,
-      materials.id as material_id,
-      materials.name as material,
-      species.id as species_id,
-      species.name as species,
-      countries.id as country_id,
-      countries.name as country,
-      sites.lat as lat,
-      sites.lng as lng,
-      \"references\".id as reference_id,
-       string_agg(distinct \"references\".short_ref, ', ') as references_short_refs
-      "
-    ).group("measurements.id", "arch_objects.id", "c14_measurements.id", "labs.id", "sites.id", "site_phases.id", "site_types.id", "on_site_object_positions.id", "feature_types.id", "materials.id", "species.id", "countries.id", '"references".id').all
-
-    # string_agg has to be replaced with string_agg for postgres in production
+    @all_measurements = Measurement.includes(:c14_measurement, :lab, sample: {arch_object: [{site_phase: {site: :country}}, :on_site_object_position, :material, :species]})
 
     @selected_measurements = @all_measurements
 
@@ -207,49 +147,49 @@ class DataController < ApplicationController
     # site name
     unless session[:query_site_name].nil?
       @selected_measurements = @selected_measurements.where(
-        "sites.name IN (?)", session[:query_site_name].split(', ')
+        sample: {arch_object: {site_phase: {sites: {:name => session[:query_site_name].split(', ')}}}}
       ).all
     end
 
     # site type
     unless session[:query_site_type].nil?
       @selected_measurements = @selected_measurements.where(
-        "site_types.name IN (?)", session[:query_site_type].split(', ')
+        sample: {arch_object: {site_phase: {site_types: {name: session[:query_site_type].split(', ')}}}}
       ).all
     end
 
     # country
     unless session[:query_country].nil?
       @selected_measurements = @selected_measurements.where(
-          "countries.name IN (?)", session[:query_country].split(', ')
+        sample: {arch_object: {site_phase: {site: {countries: {name: session[:query_country].split(', ')}}}}}
       ).all
     end
 
     # feature
     unless session[:query_feature].nil?
       @selected_measurements = @selected_measurements.where(
-          "on_site_object_positions.feature LIKE ?", session[:query_feature]
+        sample: {arch_object: {on_site_object_positions: {feature: session[:query_feature].split(', ')}}}
       ).all
     end
 
     # material
     unless session[:query_material].nil?
       @selected_measurements = @selected_measurements.where(
-          "materials.name IN (?)", session[:query_material].split(', ')
+        sample: {arch_object: {materials: {name: session[:query_material].split(', ')}}}
       ).all
     end
 
     # species
     unless session[:query_species].nil?
       @selected_measurements = @selected_measurements.where(
-          "species.name LIKE ?", session[:query_species]
+        sample: {arch_object: {species: {name: session[:query_species].split(', ')}}}
       ).all
     end
 
     # lasso
     unless session[:spatial_lasso_selection].nil?
        @selected_measurements = @selected_measurements.where(
-          "sites.id IN (?)", session[:spatial_lasso_selection]
+         sample: {arch_object: {site_phase: {sites: {id: session[:spatial_lasso_selection].split(', ')}}}}
        ).all
     end
 
@@ -267,8 +207,8 @@ class DataController < ApplicationController
     params["columns"] ||= { "0" => {"data" => "" } }
     params["length"]  ||= -1
 
-    # data for javascript
-		gon.selected_measurements = @selected_measurements.to_json
+
+		gon.selected_measurements = @selected_measurements.map { |measurement| measurement.sample.arch_object.site_phase.site}.uniq.to_json
 
     respond_to do |format|
       format.html
