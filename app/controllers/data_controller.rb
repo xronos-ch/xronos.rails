@@ -153,7 +153,7 @@ class DataController < ApplicationController
         :material,
         :species
         ]
-      } 
+      }
     ).select(
       "
       arch_objects.id as arch_object_id,
@@ -260,7 +260,7 @@ class DataController < ApplicationController
        ).all
     end
 
-
+    selected_measurements_filtered = @selected_measurements.length
 
     #### provide data ####
     # https://github.com/jbox-web/ajax-datatables-rails/issues/246
@@ -273,13 +273,15 @@ class DataController < ApplicationController
     respond_to do |format|
       format.html
       # json data (u.a. for datatables)
-      format.json { render json: SelectedMeasurementDatatable.new(
+      format.json { render json: {data: SelectedMeasurementDatatable.new(
         params,
         {
           selected_measurements: @selected_measurements,
           view_context: view_context
         }
-      )
+      ).data,
+      recordsFiltered: selected_measurements_filtered,
+      recordsTotal: Measurement.count}
       }
       # csv data for the download button
       format.csv { send_data @selected_measurements.to_csv, filename: "dates-#{Date.today}.csv" }
