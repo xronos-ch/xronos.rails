@@ -1,7 +1,8 @@
 source("helper_functions.R")
 
 #### prepare data #### 
-imp <- c14bazAAR::get_aDRAC()
+#imp <- c14bazAAR::get_aDRAC()
+imp <- c14bazAAR::get_RADON()
 imp %<>% c14bazAAR::calibrate(choices = "calprobdistr")
 imp %<>% add_simple_cal()
 imp %<>% c14bazAAR::finalize_country_name()
@@ -10,8 +11,8 @@ imp %<>% c14bazAAR::finalize_country_name()
 con <- DBI::dbConnect(
   RPostgres::Postgres(), 
   dbname = 'testdb', 
-  host = '127.0.0.1', # i.e. 'ec2-54-83-201-96.compute-1.amazonaws.com'
-  port = 5432, # or any other port specified by your DBA
+  host = '127.0.0.1',
+  port = 5432,
   user = 'ultimate_postgres',
   password = 'nudelsalat'
 )
@@ -30,18 +31,6 @@ for (i in 1:nrow(imp)) {
   arch_objects_cur <- get_table("arch_objects", con)
   arch_objects.id <- get_new_id(arch_objects_cur$id)
 
-  # samples
-  samples_cur <- get_table("samples", con)
-  samples.id <- get_new_id(samples_cur$id)
-  
-  # measurements
-  measurements_cur <- get_table("measurements", con)
-  measurements.labnr <- cur$labnr
-  if (is.na(measurements.labnr) | exists_in_db(measurements.labnr, measurements_cur$labnr)) {
-    next
-  }
-  measurements.id <- get_id(measurements.labnr, measurements_cur$labnr, measurements_cur$id)
-
   # c14_measurements
   c14_measurements_cur <- get_table("c14_measurements", con)
   c14_measurements.bp <- cur$c14age
@@ -50,6 +39,34 @@ for (i in 1:nrow(imp)) {
   c14_measurements.cal_std <- cur$cal_std
   c14_measurements.delta_c13 <- cur$c13val
   c14_measurements.id <- get_new_id(c14_measurements_cur$id)
+  
+  # countries
+  countries_cur <- get_table("countries", con)
+  countries.name <- cur$country_final
+  countries.id <- get_id(countries.name, countries_cur$name, countries_cur$id)
+  
+  # materials
+  materials_cur <- get_table("materials", con)
+  materials.name <- cur$material
+  materials.id <- get_id(materials.name, materials_cur$name, materials_cur$id)
+  
+  # measurements
+  measurements_cur <- get_table("measurements", con)
+  measurements.labnr <- cur$labnr
+  if (is.na(measurements.labnr) | exists_in_db(measurements.labnr, measurements_cur$labnr)) {
+    next
+  }
+  measurements.id <- get_id(measurements.labnr, measurements_cur$labnr, measurements_cur$id)
+  
+  # on_site_object_positions
+  on_site_object_positions_cur <- get_table("on_site_object_positions", con)
+  on_site_object_positions.feature <- cur$feature
+  on_site_object_positions.id <- get_new_id(on_site_object_positions_cur$id)
+  
+  # periods
+  periods_cur <- get_table("periods", con)
+  periods.name <- cur$period
+  periods.id <- get_id(periods.name, periods_cur$name, periods_cur$id)
   
   # references
   references_cur <- get_table("references", con)
@@ -72,20 +89,14 @@ for (i in 1:nrow(imp)) {
     }
   }
   
+  # samples
+  samples_cur <- get_table("samples", con)
+  samples.id <- get_new_id(samples_cur$id)
+  
   # site_phases
   site_phases_cur <- get_table("site_phases", con)
   site_phases.name <- cur$site
   site_phases.id <- get_id(site_phases.name, site_phases_cur$name, site_phases_cur$id)
-  
-  # periods
-  periods_cur <- get_table("periods", con)
-  periods.name <- cur$period
-  periods.id <- get_id(periods.name, periods_cur$name, periods_cur$id)
-  
-  # typochronological units
-  typochronological_units_cur <- get_table("typochronological_units", con)  
-  typochronological_units.name <- cur$culture
-  typochronological_units.id <- get_id(typochronological_units.name, typochronological_units_cur$name, typochronological_units_cur$id)
   
   # sites
   sites_cur <- get_table("sites", con)
@@ -93,22 +104,11 @@ for (i in 1:nrow(imp)) {
   sites.lat <- cur$lat
   sites.lng <- cur$lon
   sites.id <- get_id(sites.name, sites_cur$name, sites_cur$id)
-
-  # countries
-  countries_cur <- get_table("countries", con)
-  countries.name <- cur$country_final
-  countries.id <- get_id(countries.name, countries_cur$name, countries_cur$id)
   
-  # on_site_object_positions
-  on_site_object_positions_cur <- get_table("on_site_object_positions", con)
-  on_site_object_positions.feature <- cur$feature
-  on_site_object_positions.id <- get_new_id(on_site_object_positions_cur$id)
-  
-  # materials
-  materials_cur <- get_table("materials", con)
-  materials.name <- cur$material
-  materials.id <- get_id(materials.name, materials_cur$name, materials_cur$id)
-
+  # species
+  species_cur <- get_table("species", con)
+  species.name <- cur$species
+  species.id <- get_id(species.name, species_cur$name, species_cur$id)
   
   #### writing tables ####
   
