@@ -13,7 +13,7 @@ services:
   web:
     container_name: xronos_rails_app
     restart: always
-    image: xchronosch/xronos.rails
+    image: xronos/xronos.rails
     ports:
       - "4000:3000"
     depends_on:
