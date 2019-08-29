@@ -43,33 +43,34 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
   end
 
   def data
+    ## following still might cause trouble when relationships are NIL
     records.map do |record|
       {
-        "arch_object_id": record.arch_object_id,
-        "measurement_id": record.measurement_id,
+        "arch_object_id": record.sample.arch_object.id,
+        "measurement_id": record.id,
         "c14_measurement_id": record.c14_measurement_id,
         "select": "",
-        "labnr": best_in_place(Measurement.find(record.measurement_id), :labnr),
-        "bp": best_in_place(C14Measurement.find(record.c14_measurement_id), :bp),
-        "std": best_in_place(C14Measurement.find(record.c14_measurement_id), :std),
-        "cal_bp": best_in_place(C14Measurement.find(record.c14_measurement_id), :cal_bp),
-        "cal_std": best_in_place(C14Measurement.find(record.c14_measurement_id), :cal_std),
-        "delta_c13": best_in_place(C14Measurement.find(record.c14_measurement_id), :delta_c13),
-        "lab_name": record.lab_name,#link_to(record.lab_name, lab_path(record.lab_id)),
-        "site": link_to(record.site, site_path(record.site_id)),
-        "site_phase": link_to(record.site_phase, site_phase_path(record.site_phase_id)),
-        "site_type": record.site_type,#link_to(record.site_type, site_type_path(record.site_type_id)),
-        "feature": record.on_site_object_position_id.present? ? best_in_place(OnSiteObjectPosition.find(record.on_site_object_position_id), :feature) : record.on_site_object_position_id,
-        "feature_type": record.feature_type,#link_to(record.feature_type, feature_type_path(record.feature_type_id)),
-        "period": record.periods_names,
-        "typochronological_unit": record.typochronological_units_names,
-        "ecochronological_unit": record.ecochronological_units_names,
-        "material": record.material,
-        "species": record.species,
-        "country": record.country,
-        "lat": best_in_place(Site.find(record.site_id), :lat),
-        "lng": best_in_place(Site.find(record.site_id), :lng),
-        "short_ref": record.references_short_refs
+        "labnr": best_in_place(Measurement.find(record.id), :labnr),
+        "bp": best_in_place(C14Measurement.find(record.c14_measurement.id), :bp),
+        "std": best_in_place(C14Measurement.find(record.c14_measurement.id), :std),
+        "cal_bp": best_in_place(C14Measurement.find(record.c14_measurement.id), :cal_bp),
+        "cal_std": best_in_place(C14Measurement.find(record.c14_measurement.id), :cal_std),
+        "delta_c13": best_in_place(C14Measurement.find(record.c14_measurement.id), :delta_c13),
+        "lab_name": record.lab&.name || "",#link_to(record.lab_name, lab_path(record.lab_id)),
+        "site": link_to(record.sample.arch_object.site_phase.site.name, site_path(record.sample.arch_object.site_phase.site.id)),
+        "site_phase": link_to(record.sample.arch_object.site_phase.name, site_phase_path(record.sample.arch_object.site_phase.id)),
+        "site_type": record.sample.arch_object.site_phase.site_type,#link_to(record.site_type, site_type_path(record.site_type_id)),
+        "feature": best_in_place(OnSiteObjectPosition.find(record.sample.arch_object&.on_site_object_position&.id), :feature),
+        "feature_type": record.sample.arch_object.on_site_object_position.feature_type&.name,#link_to(record.feature_type, feature_type_path(record.feature_type_id)),
+        "period": record.sample.arch_object.site_phase.periods.map(&:name).join(","),
+        "typochronological_unit": record.sample.arch_object.site_phase.typochronological_units.map(&:name).join(","),
+        "ecochronological_unit": record.sample.arch_object.site_phase.ecochronological_units.map(&:name).join(","),
+        "material": record.sample.arch_object.material&.name,
+        "species": record.sample.arch_object.species&.name,
+        "country": record.sample.arch_object.site_phase.site.country.name,
+        "lat": best_in_place(Site.find(record.sample.arch_object.site_phase.site.id), :lat),
+        "lng": best_in_place(Site.find(record.sample.arch_object.site_phase.site.id), :lng),
+        "short_ref": record.references.map(&:short_ref).join(",")
       }
     end
   end

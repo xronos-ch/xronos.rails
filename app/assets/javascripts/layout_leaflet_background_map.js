@@ -16,17 +16,9 @@ document.addEventListener('DOMContentLoaded',function(){
   }
 
   // load data
-  var sel = JSON.parse(gon.selected_measurements);
+  var sites = JSON.parse(gon.selected_measurements);
 
-  // reduce selection to sites
-  const sel_reduced_to_site = new Array(sel.length)
-  for (var i = 0; i < sel_reduced_to_site.length; i++) {
-    sel_reduced_to_site[i] = {site_id: sel[i].site_id, site: sel[i].site, lat: sel[i].lat, lng: sel[i].lng}
-  }
-  // https://gist.github.com/juliovedovatto/f4ac657e5d28e060c791f5ef27b13341
-  var sites = sel_reduced_to_site.map(JSON.stringify).reverse() // convert to JSON string the array content, then reverse it (to check from end to beginning)
-    .filter(function(item, index, arr){ return arr.indexOf(item, index + 1) === -1; }) // check if there is any occurence of the item in whole array
-    .reverse().map(JSON.parse) // revert it to original state
+  console.log(sites);
 
   // sumcal function
   /*function get_c14_measurement_ids(sel, site_id) {
@@ -49,20 +41,22 @@ document.addEventListener('DOMContentLoaded',function(){
 				fillColor: "black",
 				fillOpacity: 0.5,
 				radius: 1000,
-				site_id: sites[i].site_id
+				id: sites[i].id
 			}
 		).bindPopup(
-      'Site: ' + sites[i].site +
+      'Site: ' + sites[i].name +
       "<br>" +
-      '<button type="submit" onclick="window.location=\'' + '/sites/' + sites[i].site_id + '\';">' +
+      '<button type="submit" onclick="window.location=\'' + '/sites/' + sites[i].id + '\';">' +
         "<i class=\'fa fa-binoculars\'></i> Show site" +
       "</button>" +
       '<br>' +
-      '<button type="submit" onclick="window.location=\'' + '/?utf8=✓&query_site_name=' + sites[i].site + '\';">' +
+      '<button type="submit" onclick="window.location=\'' + '/?utf8=✓&query_site_name=' + sites[i].name + '\';">' +
         "<i class=\'fa fa-filter\'></i> Measurements from this site" +
       "</button>"
     );
 	}
+
+  console.log(markers);
 
 	const layers = [
       ...markers
@@ -104,7 +98,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
         const lasso_selected_sites = new Array(layers.length)
         for (var i = 0; i < lasso_selected_sites.length; i++) {
-          lasso_selected_sites[i] = layers[i].options.site_id
+          lasso_selected_sites[i] = layers[i].options.id
         }
 
         //alert(JSON.stringify(lasso_selected_sites));
