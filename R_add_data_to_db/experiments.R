@@ -19,7 +19,7 @@ con <- DBI::dbConnect(
 
 #### write to db loop ####
 #pb <- txtProgressBar(min = 1, max = nrow(imp), style = 3)
-for (i in 1:6) {
+for (i in 1:100) {
   
   # get one row of input table
   cur <- imp[i,]
@@ -113,7 +113,9 @@ for (i in 1:6) {
   
   # sites
   sites_cur <- get_table("sites", con)
-  sites.name <- if ("site" %in% colnames(cur)) { cur$site } else { NA }
+  sites.name <- if ("site" %in% colnames(cur)) { cur$site } else { 
+    paste0("unknown site ", round(runif(1) * 1000000, 0))
+  }
   sites.lat <- if ("lat" %in% colnames(cur)) { cur$lat } else { NA }
   sites.lng <- if ("lon" %in% colnames(cur)) { cur$lon } else { NA }
   sites.id <- get_id(sites.name, sites_cur$name, sites_cur$id)
