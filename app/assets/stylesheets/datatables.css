@@ -57,7 +57,7 @@ table.dataTable {
   table.dataTable thead .sorting_desc_disabled {
     background-image: url("sort_desc_disabled.png"); }
   table.dataTable tbody tr {
-    background-color: #333333;
+    background-color: #333333 !important;
   }
     table.dataTable tbody tr.selected {
       background-color: #ffffff !important;
@@ -335,7 +335,7 @@ table.dataTable td {
   .dataTables_wrapper .dataTables_info,
   .dataTables_wrapper .dataTables_processing,
   .dataTables_wrapper .dataTables_paginate {
-    color: #b5b5b5; }
+    color: #b5b5b5 !important; }
   .dataTables_wrapper .dataTables_scroll {
     clear: both; }
     .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody {
