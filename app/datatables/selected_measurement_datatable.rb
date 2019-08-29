@@ -59,7 +59,7 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
         "lab_name": record.lab&.name || "",#link_to(record.lab_name, lab_path(record.lab_id)),
         "site": link_to(record.sample.arch_object.site_phase.site.name, site_path(record.sample.arch_object.site_phase.site.id)),
         "site_phase": link_to(record.sample.arch_object.site_phase.name, site_phase_path(record.sample.arch_object.site_phase.id)),
-        "site_type": record.sample.arch_object.site_phase.site_type,#link_to(record.site_type, site_type_path(record.site_type_id)),
+        "site_type": record.sample.arch_object.site_phase.site_type&.name,#link_to(record.site_type, site_type_path(record.site_type_id)),
         "feature": best_in_place(OnSiteObjectPosition.find(record.sample.arch_object&.on_site_object_position&.id), :feature),
         "feature_type": record.sample.arch_object.on_site_object_position.feature_type&.name,#link_to(record.feature_type, feature_type_path(record.feature_type_id)),
         "period": record.sample.arch_object.site_phase.periods.map(&:name).join(","),
