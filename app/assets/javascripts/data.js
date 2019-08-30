@@ -2,6 +2,7 @@ jQuery(document).ready(function() {
   $('#selected_measurements-datatable').dataTable({
     autoWidth: true,
     sDom: 'Br <"H"lf> <"datatable-scroll"t> <"F"ip>',
+		deferRender: true,
     buttons: [
       {
         text: '<i class="fa fa-plus"></i> New date',
