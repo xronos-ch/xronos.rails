@@ -207,12 +207,12 @@ class DataController < ApplicationController
     params["columns"] ||= { "0" => {"data" => "" } }
     params["length"]  ||= -1
 
-
-		gon.selected_measurements = @selected_measurements.map { |measurement| measurement.sample.arch_object.site_phase}.compact.map { |measurement| measurement.site}.uniq.to_json
+		# json data (for map)
+		gon.selected_measurements = @selected_measurements.map { |measurement| measurement.sample.arch_object.site_phase}.compact.map { |measurement| measurement.site}.select { |site| site.lat != nil and site.lat != nil}.uniq.to_json
 
     respond_to do |format|
       format.html
-      # json data (u.a. for datatables)
+      # json data (for datatables)
       format.json { render json: {data: SelectedMeasurementDatatable.new(
         params,
         {
