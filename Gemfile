@@ -104,3 +104,6 @@ gem 'rails-jquery-autocomplete'
 
 # in place editing
 gem 'best_in_place'
+
+# rabl for the api
+gem 'rabl'

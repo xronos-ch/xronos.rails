@@ -1,4 +1,10 @@
 Rails.application.routes.draw do
+
+  namespace :api, defaults: {format: 'json'} do
+    namespace :v1 do
+      resources :data
+    end
+  end
   resources :fell_phases
   resources :species
   resources :site_phases
