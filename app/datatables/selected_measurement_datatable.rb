@@ -62,15 +62,15 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
         "site_type": record.sample.arch_object.site_phase.present? && record.sample.arch_object.site_phase.site_type.present? ? link_to(record.sample.arch_object.site_phase.site_type.name, site_type_path(record.sample.arch_object.site_phase.site_type.id)) : '',
         "feature": record.sample.arch_object.on_site_object_position_id.present? ? best_in_place(OnSiteObjectPosition.find(record.sample.arch_object&.on_site_object_position&.id), :feature) : record.sample.arch_object.on_site_object_position_id.to_s,
         "feature_type": record.sample.arch_object.on_site_object_position_id.present? ? record.sample.arch_object.on_site_object_position.feature_type&.name : record.sample.arch_object.on_site_object_position_id.to_s,
-        "period": record.sample.arch_object.site_phase.present? && record.sample.arch_object.site_phase.periods.present? ? record.sample.arch_object.site_phase.periods.map(&:name).join(",") : '',
-        "typochronological_unit": record.sample.arch_object.site_phase.present? && record.sample.arch_object.site_phase.typochronological_units.present? ? record.sample.arch_object.site_phase.typochronological_units.map(&:name).join(",") : '',
-        "ecochronological_unit": record.sample.arch_object.site_phase.present? && record.sample.arch_object.site_phase.ecochronological_units.present? ? record.sample.arch_object.site_phase.ecochronological_units.map(&:name).join(",") : '',
+        "period": record.sample.arch_object.site_phase.present? && record.sample.arch_object.site_phase.periods.present? ? record.sample.arch_object.site_phase.periods.map(&:name).join(" | ") : '',
+        "typochronological_unit": record.sample.arch_object.site_phase.present? && record.sample.arch_object.site_phase.typochronological_units.present? ? record.sample.arch_object.site_phase.typochronological_units.map(&:name).join(" | ") : '',
+        "ecochronological_unit": record.sample.arch_object.site_phase.present? && record.sample.arch_object.site_phase.ecochronological_units.present? ? record.sample.arch_object.site_phase.ecochronological_units.map(&:name).join(" | ") : '',
         "material": record.sample.arch_object.material&.name,
         "species": record.sample.arch_object.species&.name,
         "country": record.sample.arch_object.site_phase.present? && record.sample.arch_object.site_phase.site.present? && record.sample.arch_object.site_phase.site.country.present? ? record.sample.arch_object.site_phase.site.country.name : '',
         "lat": record.sample.arch_object.site_phase.present? && record.sample.arch_object.site_phase.site.present? && record.sample.arch_object.site_phase.site.lat.present? ? best_in_place(Site.find(record.sample.arch_object.site_phase.site.id), :lat) : '',
         "lng": record.sample.arch_object.site_phase.present? && record.sample.arch_object.site_phase.site.present? && record.sample.arch_object.site_phase.site.lng.present? ? best_in_place(Site.find(record.sample.arch_object.site_phase.site.id), :lng) : '',
-        "short_ref": record.references.map(&:short_ref).join(",")
+        "short_ref": record.references.map(&:short_ref).join(" | ")
       }
     end
   end
