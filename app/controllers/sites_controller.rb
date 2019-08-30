@@ -19,6 +19,7 @@ class SitesController < ApplicationController
   # GET /sites/1
   # GET /sites/1.json
   def show
+    gon.selected_sites = [{id: @site.id, site: @site.name, lat: @site.lat, lng: @site.lng}].to_json
   end
 
   # GET /sites/new
@@ -30,6 +31,7 @@ class SitesController < ApplicationController
 
   # GET /sites/1/edit
   def edit
+    gon.selected_sites = [{id: @site.id, site: @site.name, lat: @site.lat, lng: @site.lng}].to_json
   end
 
   # POST /sites

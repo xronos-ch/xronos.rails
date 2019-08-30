@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded',function(){
   }
 
   // load data
-  var sites = JSON.parse(gon.selected_measurements);
+  var sites = JSON.parse(gon.selected_sites);
 
   console.log(sites);
 
