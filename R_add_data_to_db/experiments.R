@@ -1,4 +1,4 @@
-source("helper_functions.R")
+source("~/agora/xronos.rails/R_add_data_to_db/helper_functions.R")
 
 #### prepare data #### 
 #imp <- c14bazAAR::get_aDRAC()
@@ -18,7 +18,7 @@ con <- DBI::dbConnect(
 )
 
 #### write to db loop ####
-#pb <- txtProgressBar(min = 1, max = nrow(imp), style = 3)
+pb <- txtProgressBar(style = 3)
 for (i in 1:100) {
   
   # get one row of input table
@@ -83,6 +83,15 @@ for (i in 1:100) {
     } else {
       NA
     }
+    if (cur$sourcedb == "RADON") {
+      cur$shortref %>% 
+        strsplit(., ";") %>%
+        unlist %>%
+        gsub(",.*", "", .) %>%
+        trimws()
+    } else {
+      NA
+    }
   } else { NA }
 
   refcurref <- references_cur$short_ref
@@ -103,7 +112,9 @@ for (i in 1:100) {
   
   # site_phases
   site_phases_cur <- get_table("site_phases", con)
-  site_phases.name <- if ("site" %in% colnames(cur)) { cur$site } else { NA }
+  site_phases.name <- if ("site" %in% colnames(cur) & !is.na(cur$site)) { cur$site } else { 
+    paste0("unknown site ", random_alphanumeric_string())
+  }
   site_phases.id <- get_id(site_phases.name, site_phases_cur$name, site_phases_cur$id)
   
   # site_types
@@ -113,11 +124,9 @@ for (i in 1:100) {
   
   # sites
   sites_cur <- get_table("sites", con)
-  sites.name <- if ("site" %in% colnames(cur)) { cur$site } else { 
-    paste0("unknown site ", round(runif(1) * 1000000, 0))
-  }
-  sites.lat <- if ("lat" %in% colnames(cur)) { cur$lat } else { NA }
-  sites.lng <- if ("lon" %in% colnames(cur)) { cur$lon } else { NA }
+  sites.name <- site_phases.name
+  sites.lat <- if ("lat" %in% colnames(cur)) { cur$lat %>% round(4) } else { NA }
+  sites.lng <- if ("lon" %in% colnames(cur)) { cur$lon %>% round(4) } else { NA }
   sites.id <- get_id(sites.name, sites_cur$name, sites_cur$id)
   
   # species
@@ -447,10 +456,10 @@ for (i in 1:100) {
     "SELECT setval('typochronological_units_id_seq', (SELECT MAX(id) FROM typochronological_units));"
   )
   
-  #setTxtProgressBar(pb, i)
+  setTxtProgressBar(pb, i/100)
   
 }
-#close(pb)
+close(pb)
 
 DBI::dbDisconnect(con)
 

@@ -63,3 +63,8 @@ add_simple_cal <- function(imp) {
   )
   return(imp)
 }
+
+random_alphanumeric_string <- function(n = 1) {
+  a <- do.call(paste0, replicate(5, sample(LETTERS, n, TRUE), FALSE))
+  paste0(a, sprintf("%04d", sample(9999, n, TRUE)), sample(LETTERS, n, TRUE))
+}

@@ -47,4 +47,5 @@ docker_env_variables.env
 
 #### R files ####
 R_add_data_to_db/.Rhistory
+R_add_data_to_db/.RData
 
