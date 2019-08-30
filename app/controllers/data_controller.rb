@@ -200,8 +200,6 @@ class DataController < ApplicationController
        ).all
     end
 
-    selected_measurements_filtered = @selected_measurements.length
-
     #### provide data ####
     # https://github.com/jbox-web/ajax-datatables-rails/issues/246
     params["columns"] ||= { "0" => {"data" => "" } }
@@ -213,15 +211,18 @@ class DataController < ApplicationController
     respond_to do |format|
       format.html
       # json data (for datatables)
-      format.json { render json: {data: SelectedMeasurementDatatable.new(
-        params,
-        {
-          selected_measurements: @selected_measurements,
-          view_context: view_context
+      format.json { 
+        render json: {
+          data: SelectedMeasurementDatatable.new(
+            params,
+            {
+              selected_measurements: @selected_measurements,
+              view_context: view_context
+            }
+          ).data,
+          recordsFiltered: @selected_measurements.length,
+          recordsTotal: Measurement.count
         }
-      ).data,
-      recordsFiltered: selected_measurements_filtered,
-      recordsTotal: Measurement.count}
       }
       # csv data for the download button
       format.csv { send_data @selected_measurements.to_csv, filename: "dates-#{Date.today}.csv" }
