@@ -1,4 +1,5 @@
 object @date
+cache @date
 attributes :id, :labnr
 
 child :c14_measurement do
