@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded',function(){
   // load data
   var sites = JSON.parse(gon.selected_sites);
 
-  console.log(sites);
+  //console.log(sites);
 
   // sumcal function
   /*function get_c14_measurement_ids(sel, site_id) {
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded',function(){
     );
 	}
 
-  console.log(markers);
+  //console.log(markers);
 
 	const layers = [
       ...markers
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
         //alert(JSON.stringify(lasso_selected_sites));
         $.ajax({
-            type: "get",
+            type: "post",
             url: '/data/index',
             dataType: 'json',
             data: { spatial_lasso_selection: JSON.stringify(lasso_selected_sites) },

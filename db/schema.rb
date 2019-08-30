@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_06_141434) do
+ActiveRecord::Schema.define(version: 2019_08_30_115948) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -100,9 +100,8 @@ ActiveRecord::Schema.define(version: 2019_08_06_141434) do
   end
 
   create_table "measurements_references", id: false, force: :cascade do |t|
-    t.bigint "measurement_id", null: false
-    t.bigint "reference_id", null: false
-    t.index ["measurement_id", "reference_id"], name: "index_mr"
+    t.bigint "measurement_id"
+    t.bigint "reference_id"
   end
 
   create_table "on_site_object_positions", force: :cascade do |t|
@@ -127,18 +126,15 @@ ActiveRecord::Schema.define(version: 2019_08_06_141434) do
   end
 
   create_table "periods_site_phases", id: false, force: :cascade do |t|
-    t.bigint "site_phase_id", null: false
-    t.bigint "period_id", null: false
-    t.index ["site_phase_id", "period_id"], name: "index_spp"
+    t.bigint "site_phase_id"
+    t.bigint "period_id"
   end
 
-  create_table "physical_locations", force: :cascade do |t|
+  create_table "physical_locations", id: false, force: :cascade do |t|
     t.bigint "site_id"
     t.bigint "country_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["country_id"], name: "index_physical_locations_on_country_id"
-    t.index ["site_id"], name: "index_physical_locations_on_site_id"
+    t.text "created_at"
+    t.text "updated_at"
   end
 
   create_table "references", force: :cascade do |t|
@@ -154,6 +150,15 @@ ActiveRecord::Schema.define(version: 2019_08_06_141434) do
     t.integer "arch_object_id"
   end
 
+  create_table "sessions", force: :cascade do |t|
+    t.string "session_id", null: false
+    t.text "data"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["session_id"], name: "index_sessions_on_session_id", unique: true
+    t.index ["updated_at"], name: "index_sessions_on_updated_at"
+  end
+
   create_table "site_phases", force: :cascade do |t|
     t.string "name"
     t.integer "approx_start_time"
@@ -165,9 +170,8 @@ ActiveRecord::Schema.define(version: 2019_08_06_141434) do
   end
 
   create_table "site_phases_typochronological_units", id: false, force: :cascade do |t|
-    t.bigint "site_phase_id", null: false
-    t.bigint "typochronological_unit_id", null: false
-    t.index ["site_phase_id", "typochronological_unit_id"], name: "index_sptu"
+    t.bigint "site_phase_id"
+    t.bigint "typochronological_unit_id"
   end
 
   create_table "site_types", force: :cascade do |t|
