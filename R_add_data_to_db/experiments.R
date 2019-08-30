@@ -18,8 +18,7 @@ con <- DBI::dbConnect(
 )
 
 #### write to db loop ####
-pb <- txtProgressBar(style = 3)
-for (i in 1:100) {
+for (i in 1:nrow(imp)) {
   
   # get one row of input table
   cur <- imp[i,]
@@ -60,6 +59,9 @@ for (i in 1:100) {
   }
   measurements.id <- get_id(measurements.labnr, measurements_cur$labnr, measurements_cur$id)
   
+  # measurements_references
+  measurements_references_cur <- get_table("measurements_references", con)
+  
   # on_site_object_positions
   on_site_object_positions_cur <- get_table("on_site_object_positions", con)
   on_site_object_positions.feature <- if ("feature" %in% colnames(cur)) { cur$feature } else { NA }
@@ -69,6 +71,12 @@ for (i in 1:100) {
   periods_cur <- get_table("periods", con)
   periods.name <- if ("period" %in% colnames(cur)) { cur$period } else { NA }
   periods.id <- get_id(periods.name, periods_cur$name, periods_cur$id)
+
+  # periods_site_phases
+  periods_site_phases_cur <- get_table("periods_site_phases", con)
+  
+  # physical_locations
+  physical_locations_cur <- get_table("physical_locations", con)
   
   # references
   references_cur <- get_table("references", con)
@@ -116,6 +124,9 @@ for (i in 1:100) {
     paste0("unknown site ", random_alphanumeric_string())
   }
   site_phases.id <- get_id(site_phases.name, site_phases_cur$name, site_phases_cur$id)
+  
+  # site_phases_typochronological_units
+  site_phases_typochronological_units_cur <- get_table("site_phases_typochronological_units", con)
   
   # site_types
   site_types_cur <- get_table("site_types", con)
@@ -261,9 +272,12 @@ for (i in 1:100) {
     tibble::tibble(
       measurement_id = measurements.id,
       reference_id = references.ids
-    ) %>% 
-      dplyr::filter(!is.na(measurement_id) & !is.na(reference_id)),
-    append = T
+    ) %>%
+      dplyr::filter(!is.na(measurement_id) & !is.na(reference_id)) %>%
+      rbind(measurements_references_cur) %>%
+      dplyr::distinct(),
+    append = F,
+    overwrite = T
   )
   
   # on_site_object_positions
@@ -315,8 +329,11 @@ for (i in 1:100) {
       site_phase_id = site_phases.id,
       period_id = periods.id
     ) %>% 
-      dplyr::filter(!is.na(site_phase_id) & !is.na(period_id)),
-    append = T
+      dplyr::filter(!is.na(site_phase_id) & !is.na(period_id)) %>%
+      rbind(periods_site_phases_cur) %>%
+      dplyr::distinct(),
+    append = F,
+    overwrite = T
   )
   
   # physical_locations
@@ -327,8 +344,11 @@ for (i in 1:100) {
       country_id = countries.id
     ) %>% 
       add_time_columns() %>%
-      dplyr::filter(!is.na(site_id) & !is.na(country_id)),
-    append = T
+      dplyr::filter(!is.na(site_id) & !is.na(country_id)) %>%
+      rbind(physical_locations_cur) %>%
+      dplyr::distinct(),
+    append = F,
+    overwrite = T
   )
   
   # references
@@ -377,8 +397,11 @@ for (i in 1:100) {
       site_phase_id = site_phases.id,
       typochronological_unit_id = typochronological_units.id
     )  %>% 
-      dplyr::filter(!is.na(site_phase_id) & !is.na(typochronological_unit_id)),
-    append = T
+      dplyr::filter(!is.na(site_phase_id) & !is.na(typochronological_unit_id)) %>%
+      rbind(site_phases_typochronological_units_cur) %>%
+      dplyr::distinct(),
+    append = F,
+    overwrite = T
   )
   
   # site_types
@@ -456,10 +479,7 @@ for (i in 1:100) {
     "SELECT setval('typochronological_units_id_seq', (SELECT MAX(id) FROM typochronological_units));"
   )
   
-  setTxtProgressBar(pb, i/100)
-  
 }
-close(pb)
 
 DBI::dbDisconnect(con)
 
