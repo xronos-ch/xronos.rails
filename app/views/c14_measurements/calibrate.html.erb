@@ -14,7 +14,7 @@
 	var chart1; // globally available
 
 	$(document).ready(function() {
-	    chart1 =  new Highcharts.Chart({
+	    chart1 = new Highcharts.Chart({
 	    exporting:
 	    {
 	      url: 'https://export.highcharts.com/'
@@ -60,7 +60,7 @@
 	    },
 	    series: [{
 	      type: 'area',
-	      name: '<%= 'test ' + @c14_measurement.id.to_s %>',
+	      name: '<%=  Measurement.find_by(c14_measurement_id: @c14_measurement.id).labnr.to_s %>',
 	      pointInterval: <%= @likelihood_res.to_i.year * 1000 %>,
 	      pointStart: <%= @likelihood_start.to_i * 1000 %>,
 	      data: [<%=@data.join(", ")%>],
@@ -112,8 +112,7 @@
 	         }
 	    },
 	    title: {
-	      text: '<%= 'test ' + ' (' + @c14_measurement.bp.to_s + ' ± ' + @c14_measurement.std.to_s + ')'%>',
-				text: 'test title',
+	      text: '<%= Measurement.find_by(c14_measurement_id: @c14_measurement.id).labnr.to_s %>',
 				align: 'right',
 	      x: -70
 	    },
@@ -172,7 +171,7 @@
 	            to: <%=(@c14_measurement.bp - @c14_measurement.std).to_s%>,
 	            color: 'rgba(69, 114, 167, 0.2)',
 	            label: {
-	               text: 'c14_measurement BP 1 '+ String.fromCharCode(963),
+	               text: 'BP 1'+ String.fromCharCode(963),
 	               style: {
 	                  color: '#606060'
 	               }
