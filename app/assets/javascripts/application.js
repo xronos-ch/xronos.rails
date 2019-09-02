@@ -22,6 +22,7 @@
 //= require leaflet_lasso
 //= require datatables
 //= require cocoon
+//= require loading_screen
 //= require_tree .
 
 // initialize datatables

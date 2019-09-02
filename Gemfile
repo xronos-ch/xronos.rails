@@ -110,3 +110,6 @@ gem 'rabl'
 
 # a session store backed by an Active Record class to avoid cookie overflow with lasso
 gem 'activerecord-session_store'
+
+# loading screen
+gem 'loading_screen', '~> 0.2.3'
