@@ -96,7 +96,7 @@ $(function () {
   var multichart = new Highcharts.Chart({
     exporting:
     {
-      url: '/c14_measurements/export_chart?authenticity_token='+encodeURIComponent(AUTH_TOKEN)
+      url: 'https://export.highcharts.com/'
     },
     chart: { renderTo: 'calib_chart2',
              defaultSeriesType: 'area',

@@ -184,8 +184,7 @@ class C14MeasurementsController < ApplicationController
 
   def calibrate_multi
     # params[:ids]=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
-    #order=params[:sort_by]
-    order = 'bp desc'
+    order=params[:sort_by]
     @c14_measurements = C14Measurement.order(order).where(id: params[:ids])
 
     out="Options(){RawData=TRUE};Plot(){"
@@ -229,14 +228,13 @@ class C14MeasurementsController < ApplicationController
 
       likelihood_probs.each_with_index do |likelihood,index|
         if index==0
-          #tmp_data.push('{id: "' + c14_measurement.lab.lab_code.to_s + '-' + c14_measurement.lab_nr.to_s + '", x: ' + (Time.mktime(labels[index]).to_i*1000).to_s + ',y:' + likelihood.to_s + '}')
-          tmp_data.push('{id: "' + 'huhu' + '", x: ' + (Time.mktime(labels[index]).to_i*1000).to_s + ',y:' + likelihood.to_s + '}')
+          tmp_data.push('{id: "' + Measurement.find_by(c14_measurement_id: @c14_measurement.id).labnr.to_s + '", x: ' + (Time.mktime(labels[index]).to_i*1000).to_s + ',y:' + likelihood.to_s + '}')
         else
           tmp_data.push('{x: ' + (Time.mktime(labels[index]).to_i*1000).to_s + ', y:' + likelihood.to_s + '}')
         end
       end
 
-      # @data[i]=likelihood_probs
+      #@data[i]=likelihood_probs
       @data[i]=tmp_data
 
       result_one_sigma=@graph.scan(/#{Regexp.escape(c14_measurement_prefix)}likelihood.range\[1\](.*);/)
@@ -408,77 +406,6 @@ class C14MeasurementsController < ApplicationController
 
     render :layout => false
 
-  end
-
-
-  def export_chart
-    # require 'active_support/secure_random'
-    # create an SVG image
-    # based on Highcharts index.php
-    batik_path = Rails.root.to_s() + '/vendor/batik/batik-rasterizer.jar'
-
-    svg = params[:svg]
-    filename = params[:filename].blank? ? "chart" : params[:filename]
-
-    if params[:type] == 'image/png'
-      type = '-m image/png';
-      ext = 'png'
-    elsif params[:type] == 'image/jpeg'
-      type = '-m image/jpeg'
-      ext = 'jpg'
-    elsif params[:type]  == 'application/pdf'
-      type = '-m application/pdf'
-      ext = 'pdf'
-    elsif params[:type]  == 'image/svg+xml'
-      type = '-m image/svg+xml'
-      ext = 'svg'
-    else
-      show_error "unknown image type: #{params[:type]}"
-    end
-
-    # two random file names - one for Batik to read (with SVG XML) and one for it to write to
-    tempname = SecureRandom.hex(16)
-    outfile = "tmp/out_#{tempname}.#{ext}"
-    infile = "tmp/in_#{tempname}.svg"
-    tmppngfile = "tmp/#{tempname}.png"
-    width = "-w #{params[:width]}" if params[:width]
-
-    File.open(infile, 'w') {|f| f.write(svg) }          # SVG definition for Batik to read
-
-     # do the conversion
-    if (params[:type]  == 'image/svg+xml')
-      cmd = "cp #{infile} #{outfile}"
-      # logger.info(cmd)
-      rsp = system(cmd)
-    elsif (params[:type]  == 'image/jpeg')
-      cmd = "inkscape -f #{infile} #{width} -e #{tmppngfile}"
-      # logger.info(cmd)
-      rsp = system(cmd)
-      cmd = "convert #{tmppngfile} #{outfile}"
-      # logger.info(cmd)
-      rsp = rsp & system(cmd)
-      File.delete(tmppngfile)
-    elsif (params[:type]  == 'image/png')
-      cmd = "inkscape -f #{infile} #{width} -e #{outfile}"
-      # logger.info(cmd)
-      rsp = system(cmd)
-    elsif (params[:type]  == 'application/pdf')
-      cmd = "inkscape -f #{infile} -A #{outfile}"
-      # logger.info(cmd)
-      rsp = system(cmd)
-    end
-
-     # For now, rely on existence and size of output file as an idicator of success
-     fs = File.size?( outfile)
-     if fs.nil? || fs < 10
-       render :text => "Unable to export image; #{rsp}", :status => 500
-    else
-      File.open(outfile, 'r') do |f|
-        send_data f.read, :type => params[:type], :filename=> "#{filename}.#{ext}", :disposition => 'attachment'
-      end
-     end
-
-     File.delete( infile, outfile)
   end
 
 end

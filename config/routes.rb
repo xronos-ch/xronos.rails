@@ -16,7 +16,6 @@ Rails.application.routes.draw do
       get 'calibrate'
       get 'calibrate_multi'
       get 'calibrate_sum'
-      post 'export_chart'
     end
   end
   devise_for :users
