@@ -1,3 +1,4 @@
+library(magrittr)
 source("~/agora/xronos.rails/R_add_data_to_db/helper_functions.R")
 
 #### prepare data #### 
@@ -7,14 +8,21 @@ imp %<>% c14bazAAR::calibrate(choices = "calprobdistr")
 imp %<>% add_simple_cal()
 imp %<>% c14bazAAR::finalize_country_name()
 
+#### read env variables ####
+env_vars <- readLines("~/agora/xronos.rails/docker_env_variables.env")
+env_vars_vals <- env_vars %>% strsplit("=") %>% lapply(., function(x) x[[2]]) %>% unlist()
+user <- env_vars_vals[1]
+password <- env_vars_vals[2]
+dbname <- env_vars_vals[3]
+
 #### make connection to database ####
 con <- DBI::dbConnect(
   RPostgres::Postgres(), 
-  dbname = 'testdb', 
+  dbname = dbname, 
   host = '127.0.0.1',
   port = 5432,
-  user = 'ultimate_postgres',
-  password = 'nudelbar'
+  user = user,
+  password = password
 )
 
 #### write to db loop ####
