@@ -63,6 +63,10 @@ handles=[]
       }
   "
 
+  handles[i]="
+    <li style='position: relative; cursor: move;' id='#{i}'>#{Measurement.find_by(c14_measurement_id: @c14_measurement.id).labnr.to_s}</li>
+  "
+
 end
 series_string=series.reverse.join(',').html_safe
 axis_string=axis.reverse.join(',').html_safe
