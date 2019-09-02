@@ -133,7 +133,7 @@ class DataController < ApplicationController
     ##### select data #####
 
     # general dataset preparation
-    @all_measurements = Measurement.includes(:c14_measurement, :lab, sample: {arch_object: [{site_phase: {site: :country}}, :on_site_object_position, :material, :species]})
+    @all_measurements ||= Measurement.includes(:c14_measurement, :lab, sample: {arch_object: [{site_phase: {site: :country}}, :on_site_object_position, :material, :species]})
 
     @selected_measurements = @all_measurements
 
@@ -200,16 +200,13 @@ class DataController < ApplicationController
        ).all
     end
 
-    # store the result of the query in an instance variable to increase performance
-    @final_measurements ||= @selected_measurements
-
     #### provide data ####
     # https://github.com/jbox-web/ajax-datatables-rails/issues/246
     params["columns"] ||= { "0" => {"data" => "" } }
     params["length"]  ||= -1
 
 		# json data (for map)
-		gon.selected_sites = @final_measurements.map { |measurement| measurement.sample.arch_object.site_phase}.compact.map { |measurement| measurement.site}.select { |site| site.lat != nil and site.lat != nil}.uniq.to_json
+		gon.selected_sites = @selected_measurements.map { |measurement| measurement.sample.arch_object.site_phase}.compact.map { |measurement| measurement.site}.select { |site| site.lat != nil and site.lat != nil}.uniq.to_json
 
     respond_to do |format|
       format.html
@@ -219,16 +216,16 @@ class DataController < ApplicationController
           data: SelectedMeasurementDatatable.new(
             params,
             {
-              selected_measurements: @final_measurements,
+              selected_measurements: @selected_measurements,
               view_context: view_context
             }
           ).data,
-          recordsFiltered: @final_measurements.length,
+          recordsFiltered: @selected_measurements.length,
           recordsTotal: Measurement.count
         }
       }
       # csv data for the download button
-      format.csv { send_data @final_measurements.to_csv, filename: "dates-#{Date.today}.csv" }
+      format.csv { send_data @selected_measurements.to_csv, filename: "dates-#{Date.today}.csv" }
     end
 
   end
