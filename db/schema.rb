@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_30_115948) do
+ActiveRecord::Schema.define(version: 2019_09_03_115407) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -49,6 +49,8 @@ ActiveRecord::Schema.define(version: 2019_08_30_115948) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "parent_id"
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_ecochronological_units_on_user_id"
   end
 
   create_table "ecochronological_units_site_phases", id: false, force: :cascade do |t|
@@ -71,7 +73,9 @@ ActiveRecord::Schema.define(version: 2019_08_30_115948) do
     t.integer "site_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id"
     t.index ["site_id"], name: "index_fell_phases_on_site_id"
+    t.index ["user_id"], name: "index_fell_phases_on_user_id"
   end
 
   create_table "labs", force: :cascade do |t|
@@ -94,15 +98,16 @@ ActiveRecord::Schema.define(version: 2019_08_30_115948) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "c14_measurement_id"
+    t.bigint "user_id"
     t.index ["c14_measurement_id"], name: "index_measurements_on_c14_measurement_id"
     t.index ["lab_id"], name: "index_measurements_on_lab_id"
     t.index ["sample_id"], name: "index_measurements_on_sample_id"
+    t.index ["user_id"], name: "index_measurements_on_user_id"
   end
 
   create_table "measurements_references", id: false, force: :cascade do |t|
-    t.bigint "measurement_id", null: false
-    t.bigint "reference_id", null: false
-    t.index ["measurement_id", "reference_id"], name: "index_mr"
+    t.bigint "measurement_id"
+    t.bigint "reference_id"
   end
 
   create_table "on_site_object_positions", force: :cascade do |t|
@@ -124,21 +129,20 @@ ActiveRecord::Schema.define(version: 2019_08_30_115948) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "parent_id"
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_periods_on_user_id"
   end
 
   create_table "periods_site_phases", id: false, force: :cascade do |t|
-    t.bigint "site_phase_id", null: false
-    t.bigint "period_id", null: false
-    t.index ["site_phase_id", "period_id"], name: "index_spp"
+    t.bigint "site_phase_id"
+    t.bigint "period_id"
   end
 
-  create_table "physical_locations", force: :cascade do |t|
+  create_table "physical_locations", id: false, force: :cascade do |t|
     t.bigint "site_id"
     t.bigint "country_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["country_id"], name: "index_physical_locations_on_country_id"
-    t.index ["site_id"], name: "index_physical_locations_on_site_id"
+    t.text "created_at"
+    t.text "updated_at"
   end
 
   create_table "references", force: :cascade do |t|
@@ -171,12 +175,13 @@ ActiveRecord::Schema.define(version: 2019_08_30_115948) do
     t.datetime "updated_at", null: false
     t.integer "site_id"
     t.integer "site_type_id"
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_site_phases_on_user_id"
   end
 
   create_table "site_phases_typochronological_units", id: false, force: :cascade do |t|
-    t.bigint "site_phase_id", null: false
-    t.bigint "typochronological_unit_id", null: false
-    t.index ["site_phase_id", "typochronological_unit_id"], name: "index_sptu"
+    t.bigint "site_phase_id"
+    t.bigint "typochronological_unit_id"
   end
 
   create_table "site_types", force: :cascade do |t|
@@ -208,6 +213,8 @@ ActiveRecord::Schema.define(version: 2019_08_30_115948) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "parent_id"
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_typochronological_units_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -223,7 +230,13 @@ ActiveRecord::Schema.define(version: 2019_08_30_115948) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "ecochronological_units", "users"
+  add_foreign_key "fell_phases", "users"
   add_foreign_key "measurements", "c14_measurements"
   add_foreign_key "measurements", "labs"
   add_foreign_key "measurements", "samples"
+  add_foreign_key "measurements", "users"
+  add_foreign_key "periods", "users"
+  add_foreign_key "site_phases", "users"
+  add_foreign_key "typochronological_units", "users"
 end

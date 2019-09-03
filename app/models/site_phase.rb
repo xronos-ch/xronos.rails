@@ -23,4 +23,6 @@ class SitePhase < ApplicationRecord
   belongs_to :site_type, optional: true
   accepts_nested_attributes_for :site_type, reject_if: :all_blank, allow_destroy: true
   validates_associated :site_type
+
+  belongs_to :user
 end

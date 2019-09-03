@@ -11,13 +11,13 @@
       this_edit_link = this_object.next(".select_edit_link");
 
       if (this_value === "") {
-        //this_next_div.show();
+        this_next_div.show();
         this_edit_link.hide()
         return this_next_div.find(":input").each(function() {
           return $(this).prop('disabled', false);
         });
       } else {
-        //this_next_div.hide();
+        this_next_div.hide();
         this_edit_link.show()
         return this_next_div.find(":input").each(function() {
           return $(this).prop('disabled', true);

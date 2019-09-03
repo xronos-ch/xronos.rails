@@ -32,6 +32,7 @@ class SitePhasesController < ApplicationController
   # POST /site_phases.json
   def create
     @site_phase = SitePhase.new(site_phase_params)
+    @site_phase.user_id = current_user.id if current_user
 
     respond_to do |format|
       if @site_phase.save

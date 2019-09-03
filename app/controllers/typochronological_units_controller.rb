@@ -27,6 +27,7 @@ class TypochronologicalUnitsController < ApplicationController
   # POST /typochronological_units.json
   def create
     @typochronological_unit = TypochronologicalUnit.new(typochronological_unit_params)
+    @typochronological_unit.user_id = current_user.id if current_user
 
     respond_to do |format|
       if @typochronological_unit.save
