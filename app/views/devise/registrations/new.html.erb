@@ -8,6 +8,11 @@
   <%= render "devise/shared/error_messages", resource: resource %>
 
   <div class="field">
+    <%= f.label :passphrase %><br />
+    <%= f.text_field :passphrase, autofocus: true, autocomplete: "passphrase" %>
+  </div>
+
+  <div class="field">
     <%= f.label :email %><br />
     <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
   </div>
