@@ -18,7 +18,9 @@ Rails.application.routes.draw do
       get 'calibrate_sum'
     end
   end
-  devise_for :users
+  devise_for :users, controllers: {
+      registrations: "registrations"
+    }
   resources :measurements
   resources :samples
   resources :arch_objects

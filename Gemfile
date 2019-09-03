@@ -113,3 +113,6 @@ gem 'activerecord-session_store'
 
 # loading screen
 gem 'loading_screen', '~> 0.2.3'
+
+# recaptcha for user registration
+gem "recaptcha"

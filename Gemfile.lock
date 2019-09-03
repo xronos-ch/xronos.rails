@@ -121,6 +121,7 @@ GEM
       thor (>= 0.14, < 2.0)
     jquery-ui-rails (6.0.1)
       railties (>= 3.2.16)
+    json (2.2.0)
     leaflet-rails (1.5.1)
       rails (>= 4.2.0)
     listen (3.1.5)
@@ -185,6 +186,8 @@ GEM
     rb-fsevent (0.10.3)
     rb-inotify (0.10.0)
       ffi (~> 1.0)
+    recaptcha (5.1.0)
+      json
     regexp_parser (1.6.0)
     request_store (1.4.1)
       rack (>= 1.4)
@@ -272,6 +275,7 @@ DEPENDENCIES
   rabl
   rails (~> 5.2.3)
   rails-jquery-autocomplete
+  recaptcha
   sass-rails (~> 5.0)
   selenium-webdriver
   simple-navigation
