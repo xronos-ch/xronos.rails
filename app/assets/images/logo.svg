@@ -15,7 +15,10 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.4 5da689c313, 2019-01-14"
-   sodipodi:docname="logo.svg">
+   sodipodi:docname="logo.svg"
+   inkscape:export-filename="/home/clemens/agora/xronos.rails/app/assets/images/logo.svg.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -25,9 +28,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.979899"
-     inkscape:cx="150.28823"
-     inkscape:cy="69.955663"
+     inkscape:zoom="3.959798"
+     inkscape:cx="112.81657"
+     inkscape:cy="39.523518"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -35,11 +38,11 @@
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     inkscape:window-width="1920"
-     inkscape:window-height="1136"
+     inkscape:window-width="956"
+     inkscape:window-height="1022"
      inkscape:window-x="0"
-     inkscape:window-y="27"
-     inkscape:window-maximized="1" />
+     inkscape:window-y="0"
+     inkscape:window-maximized="0" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -48,7 +51,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -59,7 +62,7 @@
      transform="translate(-85.928705,-102.42021)">
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.28888893px;line-height:6.61458302px;font-family:'Swis721 BT';-inkscape-font-specification:'Swis721 BT, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#39a3d9;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.28888893px;line-height:6.61458302px;font-family:'Swis721 BT';-inkscape-font-specification:'Swis721 BT, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
        x="101.92992"
        y="113.38583"
        id="text862"><tspan
@@ -67,22 +70,23 @@
          id="tspan860"
          x="101.92992"
          y="113.38583"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.46666622px;font-family:Raleway;-inkscape-font-specification:Raleway;letter-spacing:2.01083326px;fill:#39a3d9;fill-opacity:1;stroke-width:0.26458332px">XRONOS</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.46666622px;font-family:Raleway;-inkscape-font-specification:Raleway;letter-spacing:2.01083326px;fill:#000000;fill-opacity:1;stroke-width:0.26458332px;stroke:none;stroke-opacity:1;">XRONOS</tspan></text>
     <g
        id="g881"
-       transform="translate(0,0.39649056)">
+       transform="translate(0,0.39649056)"
+       style="stroke:#000000;stroke-opacity:1;fill:none">
       <path
          sodipodi:nodetypes="czzc"
          inkscape:connector-curvature="0"
          id="path826"
          d="m 86.261238,102.36096 c 0,0 0,0 0,3.3004 0,3.3004 8.368636,4.78378 8.368636,8.36864 0,3.58486 0,3.58486 0,3.58486"
-         style="fill:none;fill-rule:evenodd;stroke:#39a3d9;stroke-width:0.66500002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.66500002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <path
          sodipodi:nodetypes="czzc"
          inkscape:connector-curvature="0"
          id="path826-2"
          d="m 94.629875,102.36096 c 0,0 0,0 0,3.3004 0,3.3004 -8.368636,4.78378 -8.368636,8.36864 0,3.58486 0,3.58486 0,3.58486"
-         style="fill:none;fill-rule:evenodd;stroke:#39a3d9;stroke-width:0.66500002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.66500002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     </g>
   </g>
 </svg>
