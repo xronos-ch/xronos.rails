@@ -2,8 +2,12 @@ object @date
 cache @date
 attributes :id, :labnr
 
-child :c14_measurement do
-  attributes :bp, :std, :cal_bp, :cal_std, :delta_c13
+glue :c14_measurement do
+  attributes :bp => :c14_measurement_bp
+  attributes :std => :c14_measurement_std
+  attributes :cal_bp => :c14_measurement_cal_bp
+  attributes :cal_std => :c14_measurement_cal_std
+  attributes :delta_c13 => :c14_measurement_delta_c13
 end
 
 glue :lab do
