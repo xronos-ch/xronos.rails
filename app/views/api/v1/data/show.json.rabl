@@ -3,7 +3,7 @@ cache @date
 attributes :id, :labnr
 
 glue :c14_measurement do
-  attribute(:bp, :if => lambda { |m| m.bp > params[:bp].to_i })
+  attributes :bp => :bp
   attributes :std => :std
   attributes :cal_bp => :cal_bp
   attributes :cal_std => :cal_std
