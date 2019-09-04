@@ -16,7 +16,7 @@ class Measurement < ApplicationRecord
   belongs_to :user
 
   def self.to_csv
-    CSV.generate do |csv|
+    CSV.generate :force_quotes=>true do |csv|
       csv << [
         "labnr",
         "bp",
@@ -40,28 +40,28 @@ class Measurement < ApplicationRecord
         "lng",
         "references"
       ]
-      all.each do |item|
-        csv << [item.labnr] +
-          [item.bp] +
-          [item.std] +
-          [item.cal_bp] +
-          [item.cal_std] +
-          [item.delta_c13] +
-          [item.lab_name] +
-          [item.site] +
-          [item.site_phase] +
-          [item.site_type] +
-          [item.feature] +
-          [item.feature_type] +
-          [item.periods_names] +
-          [item.typochronological_units_names] +
-          [item.ecochronological_units_names] +
-          [item.material] +
-          [item.species] +
-          [item.country] +
-          [item.lat] +
-          [item.lng] +
-          [item.references_short_refs]
+      all.each do |record|
+        csv << [record.labnr] +
+          [record.c14_measurement.bp] +
+          [record.c14_measurement.std] +
+          [record.c14_measurement.cal_bp] +
+          [record.c14_measurement.cal_std] +
+          [record.c14_measurement.delta_c13] +
+          [record.lab&.name] +
+          [record.sample.arch_object.site_phase.site.name] +
+          [record.sample.arch_object.site_phase.name] +
+          [record.sample.arch_object.site_phase.site_type&.name] +
+          [record.sample.arch_object.on_site_object_position.feature] +
+          [record.sample.arch_object.on_site_object_position.feature_type&.name] +
+          [record.sample.arch_object.site_phase.periods.map(&:name).join(" | ")] +
+          [record.sample.arch_object.site_phase.typochronological_units.map(&:name).join(" | ")] +
+          [record.sample.arch_object.site_phase.ecochronological_units.map(&:name).join(" | ")] +
+          [record.sample.arch_object.material&.name] +
+          [record.sample.arch_object.species&.name] +
+          [record.sample.arch_object.site_phase.site.country&.name] +
+          [record.sample.arch_object.site_phase.site.lat] +
+          [record.sample.arch_object.site_phase.site.lng] +
+          [record.references.map(&:short_ref).join(" | ")]
       end
     end
   end

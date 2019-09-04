@@ -8,7 +8,6 @@ glue :c14_measurement do
   attributes :cal_bp => :cal_bp
   attributes :cal_std => :cal_std
   attributes :delta_c13 => :delta_c13
-  attributes :delta_c13_std => :delta_c13_std
 end
 
 glue :lab do
