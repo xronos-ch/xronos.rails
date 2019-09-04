@@ -138,7 +138,7 @@ class DataController < ApplicationController
     # labnr
     unless session[:query_labnr].nil?
       @data = @data.where(
-          "measurements.labnr LIKE ?", session[:query_labnr]
+        labnr: params[:query_labnr].split('|')
       ).all
     end
 
@@ -194,7 +194,7 @@ class DataController < ApplicationController
     # manual table selection
     unless session[:manual_table_selection].nil?
        @data = @data.where(
-          "measurements.id IN (?)", session[:manual_table_selection]
+          id: session[:manual_table_selection]
        ).all
     end
 
