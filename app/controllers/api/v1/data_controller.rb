@@ -9,12 +9,12 @@ module Api
         # labnr
         unless params[:query_labnr].nil?
           @data = @data.where(
-              "measurements.labnr LIKE ?", params[:query_labnr]
+              labnr: params[:query_labnr].split('|')
           ).all
         end
 
         # site name
-        unless params[:query_site_name].nil?
+        unless params[:query_site].nil?
           @data = @data.where(
             sample: {arch_object: {site_phase: {sites: {:name => params[:query_site_name].split('|')}}}}
           ).all
