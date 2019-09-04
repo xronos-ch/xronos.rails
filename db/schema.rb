@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_03_115407) do
+ActiveRecord::Schema.define(version: 2019_09_04_134319) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -34,6 +34,8 @@ ActiveRecord::Schema.define(version: 2019_09_03_115407) do
     t.string "method"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "source_database_id"
+    t.index ["source_database_id"], name: "index_c14_measurements_on_source_database_id"
   end
 
   create_table "countries", force: :cascade do |t|
@@ -200,6 +202,15 @@ ActiveRecord::Schema.define(version: 2019_09_03_115407) do
     t.integer "country_id"
   end
 
+  create_table "source_databases", force: :cascade do |t|
+    t.string "name"
+    t.string "url"
+    t.text "citation"
+    t.string "licence"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "species", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -230,6 +241,7 @@ ActiveRecord::Schema.define(version: 2019_09_03_115407) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "c14_measurements", "source_databases"
   add_foreign_key "ecochronological_units", "users"
   add_foreign_key "fell_phases", "users"
   add_foreign_key "measurements", "c14_measurements"

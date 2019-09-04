@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @source_database.name %>
+</p>
+
+<p>
+  <strong>Url:</strong>
+  <%= @source_database.url %>
+</p>
+
+<p>
+  <strong>Citation:</strong>
+  <%= @source_database.citation %>
+</p>
+
+<p>
+  <strong>Licence:</strong>
+  <%= @source_database.licence %>
+</p>
+
+<%= link_to 'Edit', edit_source_database_path(@source_database) %> |
+<%= link_to 'Back', source_databases_path %>

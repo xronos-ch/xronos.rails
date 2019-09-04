@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :source_databases
   namespace :api, defaults: {format: 'json'} do
     namespace :v1 do
       resources :data
