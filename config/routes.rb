@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
 
   resources :source_databases
+  get 'data/autocomplete_source_database_name'
   namespace :api, defaults: {format: 'json'} do
     namespace :v1 do
       resources :data

@@ -100,22 +100,34 @@
           <%# countries_array = Country.all.map { |x| [x.name, x.name] } %>
 
           <%= form_tag(root_path, method: "get") do %>
+
+            <label for="query_source_database"><% if !(session[:query_source_database].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Source database</label>
+            <%= autocomplete_field_tag(:query_source_database, session[:query_source_database], data_autocomplete_source_database_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
+
             <label for="query_labnr"><% if !(session[:query_labnr].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Lab number</label>
             <%= text_field_tag(:query_labnr, (session[:query_labnr] or "")) %>
+
             <label for="query_site"><% if !(session[:query_site].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Site name</label>
             <%= autocomplete_field_tag(:query_site, session[:query_site], data_autocomplete_site_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
+
             <label for="query_site_type"><% if !(session[:query_site_type].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Site type</label>
             <%= autocomplete_field_tag(:query_site_type, session[:query_site_type], data_autocomplete_site_type_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
+
             <label for="query_country"><% if !(session[:query_country].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Country</label>
             <%= autocomplete_field_tag(:query_country, session[:query_country], data_autocomplete_country_name_path, 'data-delimiter' => '|', multiple: true) %>
+
             <label for="query_feature"><% if !(session[:query_feature].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Feature</label>
             <%= text_field_tag(:query_feature, (session[:query_feature] or "")) %>
+
             <label for="query_material"><% if !(session[:query_material].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Material</label>
             <%= autocomplete_field_tag(:query_material, session[:query_material], data_autocomplete_material_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
+
             <label for="query_species"><% if !(session[:query_species].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Species</label>
             <%= text_field_tag(:query_species, (session[:query_species] or "")) %>
+
             <br><br>
             <%= button_tag type: 'submit' do %> <%= fa_icon "search" %> Filter dates<% end %>
+
           <% end %>
 
           <%= fa_icon "times" %> <%= link_to('Reset Filter', resetfilter_url) %>

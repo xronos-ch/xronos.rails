@@ -1,4 +1,5 @@
 class DataController < ApplicationController
+  autocomplete :source_database, :name, :full => true
   autocomplete :site, :name, :full => true
   autocomplete :site_type, :name, :full => true
   autocomplete :country, :name, :full => true
@@ -29,6 +30,7 @@ class DataController < ApplicationController
   end
 
   def reset_filter_session_variable
+    session[:query_source_database] = nil
     session[:query_labnr] = nil
     session[:query_site] = nil
     session[:query_site_type] = nil
@@ -53,6 +55,14 @@ class DataController < ApplicationController
   def index
 
     #### update session ####
+
+    # source_database name
+    if params.has_key?(:query_source_database)
+      session[:query_source_database] = params[:query_source_database]
+    end
+    if params.has_key?(:query_source_database) and params[:query_source_database].empty?
+      session[:query_source_database] = nil
+    end
 
     # labnr
     if params.has_key?(:query_labnr)
@@ -134,6 +144,13 @@ class DataController < ApplicationController
 
     # general dataset preparation
     @data ||= Measurement.includes({c14_measurement: :source_database}, :lab, sample: {arch_object: [{site_phase: {site: :country}}, :on_site_object_position, :material, :species]})
+
+    # source_database name
+    unless session[:query_source_database].nil?
+      @data = @data.where(
+        c14_measurement: {source_databases: {:name => session[:query_source_database].split('|')}}
+      ).all
+    end
 
     # labnr
     unless session[:query_labnr].nil?
