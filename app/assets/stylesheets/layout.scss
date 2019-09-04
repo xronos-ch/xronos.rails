@@ -1,3 +1,14 @@
+// code
+pre code {
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	padding: 10px;
+  background-color: #fff;
+  display: block;
+	color: #000;
+	border-radius: 5px;
+}
+
 // links
 a:link {
 	color: #b5b5b5 !important;
