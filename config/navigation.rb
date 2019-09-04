@@ -6,7 +6,7 @@ SimpleNavigation::Configuration.run do |navigation|
   # The renderer can also be specified as option in the render_navigation call.
   #navigation.renderer = Your::Custom::Renderer
 
-  # Specify the class that will be applied to active navigation items. Defaults to 'selected' 
+  # Specify the class that will be applied to active navigation items. Defaults to 'selected'
   #navigation.selected_class = 'selected'
 
   # Specify the class that will be applied to the current leaf of
@@ -28,12 +28,12 @@ SimpleNavigation::Configuration.run do |navigation|
 
   # Specify if the auto highlight feature is turned on (globally, for the whole navigation). Defaults to true
   #navigation.auto_highlight = true
-  
-  # Specifies whether auto highlight should ignore query params and/or anchors when 
-  # comparing the navigation items with the current URL. Defaults to true 
+
+  # Specifies whether auto highlight should ignore query params and/or anchors when
+  # comparing the navigation items with the current URL. Defaults to true
   #navigation.ignore_query_params_on_auto_highlight = true
   #navigation.ignore_anchors_on_auto_highlight = true
-  
+
   # If this option is set to true, all item names will be considered as safe (passed through html_safe). Defaults to false.
   #navigation.consider_item_names_as_safe = false
 
@@ -139,6 +139,7 @@ SimpleNavigation::Configuration.run do |navigation|
       end
     end
 
+    primary.item :database, 'database', database_path
 		primary.item :api, 'api', api_path
 		primary.item :about, 'about', about_path
 
