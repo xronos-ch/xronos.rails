@@ -1,6 +1,7 @@
 jQuery(document).ready(function() {
   $('#selected_measurements-datatable').dataTable({
     autoWidth: true,
+    pageLength: 25,
     sDom: 'Br <"H"lf> <"datatable-scroll"t> <"F"ip>',
 		deferRender: true,
     buttons: [
