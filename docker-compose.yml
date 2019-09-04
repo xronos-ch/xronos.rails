@@ -9,7 +9,7 @@ services:
     volumes:
       - ./db:/var/lib/postgresql/data
     env_file:
-      - docker_env_variables.env
+      - env_variables.env
   web:
     container_name: xronos_rails_app
     restart: always
@@ -19,5 +19,5 @@ services:
     depends_on:
       - db
     env_file:
-      - docker_env_variables.env
+      - env_variables.env
 

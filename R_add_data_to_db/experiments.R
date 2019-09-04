@@ -9,7 +9,7 @@ imp %<>% add_simple_cal()
 imp %<>% c14bazAAR::finalize_country_name()
 
 #### read env variables ####
-env_vars <- readLines("~/agora/xronos.rails/docker_env_variables.env")
+env_vars <- readLines("~/agora/xronos.rails/env_variables.env")
 env_vars_vals <- env_vars %>% strsplit("=") %>% lapply(., function(x) x[[2]]) %>% unlist()
 user <- env_vars_vals[1]
 password <- env_vars_vals[2]

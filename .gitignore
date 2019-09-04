@@ -42,8 +42,8 @@
 #### RoR IDE RubyMine ####
 .idea/*
 
-#### docker env variables ####
-docker_env_variables.env
+#### env variables ####
+env_variables.env
 
 #### R files ####
 R_add_data_to_db/.Rhistory

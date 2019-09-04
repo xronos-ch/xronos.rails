@@ -12,12 +12,12 @@ Create a directory with the following content
 your_directory
 |- db
 |- docker-compose.yml
-|- docker_env_variables.env
+|- env_variables.env
 ```
 
 **db**: An empty directory that will contain the database.  
 **docker-compose.yml**: The `docker-compose.yml` file in this repository.  
-**docker_env_variables.env**: A file with environment variables.
+**env_variables.env**: A file with environment variables.
 
 ```
 # Database credentials
