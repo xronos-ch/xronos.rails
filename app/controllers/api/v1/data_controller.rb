@@ -4,7 +4,7 @@ module Api
       respond_to :json
 
       def index
-        @data ||= Measurement.includes(:c14_measurement, :lab, sample: {arch_object: [{site_phase: {site: :country}}, :on_site_object_position, :material, :species]})
+        @data ||= Measurement.includes({c14_measurement: :source_database}, :lab, sample: {arch_object: [{site_phase: {site: :country}}, :on_site_object_position, :material, :species]})
 
         # labnr
         unless params[:query_labnr].nil?

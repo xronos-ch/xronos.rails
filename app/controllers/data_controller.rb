@@ -133,7 +133,7 @@ class DataController < ApplicationController
     ##### select data #####
 
     # general dataset preparation
-    @data ||= Measurement.includes(:c14_measurement, :lab, sample: {arch_object: [{site_phase: {site: :country}}, :on_site_object_position, :material, :species]})
+    @data ||= Measurement.includes({c14_measurement: :source_database}, :lab, sample: {arch_object: [{site_phase: {site: :country}}, :on_site_object_position, :material, :species]})
 
     # labnr
     unless session[:query_labnr].nil?

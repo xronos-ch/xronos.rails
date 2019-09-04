@@ -18,6 +18,7 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
     # or in aliased_join_table.column_name format
     @view_columns ||= {
       select: { source: "Measurement.id" },
+      source_database: { source: "SourceDatabase.name", cond: :like },
       labnr: { source: "Measurement.labnr", cond: :like },
       bp: { source: "C14Measurement.bp", cond: :like },
       std: { source: "C14Measurement.std", cond: :like },
@@ -50,6 +51,7 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
         "measurement_id": record.id,
         "c14_measurement_id": record.c14_measurement_id,
         "select": "",
+        "source_database": record.c14_measurement.present? && record.c14_measurement.source_database.present? ? link_to(record.c14_measurement.source_database.name, record.c14_measurement.source_database.url) : '',
         "labnr": best_in_place(Measurement.find(record.id), :labnr),
         "bp": best_in_place(C14Measurement.find(record.c14_measurement.id), :bp),
         "std": best_in_place(C14Measurement.find(record.c14_measurement.id), :std),

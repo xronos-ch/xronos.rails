@@ -18,6 +18,7 @@ class Measurement < ApplicationRecord
   def self.to_csv
     CSV.generate :force_quotes=>true do |csv|
       csv << [
+        "source_database",
         "labnr",
         "bp",
         "std",
@@ -41,7 +42,8 @@ class Measurement < ApplicationRecord
         "references"
       ]
       all.each do |record|
-        csv << [record.labnr] +
+        csv << [record.c14_measurement.source_database&.name] +
+          [record.labnr] +
           [record.c14_measurement.bp] +
           [record.c14_measurement.std] +
           [record.c14_measurement.cal_bp] +

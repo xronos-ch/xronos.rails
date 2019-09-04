@@ -1,6 +1,15 @@
 object @date
 cache @date
-attributes :id, :labnr
+
+attributes :id
+
+glue :c14_measurement do
+  glue :source_database do
+    attributes :name => :source_database
+  end
+end
+
+attributes :labnr
 
 glue :c14_measurement do
   attributes :bp => :bp

@@ -137,6 +137,7 @@ jQuery(document).ready(function() {
     },
     "columns": [
       {"data": "select"},
+      {"data": "source_database"},
       {"data": "labnr"},
       {"data": "bp"},
       {"data": "std"},
