@@ -16,7 +16,7 @@ module Api
         # site name
         unless params[:query_site].nil?
           @data = @data.where(
-            sample: {arch_object: {site_phase: {sites: {:name => params[:query_site_name].split('|')}}}}
+            sample: {arch_object: {site_phase: {sites: {:name => params[:query_site].split('|')}}}}
           ).all
         end
 

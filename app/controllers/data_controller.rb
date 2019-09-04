@@ -30,7 +30,7 @@ class DataController < ApplicationController
 
   def reset_filter_session_variable
     session[:query_labnr] = nil
-    session[:query_site_name] = nil
+    session[:query_site] = nil
     session[:query_site_type] = nil
     session[:query_country] = nil
     session[:query_feature] = nil
@@ -63,11 +63,11 @@ class DataController < ApplicationController
     end
 
     # site name
-    if params.has_key?(:query_site_name)
-      session[:query_site_name] = params[:query_site_name]
+    if params.has_key?(:query_site)
+      session[:query_site] = params[:query_site]
     end
-    if params.has_key?(:query_site_name) and params[:query_site_name].empty?
-      session[:query_site_name] = nil
+    if params.has_key?(:query_site) and params[:query_site].empty?
+      session[:query_site] = nil
     end
 
     # site type
@@ -143,51 +143,51 @@ class DataController < ApplicationController
     end
 
     # site name
-    unless session[:query_site_name].nil?
+    unless session[:query_site].nil?
       @data = @data.where(
-        sample: {arch_object: {site_phase: {sites: {:name => session[:query_site_name].split(', ')}}}}
+        sample: {arch_object: {site_phase: {sites: {:name => session[:query_site].split('|')}}}}
       ).all
     end
 
     # site type
     unless session[:query_site_type].nil?
       @data = @data.where(
-        sample: {arch_object: {site_phase: {site_types: {name: session[:query_site_type].split(', ')}}}}
+        sample: {arch_object: {site_phase: {site_types: {name: session[:query_site_type].split('|')}}}}
       ).all
     end
 
     # country
     unless session[:query_country].nil?
       @data = @data.where(
-        sample: {arch_object: {site_phase: {site: {countries: {name: session[:query_country].split(', ')}}}}}
+        sample: {arch_object: {site_phase: {site: {countries: {name: session[:query_country].split('|')}}}}}
       ).all
     end
 
     # feature
     unless session[:query_feature].nil?
       @data = @data.where(
-        sample: {arch_object: {on_site_object_positions: {feature: session[:query_feature].split(', ')}}}
+        sample: {arch_object: {on_site_object_positions: {feature: session[:query_feature].split('|')}}}
       ).all
     end
 
     # material
     unless session[:query_material].nil?
       @data = @data.where(
-        sample: {arch_object: {materials: {name: session[:query_material].split(', ')}}}
+        sample: {arch_object: {materials: {name: session[:query_material].split('|')}}}
       ).all
     end
 
     # species
     unless session[:query_species].nil?
       @data = @data.where(
-        sample: {arch_object: {species: {name: session[:query_species].split(', ')}}}
+        sample: {arch_object: {species: {name: session[:query_species].split('|')}}}
       ).all
     end
 
     # lasso
     unless session[:spatial_lasso_selection].nil?
        @data = @data.where(
-         sample: {arch_object: {site_phase: {sites: {id: session[:spatial_lasso_selection].split(', ')}}}}
+         sample: {arch_object: {site_phase: {sites: {id: session[:spatial_lasso_selection].split('|')}}}}
        ).all
     end
 

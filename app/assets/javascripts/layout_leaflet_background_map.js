@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded',function(){
         "<i class=\'fa fa-binoculars\'></i> Show site" +
       "</button>" +
       '<br>' +
-      '<button type="submit" onclick="window.location=\'' + '/?utf8=✓&query_site_name=' + sites[i].name + '\';">' +
+      '<button type="submit" onclick="window.location=\'' + '/?utf8=✓&query_site=' + sites[i].name + '\';">' +
         "<i class=\'fa fa-filter\'></i> Measurements from this site" +
       "</button>"
     );
