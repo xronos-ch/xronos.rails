@@ -133,69 +133,67 @@ class DataController < ApplicationController
     ##### select data #####
 
     # general dataset preparation
-    @all_measurements ||= Measurement.includes(:c14_measurement, :lab, sample: {arch_object: [{site_phase: {site: :country}}, :on_site_object_position, :material, :species]})
-
-    @selected_measurements = @all_measurements
+    @data ||= Measurement.includes(:c14_measurement, :lab, sample: {arch_object: [{site_phase: {site: :country}}, :on_site_object_position, :material, :species]})
 
     # labnr
     unless session[:query_labnr].nil?
-      @selected_measurements = @selected_measurements.where(
+      @data = @data.where(
           "measurements.labnr LIKE ?", session[:query_labnr]
       ).all
     end
 
     # site name
     unless session[:query_site_name].nil?
-      @selected_measurements = @selected_measurements.where(
+      @data = @data.where(
         sample: {arch_object: {site_phase: {sites: {:name => session[:query_site_name].split(', ')}}}}
       ).all
     end
 
     # site type
     unless session[:query_site_type].nil?
-      @selected_measurements = @selected_measurements.where(
+      @data = @data.where(
         sample: {arch_object: {site_phase: {site_types: {name: session[:query_site_type].split(', ')}}}}
       ).all
     end
 
     # country
     unless session[:query_country].nil?
-      @selected_measurements = @selected_measurements.where(
+      @data = @data.where(
         sample: {arch_object: {site_phase: {site: {countries: {name: session[:query_country].split(', ')}}}}}
       ).all
     end
 
     # feature
     unless session[:query_feature].nil?
-      @selected_measurements = @selected_measurements.where(
+      @data = @data.where(
         sample: {arch_object: {on_site_object_positions: {feature: session[:query_feature].split(', ')}}}
       ).all
     end
 
     # material
     unless session[:query_material].nil?
-      @selected_measurements = @selected_measurements.where(
+      @data = @data.where(
         sample: {arch_object: {materials: {name: session[:query_material].split(', ')}}}
       ).all
     end
 
     # species
     unless session[:query_species].nil?
-      @selected_measurements = @selected_measurements.where(
+      @data = @data.where(
         sample: {arch_object: {species: {name: session[:query_species].split(', ')}}}
       ).all
     end
 
     # lasso
     unless session[:spatial_lasso_selection].nil?
-       @selected_measurements = @selected_measurements.where(
+       @data = @data.where(
          sample: {arch_object: {site_phase: {sites: {id: session[:spatial_lasso_selection].split(', ')}}}}
        ).all
     end
 
     # manual table selection
     unless session[:manual_table_selection].nil?
-       @selected_measurements = @selected_measurements.where(
+       @data = @data.where(
           "measurements.id IN (?)", session[:manual_table_selection]
        ).all
     end
@@ -206,7 +204,7 @@ class DataController < ApplicationController
     params["length"]  ||= -1
 
 		# json data (for map)
-		gon.selected_sites = @selected_measurements.map { |measurement| measurement.sample.arch_object.site_phase}.compact.map { |measurement| measurement.site}.select { |site| site.lat != nil and site.lat != nil}.uniq.to_json
+		gon.selected_sites = @data.map { |measurement| measurement.sample.arch_object.site_phase}.compact.map { |measurement| measurement.site}.select { |site| site.lat != nil and site.lat != nil}.uniq.to_json
 
     respond_to do |format|
       format.html
@@ -216,16 +214,16 @@ class DataController < ApplicationController
           data: SelectedMeasurementDatatable.new(
             params,
             {
-              selected_measurements: @selected_measurements,
+              selected_measurements: @data,
               view_context: view_context
             }
           ).data,
-          recordsFiltered: @selected_measurements.length,
+          recordsFiltered: @data.length,
           recordsTotal: Measurement.count
         }
       }
       # csv data for the download button
-      format.csv { send_data @selected_measurements.to_csv, filename: "dates-#{Date.today}.csv" }
+      format.csv { send_data @data.to_csv, filename: "dates-#{Date.today}.csv" }
     end
 
   end
