@@ -20,10 +20,17 @@ your_directory
 **docker_env_variables.env**: A file with environment variables.
 
 ```
+# Database credentials
 POSTGRES_USER=...
 POSTGRES_PASSWORD=...
 POSTGRES_DB=...
+# Rails Master Key (used to decrypt config/credentials.yml.enc)
 RAILS_MASTER_KEY=...
+# Google Recaptcha tokens
+RECAPTCHA_SITE_KEY=...
+RECAPTCHA_SECRET_KEY=...
+# Passphrase the users must know to register
+REGISTRATION_PASSPHRASE=...
 ```
 
 Inside of this directory you can then run
@@ -32,7 +39,7 @@ Inside of this directory you can then run
 docker-compose up -d
 ```
 
-For the first start the database migrations have to be run. This has to be done within the container. Change into the container with 
+For the first start the database migrations have to be run. This has to be done within the container. Change into the container with
 
 ```
 docker exec -it xronos_rails_app /bin/bash
@@ -68,4 +75,3 @@ docker-compose stop
 ```
 docker-compose down
 ```
-
