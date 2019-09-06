@@ -31,6 +31,7 @@ Rails.application.routes.draw do
   resources :arch_objects
   resources :labs
   resources :references
+  get 'data/autocomplete_reference_short_ref'
   resources :materials
   get 'data/autocomplete_material_name'
   resources :feature_types

@@ -10,28 +10,24 @@ class DataController < ApplicationController
   autocomplete :period, :name, :full => true
   autocomplete :typochronological_unit, :name, :full => true
   autocomplete :ecochronological_unit, :name, :full => true
+  autocomplete :reference, :short_ref, :full => true
 
   #### ui interaction ####
   def activate_right_window
     session[:right_window_active] = true
   end
-
   def deactivate_right_window
     session[:right_window_active] = false
   end
-
   def activate_left_window
     session[:left_window_active] = true
   end
-
   def deactivate_left_window
     session[:left_window_active] = false
   end
-
   def extend_left_window
     session[:left_window_big] = true
   end
-
   def reduce_left_window
     session[:left_window_big] = false
   end
@@ -46,7 +42,6 @@ class DataController < ApplicationController
     session[:query_labnr] = nil
     session[:query_site] = nil
     session[:query_site_type] = nil
-    session[:query_country] = nil
     session[:query_feature] = nil
     session[:query_feature_type] = nil
     session[:query_period] = nil
@@ -54,15 +49,15 @@ class DataController < ApplicationController
     session[:query_ecochronological_unit] = nil
     session[:query_material] = nil
     session[:query_species] = nil
+    session[:query_country] = nil
+    session[:query_reference] = nil
     session[:spatial_lasso_selection] = nil
     redirect_to :root
   end
-
   def turn_off_lasso
     session[:spatial_lasso_selection] = nil
     redirect_to :root
   end
-
   def reset_manual_table_selection
     session[:manual_table_selection] = nil
     redirect_to :root
@@ -81,14 +76,12 @@ class DataController < ApplicationController
     if params.has_key?(:query_uncal_age_start) and params[:query_uncal_age_start].empty?
       session[:query_uncal_age_start] = nil
     end
-
     if params.has_key?(:query_uncal_age_stop)
       session[:query_uncal_age_stop] = params[:query_uncal_age_stop].to_i
     end
     if params.has_key?(:query_uncal_age_stop) and params[:query_uncal_age_stop].empty?
       session[:query_uncal_age_stop] = nil
     end
-
     unless session[:query_uncal_age_start].nil?
       gon.uncal_age_start = session[:query_uncal_age_start]
     end
@@ -104,18 +97,15 @@ class DataController < ApplicationController
     if params.has_key?(:query_cal_age_start) and params[:query_cal_age_start].empty?
       session[:query_cal_age_start] = nil
     end
-
     if params.has_key?(:query_cal_age_stop)
       session[:query_cal_age_stop] = params[:query_cal_age_stop].to_i
     end
     if params.has_key?(:query_cal_age_stop) and params[:query_cal_age_stop].empty?
       session[:query_cal_age_stop] = nil
     end
-
     unless session[:query_cal_age_start].nil?
       gon.cal_age_start = session[:query_cal_age_start]
     end
-
     unless session[:query_cal_age_stop].nil?
       gon.cal_age_stop = session[:query_cal_age_stop]
     end
@@ -150,14 +140,6 @@ class DataController < ApplicationController
     end
     if params.has_key?(:query_site_type) and params[:query_site_type].empty?
       session[:query_site_type] = nil
-    end
-
-    # country
-    if params.has_key?(:query_country)
-      session[:query_country] = params[:query_country]
-    end
-    if params.has_key?(:query_country) and params[:query_country].empty?
-      session[:query_country] = nil
     end
 
     # feature
@@ -216,6 +198,22 @@ class DataController < ApplicationController
       session[:query_species] = nil
     end
 
+    # country
+    if params.has_key?(:query_country)
+      session[:query_country] = params[:query_country]
+    end
+    if params.has_key?(:query_country) and params[:query_country].empty?
+      session[:query_country] = nil
+    end
+
+    # reference
+    if params.has_key?(:query_reference)
+      session[:query_reference] = params[:query_reference]
+    end
+    if params.has_key?(:query_reference) and params[:query_reference].empty?
+      session[:query_reference] = nil
+    end
+
     # lasso
     if params[:spatial_lasso_selection].present?
       spatial_lasso_selection = Array.new;
@@ -241,6 +239,7 @@ class DataController < ApplicationController
     # general dataset preparation
     @data ||= Measurement.includes(
       {c14_measurement: :source_database},
+      :references,
       :lab,
       sample: {arch_object: [{site_phase: [{site: :country}, :periods, :typochronological_units, :ecochronological_units]}, {on_site_object_position: :feature_type}, :material, :species]}
     )
@@ -284,13 +283,6 @@ class DataController < ApplicationController
     unless session[:query_site_type].nil?
       @data = @data.where(
         sample: {arch_object: {site_phase: {site_types: {name: session[:query_site_type].split('|')}}}}
-      ).all
-    end
-
-    # country
-    unless session[:query_country].nil?
-      @data = @data.where(
-        sample: {arch_object: {site_phase: {site: {countries: {name: session[:query_country].split('|')}}}}}
       ).all
     end
 
@@ -340,6 +332,20 @@ class DataController < ApplicationController
     unless session[:query_species].nil?
       @data = @data.where(
         sample: {arch_object: {species: {name: session[:query_species].split('|')}}}
+      ).all
+    end
+
+    # country
+    unless session[:query_country].nil?
+      @data = @data.where(
+        sample: {arch_object: {site_phase: {site: {countries: {name: session[:query_country].split('|')}}}}}
+      ).all
+    end
+
+    # reference
+    unless session[:query_reference].nil?
+      @data = @data.where(
+        references: {short_ref: session[:query_reference].split('|')}
       ).all
     end
 
