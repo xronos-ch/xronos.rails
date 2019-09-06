@@ -8,7 +8,7 @@
 </p>
 
 <pre>
-<code>http://127.0.0.1:3000/api/v1/data</code>
+<code><%= request.original_url %>/v1/data</code>
 </pre>
 
 <p>
@@ -17,7 +17,7 @@
 </p>
 
 <pre>
-<code>http://127.0.0.1:3000/api/v1/data<b>?query_labnr=AAR-1847</b></code>
+<code><%= request.original_url %>/v1/data<b>?query_labnr=AAR-1847</b></code>
 </pre>
 
 <p>
@@ -26,7 +26,7 @@
 </p>
 
 <pre>
-<code>http://127.0.0.1:3000/api/v1/data<b>?query_labnr=AAR-1847|KN-2506</b></code>
+<code><%= request.original_url %>/v1/data<b>?query_labnr=AAR-1847|KN-2506</b></code>
 </pre>
 
 <p>
@@ -36,7 +36,7 @@
 </p>
 
 <pre>
-<code>http://127.0.0.1:3000/api/v1/data<b>?query_country=Germany&query_material=charcoal</b></code>
+<code><%= request.original_url %>/v1/data<b>?query_country=Germany&query_material=charcoal</b></code>
 </pre>
 
 <p>
