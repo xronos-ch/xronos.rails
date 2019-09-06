@@ -11,8 +11,11 @@ Rails.application.routes.draw do
   resources :species
   resources :site_phases
   resources :ecochronological_units
+  get 'data/autocomplete_ecochronological_unit_name'
   resources :typochronological_units
+  get 'data/autocomplete_typochronological_unit_name'
   resources :periods
+  get 'data/autocomplete_period_name'
   resources :c14_measurements do
     member do
       get 'calibrate'

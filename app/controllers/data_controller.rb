@@ -1,11 +1,17 @@
 class DataController < ApplicationController
+
+  #### autocomplete initialisation ####
   autocomplete :source_database, :name, :full => true
   autocomplete :site, :name, :full => true
   autocomplete :site_type, :name, :full => true
   autocomplete :feature_type, :name, :full => true
   autocomplete :country, :name, :full => true
   autocomplete :material, :name, :full => true
+  autocomplete :period, :name, :full => true
+  autocomplete :typochronological_unit, :name, :full => true
+  autocomplete :ecochronological_unit, :name, :full => true
 
+  #### ui interaction ####
   def activate_right_window
     session[:right_window_active] = true
   end
@@ -30,6 +36,7 @@ class DataController < ApplicationController
     session[:left_window_big] = false
   end
 
+  #### filter buttons ####
   def reset_filter_session_variable
     session[:query_uncal_age_start] = nil
     session[:query_uncal_age_stop] = nil
@@ -42,6 +49,9 @@ class DataController < ApplicationController
     session[:query_country] = nil
     session[:query_feature] = nil
     session[:query_feature_type] = nil
+    session[:query_period] = nil
+    session[:query_typochronological_unit] = nil
+    session[:query_ecochronological_unit] = nil
     session[:query_material] = nil
     session[:query_species] = nil
     session[:spatial_lasso_selection] = nil
@@ -57,6 +67,8 @@ class DataController < ApplicationController
     session[:manual_table_selection] = nil
     redirect_to :root
   end
+
+
 
   def index
 
@@ -164,6 +176,30 @@ class DataController < ApplicationController
       session[:query_feature_type] = nil
     end
 
+    # period
+    if params.has_key?(:query_period)
+      session[:query_period] = params[:query_period]
+    end
+    if params.has_key?(:query_period) and params[:query_period].empty?
+      session[:query_period] = nil
+    end
+
+    # typochronological_unit
+    if params.has_key?(:query_typochronological_unit)
+      session[:query_typochronological_unit] = params[:query_typochronological_unit]
+    end
+    if params.has_key?(:query_typochronological_unit) and params[:query_typochronological_unit].empty?
+      session[:query_typochronological_unit] = nil
+    end
+
+    # ecochronological_unit
+    if params.has_key?(:query_ecochronological_unit)
+      session[:query_ecochronological_unit] = params[:query_ecochronological_unit]
+    end
+    if params.has_key?(:query_ecochronological_unit) and params[:query_ecochronological_unit].empty?
+      session[:query_ecochronological_unit] = nil
+    end
+
     # material
     if params.has_key?(:query_material)
       session[:query_material] = params[:query_material]
@@ -206,7 +242,7 @@ class DataController < ApplicationController
     @data ||= Measurement.includes(
       {c14_measurement: :source_database},
       :lab,
-      sample: {arch_object: [{site_phase: {site: :country}}, :on_site_object_position, :material, :species]}
+      sample: {arch_object: [{site_phase: [{site: :country}, :periods, :typochronological_units, :ecochronological_units]}, {on_site_object_position: :feature_type}, :material, :species]}
     )
 
     # uncal age
@@ -269,6 +305,27 @@ class DataController < ApplicationController
     unless session[:query_feature_type].nil?
       @data = @data.where(
         sample: {arch_object: {on_site_object_positions: {feature_types: {name: session[:query_feature_type].split('|')}}}}
+      ).all
+    end
+
+    # period
+    unless session[:query_period].nil?
+      @data = @data.where(
+        sample: {arch_object: {site_phase: {periods: {name: session[:query_period].split('|')}}}}
+      ).all
+    end
+
+    # typochronological_unit
+    unless session[:query_typochronological_unit].nil?
+      @data = @data.where(
+        sample: {arch_object: {site_phase: {typochronological_units: {name: session[:query_typochronological_unit].split('|')}}}}
+      ).all
+    end
+
+    # ecochronological_unit
+    unless session[:query_ecochronological_unit].nil?
+      @data = @data.where(
+        sample: {arch_object: {site_phase: {ecochronological_units: {name: session[:query_ecochronological_unit].split('|')}}}}
       ).all
     end
 

@@ -130,6 +130,15 @@
             <label for="query_feature_type"><% if !(session[:query_feature_type].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Feature type</label>
             <%= autocomplete_field_tag(:query_feature_type, session[:query_feature_type], data_autocomplete_feature_type_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
 
+            <label for="query_period"><% if !(session[:query_period].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Period</label>
+            <%= autocomplete_field_tag(:query_period, session[:query_period], data_autocomplete_period_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
+
+            <label for="query_typochronological_unit"><% if !(session[:query_typochronological_unit].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Typochronological unit</label>
+            <%= autocomplete_field_tag(:query_typochronological_unit, session[:query_typochronological_unit], data_autocomplete_typochronological_unit_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
+
+            <label for="query_ecochronological_unit"><% if !(session[:query_ecochronological_unit].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Ecochronological unit</label>
+            <%= autocomplete_field_tag(:query_ecochronological_unit, session[:query_ecochronological_unit], data_autocomplete_ecochronological_unit_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
+
             <label for="query_material"><% if !(session[:query_material].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Material</label>
             <%= autocomplete_field_tag(:query_material, session[:query_material], data_autocomplete_material_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
 
