@@ -32,6 +32,8 @@ class DataController < ApplicationController
   def reset_filter_session_variable
     session[:query_uncal_age_start] = nil
     session[:query_uncal_age_stop] = nil
+    session[:query_cal_age_start] = nil
+    session[:query_cal_age_stop] = nil
     session[:query_source_database] = nil
     session[:query_labnr] = nil
     session[:query_site] = nil
@@ -79,6 +81,29 @@ class DataController < ApplicationController
 
     unless session[:query_uncal_age_stop].nil?
       gon.uncal_age_stop = session[:query_uncal_age_stop]
+    end
+
+    # cal age
+    if params.has_key?(:query_cal_age_start)
+      session[:query_cal_age_start] = params[:query_cal_age_start].to_i
+    end
+    if params.has_key?(:query_cal_age_start) and params[:query_cal_age_start].empty?
+      session[:query_cal_age_start] = nil
+    end
+
+    if params.has_key?(:query_cal_age_stop)
+      session[:query_cal_age_stop] = params[:query_cal_age_stop].to_i
+    end
+    if params.has_key?(:query_cal_age_stop) and params[:query_cal_age_stop].empty?
+      session[:query_cal_age_stop] = nil
+    end
+
+    unless session[:query_cal_age_start].nil?
+      gon.cal_age_start = session[:query_cal_age_start]
+    end
+
+    unless session[:query_cal_age_stop].nil?
+      gon.cal_age_stop = session[:query_cal_age_stop]
     end
 
     # source_database name
@@ -178,6 +203,13 @@ class DataController < ApplicationController
     unless session[:query_uncal_age_start].nil?
       @data = @data.where(
         c14_measurements: {:bp => (session[:query_uncal_age_stop]..session[:query_uncal_age_start])}
+      ).all
+    end
+
+    # cal age
+    unless session[:query_cal_age_start].nil?
+      @data = @data.where(
+        c14_measurements: {:cal_bp => (session[:query_cal_age_stop]..session[:query_cal_age_start])}
       ).all
     end
 
