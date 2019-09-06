@@ -31,6 +31,7 @@ Rails.application.routes.draw do
   resources :materials
   get 'data/autocomplete_material_name'
   resources :feature_types
+  get 'data/autocomplete_feature_type_name'
   resources :on_site_object_positions
   resources :site_types
   get 'data/autocomplete_site_type_name'

@@ -2,6 +2,7 @@ class DataController < ApplicationController
   autocomplete :source_database, :name, :full => true
   autocomplete :site, :name, :full => true
   autocomplete :site_type, :name, :full => true
+  autocomplete :feature_type, :name, :full => true
   autocomplete :country, :name, :full => true
   autocomplete :material, :name, :full => true
 
@@ -40,6 +41,7 @@ class DataController < ApplicationController
     session[:query_site_type] = nil
     session[:query_country] = nil
     session[:query_feature] = nil
+    session[:query_feature_type] = nil
     session[:query_material] = nil
     session[:query_species] = nil
     session[:spatial_lasso_selection] = nil
@@ -154,6 +156,14 @@ class DataController < ApplicationController
       session[:query_feature] = nil
     end
 
+    # feature type
+    if params.has_key?(:query_feature_type)
+      session[:query_feature_type] = params[:query_feature_type]
+    end
+    if params.has_key?(:query_feature_type) and params[:query_feature_type].empty?
+      session[:query_feature_type] = nil
+    end
+
     # material
     if params.has_key?(:query_material)
       session[:query_material] = params[:query_material]
@@ -252,6 +262,13 @@ class DataController < ApplicationController
     unless session[:query_feature].nil?
       @data = @data.where(
         sample: {arch_object: {on_site_object_positions: {feature: session[:query_feature].split('|')}}}
+      ).all
+    end
+
+    # feature type
+    unless session[:query_feature_type].nil?
+      @data = @data.where(
+        sample: {arch_object: {on_site_object_positions: {feature_types: {name: session[:query_feature_type].split('|')}}}}
       ).all
     end
 
