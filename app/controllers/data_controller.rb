@@ -30,6 +30,8 @@ class DataController < ApplicationController
   end
 
   def reset_filter_session_variable
+    session[:query_uncal_age_start] = nil
+    session[:query_uncal_age_stop] = nil
     session[:query_source_database] = nil
     session[:query_labnr] = nil
     session[:query_site] = nil
@@ -58,17 +60,25 @@ class DataController < ApplicationController
 
     # uncal age
     if params.has_key?(:query_uncal_age_start)
-      session[:query_uncal_age_start] = params[:query_uncal_age_start]
+      session[:query_uncal_age_start] = params[:query_uncal_age_start].to_i
     end
     if params.has_key?(:query_uncal_age_start) and params[:query_uncal_age_start].empty?
       session[:query_uncal_age_start] = nil
     end
 
     if params.has_key?(:query_uncal_age_stop)
-      session[:query_uncal_age_stop] = params[:query_uncal_age_stop]
+      session[:query_uncal_age_stop] = params[:query_uncal_age_stop].to_i
     end
     if params.has_key?(:query_uncal_age_stop) and params[:query_uncal_age_stop].empty?
       session[:query_uncal_age_stop] = nil
+    end
+
+    unless session[:query_uncal_age_start].nil?
+      gon.uncal_age_start = session[:query_uncal_age_start]
+    end
+
+    unless session[:query_uncal_age_stop].nil?
+      gon.uncal_age_stop = session[:query_uncal_age_stop]
     end
 
     # source_database name
@@ -167,9 +177,7 @@ class DataController < ApplicationController
     # uncal age
     unless session[:query_uncal_age_start].nil?
       @data = @data.where(
-        #c14_measurement: {:bp => session[:query_uncal_age_start].to_i}
-        c14_measurements: {:bp => (session[:query_uncal_age_start].to_i..session[:query_uncal_age_stop].to_i)}
-        #"c14_measurements.bp IN (?)", (session[:query_uncal_age_start]..session[:query_uncal_age_stop])
+        c14_measurements: {:bp => (session[:query_uncal_age_stop]..session[:query_uncal_age_start])}
       ).all
     end
 
@@ -249,7 +257,7 @@ class DataController < ApplicationController
     params["length"]  ||= -1
 
 		# json data (for map)
-		#gon.selected_sites = @data.map { |measurement| measurement.sample.arch_object.site_phase}.compact.map { |measurement| measurement.site}.select { |site| site.lat != nil and site.lat != nil}.uniq.to_json
+		gon.selected_sites = @data.map { |measurement| measurement.sample.arch_object.site_phase}.compact.map { |measurement| measurement.site}.select { |site| site.lat != nil and site.lat != nil}.uniq.to_json
 
     respond_to do |format|
       format.html

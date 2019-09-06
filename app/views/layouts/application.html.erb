@@ -101,7 +101,7 @@
 
           <%= form_tag(root_path, method: "get") do %>
 
-            <label for="uncal_age_slider"><% if !(session[:query_uncal_age_start].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Uncalibrated age</label>
+            <label for="uncal_age_slider"><% if (session[:query_uncal_age_start].nil? || session[:query_uncal_age_start] == 50000) && (session[:query_uncal_age_stop].nil? || session[:query_uncal_age_stop] == 0) %> <%= fa_icon "times" %> <% else %> <%= fa_icon "check" %> <% end %> Uncalibrated age BP</label>
             <input id="uncal_age_slider" class="js-range-slider"></input>
             <%= hidden_field_tag(:query_uncal_age_start, session[:query_uncal_age_start]) %>
             <%= hidden_field_tag(:query_uncal_age_stop, session[:query_uncal_age_stop]) %>
