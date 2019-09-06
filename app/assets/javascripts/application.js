@@ -23,6 +23,7 @@
 //= require datatables
 //= require cocoon
 //= require loading_screen
+//= require ion.rangeSlider
 //= require_tree .
 
 // initialize datatables

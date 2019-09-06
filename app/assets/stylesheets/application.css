@@ -16,4 +16,6 @@
  *= require leaflet
  *= require font-awesome
  *= require loading_screen
+ *= require jquery-ui
+ *= require ion.rangeSlider.css
 */

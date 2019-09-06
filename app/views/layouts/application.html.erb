@@ -101,6 +101,11 @@
 
           <%= form_tag(root_path, method: "get") do %>
 
+            <label for="uncal_age_slider"><% if !(session[:query_uncal_age_start].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Uncalibrated age</label>
+            <input id="uncal_age_slider" class="js-range-slider"></input>
+            <%= hidden_field_tag(:query_uncal_age_start, session[:query_uncal_age_start]) %>
+            <%= hidden_field_tag(:query_uncal_age_stop, session[:query_uncal_age_stop]) %>
+
             <label for="query_source_database"><% if !(session[:query_source_database].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Source database</label>
             <%= autocomplete_field_tag(:query_source_database, session[:query_source_database], data_autocomplete_source_database_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
 
