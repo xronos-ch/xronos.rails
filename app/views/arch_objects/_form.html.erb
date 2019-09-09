@@ -67,18 +67,9 @@
       <div class="field_master_top">
         <b><%= f.label :on_site_object_position %></b>
       </div>
-      <div class="field_master">
-        <div class="field">
-          <%= f.collection_select :on_site_object_position_id, OnSiteObjectPosition.all, :id, :feature, { include_blank: 'Create new' }, {:class => "observed_select"} %>
-          <%= link_to 'edit', root_path, :id => "edit_on_site_object_position_link", :class => "select_edit_link" %>
-          <script type="text/javascript">
-            $("#edit_on_site_object_position_link").click(function() { $(this).attr("href", "/on_site_object_positions/" + $("#arch_object_on_site_object_position_id").val() + "/edit") });
-          </script>
-        </div>
-        <%= f.fields_for :on_site_object_position, :include_id => false do |on_site_object_position| %>
-          <%= render 'on_site_object_positions/on_site_object_position_fields', :f => on_site_object_position %>
-        <% end %>
-      </div>
+      <%= f.fields_for :on_site_object_position, :include_id => false do |on_site_object_position| %>
+        <%= render 'on_site_object_positions/on_site_object_position_fields', :f => on_site_object_position %>
+      <% end %>
     </div>
 
     <div class="flex_field_element">
