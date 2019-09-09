@@ -9,13 +9,25 @@ $(document).ready(function() {
     min = -50000,
     max = 0;
 
+  if (typeof gon === 'undefined') {
+    uncal_from = -50000;
+    uncal_to = 0;
+    cal_from = -50000;
+    cal_to = 0;
+  } else {
+    uncal_from = -gon.uncal_age_start;
+    uncal_to = -gon.uncal_age_stop;
+    cal_from = -gon.cal_age_start;
+    cal_to = -gon.cal_age_stop;
+  }
+
   $uncal_range.ionRangeSlider({
     skin: "flat",
     type: "double",
     min: min,
     max: max,
-    from: -gon.uncal_age_start,
-    to: -gon.uncal_age_stop,
+    from: uncal_from,
+    to: uncal_to,
     step: 100,
     drag_interval: true,
     min_interval: 100,
@@ -39,8 +51,8 @@ $(document).ready(function() {
     type: "double",
     min: min,
     max: max,
-    from: -gon.cal_age_start,
-    to: -gon.cal_age_stop,
+    from: cal_from,
+    to: cal_to,
     step: 100,
     drag_interval: true,
     min_interval: 100,
