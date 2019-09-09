@@ -18,7 +18,8 @@ class ArchObjectsController < ApplicationController
   def new
     @arch_object = ArchObject.new
     @arch_object.samples.build.measurements.build
-    @arch_object.build_site_phase
+    @arch_object.build_site_phase.build_site_type
+    @arch_object.site_phase.build_site
     @arch_object.build_material
     @arch_object.build_species
     @arch_object.build_on_site_object_position
@@ -108,7 +109,13 @@ class ArchObjectsController < ApplicationController
               :name,
               :start_time,
               :end_time,
-              :_destroy
+              :_destroy,
+              :references_attributes => [
+                :id,
+                :short_ref,
+                :bibtex,
+                :_destroy
+              ]
             ]
           ],
           :site_type_attributes => [

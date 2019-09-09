@@ -99,7 +99,13 @@ class SitesController < ApplicationController
           :name,
           :start_time,
           :end_time,
-          :_destroy
+          :_destroy,
+          :references_attributes => [
+            :id,
+            :short_ref,
+            :bibtex,
+            :_destroy
+          ]
         ]
       )
     end

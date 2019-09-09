@@ -17,6 +17,7 @@ class FellPhasesController < ApplicationController
   # GET /fell_phases/new
   def new
     @fell_phase = FellPhase.new
+    @fell_phase.references.build
   end
 
   # GET /fell_phases/1/edit
@@ -72,6 +73,19 @@ class FellPhasesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def fell_phase_params
-      params.require(:fell_phase).permit(:name, :start_time, :end_time, :site_id)
+      params.require(:fell_phase).permit(
+        :id,
+        :name,
+        :start_time,
+        :end_time,
+        :site_id,
+        :_destroy,
+        :references_attributes => [
+          :id,
+          :short_ref,
+          :bibtex,
+          :_destroy
+        ]
+      )
     end
 end
