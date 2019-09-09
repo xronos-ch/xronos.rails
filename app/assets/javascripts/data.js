@@ -1,18 +1,18 @@
 jQuery(document).ready(function() {
   $('#selected_measurements-datatable').dataTable({
     autoWidth: true,
-    pageLength: 25,
+    pageLength: 20,
     sDom: 'Br <"H"lf> <"datatable-scroll"t> <"F"ip>',
 		deferRender: true,
     buttons: [
       {
-        text: '<i class="fa fa-plus"></i> New date',
+        text: '<i class="fa fa-plus"></i> Add new date',
         action: function () {
           window.open("/arch_objects/new");
         }
       },
       {
-        text: '<i class="fa fa-edit"></i> Edit date',
+        text: '<i class="fa fa-edit"></i> Edit selected date',
         action: function ( e, dt, node, config ) {
           var rows = dt.rows( { selected: true } ).count();
           var selected_rows = dt.rows( {selected: true} ).data();
@@ -24,20 +24,20 @@ jQuery(document).ready(function() {
         }
       },
       {
-        text: '<i class="fa fa-circle"></i> Select all',
+        text: '<i class="fa fa-circle"></i> Select all dates',
         action: function ( e, dt, node, config ) {
           dt.rows().select();
         }
       },
       {
-        text: '<i class="fa fa-circle-o"></i> Select none',
+        text: '<i class="fa fa-circle-o"></i> Select no dates',
         action: function ( e, dt, node, config ) {
           dt.rows().deselect();
         }
       },
       {
         extend: 'selected',
-        text: '<i class="fa fa-filter"></i><i class="fa fa-circle"> Manual filter',
+        text: '<i class="fa fa-filter"></i><i class="fa fa-circle"> Only keep selected dates',
         action: function ( e, dt, node, config ) {
           var rows = dt.rows( { selected: true } ).count();
           var selected_rows = dt.rows( {selected: true} ).data();
@@ -63,7 +63,7 @@ jQuery(document).ready(function() {
         }
       },
       {
-        text: '<i class="fa fa-filter"></i><i class="fa fa-circle-o"> Disable filter',
+        text: '<i class="fa fa-filter"></i><i class="fa fa-circle-o"> Disable manual selection filter',
         action: function () {
           $.ajax({
               type: "get",
@@ -79,14 +79,8 @@ jQuery(document).ready(function() {
         }
       },
       {
-        text: '<i class="fa fa-download"></i> Download',
-        action: function () {
-          window.open("?format=csv");
-        }
-      },
-      {
         extend: 'selected',
-        text: '<i class="fa fa-line-chart"></i> Calibrate',
+        text: '<i class="fa fa-line-chart"></i> Calculate calibration of selected dates',
         action: function ( e, dt, node, config ) {
           var rows = dt.rows( { selected: true } ).count();
           var selected_rows = dt.rows( {selected: true} ).data();
@@ -103,7 +97,7 @@ jQuery(document).ready(function() {
       },
       {
         extend: 'selected',
-        text: '<i class="fa fa-barcode"></i> Sum calibrate',
+        text: '<i class="fa fa-barcode"></i> Calculate sum calibration of selected dates',
         action: function ( e, dt, node, config ) {
           var rows = dt.rows( { selected: true } ).count();
           var selected_rows = dt.rows( {selected: true} ).data();
@@ -112,6 +106,12 @@ jQuery(document).ready(function() {
             values = values + 'ids[]=' + selected_rows[i].c14_measurement_id + '&';
           };
           window.open('/c14_measurements/1/calibrate_sum?' + values, 'Calibration', 'height=800,width=1000,resizable=yes,scrollbars=yes,status=yes');
+        }
+      },
+      {
+        text: '<i class="fa fa-download"></i> Download all dates as .csv-file',
+        action: function () {
+          window.open("?format=csv");
         }
       }
     ],
