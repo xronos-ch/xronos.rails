@@ -114,8 +114,9 @@ ActiveRecord::Schema.define(version: 2019_09_09_080610) do
   end
 
   create_table "measurements_references", id: false, force: :cascade do |t|
-    t.bigint "measurement_id"
-    t.bigint "reference_id"
+    t.bigint "measurement_id", null: false
+    t.bigint "reference_id", null: false
+    t.index ["measurement_id", "reference_id"], name: "index_mr"
   end
 
   create_table "on_site_object_positions", force: :cascade do |t|
@@ -142,15 +143,18 @@ ActiveRecord::Schema.define(version: 2019_09_09_080610) do
   end
 
   create_table "periods_site_phases", id: false, force: :cascade do |t|
-    t.bigint "site_phase_id"
-    t.bigint "period_id"
+    t.bigint "site_phase_id", null: false
+    t.bigint "period_id", null: false
+    t.index ["site_phase_id", "period_id"], name: "index_spp"
   end
 
-  create_table "physical_locations", id: false, force: :cascade do |t|
+  create_table "physical_locations", force: :cascade do |t|
     t.bigint "site_id"
     t.bigint "country_id"
-    t.text "created_at"
-    t.text "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["country_id"], name: "index_physical_locations_on_country_id"
+    t.index ["site_id"], name: "index_physical_locations_on_site_id"
   end
 
   create_table "references", force: :cascade do |t|
@@ -188,8 +192,9 @@ ActiveRecord::Schema.define(version: 2019_09_09_080610) do
   end
 
   create_table "site_phases_typochronological_units", id: false, force: :cascade do |t|
-    t.bigint "site_phase_id"
-    t.bigint "typochronological_unit_id"
+    t.bigint "site_phase_id", null: false
+    t.bigint "typochronological_unit_id", null: false
+    t.index ["site_phase_id", "typochronological_unit_id"], name: "index_sptu"
   end
 
   create_table "site_types", force: :cascade do |t|
