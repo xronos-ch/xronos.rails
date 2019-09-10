@@ -19,7 +19,7 @@ class MeasurementsController < ApplicationController
     @measurement = Measurement.new
     @measurement.references.build
     @measurement.build_lab
-    @measurement.build_c14_measurement
+    @measurement.build_c14_measurement.build_source_database
   end
 
   # GET /measurements/1/edit
@@ -81,6 +81,7 @@ class MeasurementsController < ApplicationController
         :_destroy,
         :sample_id,
         :lab_id,
+        :user_id,
         :c14_measurement_id,
         :c14_measurement_attributes => [
           :id,

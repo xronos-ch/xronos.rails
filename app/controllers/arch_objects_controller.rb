@@ -35,6 +35,7 @@ class ArchObjectsController < ApplicationController
   # POST /arch_objects.json
   def create
     @arch_object = ArchObject.new(arch_object_params)
+    @arch_object.samples.each { |sample| sample.measurements.each { |measurement| measurement.user_id = current_user.id if current_user } }
 
     respond_to do |format|
       if @arch_object.save
@@ -183,6 +184,7 @@ class ArchObjectsController < ApplicationController
             :labnr,
             :sample_id,
             :lab_id,
+            :user_id,
             :c14_measurement_id,
             :_destroy,
             :c14_measurement_attributes => [
