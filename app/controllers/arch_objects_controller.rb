@@ -35,7 +35,13 @@ class ArchObjectsController < ApplicationController
   # POST /arch_objects.json
   def create
     @arch_object = ArchObject.new(arch_object_params)
+    # add user_id of current user
     @arch_object.samples.each { |sample| sample.measurements.each { |measurement| measurement.user_id = current_user.id if current_user } }
+    @arch_object.site_phase.user_id = current_user.id if current_user
+    @arch_object.site_phase.ecochronological_units.each { |ecochronological_unit| ecochronological_unit.user_id = current_user.id if current_user }
+    @arch_object.site_phase.periods.each { |period| period.user_id = current_user.id if current_user }
+    @arch_object.site_phase.typochronological_units.each { |typochronological_unit| typochronological_unit.user_id = current_user.id if current_user }
+    @arch_object.site_phase.site.fell_phases.each { |fell_phase| fell_phase.user_id = current_user.id if current_user }
 
     respond_to do |format|
       if @arch_object.save
