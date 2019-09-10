@@ -35,4 +35,16 @@
     <%= f.text_field :method %>
   </div>
 
+  <div class="field_master_top">
+    <b><%= f.label :source_database %></b>
+  </div>
+  <div class="field_master">
+    <div class="field">
+      <%= f.collection_select :source_database_id, SourceDatabase.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"}  %>
+    </div>
+    <%= f.fields_for :source_database, :include_id => false do |source_database| %>
+      <%= render 'source_databases/source_database_fields', :f => source_database %>
+    <% end %>
+  </div>
+
 </div>

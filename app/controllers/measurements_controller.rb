@@ -91,7 +91,16 @@ class MeasurementsController < ApplicationController
           :delta_c13,
           :delta_c13_std,
           :method,
-          :_destroy
+          :_destroy,
+          :source_database_id,
+          :source_database_attributes => [
+            :id,
+            :name,
+            :url,
+            :citation,
+            :licence,
+            :_destroy
+          ]
         ],
         :lab_attributes => [
           :id,

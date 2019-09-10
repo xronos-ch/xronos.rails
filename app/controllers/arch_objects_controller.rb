@@ -17,12 +17,14 @@ class ArchObjectsController < ApplicationController
   # GET /arch_objects/new
   def new
     @arch_object = ArchObject.new
-    @arch_object.samples.build.measurements.build
+    @arch_object.samples.build.measurements.build.build_c14_measurement.build_source_database
+    @arch_object.samples.each { |sample| sample.measurements.each { |measurement| measurement.build_lab } }
     @arch_object.build_site_phase.build_site_type
     @arch_object.site_phase.build_site
     @arch_object.build_material
     @arch_object.build_species
     @arch_object.build_on_site_object_position
+    @arch_object.on_site_object_position.build_feature_type
   end
 
   # GET /arch_objects/1/edit
@@ -192,7 +194,16 @@ class ArchObjectsController < ApplicationController
               :delta_c13,
               :delta_c13_std,
               :method,
-              :_destroy
+              :_destroy,
+              :source_database_id,
+              :source_database_attributes => [
+                :id,
+                :name,
+                :url,
+                :citation,
+                :licence,
+                :_destroy
+              ]
             ],
             :lab_attributes => [
               :id,

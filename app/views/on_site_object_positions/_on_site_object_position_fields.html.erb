@@ -37,7 +37,7 @@
     <div class="field">
       <%= f.collection_select :feature_type_id, FeatureType.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"}  %>
     </div>
-    <%= f.fields_for :feature_type, FeatureType.new do |feature_type| %>
+    <%= f.fields_for :feature_type, :include_id => false do |feature_type| %>
       <%= render 'feature_types/feature_type_fields', :f => feature_type %>
     <% end %>
   </div>

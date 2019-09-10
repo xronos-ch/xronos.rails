@@ -17,6 +17,7 @@ class C14MeasurementsController < ApplicationController
   # GET /c14_measurements/new
   def new
     @c14_measurement = C14Measurement.new
+    @c14_measurement.build_source_database
   end
 
   # GET /c14_measurements/1/edit
@@ -71,7 +72,24 @@ class C14MeasurementsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def c14_measurement_params
-      params.require(:c14_measurement).permit(:bp, :std, :cal_bp, :cal_std, :delta_c13, :delta_c13_std, :method)
+      params.require(:c14_measurement).permit(
+        :bp,
+        :std,
+        :cal_bp,
+        :cal_std,
+        :delta_c13,
+        :delta_c13_std,
+        :method,
+        :source_database_id,
+        :source_database_attributes => [
+          :id,
+          :name,
+          :url,
+          :citation,
+          :licence,
+          :_destroy
+        ]
+      )
     end
 
   public
