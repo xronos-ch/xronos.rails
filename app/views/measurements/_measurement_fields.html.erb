@@ -21,7 +21,7 @@
     <div class="field">
       <%= f.collection_select :lab_id, Lab.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"}  %>
     </div>
-    <%= f.fields_for :lab do |lab| %>
+    <%= f.fields_for :lab, :include_id => false do |lab| %>
       <%= render 'labs/lab_fields', :f => lab %>
     <% end %>
   </div>
