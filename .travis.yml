@@ -4,8 +4,7 @@ rvm:
   - 2.6.3
 
 env:
-  - RAILS_ENV=test
-  - REGISTRATION_PASSPHRASE=DasisteinTest
+  - RAILS_ENV=test REGISTRATION_PASSPHRASE=DasisteinTest
 
 before_install:
   - gem update --system
