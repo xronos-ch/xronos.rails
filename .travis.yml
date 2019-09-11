@@ -11,6 +11,4 @@ before_install:
   - gem install bundler
 
 script:
-  - bundle exec rake db:create
-  - bin/rails db:migrate
-  - bundle exec rake test
+  - bundle exec rake db:create && bin/rails db:migrate RAILS_ENV=test && bundle exec rake test
