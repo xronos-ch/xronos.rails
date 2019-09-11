@@ -12,9 +12,6 @@
 
 ActiveRecord::Schema.define(version: 2019_09_09_080610) do
 
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
-
   create_table "arch_objects", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -252,14 +249,4 @@ ActiveRecord::Schema.define(version: 2019_09_09_080610) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "c14_measurements", "source_databases"
-  add_foreign_key "ecochronological_units", "users"
-  add_foreign_key "fell_phases", "users"
-  add_foreign_key "measurements", "c14_measurements"
-  add_foreign_key "measurements", "labs"
-  add_foreign_key "measurements", "samples"
-  add_foreign_key "measurements", "users"
-  add_foreign_key "periods", "users"
-  add_foreign_key "site_phases", "users"
-  add_foreign_key "typochronological_units", "users"
 end
