@@ -5,6 +5,7 @@ rvm:
 
 env:
   - RAILS_ENV=test
+  - REGISTRATION_PASSPHRASE=DasisteinTest
 
 before_install:
   - gem update --system
