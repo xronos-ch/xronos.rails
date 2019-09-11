@@ -12,5 +12,6 @@ before_install:
 
 script:
   - bundle exec rake db:create
+  - bundle exec rake test:prepare
   - bundle exec rake db:migrate
   - bundle exec rake test
