@@ -4,17 +4,16 @@ rvm:
   - 2.6.3
 
 env:
-  - RAILS_ENV=test REGISTRATION_PASSPHRASE=DasisteinTest
+  - DB=sqlite REGISTRATION_PASSPHRASE=DasisteinTest
 
 before_install:
   - gem update --system
   - gem install bundler
 
 before_script:
-  - bundle exec rake db:drop
-  - bundle exec rake db:create
-  - bundle exec rake db:migrate
+  - cp config/database.travis.yml config/database.yml
 
 script:
-  - bundle exec rake db:migrate:status
-  - bundle exec rake test
+  - RAILS_ENV=test bundle exec rake db:migrate --trace
+  - bundle exec rake db:test:prepare
+  - xvfb-run bundle exec rake
