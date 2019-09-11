@@ -16,5 +16,5 @@ before_script:
   - bundle exec rake db:migrate
 
 script:
-  - rake db:migrate:status
+  - bundle exec rake db:migrate:status
   - bundle exec rake test
