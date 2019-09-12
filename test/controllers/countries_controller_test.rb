@@ -19,33 +19,37 @@ class CountriesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-#  test "should create country" do
-#    assert_difference('Country.count') do
-#      post countries_url, params: { country: {  } }
-#    end
-#    assert_redirected_to country_url(Country.last)
-#  end
+  test "should create country" do
+    sign_in @admin
+    assert_difference('Country.count') do
+      post countries_url, params: { country: { name: "Testland1" } }
+    end
+    assert_redirected_to country_url(Country.last)
+  end
 
   test "should show country" do
     get country_url(@country)
     assert_response :success
   end
 
-#  test "should get edit" do
-#    get edit_country_url(@country)
-#    assert_response :success
-#  end
+  test "should get edit" do
+    sign_in @admin
+    get edit_country_url(@country)
+    assert_response :success
+  end
 
-#  test "should update country" do
-#    patch country_url(@country), params: { country: {  } }
-#    assert_redirected_to country_url(@country)
-#  end
+  test "should update country" do
+    sign_in @admin
+    patch country_url(@country), params: { country: { name: "Testland2" } }
+    assert_redirected_to country_url(@country)
+  end
 
-#  test "should destroy country" do
-#    assert_difference('Country.count', -1) do
-#      delete country_url(@country)
-#    end
+  test "should destroy country" do
+    sign_in @admin
+    assert_difference('Country.count', -1) do
+      delete country_url(@country)
+    end
+    assert_redirected_to countries_url
+  end
 
-#    assert_redirected_to countries_url
-#  end
 end
