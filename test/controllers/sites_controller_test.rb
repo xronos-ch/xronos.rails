@@ -5,7 +5,7 @@ class SitesControllerTest < ActionDispatch::IntegrationTest
 
   setup do
     @site = FactoryBot.create(:site)
-    @admin = FactoryBot.create(:user)
+    @admin = FactoryBot.create(:user, :admin)
   end
 
   test "should get index" do

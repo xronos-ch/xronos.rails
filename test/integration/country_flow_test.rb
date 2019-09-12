@@ -6,7 +6,7 @@ class PostFlowTest < Capybara::Rails::TestCase
   setup do
     @country1 = FactoryBot.create(:country)
     @country2 = FactoryBot.create(:country)
-    @admin = FactoryBot.create(:user)
+    @admin = FactoryBot.create(:user, :admin)
   end
 
   test 'country index' do

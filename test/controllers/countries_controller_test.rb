@@ -5,7 +5,7 @@ class CountriesControllerTest < ActionDispatch::IntegrationTest
 
   setup do
     @country = FactoryBot.create(:country)
-    @admin = FactoryBot.create(:user)
+    @admin = FactoryBot.create(:user, :admin)
   end
 
   test "should get index" do
