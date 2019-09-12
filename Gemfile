@@ -76,7 +76,7 @@ gem 'leaflet-rails'
 gem 'jquery-rails'
 
 # user management
-gem 'devise'
+gem 'devise', ">= 4.7.1"
 
 # authorizations management
 gem 'cancancan'
