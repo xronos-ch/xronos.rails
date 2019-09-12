@@ -1,11 +1,11 @@
 require 'test_helper'
 
 class CountriesControllerTest < ActionDispatch::IntegrationTest
-#  include Devise::TestHelpers
+  include Devise::Test::IntegrationHelpers
 
   setup do
     @country = FactoryBot.create(:country)
-#    @admin =
+    @admin = FactoryBot.create(:user)
   end
 
   test "should get index" do
@@ -13,16 +13,16 @@ class CountriesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-#  test "should get new" do
-#    get new_country_url
-#    assert_response :success
-#  end
+  test "should get new" do
+    sign_in @admin
+    get new_country_url
+    assert_response :success
+  end
 
 #  test "should create country" do
 #    assert_difference('Country.count') do
 #      post countries_url, params: { country: {  } }
 #    end
-
 #    assert_redirected_to country_url(Country.last)
 #  end
 

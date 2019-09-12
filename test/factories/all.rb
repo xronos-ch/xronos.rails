@@ -12,3 +12,13 @@ FactoryBot.define do
     country
   end
 end
+
+FactoryBot.define do
+  factory :user do
+    email { "test@test.com" }
+    password { "Hubsch123123" }
+    password_confirmation { "Hubsch123123" }
+    admin { true }
+    passphrase { ENV["REGISTRATION_PASSPHRASE"] }
+  end
+end
