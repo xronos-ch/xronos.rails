@@ -16,55 +16,50 @@ document.addEventListener('DOMContentLoaded',function(){
   }
 
   // load data
-  var sites = JSON.parse(gon.selected_sites);
+  if (typeof gon === 'undefined') {
+    // nothing...
+  } else {
+    var sites = JSON.parse(gon.selected_sites);
+
+    // console.log(sites);
+
+    // prepare markers
+    const markers = new Array(sites.length)
+    for (var i = 0; i < markers.length; i++) {
+      markers[i] = L.circle(
+        [sites[i].lat, sites[i].lng], {
+          color: 'black',
+          fillColor: "black",
+          fillOpacity: 0.5,
+          radius: 1000,
+          id: sites[i].id
+        }
+      ).bindPopup(
+        'Site: ' + sites[i].name +
+        "<br>" +
+        '<button type="submit" onclick="window.location=\'' + '/sites/' + sites[i].id + '\';">' +
+          "<i class=\'fa fa-binoculars\'></i> Show site" +
+        "</button>" +
+        '<br>' +
+        '<button type="submit" onclick="window.location=\'' + '/?utf8=✓&query_site=' + sites[i].name + '\';">' +
+          "<i class=\'fa fa-filter\'></i> Measurements from this site" +
+        "</button>"
+      );
+    }
+
+    const layers = [
+        ...markers
+      ];
+
+    const featureGroup = L.featureGroup(
+      layers
+    ).addTo(map);
+
+  }
 
   //console.log(sites);
 
-  // sumcal function
-  /*function get_c14_measurement_ids(sel, site_id) {
-    var values = '';
-    for (i = 0; i < sel.length; i++) {
-      if (sel[i].site_id == site_id) {
-        values = values + 'ids[]=' + sel[i].c14_measurement_id + '&';
-      }
-    }
-    alert(values);
-    window.open('/c14_measurements/1/calibrate_sum?' + values, 'Calibration', 'height=800,width=1000,resizable=yes,scrollbars=yes,status=yes');
-  }*/
 
-  // prepare markers
-  const markers = new Array(sites.length)
-	for (var i = 0; i < markers.length; i++) {
-		markers[i] = L.circle(
-			[sites[i].lat, sites[i].lng], {
-				color: 'black',
-				fillColor: "black",
-				fillOpacity: 0.5,
-				radius: 1000,
-				id: sites[i].id
-			}
-		).bindPopup(
-      'Site: ' + sites[i].name +
-      "<br>" +
-      '<button type="submit" onclick="window.location=\'' + '/sites/' + sites[i].id + '\';">' +
-        "<i class=\'fa fa-binoculars\'></i> Show site" +
-      "</button>" +
-      '<br>' +
-      '<button type="submit" onclick="window.location=\'' + '/?utf8=✓&query_site=' + sites[i].name + '\';">' +
-        "<i class=\'fa fa-filter\'></i> Measurements from this site" +
-      "</button>"
-    );
-	}
-
-  //console.log(markers);
-
-	const layers = [
-      ...markers
-    ];
-
-	const featureGroup = L.featureGroup(
-		layers
-	).addTo(map);
 
 	// #### lasso ####
 
