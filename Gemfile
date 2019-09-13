@@ -53,6 +53,7 @@ group :test do
   gem 'minitest-rails-capybara'
   gem 'selenium-webdriver'
   gem 'webdrivers'
+  gem 'capybara-selenium'
   # Generating test data for models
   gem 'factory_bot_rails'
   gem 'faker'

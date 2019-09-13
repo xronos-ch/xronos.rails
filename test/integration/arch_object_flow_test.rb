@@ -14,6 +14,9 @@ class ArchObjectFlowTest < Capybara::Rails::TestCase
 
     click_on 'New Arch Object'
 
+    # Samples > Measurements
+    fill_in 'arch_object[samples_attributes][0][measurements_attributes][0][labnr]', with: 'AAA-123'
+
     # Samples > Measurements > C14Measurement
     fill_in 'arch_object[samples_attributes][0][measurements_attributes][0][c14_measurement_attributes][bp]', with: 2345
     fill_in 'arch_object[samples_attributes][0][measurements_attributes][0][c14_measurement_attributes][std]', with: 12
@@ -22,9 +25,6 @@ class ArchObjectFlowTest < Capybara::Rails::TestCase
     fill_in 'arch_object[samples_attributes][0][measurements_attributes][0][c14_measurement_attributes][delta_c13]', with: 30
     fill_in 'arch_object[samples_attributes][0][measurements_attributes][0][c14_measurement_attributes][delta_c13_std]', with: 10
     fill_in 'arch_object[samples_attributes][0][measurements_attributes][0][c14_measurement_attributes][method]', with: "AMS"
-
-    # Samples > Measurements
-    fill_in 'arch_object[samples_attributes][0][measurements_attributes][0][labnr]', with: 'AAA-123'
 
     # Samples > Measurements > C14Measurement > SourceDatabase
     fill_in 'arch_object[samples_attributes][0][measurements_attributes][0][c14_measurement_attributes][source_database_attributes][name]', with: "Testdatabase"

@@ -3,6 +3,9 @@ cache: bundler
 rvm:
   - 2.6.3
 
+addons:
+  chrome: stable
+
 env:
   - DB=sqlite REGISTRATION_PASSPHRASE=DasisteinTest
 
