@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class PostFlowTest < Capybara::Rails::TestCase
+class CountryFlowTest < Capybara::Rails::TestCase
   include Devise::Test::IntegrationHelpers
 
   setup do
@@ -11,13 +11,15 @@ class PostFlowTest < Capybara::Rails::TestCase
 
   test 'country index' do
     visit countries_path
-    assert page.has_content?(@country1.name)
-    assert page.has_content?(@country2.name)
+    click_on "left_window_nav_general"
+    assert has_content?(@country1.name)
+    assert has_content?(@country2.name)
   end
 
   test 'creating a new country' do
     sign_in @admin
     visit countries_path
+    click_on "left_window_nav_general"
 
     click_on 'New Country'
 
@@ -26,7 +28,7 @@ class PostFlowTest < Capybara::Rails::TestCase
     click_on 'Create Country'
 
     assert_current_path country_path(Country.last)
-    assert page.has_content?('Tolles Land')
+    assert has_content?('Tolles Land')
   end
 
 end

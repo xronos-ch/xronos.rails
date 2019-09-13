@@ -17,7 +17,8 @@ class ArchObjectsController < ApplicationController
   # GET /arch_objects/new
   def new
     @arch_object = ArchObject.new
-    @arch_object.samples.build.measurements.build.build_c14_measurement.build_source_database
+    @arch_object.samples.build.measurements.build
+    @arch_object.samples.each { |sample| sample.measurements.each { |measurement| measurement.build_c14_measurement.build_source_database } }
     @arch_object.samples.each { |sample| sample.measurements.each { |measurement| measurement.build_lab } }
     @arch_object.build_site_phase.build_site_type
     @arch_object.site_phase.build_site
