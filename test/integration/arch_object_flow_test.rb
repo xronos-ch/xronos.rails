@@ -37,16 +37,17 @@ class ArchObjectFlowTest < Capybara::Rails::TestCase
     first('input[id^="arch_object_samples_attributes_0_measurements_attributes_0_lab_attributes_active"]').set(true)
 
     # Samples > Measurements > References
-    # broken
-    #click_on 'add reference'
-    #first('input[id^="arch_object_samples_attributes_0_measurements_attributes_0_references_attributes_"][id$="_short_ref"]').set("Dirac 1981")
-    #first('input[id^="arch_object_samples_attributes_0_measurements_attributes_0_references_attributes_"][id$="_bibtex"]').set("@book{dirac,
-    #  title={The Principles of Quantum Mechanics},
-    #  author={Paul Adrien Maurice Dirac},
-    #  series={International series of monographs on physics},
-    #  year={1981},
-    #  publisher={Clarendon Press},
-    #}")
+    all('a', :text => 'add reference')[0].click
+    first('input[id^="arch_object_samples_attributes_0_measurements_attributes_0_references_attributes"][id$="short_ref"]').set("Dirac 1981")
+    first('textarea[id^="arch_object_samples_attributes_0_measurements_attributes_0_references_attributes"][id$="bibtex"]').set(
+      "@book{dirac,"\
+        "title={The Principles of Quantum Mechanics},"\
+        "author={Paul Adrien Maurice Dirac},"\
+        "series={International series of monographs on physics},"\
+        "year={1981},"\
+        "publisher={Clarendon Press},"\
+      "}"
+    )
 
     # Material
     fill_in 'arch_object[material_attributes][name]', with: "Plutonium"
@@ -96,16 +97,17 @@ class ArchObjectFlowTest < Capybara::Rails::TestCase
     first('input[id^="arch_object_site_phase_attributes_site_attributes_fell_phases_attributes"][id$="end_time"]').set(2400)
 
     # SitePhase > Site > FellPhases > References
-    # broken
-    #click_on 'add reference'
-    #fill_in 'arch_object[site_phase_attributes][site_attributes][fell_phases_attributes][1568364017591][references_attributes][1568364329345][short_ref]', with: "Dirac 1981"
-    #fill_in 'arch_object[site_phase_attributes][site_attributes][fell_phases_attributes][1568364017591][references_attributes][1568364329345][bibtex]', with: "@book{dirac,
-    #  title={The Principles of Quantum Mechanics},
-    #  author={Paul Adrien Maurice Dirac},
-    #  series={International series of monographs on physics},
-    #  year={1981},
-    #  publisher={Clarendon Press},
-    #}"
+    all('a', :text => 'add reference')[1].click
+    first('input[id^="arch_object_site_phase_attributes_site_attributes_fell_phases_attributes"][id$="short_ref"]').set("Dirac 1981")
+    first('textarea[id^="arch_object_site_phase_attributes_site_attributes_fell_phases_attributes"][id$="bibtex"]').set(
+      "@book{dirac,"\
+        "title={The Principles of Quantum Mechanics},"\
+        "author={Paul Adrien Maurice Dirac},"\
+        "series={International series of monographs on physics},"\
+        "year={1981},"\
+        "publisher={Clarendon Press},"\
+      "}"
+    )
 
     # OnSiteObjectPosition
     fill_in "arch_object[on_site_object_position_attributes][feature]", with: "Citadel"
