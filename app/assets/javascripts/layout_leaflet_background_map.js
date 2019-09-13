@@ -15,7 +15,9 @@ document.addEventListener('DOMContentLoaded',function(){
     map.setView([45, 7], 3);
   }
 
-  // load data
+
+
+  // load data and add markers to map
   if (typeof gon === 'undefined') {
     // nothing...
   } else {
@@ -56,8 +58,6 @@ document.addEventListener('DOMContentLoaded',function(){
     ).addTo(map);
 
   }
-
-  //console.log(sites);
 
 
 
