@@ -34,7 +34,7 @@ class ArchObjectFlowTest < Capybara::Rails::TestCase
 
     # Samples > Measurements > Lab
     fill_in 'arch_object[samples_attributes][0][measurements_attributes][0][lab_attributes][name]', with: "Black Mesa Research Facility"
-    #fill_in 'arch_object[samples_attributes][0][measurements_attributes][0][lab_attributes][active]', with: true
+    first('input[id^="arch_object_samples_attributes_0_measurements_attributes_0_lab_attributes_active"]').set(true)
 
     # Samples > Measurements > References
     # broken
