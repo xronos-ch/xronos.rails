@@ -168,7 +168,7 @@ GEM
     orm_adapter (0.5.0)
     pg (1.1.4)
     public_suffix (4.0.1)
-    puma (3.12.1)
+    puma (3.12.3)
     rabl (0.14.1)
       activesupport (>= 2.3.14)
     rack (2.0.7)
@@ -295,7 +295,7 @@ DEPENDENCIES
   loading_screen (~> 0.2.3)
   minitest-rails-capybara
   pg
-  puma (~> 3.11)
+  puma (~> 3.12)
   rabl
   rails (~> 5.2.3)
   rails-jquery-autocomplete
