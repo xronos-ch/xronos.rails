@@ -248,119 +248,119 @@ class DataController < ApplicationController
     unless session[:query_uncal_age_start].nil?
       @data = @data.where(
         c14_measurements: {:bp => (session[:query_uncal_age_stop]..session[:query_uncal_age_start])}
-      ).all
+      )
     end
 
     # cal age
     unless session[:query_cal_age_start].nil?
       @data = @data.where(
         c14_measurements: {:cal_bp => (session[:query_cal_age_stop]..session[:query_cal_age_start])}
-      ).all
+      )
     end
 
     # source_database name
     unless session[:query_source_database].nil?
       @data = @data.where(
         c14_measurement: {source_databases: {:name => session[:query_source_database].split('|')}}
-      ).all
+      )
     end
 
     # labnr
     unless session[:query_labnr].nil?
       @data = @data.where(
         labnr: params[:query_labnr].split('|')
-      ).all
+      )
     end
 
     # site name
     unless session[:query_site].nil?
       @data = @data.where(
         sample: {arch_object: {site_phase: {sites: {:name => session[:query_site].split('|')}}}}
-      ).all
+      )
     end
 
     # site type
     unless session[:query_site_type].nil?
       @data = @data.where(
         sample: {arch_object: {site_phase: {site_types: {name: session[:query_site_type].split('|')}}}}
-      ).all
+      )
     end
 
     # feature
     unless session[:query_feature].nil?
       @data = @data.where(
         sample: {arch_object: {on_site_object_positions: {feature: session[:query_feature].split('|')}}}
-      ).all
+      )
     end
 
     # feature type
     unless session[:query_feature_type].nil?
       @data = @data.where(
         sample: {arch_object: {on_site_object_positions: {feature_types: {name: session[:query_feature_type].split('|')}}}}
-      ).all
+      )
     end
 
     # period
     unless session[:query_period].nil?
       @data = @data.where(
         sample: {arch_object: {site_phase: {periods: {name: session[:query_period].split('|')}}}}
-      ).all
+      )
     end
 
     # typochronological_unit
     unless session[:query_typochronological_unit].nil?
       @data = @data.where(
         sample: {arch_object: {site_phase: {typochronological_units: {name: session[:query_typochronological_unit].split('|')}}}}
-      ).all
+      )
     end
 
     # ecochronological_unit
     unless session[:query_ecochronological_unit].nil?
       @data = @data.where(
         sample: {arch_object: {site_phase: {ecochronological_units: {name: session[:query_ecochronological_unit].split('|')}}}}
-      ).all
+      )
     end
 
     # material
     unless session[:query_material].nil?
       @data = @data.where(
         sample: {arch_object: {materials: {name: session[:query_material].split('|')}}}
-      ).all
+      )
     end
 
     # species
     unless session[:query_species].nil?
       @data = @data.where(
         sample: {arch_object: {species: {name: session[:query_species].split('|')}}}
-      ).all
+      )
     end
 
     # country
     unless session[:query_country].nil?
       @data = @data.where(
         sample: {arch_object: {site_phase: {site: {countries: {name: session[:query_country].split('|')}}}}}
-      ).all
+      )
     end
 
     # reference
     unless session[:query_reference].nil?
       @data = @data.where(
         references: {short_ref: session[:query_reference].split('|')}
-      ).all
+      )
     end
 
     # lasso
     unless session[:spatial_lasso_selection].nil?
        @data = @data.where(
          sample: {arch_object: {site_phase: {sites: {id: session[:spatial_lasso_selection].split('|')}}}}
-       ).all
+       )
     end
 
     # manual table selection
     unless session[:manual_table_selection].nil?
        @data = @data.where(
           id: session[:manual_table_selection]
-       ).all
+       )
     end
 
     #### provide data ####
@@ -368,11 +368,13 @@ class DataController < ApplicationController
     params["columns"] ||= { "0" => {"data" => "" } }
     params["length"]  ||= -1
 
-		# json data (for map)
-		gon.selected_sites = @data.map { |measurement| measurement.sample.arch_object.site_phase}.compact.map { |measurement| measurement.site}.select { |site| site.lat != nil and site.lat != nil}.uniq.to_json
-
     respond_to do |format|
-      format.html
+      format.html {
+      		# json data (for map)
+		arch_objects_ids = @data.distinct.pluck(:'samples.arch_object_id')
+		gon.selected_sites = Site.distinct.joins(site_phases: :arch_objects).where(site_phases:{arch_objects: {id: arch_objects_ids}}).where.not(lat: nil).where.not(lng: nil).select(:id, :name, :lat, :lng)
+		gon.selected_sites = Oj.dump(gon.selected_sites)
+      }
       # json data (for datatables)
       format.json {
         render json: {
@@ -383,7 +385,7 @@ class DataController < ApplicationController
               view_context: view_context
             }
           ).data,
-          recordsFiltered: @data.length,
+          recordsFiltered: @data.size,
           recordsTotal: Measurement.count
         }
       }

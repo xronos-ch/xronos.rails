@@ -137,28 +137,14 @@ jQuery(document).ready(function() {
     },
     "columns": [
       {"data": "select"},
-      {"data": "source_database"},
       {"data": "labnr"},
       {"data": "bp"},
       {"data": "std"},
       {"data": "cal_bp"},
       {"data": "cal_std"},
-      {"data": "delta_c13"},
-      {"data": "lab_name"},
       {"data": "site"},
-      {"data": "site_phase"},
-      {"data": "site_type"},
-      {"data": "feature"},
-      {"data": "feature_type"},
       {"data": "period"},
-      {"data": "typochronological_unit"},
-      {"data": "ecochronological_unit"},
       {"data": "material"},
-      {"data": "species"},
-      {"data": "country"},
-      {"data": "lat"},
-      {"data": "lng"},
-      {"data": "short_ref"},
     ]
     // pagingType is optional, if you want full pagination controls.
     // Check dataTables documentation to learn more about

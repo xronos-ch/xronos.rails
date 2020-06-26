@@ -119,3 +119,10 @@ gem 'loading_screen', '~> 0.2.3'
 
 # recaptcha for user registration
 gem "recaptcha"
+
+# Oj for json serialisation
+gem 'oj'
+
+# yajl for json serialisation in datatables
+gem 'yajl-ruby', require: 'yajl'
+
