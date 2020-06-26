@@ -10,7 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_09_080610) do
+ActiveRecord::Schema.define(version: 2020_06_25_155420) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   create_table "arch_objects", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -31,12 +34,12 @@ ActiveRecord::Schema.define(version: 2019_09_09_080610) do
     t.string "method"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "source_database_id"
+    t.bigint "source_database_id"
     t.index ["source_database_id"], name: "index_c14_measurements_on_source_database_id"
   end
 
-  create_table "countries", force: :cascade do |t|
-    t.string "name"
+  create_table "countries", id: :integer, default: nil, force: :cascade do |t|
+    t.string "name", limit: 100
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -48,13 +51,13 @@ ActiveRecord::Schema.define(version: 2019_09_09_080610) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "parent_id"
-    t.integer "user_id"
+    t.bigint "user_id"
     t.index ["user_id"], name: "index_ecochronological_units_on_user_id"
   end
 
   create_table "ecochronological_units_site_phases", id: false, force: :cascade do |t|
-    t.integer "site_phase_id", null: false
-    t.integer "ecochronological_unit_id", null: false
+    t.bigint "site_phase_id", null: false
+    t.bigint "ecochronological_unit_id", null: false
     t.index ["site_phase_id", "ecochronological_unit_id"], name: "index_speu"
   end
 
@@ -72,14 +75,14 @@ ActiveRecord::Schema.define(version: 2019_09_09_080610) do
     t.integer "site_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "user_id"
+    t.bigint "user_id"
     t.index ["site_id"], name: "index_fell_phases_on_site_id"
     t.index ["user_id"], name: "index_fell_phases_on_user_id"
   end
 
   create_table "fell_phases_references", id: false, force: :cascade do |t|
-    t.integer "fell_phase_id", null: false
-    t.integer "reference_id", null: false
+    t.bigint "fell_phase_id", null: false
+    t.bigint "reference_id", null: false
     t.index ["fell_phase_id", "reference_id"], name: "index_fpr"
   end
 
@@ -103,7 +106,7 @@ ActiveRecord::Schema.define(version: 2019_09_09_080610) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "c14_measurement_id"
-    t.integer "user_id"
+    t.bigint "user_id"
     t.index ["c14_measurement_id"], name: "index_measurements_on_c14_measurement_id"
     t.index ["lab_id"], name: "index_measurements_on_lab_id"
     t.index ["sample_id"], name: "index_measurements_on_sample_id"
@@ -111,9 +114,8 @@ ActiveRecord::Schema.define(version: 2019_09_09_080610) do
   end
 
   create_table "measurements_references", id: false, force: :cascade do |t|
-    t.integer "measurement_id", null: false
-    t.integer "reference_id", null: false
-    t.index ["measurement_id", "reference_id"], name: "index_mr"
+    t.bigint "measurement_id"
+    t.integer "reference_id"
   end
 
   create_table "on_site_object_positions", force: :cascade do |t|
@@ -135,23 +137,20 @@ ActiveRecord::Schema.define(version: 2019_09_09_080610) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "parent_id"
-    t.integer "user_id"
+    t.bigint "user_id"
     t.index ["user_id"], name: "index_periods_on_user_id"
   end
 
   create_table "periods_site_phases", id: false, force: :cascade do |t|
-    t.integer "site_phase_id", null: false
-    t.integer "period_id", null: false
-    t.index ["site_phase_id", "period_id"], name: "index_spp"
+    t.bigint "site_phase_id"
+    t.bigint "period_id"
   end
 
-  create_table "physical_locations", force: :cascade do |t|
-    t.integer "site_id"
-    t.integer "country_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["country_id"], name: "index_physical_locations_on_country_id"
-    t.index ["site_id"], name: "index_physical_locations_on_site_id"
+  create_table "physical_locations", id: false, force: :cascade do |t|
+    t.bigint "site_id"
+    t.float "country_id"
+    t.text "created_at"
+    t.text "updated_at"
   end
 
   create_table "references", force: :cascade do |t|
@@ -184,14 +183,13 @@ ActiveRecord::Schema.define(version: 2019_09_09_080610) do
     t.datetime "updated_at", null: false
     t.integer "site_id"
     t.integer "site_type_id"
-    t.integer "user_id"
+    t.bigint "user_id"
     t.index ["user_id"], name: "index_site_phases_on_user_id"
   end
 
   create_table "site_phases_typochronological_units", id: false, force: :cascade do |t|
-    t.integer "site_phase_id", null: false
-    t.integer "typochronological_unit_id", null: false
-    t.index ["site_phase_id", "typochronological_unit_id"], name: "index_sptu"
+    t.bigint "site_phase_id"
+    t.bigint "typochronological_unit_id"
   end
 
   create_table "site_types", force: :cascade do |t|
@@ -232,7 +230,7 @@ ActiveRecord::Schema.define(version: 2019_09_09_080610) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "parent_id"
-    t.integer "user_id"
+    t.bigint "user_id"
     t.index ["user_id"], name: "index_typochronological_units_on_user_id"
   end
 
@@ -249,4 +247,14 @@ ActiveRecord::Schema.define(version: 2019_09_09_080610) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "c14_measurements", "source_databases"
+  add_foreign_key "ecochronological_units", "users"
+  add_foreign_key "fell_phases", "users"
+  add_foreign_key "measurements", "c14_measurements"
+  add_foreign_key "measurements", "labs"
+  add_foreign_key "measurements", "samples"
+  add_foreign_key "measurements", "users"
+  add_foreign_key "periods", "users"
+  add_foreign_key "site_phases", "users"
+  add_foreign_key "typochronological_units", "users"
 end
