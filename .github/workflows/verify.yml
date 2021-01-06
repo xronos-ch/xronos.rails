@@ -1,6 +1,6 @@
 # Put this in the file: .github/workflows/verify.yml
 
-name: Verify
+name: Tests
 on: [push]
 
 jobs:
