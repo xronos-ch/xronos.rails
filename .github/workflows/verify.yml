@@ -115,7 +115,7 @@ jobs:
           bin/rails db:setup
 
       - name: Run tests
-        run: COVERAGE=true bundle exec rspec  --require rails_helper
+        run: COVERAGE=true bundle exec rspec
         env:
           RAILS_ENV: test
           PGHOST: localhost
