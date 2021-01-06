@@ -332,6 +332,7 @@ DEPENDENCIES
   rails (~> 5.2.3)
   rails-jquery-autocomplete
   recaptcha
+  rubocop
   rubocop-rails
   sass-rails (~> 5.0)
   selenium-webdriver

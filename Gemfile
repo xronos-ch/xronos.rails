@@ -130,5 +130,6 @@ gem 'yajl-ruby', require: 'yajl'
 gem 'dotenv-rails', groups: [:development, :test]
 
 # Rubocop for code checking
-gem 'rubocop-rails', require: false, groups: [:development, :test]
+gem 'rubocop', require: false
+gem 'rubocop-rails', require: false
 
