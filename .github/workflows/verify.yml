@@ -110,6 +110,7 @@ jobs:
           POSTGRES_USER: myapp
           POSTGRES_DB: myapp_test
           POSTGRES_PASSWORD: ""
+          REGISTRATION_PASSPHRASE: ""
         run: |
           bin/rails db:setup
 
