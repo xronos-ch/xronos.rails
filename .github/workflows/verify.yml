@@ -42,8 +42,6 @@ jobs:
       - name: Install packages
         run: |
           yarn install --pure-lockfile
-      - name: RuboCop Linter Action
-        uses: andrewmcodes/rubocop-linter-action@v3.3.0
       - name: stylelint 
         uses: actions-hub/stylelint@master
 
