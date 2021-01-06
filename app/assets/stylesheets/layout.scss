@@ -115,7 +115,7 @@ a:hover {
   left: 0;
   width: 40vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.7);
   transition: all 500ms ease-in-out;
   clip-path: circle(30px at 65px calc(100% - 125px));
   visibility: hidden;
@@ -276,7 +276,7 @@ main.big {
   right: 0;
   width: 12vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.7);
   transition: all 500ms ease-in-out;
   clip-path: circle(30px at calc(100% - 65px) calc(100% - 85px));
   visibility: hidden;
