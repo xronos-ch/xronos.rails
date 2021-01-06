@@ -45,10 +45,10 @@ jobs:
 
       - name: Run linters
         run: |
-          bin/rubocop --parallel
-          bin/stylelint
-          bin/prettier
-          bin/eslint
+          rubocop --parallel
+          stylelint
+          prettier
+          eslint
       - name: Run security checks
         run: |
           bin/bundler-audit --update
