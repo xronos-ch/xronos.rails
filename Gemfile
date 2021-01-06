@@ -126,3 +126,6 @@ gem 'oj'
 # yajl for json serialisation in datatables
 gem 'yajl-ruby', require: 'yajl'
 
+# Dotenv for Management Environmental Variables
+gem 'dotenv-rails', groups: [:development, :test]
+

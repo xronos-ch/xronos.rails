@@ -44,6 +44,7 @@
 
 #### env variables ####
 env_variables.env
+.env
 
 #### R files ####
 R_add_data_to_db/.Rhistory

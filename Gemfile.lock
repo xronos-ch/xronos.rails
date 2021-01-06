@@ -95,6 +95,10 @@ GEM
       railties (>= 4.1.0)
       responders
       warden (~> 1.2.3)
+    dotenv (2.7.6)
+    dotenv-rails (2.7.6)
+      dotenv (= 2.7.6)
+      railties (>= 3.2)
     erubi (1.8.0)
     execjs (2.7.0)
     factory_bot (5.0.2)
@@ -283,6 +287,7 @@ DEPENDENCIES
   cocoon
   coffee-rails (~> 4.2)
   devise (>= 4.7.1)
+  dotenv-rails
   factory_bot_rails
   faker
   font-awesome-rails
@@ -319,4 +324,4 @@ RUBY VERSION
    ruby 2.6.3p62
 
 BUNDLED WITH
-   2.1.4
+   2.2.4
