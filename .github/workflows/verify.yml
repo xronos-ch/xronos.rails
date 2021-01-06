@@ -42,17 +42,10 @@ jobs:
       - name: Install packages
         run: |
           yarn install --pure-lockfile
-
-      - name: Run linters
-        run: |
-          rubocop --parallel
-          stylelint
-          prettier
-          eslint
-      - name: Run security checks
-        run: |
-          bin/bundler-audit --update
-          bin/brakeman -q -w2
+      - name: RuboCop Linter Action
+        uses: andrewmcodes/rubocop-linter-action@v3.3.0
+      - name: stylelint 
+        uses: actions-hub/stylelint@master
 
   tests:
     name: Tests
