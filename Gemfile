@@ -129,3 +129,6 @@ gem 'yajl-ruby', require: 'yajl'
 # Dotenv for Management Environmental Variables
 gem 'dotenv-rails', groups: [:development, :test]
 
+# Rubocop for code checking
+gem 'rubocop-rails', require: false, groups: [:development, :test]
+
