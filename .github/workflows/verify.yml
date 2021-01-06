@@ -115,4 +115,12 @@ jobs:
           bin/rails db:setup
 
       - name: Run tests
-        run: bin/rspec
+        run: COVERAGE=true bundle exec rspec  --require rails_helper
+        env:
+          RAILS_ENV: test
+          PGHOST: localhost
+          PGUSER: myapp
+          POSTGRES_USER: myapp
+          POSTGRES_DB: myapp_test
+          POSTGRES_PASSWORD: ""
+          REGISTRATION_PASSPHRASE: ""
