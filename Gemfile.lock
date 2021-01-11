@@ -134,6 +134,7 @@ GEM
     json (2.5.1)
     leaflet-rails (1.5.1)
       rails (>= 4.2.0)
+    libv8 (8.4.255.0)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -151,6 +152,8 @@ GEM
     mimemagic (0.3.5)
     mini_mime (1.0.2)
     mini_portile2 (2.5.0)
+    mini_racer (0.3.1)
+      libv8 (~> 8.4.255)
     minitest (5.14.3)
     minitest-capybara (0.9.0)
       capybara
@@ -342,6 +345,7 @@ DEPENDENCIES
   leaflet-rails
   listen (>= 3.0.5, < 3.2)
   loading_screen (~> 0.2.3)
+  mini_racer
   minitest-rails-capybara
   oj
   pg

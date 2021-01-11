@@ -24,8 +24,6 @@ document.addEventListener('DOMContentLoaded',function(){
   } else {
     var sites = JSON.parse(gon.selected_sites);
 
-    // console.log(sites);
-
     // prepare markers
     const markers = new Array(sites.length)
     for (var i = 0; i < markers.length; i++) {
@@ -37,17 +35,42 @@ document.addEventListener('DOMContentLoaded',function(){
           radius: 1000,
           id: sites[i].id
         }
-      ).bindPopup(
-        'Site: ' + sites[i].name +
-        "<br>" +
-        '<button type="submit" onclick="window.location=\'' + '/sites/' + sites[i].id + '\';">' +
-          "<i class=\'fa fa-binoculars\'></i> Show site" +
-        "</button>" +
-        '<br>' +
-        '<button type="submit" onclick="window.location=\'' + '/?utf8=✓&query_site=' + sites[i].name + '\';">' +
-          "<i class=\'fa fa-filter\'></i> Measurements from this site" +
-        "</button>"
-      );
+      ).bindPopup((popup)=>{
+     var el = document.createElement('div');
+     el.classList.add("popup_tabs");
+    $.getJSON("/api/v1/data?query_site_id=" + popup.options.id,function(datapoint){
+		console.log(datapoint);
+		var measurement_content = '';
+		for (var l = 0; l< datapoint.length; l++){
+			measurement_content += '<p>' +
+				datapoint[l].measurement.labnr +
+				': ' +
+				datapoint[l].measurement.bp +
+				' &#x00B1; ' +
+				datapoint[l].measurement.std +
+				''
+				'</p>';
+		}
+      el.innerHTML = '<div class="popup_tab" id="tab-1">' +
+            '<div class="popup_content">' +
+            'Name: ' + datapoint[0].measurement.site +
+            '</div>' +
+            '</div>' +
+
+            '<div class="popup_tab" id="tab-2">' +
+            '<div class="popup_content">' +
+            measurement_content +
+            '</div>' +
+            '</div>' +
+    
+            '<ul class="popup_tabs-link">' +
+            '<li class="popup_tab-link"> <a href="#tab-1"><span>Site</span></a></li>' +
+            '<li class="popup_tab-link"> <a href="#tab-2"><span>Measurements</span></a></li>' +
+		'</ul>';
+    });
+
+     return el;
+      });
     }
 
     const layers = [
