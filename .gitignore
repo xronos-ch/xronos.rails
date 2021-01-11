@@ -2,6 +2,7 @@
 # dia files
 *.dia~
 *.dia.autosave
+*.DS_Store
 
 # MySQL Workbench
 *.mwb.bak
