@@ -2,8 +2,14 @@ module Api
   module V1
     class DataController < ApplicationController
       respond_to :json
+      before_action :valid_query, only: [:index]
 
+      rescue_from ActionController::UnpermittedParameters do
+        render :nothing => true, :status => :bad_request
+      end
+            
       def index
+  
         @data ||= Measurement.includes({c14_measurement: :source_database}, :lab, sample: {arch_object: [{site_phase: {site: :country}}, :on_site_object_position, :material, :species]})
 
         # labnr
@@ -59,6 +65,16 @@ module Api
 
       def show
         @date = Measurement.find(params[:id])
+      end
+      
+      private
+      
+      def valid_query
+#        return true if params.empty?
+#        allowed_queries = %w(query_labnr query_site query_site_type query_country query_feature query_material query_species)
+#        return true if params.except(allowed_queries).empty?
+#        return false
+        params.permit(:format, :query_labnr, :query_site, :query_site_type, :query_country, :query_feature, :query_material, :query_species)
       end
     end
   end
