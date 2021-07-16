@@ -19,7 +19,9 @@
 
     <div id="notch_wrap">
       <div id="notch">
-        <b> <a href="https://www.github.com/nevrome/xronos.rails"><%= image_tag "logo.svg.png", height: '20' %> </a></b>
+        <b> <a href="https://blog.xronos.ch"><%= image_tag "logo.svg.png", height: '20' %> </a></b>
+		<!--
+			### Login and (Self) Registration currently not enabled ###
         <div id="notch_login_status">
           <% if user_signed_in? %>
             <%= fa_icon "user" %> <% if current_user.admin? %> <%= fa_icon "legal" %> <% end %> <%= current_user.email[0...15] + "..." %>
@@ -30,6 +32,7 @@
             <%= fa_icon "user-plus" %> <%= link_to('Register', new_user_registration_path, class: "user_edit_link") %>
           <% end %>
         </div>
+		-->
       </div>
     </div>
 
