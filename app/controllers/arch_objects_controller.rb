@@ -136,6 +136,7 @@ class ArchObjectsController < ApplicationController
           ],
           :periods_attributes => [
             :id,
+            :parent_id,
             :name,
             :approx_start_time,
             :approx_end_time,
@@ -143,6 +144,7 @@ class ArchObjectsController < ApplicationController
           ],
           :typochronological_units_attributes => [
               :id,
+              :parent_id,
               :name,
               :approx_start_time,
               :approx_end_time,
@@ -150,6 +152,7 @@ class ArchObjectsController < ApplicationController
           ],
           :ecochronological_units_attributes => [
               :id,
+              :parent_id,
               :name,
               :approx_start_time,
               :approx_end_time,
