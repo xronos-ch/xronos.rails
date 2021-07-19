@@ -31,3 +31,17 @@ class ActionDispatch::IntegrationTest
     config.default_driver        = :headless_chrome
   end
 end
+
+# in test/test_helper.rb
+def with_versioning
+  was_enabled = PaperTrail.enabled?
+  was_enabled_for_request = PaperTrail.request.enabled?
+  PaperTrail.enabled = true
+  PaperTrail.request.enabled = true
+  begin
+    yield
+  ensure
+    PaperTrail.enabled = was_enabled
+    PaperTrail.request.enabled = was_enabled_for_request
+  end
+end
