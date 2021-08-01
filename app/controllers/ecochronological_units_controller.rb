@@ -27,7 +27,6 @@ class EcochronologicalUnitsController < ApplicationController
   # POST /ecochronological_units.json
   def create
     @ecochronological_unit = EcochronologicalUnit.new(ecochronological_unit_params)
-    @ecochronological_unit.user_id = current_user.id if current_user
 
     respond_to do |format|
       if @ecochronological_unit.save

@@ -30,7 +30,6 @@ class MeasurementsController < ApplicationController
   # POST /measurements.json
   def create
     @measurement = Measurement.new(measurement_params)
-    @measurement.user_id = current_user.id if current_user
 
     respond_to do |format|
       if @measurement.save
@@ -81,7 +80,6 @@ class MeasurementsController < ApplicationController
         :_destroy,
         :sample_id,
         :lab_id,
-        :user_id,
         :c14_measurement_id,
         :c14_measurement_attributes => [
           :id,

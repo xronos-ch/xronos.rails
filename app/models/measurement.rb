@@ -14,8 +14,6 @@ class Measurement < ApplicationRecord
   accepts_nested_attributes_for :references, reject_if: :all_blank
   validates_associated :references
 
-  belongs_to :user
-
   def self.to_csv
     CSV.generate :force_quotes=>true do |csv|
       csv << [

@@ -24,5 +24,4 @@ class SitePhase < ApplicationRecord
   accepts_nested_attributes_for :site_type, reject_if: :all_blank, allow_destroy: true
   validates_associated :site_type
 
-  belongs_to :user
 end
