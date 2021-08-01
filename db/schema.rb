@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_25_155420) do
+ActiveRecord::Schema.define(version: 2021_08_01_122832) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -137,8 +137,6 @@ ActiveRecord::Schema.define(version: 2020_06_25_155420) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "parent_id"
-    t.bigint "user_id"
-    t.index ["user_id"], name: "index_periods_on_user_id"
   end
 
   create_table "periods_site_phases", id: false, force: :cascade do |t|
@@ -230,8 +228,6 @@ ActiveRecord::Schema.define(version: 2020_06_25_155420) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "parent_id"
-    t.bigint "user_id"
-    t.index ["user_id"], name: "index_typochronological_units_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -254,7 +250,5 @@ ActiveRecord::Schema.define(version: 2020_06_25_155420) do
   add_foreign_key "measurements", "labs"
   add_foreign_key "measurements", "samples"
   add_foreign_key "measurements", "users"
-  add_foreign_key "periods", "users"
   add_foreign_key "site_phases", "users"
-  add_foreign_key "typochronological_units", "users"
 end
