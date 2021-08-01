@@ -8,5 +8,4 @@ class User < ApplicationRecord
   validates :passphrase, format: { with: Regexp.new(ENV["REGISTRATION_PASSPHRASE"]) , message: "is wrong. Please contact ... to get a correct passphrase to register." }
 
   has_many :measurements, inverse_of: :user
-  has_many :fell_phases, inverse_of: :user
 end

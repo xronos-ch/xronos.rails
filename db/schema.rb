@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_01_123336) do
+ActiveRecord::Schema.define(version: 2021_08_01_123602) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -73,9 +73,7 @@ ActiveRecord::Schema.define(version: 2021_08_01_123336) do
     t.integer "site_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "user_id"
     t.index ["site_id"], name: "index_fell_phases_on_site_id"
-    t.index ["user_id"], name: "index_fell_phases_on_user_id"
   end
 
   create_table "fell_phases_references", id: false, force: :cascade do |t|
@@ -240,7 +238,6 @@ ActiveRecord::Schema.define(version: 2021_08_01_123336) do
   end
 
   add_foreign_key "c14_measurements", "source_databases"
-  add_foreign_key "fell_phases", "users"
   add_foreign_key "measurements", "c14_measurements"
   add_foreign_key "measurements", "labs"
   add_foreign_key "measurements", "samples"
