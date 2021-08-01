@@ -7,5 +7,4 @@ class User < ApplicationRecord
   attr_accessor :passphrase
   validates :passphrase, format: { with: Regexp.new(ENV["REGISTRATION_PASSPHRASE"]) , message: "is wrong. Please contact ... to get a correct passphrase to register." }
 
-  has_many :measurements, inverse_of: :user
 end
