@@ -40,6 +40,9 @@ group :development, :test do
 
   # RSpec for testing
   gem 'rspec-rails', '~> 4.0.1'
+  # Generating test data for models
+  gem 'factory_bot_rails'
+  gem 'faker'
 end
 
 group :development do
@@ -57,9 +60,6 @@ group :test do
   gem 'selenium-webdriver'
   gem 'webdrivers'
   gem 'capybara-selenium'
-  # Generating test data for models
-  gem 'factory_bot_rails'
-  gem 'faker'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
