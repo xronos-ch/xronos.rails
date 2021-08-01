@@ -1,7 +1,7 @@
 FactoryBot.define do
   
   factory :material do
-    name { Faker::Construction.unique.material }
+    sequence(:name)   { |n| "Material #{n}" }
   end
   
 end
