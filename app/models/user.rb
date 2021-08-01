@@ -9,5 +9,4 @@ class User < ApplicationRecord
 
   has_many :measurements, inverse_of: :user
   has_many :fell_phases, inverse_of: :user
-  has_many :site_phases, inverse_of: :user
 end
