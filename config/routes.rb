@@ -45,7 +45,7 @@ Rails.application.routes.draw do
   get 'data/autocomplete_site_name'
   get 'data/index'
 	post 'data/index'
-  root 'data#index'
+#  root 'data#index'
   root to: "data#index"
   get '/api' => 'pages#api'
   get '/about' => 'pages#about'
