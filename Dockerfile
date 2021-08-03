@@ -17,7 +17,7 @@ ADD Gemfile .
 ADD Gemfile.lock .
 
 # update bundler
-RUN gem install bundler:2.0.1
+RUN gem install bundler
 
 # bundle install
 RUN bundle install --system
