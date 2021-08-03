@@ -1,6 +1,6 @@
 # base image
 FROM ruby:3.0.2
-MAINTAINER Martin Hinz <martin.hinz@ufg.uni-kiel.de>
+MAINTAINER Martin Hinz <martin.hinz@iaw.unibe.ch>
 
 # install javascript runtime
 RUN apt-get update && apt-get install -y nodejs --no-install-recommends && rm -rf /var/lib/apt/lists/*
