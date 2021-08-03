@@ -364,9 +364,6 @@ class DataController < ApplicationController
     end
 
     #### provide data ####
-    # https://github.com/jbox-web/ajax-datatables-rails/issues/246
-    params["columns"] ||= { "0" => {"data" => "" } }
-    params["length"]  ||= -1
 
     respond_to do |format|
       format.html {
