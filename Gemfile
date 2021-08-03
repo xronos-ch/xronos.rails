@@ -4,7 +4,9 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '2.7.2'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.2.6'
+gem 'rails', '~> 6.1.4'
+# gem 'rails', '~> 5.2.6'
+
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3'
 # Use Puma as the app server
@@ -56,7 +58,8 @@ end
 
 group :test do
   # Adds support for Capybara system testing and selenium driver
-  gem 'minitest-rails-capybara'
+#  gem 'minitest-rails-capybara'
+  gem 'minitest'
   gem 'selenium-webdriver'
   gem 'webdrivers'
   gem 'capybara-selenium'
@@ -66,7 +69,8 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # enable isa-relations
-gem 'active_record-acts_as'
+# gem 'active_record-acts_as'
+# not used any longer? if upgrade to rails 6 is successful, remove?
 
 # irb for bootsnap: rails console
 gem 'irb', require: false
@@ -109,7 +113,7 @@ gem 'jquery-ui-rails'
 gem 'rails-jquery-autocomplete'
 
 # in place editing
-gem 'best_in_place'
+gem "best_in_place", git: "https://github.com/mmotherwell/best_in_place"
 
 # rabl for the api
 gem 'rabl'

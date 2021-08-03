@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded',function(){
         }
     });
 
+/*  Not working when user_edit_link not available?
     user_edit_link.addEventListener("click", evt => {
         if (left_window_menu.className.indexOf("active") === -1) {
             left_window_menu.classList.add("active");
@@ -35,6 +36,6 @@ document.addEventListener('DOMContentLoaded',function(){
 
         }
     });
-
+*/
 });
 

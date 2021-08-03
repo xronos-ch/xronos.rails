@@ -1,6 +1,7 @@
 require 'test_helper'
 
-class CountryFlowTest < Capybara::Rails::TestCase
+class CountryFlowTest < ActionDispatch::IntegrationTest
+
   include Devise::Test::IntegrationHelpers
 
   setup do
