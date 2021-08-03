@@ -4,7 +4,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '2.7.2'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 6.0.4'
+gem 'rails', '~> 6.1.4'
 # gem 'rails', '~> 5.2.6'
 
 # Use sqlite3 as the database for Active Record
@@ -113,7 +113,7 @@ gem 'jquery-ui-rails'
 gem 'rails-jquery-autocomplete'
 
 # in place editing
-gem 'best_in_place'
+gem "best_in_place", git: "https://github.com/mmotherwell/best_in_place"
 
 # rabl for the api
 gem 'rabl'

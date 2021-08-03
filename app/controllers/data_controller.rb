@@ -368,7 +368,7 @@ class DataController < ApplicationController
     respond_to do |format|
       format.html {
       		# json data (for map)
-		arch_objects_ids = @data.distinct.pluck(:'samples.arch_object_id')
+		arch_objects_ids = @data.joins(:sample).distinct.pluck(:arch_object_id)
 		gon.selected_sites = Site.distinct.joins(site_phases: :arch_objects).where(site_phases:{arch_objects: {id: arch_objects_ids}}).where.not(lat: nil).where.not(lng: nil).select(:id, :name, :lat, :lng)
 		gon.selected_sites = Oj.dump(gon.selected_sites)
       }
