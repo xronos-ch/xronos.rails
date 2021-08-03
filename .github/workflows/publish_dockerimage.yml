@@ -8,11 +8,11 @@ name: Publish Docker image
 on:
   release:
     types: [published]
-      tags:
-        - 'latest'
+    tags:
+      - 'latest'
   workflow_dispatch:
-      tags:
-        - 'latest'
+    tags:
+      - 'latest'
         
 jobs:
   push_to_registry:
