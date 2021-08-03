@@ -1,6 +1,7 @@
 require 'test_helper'
 
-class ArchObjectFlowTest < Capybara::Rails::TestCase
+class ArchObjectFlowTest < ActionDispatch::IntegrationTest
+
   include Devise::Test::IntegrationHelpers
 
   setup do
