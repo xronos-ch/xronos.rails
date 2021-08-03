@@ -1,5 +1,5 @@
 # base image
-FROM ruby:2.6.3
+FROM ruby:3.0.2
 MAINTAINER Martin Hinz <martin.hinz@ufg.uni-kiel.de>
 
 # install javascript runtime
