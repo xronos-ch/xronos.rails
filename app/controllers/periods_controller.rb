@@ -27,7 +27,6 @@ class PeriodsController < ApplicationController
   # POST /periods.json
   def create
     @period = Period.new(period_params)
-    @period.user_id = current_user.id if current_user
 
     respond_to do |format|
       if @period.save

@@ -28,7 +28,6 @@ class FellPhasesController < ApplicationController
   # POST /fell_phases.json
   def create
     @fell_phase = FellPhase.new(fell_phase_params)
-    @fell_phase.user_id = current_user.id if current_user
 
     respond_to do |format|
       if @fell_phase.save

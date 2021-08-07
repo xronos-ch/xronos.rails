@@ -1,6 +1,6 @@
 # base image
-FROM ruby:2.6.3
-MAINTAINER Martin Hinz <martin.hinz@ufg.uni-kiel.de>
+FROM ruby:3.0.2
+MAINTAINER Martin Hinz <martin.hinz@iaw.unibe.ch>
 
 # install javascript runtime
 RUN apt-get update && apt-get install -y nodejs --no-install-recommends && rm -rf /var/lib/apt/lists/*
@@ -17,7 +17,7 @@ ADD Gemfile .
 ADD Gemfile.lock .
 
 # update bundler
-RUN gem install bundler:2.0.1
+RUN gem install bundler
 
 # bundle install
 RUN bundle install --system

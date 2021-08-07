@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_19_115120) do
+ActiveRecord::Schema.define(version: 2021_08_01_124700) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -51,8 +51,6 @@ ActiveRecord::Schema.define(version: 2021_07_19_115120) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "parent_id"
-    t.bigint "user_id"
-    t.index ["user_id"], name: "index_ecochronological_units_on_user_id"
   end
 
   create_table "ecochronological_units_site_phases", id: false, force: :cascade do |t|
@@ -75,9 +73,7 @@ ActiveRecord::Schema.define(version: 2021_07_19_115120) do
     t.integer "site_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "user_id"
     t.index ["site_id"], name: "index_fell_phases_on_site_id"
-    t.index ["user_id"], name: "index_fell_phases_on_user_id"
   end
 
   create_table "fell_phases_references", id: false, force: :cascade do |t|
@@ -106,11 +102,9 @@ ActiveRecord::Schema.define(version: 2021_07_19_115120) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "c14_measurement_id"
-    t.bigint "user_id"
     t.index ["c14_measurement_id"], name: "index_measurements_on_c14_measurement_id"
     t.index ["lab_id"], name: "index_measurements_on_lab_id"
     t.index ["sample_id"], name: "index_measurements_on_sample_id"
-    t.index ["user_id"], name: "index_measurements_on_user_id"
   end
 
   create_table "measurements_references", id: false, force: :cascade do |t|
@@ -138,8 +132,6 @@ ActiveRecord::Schema.define(version: 2021_07_19_115120) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "parent_id"
-    t.bigint "user_id"
-    t.index ["user_id"], name: "index_periods_on_user_id"
   end
 
   create_table "periods_site_phases", id: false, force: :cascade do |t|
@@ -187,8 +179,6 @@ ActiveRecord::Schema.define(version: 2021_07_19_115120) do
     t.datetime "updated_at", null: false
     t.integer "site_id"
     t.integer "site_type_id"
-    t.bigint "user_id"
-    t.index ["user_id"], name: "index_site_phases_on_user_id"
   end
 
   create_table "site_phases_typochronological_units", id: false, force: :cascade do |t|
@@ -235,8 +225,6 @@ ActiveRecord::Schema.define(version: 2021_07_19_115120) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "parent_id"
-    t.bigint "user_id"
-    t.index ["user_id"], name: "index_typochronological_units_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -263,13 +251,7 @@ ActiveRecord::Schema.define(version: 2021_07_19_115120) do
   end
 
   add_foreign_key "c14_measurements", "source_databases"
-  add_foreign_key "ecochronological_units", "users"
-  add_foreign_key "fell_phases", "users"
   add_foreign_key "measurements", "c14_measurements"
   add_foreign_key "measurements", "labs"
   add_foreign_key "measurements", "samples"
-  add_foreign_key "measurements", "users"
-  add_foreign_key "periods", "users"
-  add_foreign_key "site_phases", "users"
-  add_foreign_key "typochronological_units", "users"
 end
