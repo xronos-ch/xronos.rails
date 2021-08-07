@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::Base
+  before_action :set_paper_trail_whodunnit
 
   # access management error handling (messages)
   rescue_from CanCan::AccessDenied do |exception|
@@ -8,5 +9,15 @@ class ApplicationController < ActionController::Base
       format.js   { render nothing: true, status: :not_found }
     end
   end
+  
+  def info_for_paper_trail
+    { whodunnit_user_email: current_user.email } if user_signed_in?
+  end
 
+  protected
+  
+  def user_for_paper_trail
+    current_user.id if user_signed_in?
+  end
+    
 end
