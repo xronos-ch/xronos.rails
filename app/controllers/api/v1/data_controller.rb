@@ -5,14 +5,14 @@ module Api
       #before_action :doorkeeper_authorize! # Requires access token for all actions
       
       # Authorize only necessary for admin
-      #before_action only: [:create, :update, :destroy] do
-      #  doorkeeper_authorize! :admin
-      #end
-      
-      # Authorize only necessary for admin for all actions
-      before_action do
+      before_action only: [:create, :update, :destroy] do
         doorkeeper_authorize! :admin
       end
+      
+      # Authorize only necessary for admin for all actions
+      # before_action do
+      #   doorkeeper_authorize! :admin
+      # end
 
 
       respond_to :json
