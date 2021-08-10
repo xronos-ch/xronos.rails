@@ -5,6 +5,10 @@ class Measurement < ApplicationRecord
   belongs_to :lab, optional: true
   accepts_nested_attributes_for :lab, reject_if: :all_blank
   validates_associated :lab
+  
+  belongs_to :measurement_state, optional: true
+  accepts_nested_attributes_for :measurement_state, reject_if: :all_blank
+  validates_associated :measurement_state
 
   belongs_to :c14_measurement, optional: true
   accepts_nested_attributes_for :c14_measurement, reject_if: :all_blank
@@ -14,6 +18,25 @@ class Measurement < ApplicationRecord
   accepts_nested_attributes_for :references, reject_if: :all_blank
   validates_associated :references
 
+  belongs_to :replacement_measurement,
+    class_name: 'Measurement',
+    foreign_key: :replaced_by,
+    primary_key: :id,
+    optional: true
+
+  has_many :replaced_measurements,
+    class_name: 'Measurement',
+    foreign_key: :replaced_by,
+    primary_key: :id
+
+  def replacing=(replacing_ids)
+    self.replaced_measurements ||= Measurement.find_by_id(replacing_ids)
+  end
+
+  def replacing
+    @replacing || Measurement.where(replaced_by: self.id)
+  end
+  
   def self.to_csv
     CSV.generate :force_quotes=>true do |csv|
       csv << [

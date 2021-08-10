@@ -80,6 +80,7 @@ class MeasurementsController < ApplicationController
         :_destroy,
         :sample_id,
         :lab_id,
+        :measurement_state_id,
         :c14_measurement_id,
         :c14_measurement_attributes => [
           :id,
@@ -111,6 +112,12 @@ class MeasurementsController < ApplicationController
           :id,
           :short_ref,
           :bibtex,
+          :_destroy
+        ],
+        :measurement_state_attributes => [
+          :id,
+          :name,
+          :description,
           :_destroy
         ]
       )
