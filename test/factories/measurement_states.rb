@@ -1,8 +1,8 @@
 FactoryBot.define do
   
   factory :measurement_state do
-    name { Faker::Emotion.unique.noun }
-    description { Faker::Emotion.adjective }
+    name { Faker::Name.unique.first_name }
+    description { Faker::ChuckNorris.fact }
   end
   
 end
