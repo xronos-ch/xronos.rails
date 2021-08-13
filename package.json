@@ -1,5 +1,15 @@
 {
   "name": "xronos",
   "private": true,
-  "dependencies": {}
+  "dependencies": {
+    "@rails/webpacker": "5.4.0",
+    "bootstrap": "4.3.1",
+    "jquery": "^3.6.0",
+    "popper.js": "^1.16.1",
+    "webpack": "^4.46.0",
+    "webpack-cli": "^3.3.12"
+  },
+  "devDependencies": {
+    "webpack-dev-server": "^3.11.2"
+  }
 }

@@ -136,3 +136,4 @@ gem 'dotenv-rails', groups: [:development, :test]
 gem 'rubocop', require: false
 gem 'rubocop-rails', require: false
 
+gem 'webpacker'

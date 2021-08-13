@@ -49,12 +49,23 @@ a:hover {
 #notch {
   position: relative;
   height: auto;
-	padding-top: 2px;
+  padding-top: 2px;
   text-align: center;
-  clip-path: polygon(0 0, 100% 0, 90% 100%, 10% 100%);
+//  clip-path: polygon(0 0, 100% 0, 90% 100%, 10% 100%);
   color: black;
-  background: white;
   border: none;
+}
+
+#notch::before {
+  content:"";
+  position:absolute;
+  z-index:-1;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  clip-path: polygon(0 0, 100% 0, 90% 100%, 10% 100%);
+  background-color: white;
 }
 
 #notch_login_status {
