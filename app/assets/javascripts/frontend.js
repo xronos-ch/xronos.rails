@@ -10,23 +10,16 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-//= require jquery
-//= require best_in_place
-//= require jquery_ujs
-//= require jquery-ui/widgets/autocomplete
-//= require jquery-ui
-//= require best_in_place.jquery-ui
-//= require autocomplete-rails
-//= require activestorage
-//= require datatables
-//= require cocoon
-//= require loading_screen
-//= require ion.rangeSlider
 //= require cable
 //= require calibrate
-//= require data
-//= require datatables
-//= require bootstrap.bundle.min
+//= require leaflet
+//= require leaflet_lasso
+//= require layout_extend_left_window_nav
+//= require layout_form_observed_select
+//= require layout_leaflet_background_map
+//= require layout_left_window_menu
+//= require layout_right_window_menu
+//= require layout_special_filter_tools
 
 
 // initialize datatables
