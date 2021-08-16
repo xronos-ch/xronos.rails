@@ -206,12 +206,12 @@ a:hover {
 main {
   display:inline-block;
   height:100%;
-  width: calc(42vw - 100px);
+  width: calc(40vw - 100px);
   transition: all 500ms ease-in-out;
 }
 
 main.big {
-  width: calc(82vw - 100px);
+  width: calc(80vw - 100px);
 }
 
 #breadcrumbs_nav {

@@ -29,8 +29,8 @@
             <%= fa_icon "edit" %> <%= link_to('Edit registration', edit_user_registration_path, class: "user_edit_link") %>
             <%= fa_icon "sign-out" %> <%= link_to('Logout', destroy_user_session_path, method: :delete) %>
           <% else %>
-           <div class="dropright">
-			  <button class="btn btn-sm btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+           <div class="dropend">
+           	  <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
 				Sign in
 			  </button>
 
@@ -39,18 +39,14 @@
     			  <div class="form-group">
 			  	    <%= f.label :email, class: "sr-only col-form-label col-form-label-sm" %>
 					<div class="input-group">
-					  <div class="input-group-prepend">
 				        <div class="input-group-text" style="width: 15px;"><%= fa_icon "user" %></div>
-				      </div>
 			          <%= f.text_field :email, class: "form-control form-control-sm", placeholder: "email@example.com"  %>
 				    </div>
 				  </div>
 				  <div class="form-group">
 			 	    <%= f.label :password, class: "sr-only col-form-label col-form-label-sm" %>
   					<div class="input-group">
-					  <div class="input-group-prepend">
-				        <div class="input-group-text" style="width: 15px;"><%= fa_icon "unlock" %></div>
-				      </div>
+			          <div class="input-group-text" style="width: 15px;"><%= fa_icon "unlock" %></div>
 			          <%= f.password_field :password, class: "form-control form-control-sm", placeholder: "password"  %>
 			  	  	</div>
 			  	  </div>

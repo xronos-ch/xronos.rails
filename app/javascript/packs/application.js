@@ -15,7 +15,8 @@
 // const images = require.context('../images', true)
 // const imagePath = (name) => images(name, true)
 
-require("bootstrap")
+// require("bootstrap")
+import "../stylesheets/application";
 document.addEventListener("turbolinks:load", function() {
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
@@ -23,4 +24,4 @@ document.addEventListener("turbolinks:load", function() {
     })
 })
 
-import "../stylesheets/application"
+

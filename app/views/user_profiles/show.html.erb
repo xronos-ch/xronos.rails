@@ -6,7 +6,7 @@
     <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Profile</button>
   </li>
   <li class="nav-item" role="presentation">
-    <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Contact</button>
+    <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Something Else</button>
   </li>
 </ul>
 <div class="tab-content" id="myTabContent">
@@ -15,18 +15,10 @@
   <p>
   <dt class="col-sm-3">First name:</dt>
   <dd class="col-sm-9"><%= @user_profile.first_name %></dd>
-
-<p>
-  <strong>Last name:</strong>
-  <%= @user_profile.last_name %>
-</p>
-
-<p>
-  <strong>User:</strong>
-  <%= @user_profile.user_id %>
-</p>
-
+  <dt class="col-sm-3">Last name:</dt>
+  <dd class="col-sm-9"><%= @user_profile.last_name %></dd>
 </dl>
+
 
   </div>
   <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>

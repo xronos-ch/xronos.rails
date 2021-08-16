@@ -2,10 +2,10 @@
   "name": "xronos",
   "private": true,
   "dependencies": {
+    "@popperjs/core": "^2.9.3",
     "@rails/webpacker": "5.4.0",
-    "bootstrap": "4.3.1",
+    "bootstrap": "^5.0.0-beta3",
     "jquery": "^3.6.0",
-    "popper.js": "^1.16.1",
     "webpack": "^4.46.0",
     "webpack-cli": "^3.3.12"
   },
