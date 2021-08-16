@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded',function(){
     const left_window_menu = document.querySelector(".left_window_menu");
     const btn = left_window_menu.querySelector("#left_window_nav_general");
     const notch = document.querySelector("#notch");
-    const user_edit_link = notch.querySelector(".user_edit_link");
+//    const user_edit_link = notch.querySelector(".user_edit_link");
 
     btn.addEventListener("click", evt => {
         if (left_window_menu.className.indexOf("active") === -1) {

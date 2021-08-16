@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  get "/table" => "data#index"
+  get "/map" => "data#map"
   resources :user_profiles
   use_doorkeeper
   resources :measurement_states
@@ -49,7 +51,7 @@ Rails.application.routes.draw do
   get 'data/index'
 	post 'data/index'
 #  root 'data#index'
-  root to: "data#index"
+  root to: "data#map"
   get '/api' => 'pages#api'
   get '/about' => 'pages#about'
   get '/database' => 'pages#database'

@@ -63,9 +63,17 @@ class DataController < ApplicationController
     redirect_to :root
   end
 
-
-
   def index
+  	get_data
+  end
+  
+  def map
+  	get_data
+  end
+
+  private
+
+  def get_data
 
     #### update session ####
 
