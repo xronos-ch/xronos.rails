@@ -138,3 +138,6 @@ gem 'rubocop-rails', require: false
 
 # Paper Trail for versioning
 gem 'paper_trail'
+
+# Door Keeper for Oauth2-api
+gem 'doorkeeper'

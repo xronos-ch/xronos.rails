@@ -6,6 +6,7 @@ FactoryBot.define do
     admin { false }
     passphrase { ENV["REGISTRATION_PASSPHRASE"] }
     trait :admin do
+      email { "admin@chronos.ch" }
       admin { true }
     end
     factory :admin, traits: [:admin]
