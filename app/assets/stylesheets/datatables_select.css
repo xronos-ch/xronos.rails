@@ -79,7 +79,7 @@ table.dataTable tbody th.select-checkbox:before {
   content: ' ';
   margin-top: -8px;
   margin-left: -6px;
-  border: 1px solid white;
+  border: 1px solid black;
   border-radius: 3px;
 }
 table.dataTable tr.selected td.select-checkbox:after,

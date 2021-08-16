@@ -57,7 +57,7 @@ table.dataTable {
   table.dataTable thead .sorting_desc_disabled {
     background-image: url("sort_desc_disabled.png"); }
   table.dataTable tbody tr {
-    background-color: #333333 !important;
+   /* background-color: #333333 !important; */
   }
     table.dataTable tbody tr.selected {
       background-color: #ffffff !important;
@@ -376,3 +376,7 @@ table.dataTable td {
     text-align: center; }
   .dataTables_wrapper .dataTables_filter {
     margin-top: 0.5em; } }
+    
+@import 'datatables/dataTables.bootstrap4';
+@import 'datatables/extensions/Responsive/responsive.bootstrap4';
+@import 'datatables/extensions/Buttons/buttons.bootstrap4';

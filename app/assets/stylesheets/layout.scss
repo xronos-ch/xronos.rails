@@ -386,7 +386,6 @@ main.big {
     background-clip: padding-box;
     outline: 0;
     transition: transform .3s ease-in-out;
-    z-index: -1;
 }
 
 #button_filter_data {
@@ -395,5 +394,5 @@ main.big {
     display: inline-block;
     cursor: pointer;
     position: fixed;
-    z-index: 100;
+    z-index: 1100;
 }

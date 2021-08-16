@@ -1,3 +1,4 @@
+<div style="z-index: -1">
 <table id="selected_measurements-datatable" class="compact row-border hover" data-source="<%= root_path(format: :json) %>" style="width: 100%">
 	<thead>
 		<tr>
@@ -15,3 +16,16 @@
 	<tbody>
 	</tbody>
 </table>
+</div>
+
+<div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="filterDataOffcanvas" aria-labelledby="offcanvasScrollingLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasScrollingLabel"></h5>
+  </div>
+  <div class="filter_data">
+    <!-- #### Filter #### -->
+	<%= render "filter" %>
+  </div>
+</div>
+</div>
+<button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterDataOffcanvas" aria-controls="filterDataOffcanvas" id="button_filter_data"><%= fa_icon "search" %>Show data filter</button>
