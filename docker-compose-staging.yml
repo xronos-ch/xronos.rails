@@ -11,7 +11,7 @@ services:
     env_file:
       - env_variables.env
   web:
-    container_name: xronos_rails_app
+    container_name: xronos_rails_staging_app
     restart: always
     image: xronos/xronos.rails
     ports:
