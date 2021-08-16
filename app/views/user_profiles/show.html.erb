@@ -11,14 +11,9 @@
 </ul>
 <div class="tab-content" id="myTabContent">
   <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-  <dl class="row">
-  <p>
-  <dt class="col-sm-3">First name:</dt>
-  <dd class="col-sm-9"><%= @user_profile.first_name %></dd>
-  <dt class="col-sm-3">Last name:</dt>
-  <dd class="col-sm-9"><%= @user_profile.last_name %></dd>
-</dl>
-
+<%= form_for(@user_profile) do |f| %>
+  <%= render 'user_profile_fields', :form => f, :disabled => true %>
+<% end %>
 
   </div>
   <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
