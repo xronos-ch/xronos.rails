@@ -78,6 +78,7 @@ class SitePhasesController < ApplicationController
     def site_phase_params
       params.require(:site_phase).permit(
         :id,
+        :parent_id,
         :name,
         :approx_start_time,
         :approx_end_time,

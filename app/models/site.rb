@@ -1,5 +1,6 @@
 class Site < ApplicationRecord
-
+  has_paper_trail
+  
   validates :name, presence: true
 
   has_many :site_phases, inverse_of: :site

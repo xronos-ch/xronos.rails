@@ -1,6 +1,20 @@
 module Api
   module V1
     class DataController < ApplicationController
+    
+      #before_action :doorkeeper_authorize! # Requires access token for all actions
+      
+      # Authorize only necessary for admin
+      before_action only: [:create, :update, :destroy] do
+        doorkeeper_authorize! :admin
+      end
+      
+      # Authorize only necessary for admin for all actions
+      # before_action do
+      #   doorkeeper_authorize! :admin
+      # end
+
+
       respond_to :json
       before_action :valid_query, only: [:index]
 

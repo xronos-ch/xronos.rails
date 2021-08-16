@@ -115,6 +115,8 @@ GEM
       responders
       warden (~> 1.2.3)
     diff-lcs (1.4.4)
+    doorkeeper (5.5.2)
+      railties (>= 5)
     dotenv (2.7.6)
     dotenv-rails (2.7.6)
       dotenv (= 2.7.6)
@@ -178,6 +180,9 @@ GEM
       racc (~> 1.4)
     oj (3.12.3)
     orm_adapter (0.5.0)
+    paper_trail (12.0.0)
+      activerecord (>= 5.2)
+      request_store (~> 1.1)
     parallel (1.20.1)
     parser (3.0.2.0)
       ast (~> 2.4.1)
@@ -346,6 +351,7 @@ DEPENDENCIES
   cocoon
   coffee-rails (~> 4.2)
   devise (>= 4.7.1)
+  doorkeeper
   dotenv-rails
   factory_bot_rails
   faker
@@ -361,6 +367,7 @@ DEPENDENCIES
   loading_screen (~> 0.2.3)
   minitest
   oj
+  paper_trail
   pg
   puma (< 6)
   rabl

@@ -51,7 +51,6 @@ env_variables.env
 R_add_data_to_db/.Rhistory
 R_add_data_to_db/.RData
 
-
 /public/packs
 /public/packs-test
 /node_modules

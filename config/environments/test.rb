@@ -46,6 +46,13 @@ Rails.application.configure do
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
 
+  # Raises error for missing translations
+  # config.action_view.raise_on_missing_translations = true
+  
+  config.after_initialize do
+    PaperTrail.enabled = false
+  end
+
   # Raise exceptions for disallowed deprecations.
   config.active_support.disallowed_deprecation = :raise
 
@@ -57,4 +64,5 @@ Rails.application.configure do
 
   # Annotate rendered view with file names.
   # config.action_view.annotate_rendered_view_with_filenames = true
+
 end

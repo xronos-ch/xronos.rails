@@ -136,4 +136,11 @@ gem 'dotenv-rails', groups: [:development, :test]
 gem 'rubocop', require: false
 gem 'rubocop-rails', require: false
 
+# Paper Trail for versioning
+gem 'paper_trail'
+
+# Door Keeper for Oauth2-api
+gem 'doorkeeper'
+
+# WebPacker for up-to-date asset serving
 gem 'webpacker'
