@@ -15,7 +15,7 @@ services:
     restart: always
     image: xronos/xronos.rails
     ports:
-      - "4000:3001"
+      - "4001:3000"
     depends_on:
       - db
     env_file:
