@@ -35,6 +35,6 @@ jobs:
         with:
           context: .
           push: true
-          file: ./Dockerfile.staging
           tags: xronos/xronos.rails:staging
           labels: ${{ steps.meta.outputs.labels }}
+          file: ./Dockerfile.staging
