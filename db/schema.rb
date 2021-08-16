@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_07_162055) do
+ActiveRecord::Schema.define(version: 2021_08_10_162234) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -95,6 +95,13 @@ ActiveRecord::Schema.define(version: 2021_08_07_162055) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "measurement_states", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "measurements", force: :cascade do |t|
     t.string "labnr"
     t.integer "sample_id"
@@ -102,8 +109,12 @@ ActiveRecord::Schema.define(version: 2021_08_07_162055) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "c14_measurement_id"
+    t.integer "replaced_by"
+    t.text "replacement_comment"
+    t.bigint "measurement_state_id", null: false
     t.index ["c14_measurement_id"], name: "index_measurements_on_c14_measurement_id"
     t.index ["lab_id"], name: "index_measurements_on_lab_id"
+    t.index ["measurement_state_id"], name: "index_measurements_on_measurement_state_id"
     t.index ["sample_id"], name: "index_measurements_on_sample_id"
   end
 
@@ -298,8 +309,8 @@ ActiveRecord::Schema.define(version: 2021_08_07_162055) do
   add_foreign_key "c14_measurements", "source_databases"
   add_foreign_key "measurements", "c14_measurements"
   add_foreign_key "measurements", "labs"
+  add_foreign_key "measurements", "measurement_states"
   add_foreign_key "measurements", "samples"
-  add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_grants", "users", column: "resource_owner_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "users", column: "resource_owner_id"

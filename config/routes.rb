@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
 
   use_doorkeeper
+  resources :measurement_states
   resources :source_databases
   get 'data/autocomplete_source_database_name'
   namespace :api, defaults: {format: 'json'} do

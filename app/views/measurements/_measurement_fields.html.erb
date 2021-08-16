@@ -25,7 +25,19 @@
       <%= render 'labs/lab_fields', :f => lab %>
     <% end %>
   </div>
-
+  
+  <div class="field_master_top">
+    <b><%= f.label :measurement_state %></b>
+  </div>
+  <div class="field_master">
+    <div class="field">
+      <%= f.collection_select :measurement_state_id, MeasurementState.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"}  %>
+    </div>
+    <%= f.fields_for :measurement_state, :include_id => false do |lab| %>
+      <%= render 'measurement_states/measurement_state_fields', :f => lab %>
+    <% end %>
+  </div>
+  
   <div class="field_master_top">
     <b><%= f.label :references %></b>
   </div>

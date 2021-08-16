@@ -187,6 +187,7 @@ class ArchObjectsController < ApplicationController
             :labnr,
             :sample_id,
             :lab_id,
+            :measurement_state_id,
             :c14_measurement_id,
             :_destroy,
             :c14_measurement_attributes => [
@@ -220,7 +221,13 @@ class ArchObjectsController < ApplicationController
               :short_ref,
               :bibtex,
               :_destroy
-            ]
+            ],
+            :measurement_state_attributes => [
+              :id,
+              :name,
+              :description,
+              :_destroy
+              ]
           ]
         ]
       )

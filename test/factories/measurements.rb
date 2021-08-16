@@ -4,6 +4,7 @@ FactoryBot.define do
     labnr { Faker::Alphanumeric.alpha(number: 3) + "-" + Faker::Number.number(digits:5).to_s }
     sample
     lab
+    measurement_state
     trait :is_14c do
       c14_measurement
     end
