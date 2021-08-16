@@ -1,5 +1,7 @@
 class Measurement < ApplicationRecord
 
+  has_paper_trail
+  
   belongs_to :sample
 
   belongs_to :lab, optional: true

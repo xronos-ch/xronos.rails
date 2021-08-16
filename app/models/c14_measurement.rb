@@ -1,5 +1,7 @@
 class C14Measurement < ApplicationRecord
-
+  
+  has_paper_trail
+  
   validates :bp, :std, presence: true
 
   belongs_to :source_database

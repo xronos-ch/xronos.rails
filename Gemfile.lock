@@ -178,6 +178,9 @@ GEM
       racc (~> 1.4)
     oj (3.12.3)
     orm_adapter (0.5.0)
+    paper_trail (12.0.0)
+      activerecord (>= 5.2)
+      request_store (~> 1.1)
     parallel (1.20.1)
     parser (3.0.2.0)
       ast (~> 2.4.1)
@@ -353,6 +356,7 @@ DEPENDENCIES
   loading_screen (~> 0.2.3)
   minitest
   oj
+  paper_trail
   pg
   puma (< 6)
   rabl
