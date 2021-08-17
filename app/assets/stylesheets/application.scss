@@ -20,3 +20,8 @@
  *= require ion.rangeSlider.css
 */
 
+@import "bootstrap";
+
+#accordionFilterPanel .accordion-button{    
+       padding: 5px; //if not working use !important rule
+   } 

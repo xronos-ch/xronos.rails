@@ -21,5 +21,5 @@ class ArchObject < ApplicationRecord
 	has_many :samples, inverse_of: :arch_object
 	accepts_nested_attributes_for :samples, reject_if: :all_blank, allow_destroy: true
 	validates_associated :samples
-
+  has_many :measurements, through: :samples
 end

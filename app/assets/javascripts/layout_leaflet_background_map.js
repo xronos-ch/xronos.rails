@@ -1,9 +1,11 @@
+var map
+
 document.addEventListener('DOMContentLoaded',function(){
 
   // #### map ####
 
   // define base map
-  const map = L.map('background_map');
+  map = L.map('background_map');
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 	maxZoom: 19,
 	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',

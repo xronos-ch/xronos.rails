@@ -1,19 +1,6 @@
 <p id="notice"><%= notice %></p>
 
-<p>
-  <strong>Labnr:</strong>
-  <%= @measurement.labnr %>
-</p>
-
-<p>
-  <strong>Sample:</strong>
-  <%= @measurement.sample %>
-</p>
-
-<p>
-  <strong>Lab:</strong>
-  <%= @measurement.lab %>
-</p>
+<%= render "measurement", measurement: @measurement%>
 
 <%= link_to 'Edit', edit_measurement_path(@measurement) %> |
 <%= link_to 'Back', measurements_path %>

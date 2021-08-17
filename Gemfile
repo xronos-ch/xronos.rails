@@ -144,3 +144,5 @@ gem 'doorkeeper'
 
 # WebPacker for up-to-date asset serving
 gem 'webpacker'
+
+gem 'bootstrap', '~> 5.0.2'
