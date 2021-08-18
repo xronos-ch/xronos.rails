@@ -34,25 +34,15 @@ class DataController < ApplicationController
 
   #### filter buttons ####
   def reset_filter_session_variable
-    session[:query_uncal_age_start] = nil
-    session[:query_uncal_age_stop] = nil
-    session[:query_cal_age_start] = nil
-    session[:query_cal_age_stop] = nil
-    session[:query_source_database] = nil
-    session[:query_labnr] = nil
-    session[:query_site] = nil
-    session[:query_site_type] = nil
-    session[:query_feature] = nil
-    session[:query_feature_type] = nil
-    session[:query_period] = nil
-    session[:query_typochronological_unit] = nil
-    session[:query_ecochronological_unit] = nil
-    session[:query_material] = nil
-    session[:query_species] = nil
-    session[:query_country] = nil
-    session[:query_reference] = nil
+    referrer_url = URI.parse(request.referrer) rescue URI.parse("/")
+    referrer_url.query = Rack::Utils.parse_nested_query(referrer_url.query).delete_if { |key, value| key.to_s.match(/^query_.+/) }.to_query
+    session.keys.each do |key|
+      if key.to_s.match(/^query_.+/)
+        session[key] = nil
+      end
+    end
     session[:spatial_lasso_selection] = nil
-    redirect_to :root
+    redirect_to referrer_url.to_s
   end
   def turn_off_lasso
     session[:spatial_lasso_selection] = nil

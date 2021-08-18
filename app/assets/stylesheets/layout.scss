@@ -1,3 +1,14 @@
+// body
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+footer{
+    margin-top: auto;
+}
+
 // code
 pre code {
 	white-space: pre-wrap;
@@ -7,20 +18,6 @@ pre code {
   display: block;
 	color: #000;
 	border-radius: 5px;
-}
-
-// links
-a:link {
-	color: #b5b5b5 !important;
-}
-
-a:visited {
-	color: #b5b5b5 !important;
-}
-
-a:hover {
-  color: red !important;
-  background-color: transparent !important;
 }
 
 // map

@@ -1,50 +1,53 @@
-<div class="field_master">
+<% disabled ||= false  
+#We do this so if disabled is not passed to the partial it doesn't crash. 
+# We default it to false 
+%>
 
-  <div class="field">
+<div class="row g-3">
+  <div class="col-md-6">
     <%= f.label :bp %>
-    <%= f.number_field :bp %>
+    <%= f.number_field :bp, class: "form-control", disabled: disabled %>
   </div>
 
-  <div class="field">
+  <div class="col-md-6">
     <%= f.label :std %>
-    <%= f.number_field :std %>
+    <%= f.number_field :std, class: "form-control", disabled: disabled %>
   </div>
 
-  <div class="field">
+  <div class="col-md-6">
     <%= f.label :cal_bp %>
-    <%= f.number_field :cal_bp %>
+    <%= f.number_field :cal_bp, class: "form-control", disabled: disabled %>
   </div>
 
-  <div class="field">
+  <div class="col-md-6">
     <%= f.label :cal_std %>
-    <%= f.number_field :cal_std %>
+    <%= f.number_field :cal_std, class: "form-control", disabled: disabled %>
   </div>
 
-  <div class="field">
+  <div class="col-md-6">
     <%= f.label :delta_c13 %>
-    <%= f.text_field :delta_c13 %>
+    <%= f.text_field :delta_c13, class: "form-control", disabled: disabled %>
   </div>
 
-  <div class="field">
+  <div class="col-md-6">
     <%= f.label :delta_c13_std %>
-    <%= f.text_field :delta_c13_std %>
+    <%= f.text_field :delta_c13_std, class: "form-control", disabled: disabled %>
   </div>
 
-  <div class="field">
+  <div class="col-md-6">
     <%= f.label :method %>
-    <%= f.text_field :method %>
+    <%= f.text_field :method, class: "form-control", disabled: disabled %>
   </div>
 
-  <div class="field_master_top">
-    <b><%= f.label :source_database %></b>
+  <div class="col-md-6">
+    <%= f.label :source_database %>
+    <div>
+    <%= f.collection_select :source_database_id, SourceDatabase.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select form-select", disabled: disabled}  %>
   </div>
-  <div class="field_master">
-    <div class="field">
-      <%= f.collection_select :source_database_id, SourceDatabase.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"}  %>
-    </div>
-    <%= f.fields_for :source_database, :include_id => false do |source_database| %>
-      <%= render 'source_databases/source_database_fields', :f => source_database %>
-    <% end %>
-  </div>
+  <%= f.fields_for :source_database, :include_id => false do |source_database| %>
+    <%= render 'source_databases/source_database_fields', :f => source_database %>
+  <% end %>
+</div>
 
 </div>
+

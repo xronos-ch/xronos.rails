@@ -1,14 +1,35 @@
-<p>
-  <strong>Labnr:</strong>
-  <%= measurement.labnr %>
-</p>
+  <div class="row">
+    <div class="col">
+      <div class="d-flex justify-content-center">
+        <h1>
+          <%= measurement.labnr %>
+        </h1>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="d-flex justify-content-center">
+        <p><b><%=measurement.type%> from <%= measurement.sample.arch_object.site_phase.site.name%></b><p>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="d-flex justify-content-center">
+        <p><%=measurement.temporal_information%><p>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="d-flex justify-content-center">
+        <p>Original Dataset from <%=measurement.source_database.name%>, <%=measurement.measurement_state.name%><p>
+      </div>
+    </div>
+  </div>
+  
+<%= form_for(measurement) do |f| %>
+  <%= render 'measurement_fields', :f => f, :disabled => true %>
+<% end %>
 
-<p>
-  <strong>Sample:</strong>
-  <%= measurement.sample %>
-</p>
-
-<p>
-  <strong>Lab:</strong>
-  <%= measurement.lab.name %>
-</p>

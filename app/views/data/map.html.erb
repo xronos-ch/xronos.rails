@@ -1,13 +1,14 @@
 <!-- #### Background map #### -->
-<div id="background_map"></div>
+<div id="background_map" style="height:100vH; position: relative;outline: none;" class="container-fluid"></div>
+
 
 <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="filterDataOffcanvas" aria-labelledby="offcanvasScrollingLabel">
   <div class="offcanvas-header">
-              <h5 class="offcanvas-title" id="offcanvasScrollingLabel">
+    <h5 class="offcanvas-title" id="offcanvasScrollingLabel">
       Filter Data
     </h5>
     <div class="clearfix">
-      <button class="btn btn-light pull-right" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterDataOffcanvas" aria-controls="filterDataOffcanvas" id="button_close_filter_data"><%= fa_icon "close" %></button>
+      <button type="button" class="btn-close" aria-label="Close" data-bs-toggle="offcanvas" data-bs-target="#filterDataOffcanvas" aria-controls="filterDataOffcanvas" id="button_close_filter_data"></button>
     </div>
   </div>
   <!-- #### Filter #### -->
@@ -15,7 +16,3 @@
 </div>
 
 <button class="btn btn-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterDataOffcanvas" aria-controls="filterDataOffcanvas" id="button_filter_data"><%= fa_icon "search" %>Show data filter</button>
-
-
-
-

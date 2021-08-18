@@ -1,13 +1,13 @@
 class Measurement < ApplicationRecord
 
   has_paper_trail
-  
-  belongs_to :sample
 
+  belongs_to :sample
+  
   belongs_to :lab, optional: true
   accepts_nested_attributes_for :lab, reject_if: :all_blank
   validates_associated :lab
-  
+
   belongs_to :measurement_state, optional: true
   accepts_nested_attributes_for :measurement_state, reject_if: :all_blank
   validates_associated :measurement_state
@@ -38,7 +38,38 @@ class Measurement < ApplicationRecord
   def replacing
     @replacing || Measurement.where(replaced_by: self.id)
   end
+
+  def type
+    case
+    when defined?(c14_measurement)
+      "<sup>14</sup>C Measurement".html_safe
+    else
+      "undefined"
+    end
+  end
   
+  def temporal_information
+    case type
+    when "<sup>14</sup>C Measurement"
+    ret_val = []
+    ret_val[0] = c14_measurement.uncalibrated_to_setence unless c14_measurement.uncalibrated_to_setence.blank?
+    ret_val[1] = c14_measurement.calibrated_to_setence unless c14_measurement.calibrated_to_setence.blank?
+    ret_val.join("<br>").html_safe
+      
+    else
+      "undefined"
+    end
+  end
+  
+  def source_database
+    case type
+    when "<sup>14</sup>C Measurement"
+	  c14_measurement.source_database      
+    else
+      "undefined"
+    end
+  end
+
   def self.to_csv
     CSV.generate :force_quotes=>true do |csv|
       csv << [
@@ -93,3 +124,4 @@ class Measurement < ApplicationRecord
   end
 
 end
+

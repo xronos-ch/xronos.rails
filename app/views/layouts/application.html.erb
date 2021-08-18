@@ -10,11 +10,11 @@
     <%= javascript_pack_tag 'application' %>
     <%= javascript_include_tag 'application' %>
     <%= javascript_include_tag 'frontend' %>
+
+    <%= javascript_include_tag params[:controller], :media => "all"  if javascript_exists?(params[:controller]) %>
+
     <%= include_gon %>
-
-	<%= javascript_include_tag params[:controller], :media => "all"  if javascript_exists?(params[:controller]) %>
-
-
+    
     <%= favicon_link_tag asset_path('favicon.ico') %>
   </head>
 
@@ -22,119 +22,136 @@
 
     <%= loading_screen style: :rectangle_bounce, color: "#232323", background: "rgba(0, 0, 0, 0.0)" %>
 
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="/"><%= image_tag "logo.svg.png", height: '20' %></a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/table">Table</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/map">Map</a>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            About
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="/about">About this Project</a></li>
-            <li><a class="dropdown-item" href="/database">About this Database</a></li>
-            <li><a class="dropdown-item" href="/api">API</a></li>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/"><%= image_tag "logo.svg.png", height: '20' %></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="/table">Table</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="/map">Map</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                About
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="/about">About this Project</a></li>
+                <li><a class="dropdown-item" href="/database">About this Database</a></li>
+                <li><a class="dropdown-item" href="/api">API</a></li>
+              </ul>
+            </li>
           </ul>
-        </li>
-      </ul>
-    </div>
-    <div class="d-flex">
-                <% if user_signed_in? %>
+        </div>
+        <div class="d-flex">
+          <% if user_signed_in? %>
             <%= fa_icon "user" %> <% if current_user.admin? %> <%= fa_icon "legal" %> <% end %> <%= current_user.email[0...15] + "..." %>
             <%= fa_icon "edit" %> <%= link_to('Edit registration', edit_user_registration_path, class: "user_edit_link") %>
             <%= fa_icon "sign-out" %> <%= link_to('Logout', destroy_user_session_path, method: :delete) %>
           <% else %>
-           <div class="dropdown">
-           	  <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-				Sign in
-			  </button>
+            <div class="dropdown">
+              <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                Sign in
+              </button>
 
-			  <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuLink" style="width: 300px">
-				<%= form_for :user, :url => session_path(:user), :html => {:class => "px-4"}  do |f| %>
-    			  <div class="form-group">
-			  	    <%= f.label :email, class: "sr-only col-form-label col-form-label-sm" %>
-					<div class="input-group">
-				        <div class="input-group-text" style="width: 15px;"><%= fa_icon "user" %></div>
-			          <%= f.text_field :email, class: "form-control form-control-sm", placeholder: "email@example.com"  %>
-				    </div>
-				  </div>
-				  <div class="form-group">
-			 	    <%= f.label :password, class: "sr-only col-form-label col-form-label-sm" %>
-  					<div class="input-group">
-			          <div class="input-group-text" style="width: 15px;"><%= fa_icon "unlock" %></div>
-			          <%= f.password_field :password, class: "form-control form-control-sm", placeholder: "password"  %>
-			  	  	</div>
-			  	  </div>
-				  <div class="form-check" style="display: inline-block;">
-				    <%= f.check_box :remember_me, class: "form-check-input form-check-input-sm"  %>
-				    <%= f.label :remember_me, "Remember me", class: "form-check-label col-form-label-sm" %>
-			      </div>
-			      <%= f.submit 'Sign in', class: "btn btn-primary pull-right" %>
-				<% end %>
-				<!-- <div class="dropdown-divider"></div>
-				<%= link_to "Forgot your password?", new_password_path(:user), class: "dropdown-item" %>
-				<%= link_to('New around here? Sign up', new_user_registration_path, class: "dropdown-item") %> -->
-			  </div>
-		   </div>
+              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuLink" style="width: 300px">
+                <%= form_for :user, :url => session_path(:user), :html => {:class => "px-4"}  do |f| %>
+                  <div class="form-group">
+                    <%= f.label :email, class: "sr-only col-form-label col-form-label-sm" %>
+                    <div class="input-group">
+                      <div class="input-group-text" style="width: 15px;"><%= fa_icon "user" %></div>
+                      <%= f.text_field :email, class: "form-control form-control-sm", placeholder: "email@example.com"  %>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <%= f.label :password, class: "sr-only col-form-label col-form-label-sm" %>
+                    <div class="input-group">
+                      <div class="input-group-text" style="width: 15px;"><%= fa_icon "unlock" %></div>
+                      <%= f.password_field :password, class: "form-control form-control-sm", placeholder: "password"  %>
+                    </div>
+                  </div>
+                  <div class="form-check" style="display: inline-block;">
+                    <%= f.check_box :remember_me, class: "form-check-input form-check-input-sm"  %>
+                    <%= f.label :remember_me, "Remember me", class: "form-check-label col-form-label-sm" %>
+                  </div>
+                  <%= f.submit 'Sign in', class: "btn btn-primary pull-right" %>
+                <% end %>
+                <!-- <div class="dropdown-divider"></div>
+                  <%= link_to "Forgot your password?", new_password_path(:user), class: "dropdown-item" %>
+                  <%= link_to('New around here? Sign up', new_user_registration_path, class: "dropdown-item") %> -->
+              </div>
+            </div>
           <% end %>
+        </div>
+      </div>
+    </nav>
+    <div class="container-fluid flex-grow-1">
+      <%= yield %>
     </div>
-  </div>
-</nav>
+    <footer class="page-footer">
+      <div class="container-fluid pb-0 mb-0 justify-content-center text-light bg-info">
+        <div class="row py-3">
+			<div class="d-flex justify-content-center">
 
-<%= yield %>
-
-		<!-- #### left_window #### -->
-		<div class="left_window_menu <%= 'active' if session[:left_window_active] %>">
-
-			<nav class="left_window_nav <%= 'big' if session[:left_window_big] %>">
-
-        <button id="left_window_nav_extend" type="button" aria-label="extend left_window_menu">
-          <%= fa_icon "expand" %>
-        </button>
-
-				<div id="content">
-
-					<nav id="nav">
-						<%= render_navigation renderer: :links %>
-					</nav>
-
-					<!-- #### Pages #### -->
-					<main class="<%= 'big' if session[:left_window_big] %>">
-
-            <nav id="breadcrumbs_nav">
-              <%= render_navigation renderer: :breadcrumbs, join_with: ' &gt; ' %>
-            </nav>
-
-						<% flash.each do |name, msg| %>
-              <% if msg.is_a?(String) %>
-						    <div id="flash_container">
-							    <%= content_tag :div, msg %>
+            <a href="/about" class="link-light">About this Project</a>&nbsp;|&nbsp;
+            <a href="/database" class="link-light">About this Database</a>&nbsp;|&nbsp;
+            <a href="/api" class="link-light">API</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="container-fluid pb-0 mb-0 justify-content-center text-light bg-dark">
+        <div class="row justify-content-center py-3">
+          <div class="col-11">
+            <div class="row ">
+              <div class="col-xl-3 col-md-3 col-sm-3 col-12 my-auto mx-auto a">
+                <%= image_tag "logo.white.png", class: "img-fluid"  %>
+              </div>
+              <div class="col-xl-3 col-md-3 col-sm-3 col-12">
+                <h6 class="mb-3 mb-lg-4 bold-text text-muted"><b>Funded by</b></h6>
+                <%= image_tag "snf_logo.png", class: "img-fluid"  %>
+              </div>
+              <div class="col-xl-3 col-md-3 col-sm-3 col-12">
+                <h6 class="mb-3 mb-lg-4 bold-text text-muted"><b>Hosted by</b></h6>
+                <div style="max-width: 200px">
+                  <%= image_tag "Unibe_Logo_16pt_weiss.png", class: "img-fluid"  %>
                 </div>
-             <% end %>
-           <% end %>
-
-  					<!-- #### Home #### -->
-						<div id="Home" class="page default">
-
-							<%#= yield %>
-
-						</div>
-
-					</main>
-
-			</nav>
-
-		</div>
-
+              </div>
+              <div class="col-xl-3 col-md-3 col-sm-3 col-12">
+                <h6 class="mb-3 mb-lg-4 text-muted bold-text mt-sm-0 mt-5"><b>Contact</b></h6><small>
+                  <p class="mb-1">SNFS Project XRONOS</p>
+                  <p class="mb-1">Department of Prehistoric Archaeology</p>
+                  <p class="mb-1">Institute of Archaeological Sciences</p>
+                  <p class="mb-1">Mittelstrasse 43</p>
+                  <p class="mb-1">University of Bern</p>
+                  <p class="mb-1">3012 Bern</p>
+                  <p class="mb-1">Switzerland</p>
+                </small>
+              </div>
+            </div>
+            <div class="row ">
+              <div class="col-xl-8 col-md-4 col-sm-4 col-auto my-md-0 mt-5 order-sm-1 order-3 align-self-end">
+                <small class="rights"><span>&#174;</span> 2021 XRONOS Project</small>
+              </div>
+              <div class="col-xl-2 col-md-4 col-sm-4 col-auto order-1 align-self-end ">
+                <h6 class="mt-55 mt-2 text-muted bold-text"><b>Martin Hinz</b></h6><small> <span><i class="fa fa-envelope" aria-hidden="true"></i></span> martin.hinz@iaw.unibe.ch</small>
+              </div>
+              <div class="col-xl-2 col-md-4 col-sm-4 col-auto order-2 align-self-end mt-3 ">
+                <h6 class="text-muted bold-text"><b>Joe Roe</b></h6><small><span><i class="fa fa-envelope" aria-hidden="true"></i></span> joseph.roe@iaw.unibe.ch</small>
+              </div>
+            </div>
+          </div>
+        </div>
+    </footer>
+      </div>
   </body>
 </html>
+
+
+
+

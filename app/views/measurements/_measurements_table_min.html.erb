@@ -1,0 +1,21 @@
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope=col>Lab-Nr.</th>
+      <th scope=col>Measurement Type</th>
+      <th scope=col>Temporal Information</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% measurements.each do |measurement| %>
+      <tr>
+        <td><%= measurement.labnr %></td>
+        <td><%= measurement.type %></td>
+        <td><%= measurement.temporal_information %></td>
+        <td><%= link_to "Details", measurement %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

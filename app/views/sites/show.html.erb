@@ -35,9 +35,7 @@
       <% unless @site.measurements.nil? %>
         <%= @site.name %> has <%= pluralize(@site.measurements.count, 'Measurement') %>:
         
-        <% @site.measurements.each do |measurement|%>
-        	<%= render "measurements/measurement", measurement: measurement %>
-        <%end%>
+       	<%= render "measurements/measurements_table_min", measurements: @site.measurements %>
       <%end%>
     </div>
   </div>

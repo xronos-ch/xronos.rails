@@ -2,7 +2,7 @@
   <!-- #### Filter #### -->
   <!-- #### Filter inputs #### -->
 
-  <%= form_tag(root_path, method: "get") do %>
+  <%= form_tag(request.path, method: "get") do %>
 
     <div class="accordion" id="accordionFilterPanel">
       <div class="accordion-item">
