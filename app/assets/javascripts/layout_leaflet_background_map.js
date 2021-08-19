@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded',function(){
 			maxBoundsViscosity: 0.75
 	});
 	L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-		maxZoom: 19,
 		attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 		maxZoom: 18,
 		id: 'mapbox.streets',
@@ -37,12 +36,13 @@ document.addEventListener('DOMContentLoaded',function(){
 		// prepare markers
 		const markers = new Array(sites.length)
 		for (var i = 0; i < markers.length; i++) {
-			markers[i] = L.circle(
+			markers[i] = L.circleMarker(
 				[sites[i].lat, sites[i].lng], {
 					color: 'black',
-					fillColor: "black",
+					fillColor: '#A44A3F',
 					fillOpacity: 0.5,
-					radius: 1000,
+					weight: 2,
+					radius: 4,
 					id: sites[i].id
 				}
 			).bindPopup(

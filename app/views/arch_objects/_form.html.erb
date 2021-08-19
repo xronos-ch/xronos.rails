@@ -4,82 +4,16 @@
       <h2><%= pluralize(arch_object.errors.count, "error") %> prohibited this arch_object from being saved:</h2>
 
       <ul>
-      <% arch_object.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
+        <% arch_object.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
       </ul>
     </div>
   <% end %>
 
   <div class="flex_field_container">
 
-    <div class="flex_field_element">
-
-      <div class="field_master_top">
-        <b><%= f.label :samples %></b>
-      </div>
-      <div class="field_master">
-        <%= f.fields_for :samples do |sample| %>
-          <%= render 'samples/sample_fields_ass', :f => sample %>
-        <% end %>
-        <div class='links'>
-          <%= fa_icon "plus" %> <%= link_to_add_association 'add sample', f, :samples, partial: 'samples/sample_fields_ass' %>
-        </div>
-      </div>
-
-      <div class="field_master_top">
-        <b><%= f.label :material %></b>
-      </div>
-      <div class="field_master">
-        <div class="field">
-          <%= f.collection_select :material_id, Material.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
-          <%= link_to 'edit', root_path, :id => "edit_material_link", :class => "select_edit_link" %>
-          <script type="text/javascript">
-            $("#edit_material_link").click(function() { $(this).attr("href", "/materials/" + $("#arch_object_material_id").val() + "/edit") });
-          </script>
-        </div>
-        <%= f.fields_for :material, :include_id => false do |material| %>
-          <%= render 'materials/material_fields', :f => material %>
-        <% end %>
-      </div>
-
-      <div class="field_master_top">
-        <b><%= f.label :species %></b>
-      </div>
-      <%= f.fields_for :species, :include_id => false do |species| %>
-        <%= render 'species/species_fields', :f => species %>
-      <% end %>
-
-    </div>
-
-    <div class="flex_field_element">
-      <div class="field_master_top">
-        <b><%= f.label :site_phase %></b>
-      </div>
-        <div class="field_master">
-          <div class="field">
-            <%= f.collection_select :site_phase_id, SitePhase.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"} %>
-            <%= link_to 'edit', root_path, :id => "edit_site_phase_link", :class => "select_edit_link" %>
-            <script type="text/javascript">
-              $("#edit_site_phase_link").click(function() { $(this).attr("href", "/site_phases/" + $("#arch_object_site_phase_id").val() + "/edit") });
-            </script>
-          </div>
-          <div class="field_master">
-          <%= f.fields_for :site_phase, :include_id => false do |site_phase| %>
-            <%= render 'site_phases/site_phase_fields', :f => site_phase %>
-          <% end %>
-        </div>
-      </div>
-    </div>
-
-    <div class="flex_field_element">
-      <div class="field_master_top">
-        <b><%= f.label :on_site_object_position %></b>
-      </div>
-      <%= f.fields_for :on_site_object_position, :include_id => false do |on_site_object_position| %>
-        <%= render 'on_site_object_positions/on_site_object_position_fields', :f => on_site_object_position %>
-      <% end %>
-    </div>
+     <%= render 'arch_object_fields', :f => f %>
 
   </div>
 
@@ -93,3 +27,4 @@
   </div>
 
 <% end %>
+

@@ -14,7 +14,9 @@
     <%= javascript_include_tag params[:controller], :media => "all"  if javascript_exists?(params[:controller]) %>
 
     <%= include_gon %>
-    
+
+    <%= yield :head %>
+
     <%= favicon_link_tag asset_path('favicon.ico') %>
   </head>
 
@@ -22,9 +24,9 @@
 
     <%= loading_screen style: :rectangle_bounce, color: "#232323", background: "rgba(0, 0, 0, 0.0)" %>
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-3">
       <div class="container-fluid">
-        <a class="navbar-brand" href="/"><%= image_tag "logo.svg.png", height: '20' %></a>
+        <a class="navbar-brand" href="/"><%= image_tag "logo.white.png", height: '20' %></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -41,52 +43,62 @@
                 About
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" href="/about">About this Project</a></li>
-                <li><a class="dropdown-item" href="/database">About this Database</a></li>
-                <li><a class="dropdown-item" href="/api">API</a></li>
+                <li><a class="dropdown-item nav-link text-dark" href="/about">About this Project</a></li>
+                <li><a class="dropdown-item nav-link text-dark" href="/database">About this Database</a></li>
+                <li><a class="dropdown-item nav-link text-dark" href="/api">API</a></li>
+                <li><a class="dropdown-item nav-link text-dark" href="https://blog.xronos.ch">Blog</a></li>
               </ul>
             </li>
           </ul>
-        </div>
-        <div class="d-flex">
-          <% if user_signed_in? %>
-            <%= fa_icon "user" %> <% if current_user.admin? %> <%= fa_icon "legal" %> <% end %> <%= current_user.email[0...15] + "..." %>
-            <%= fa_icon "edit" %> <%= link_to('Edit registration', edit_user_registration_path, class: "user_edit_link") %>
-            <%= fa_icon "sign-out" %> <%= link_to('Logout', destroy_user_session_path, method: :delete) %>
-          <% else %>
-            <div class="dropdown">
-              <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                Sign in
-              </button>
 
-              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuLink" style="width: 300px">
-                <%= form_for :user, :url => session_path(:user), :html => {:class => "px-4"}  do |f| %>
-                  <div class="form-group">
-                    <%= f.label :email, class: "sr-only col-form-label col-form-label-sm" %>
-                    <div class="input-group">
-                      <div class="input-group-text" style="width: 15px;"><%= fa_icon "user" %></div>
-                      <%= f.text_field :email, class: "form-control form-control-sm", placeholder: "email@example.com"  %>
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <%= f.label :password, class: "sr-only col-form-label col-form-label-sm" %>
-                    <div class="input-group">
-                      <div class="input-group-text" style="width: 15px;"><%= fa_icon "unlock" %></div>
-                      <%= f.password_field :password, class: "form-control form-control-sm", placeholder: "password"  %>
-                    </div>
-                  </div>
-                  <div class="form-check" style="display: inline-block;">
-                    <%= f.check_box :remember_me, class: "form-check-input form-check-input-sm"  %>
-                    <%= f.label :remember_me, "Remember me", class: "form-check-label col-form-label-sm" %>
-                  </div>
-                  <%= f.submit 'Sign in', class: "btn btn-primary pull-right" %>
-                <% end %>
-                <!-- <div class="dropdown-divider"></div>
-                  <%= link_to "Forgot your password?", new_password_path(:user), class: "dropdown-item" %>
-                  <%= link_to('New around here? Sign up', new_user_registration_path, class: "dropdown-item") %> -->
+          <div class="d-flex">
+            <% if user_signed_in? %>
+              <div class="dropdown">
+                <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                  <%= current_user.email %>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                  <li> <%= link_to(edit_user_registration_path, class: "dropdown-item") do%><%= fa_icon "edit" %> Edit registration<% end %></li>
+                  <li> <%= link_to(destroy_user_session_path, method: :delete, class: "dropdown-item") do %><%= fa_icon "sign-out" %> Logout<% end %></li>
+                </ul>
               </div>
-            </div>
-          <% end %>
+
+
+            <% else %>
+              <div class="dropdown">
+                <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                  Sign in
+                </button>
+
+                <div class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="dropdownMenuLink" style="width: 300px">
+                  <%= form_for :user, :url => session_path(:user), :html => {:class => "px-4"}  do |f| %>
+                    <div class="form-group">
+                      <%= f.label :email, class: "sr-only col-form-label col-form-label-sm" %>
+                      <div class="input-group">
+                        <div class="input-group-text" style="width: 35px;"><%= fa_icon "user" %></div>
+                        <%= f.text_field :email, class: "form-control form-control-sm", placeholder: "email@example.com"  %>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <%= f.label :password, class: "sr-only col-form-label col-form-label-sm" %>
+                      <div class="input-group">
+                        <div class="input-group-text" style="width: 35px;"><%= fa_icon "unlock" %></div>
+                        <%= f.password_field :password, class: "form-control form-control-sm", placeholder: "password"  %>
+                      </div>
+                    </div>
+                    <div class="form-check" style="display: inline-block;">
+                      <%= f.check_box :remember_me, class: "form-check-input form-check-input-sm"  %>
+                      <%= f.label :remember_me, "Remember me", class: "form-check-label col-form-label-sm" %>
+                    </div>
+                    <%= f.submit 'Sign in', class: "btn btn-primary btn-sm pull-right" %>
+                  <% end %>
+                  <!-- <div class="dropdown-divider"></div>
+                    <%= link_to "Forgot your password?", new_password_path(:user), class: "dropdown-item" %>
+                    <%= link_to('New around here? Sign up', new_user_registration_path, class: "dropdown-item") %> -->
+                </div>
+              </div>
+            <% end %>
+          </div>
         </div>
       </div>
     </nav>
@@ -94,16 +106,17 @@
       <%= yield %>
     </div>
     <footer class="page-footer">
-      <div class="container-fluid pb-0 mb-0 justify-content-center text-light bg-info">
+      <div class="container-fluid pb-0 mb-0 mt-3 justify-content-center text-light bg-primary">
         <div class="row py-3">
-			<div class="d-flex justify-content-center">
+          <div class="d-flex justify-content-center link-light nav-link">
 
-            <a href="/about" class="link-light">About this Project</a>&nbsp;|&nbsp;
-            <a href="/database" class="link-light">About this Database</a>&nbsp;|&nbsp;
-            <a href="/api" class="link-light">API</a>
-            </div>
+            <a href="/about" class="link-light nav-link">About this Project</a>|
+            <a href="/database" class="link-light nav-link">About this Database</a>|
+            <a href="/api" class="link-light nav-link">API</a>|
+            <a href="https://blog.xronos.ch" class="link-light nav-link">Blog</a>
           </div>
         </div>
+      </div>
       </div>
       <div class="container-fluid pb-0 mb-0 justify-content-center text-light bg-dark">
         <div class="row justify-content-center py-3">
@@ -151,6 +164,10 @@
       </div>
   </body>
 </html>
+
+
+
+
 
 
 

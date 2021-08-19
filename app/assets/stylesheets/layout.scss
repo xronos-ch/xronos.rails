@@ -1,3 +1,4 @@
+
 // body
 body {
   min-height: 100vh;
@@ -387,9 +388,37 @@ main.big {
 
 #button_filter_data {
 	left: 30px;
-    top: calc(100% - 100px);
+    top: calc(100% - 240px);
     display: inline-block;
     cursor: pointer;
     position: fixed;
     z-index: 1;
+}
+
+a.nav-link {
+	font-size: 75%;
+}
+
+div.hero {
+  color: white;
+  background-image: url("hero_image.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 30vh;
+}
+
+
+div.hero_caption {
+  position: absolute;
+  bottom: 5px;
+  right: 0px;
+  font-style: italic
+}
+span.hero_caption {
+ padding: 5px;
+}
+
+span.hero_caption:hover {
+ background-color: rgba(0, 0, 0, 0.4);
 }

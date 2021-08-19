@@ -1,0 +1,38 @@
+<table class="table table-striped table-sm">
+  <thead>
+    <tr>
+      <th scope="col">Position of the Archaeological Object on Site</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Feature</th>
+      <td><%= on_site_object_position.feature%></td>
+    </tr>
+    <tr>
+      <td>Site Grid Square</th>
+      <td><%= on_site_object_position.site_grid_square%></td>
+    </tr>
+    <tr>
+      <td>Coordinate reference system</th>
+      <td><%= on_site_object_position.coord_reference_system%></td>
+    </tr>
+    <tr>
+      <td>X coordinate</th>
+      <td><%= on_site_object_position.coord_X%></td>
+    </tr>
+    <tr>
+      <td>Y coordinate</th>
+      <td><%= on_site_object_position.coord_Y%></td>
+    </tr>
+    <tr>
+      <td>Z coordinate</th>
+      <td><%= on_site_object_position.coord_Z%></td>
+    </tr>
+    <tr>
+      <td>Feature Type</th>
+      <td><%= on_site_object_position.feature_type.name%></td>
+    </tr>
+  </tbody>
+</table>

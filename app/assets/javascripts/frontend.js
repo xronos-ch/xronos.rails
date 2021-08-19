@@ -10,25 +10,5 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-//= require cable
-//= require calibrate
-//= require leaflet
-//= require leaflet_lasso
-//= require layout_extend_left_window_nav
 //= require layout_form_observed_select
-//= require layout_leaflet_background_map
-//= require layout_left_window_menu
-//= require layout_right_window_menu
 //= require layout_special_filter_tools
-
-
-// initialize datatables
-$(document).ready(function() {
-  $("#dttb").dataTable();
-});
-
-// special popup window for calibration results
-$('a[calibration-popup]').live('click', function(e) {
-  window.open( $(this).attr('href'), "Calibration", "height=600,width=900,titlebar=0,resizable=yes,scrollbars=yes,status=yes");
-  e.preventDefault();
-});

@@ -1,43 +1,29 @@
 jQuery(document).ready(function() {
   $('#selected_measurements-datatable').dataTable({
-    autoWidth: true,
     pageLength: 20,
+    autoWidth: true,
+    searching: false,
+    lengthChange: false,
     sDom: 'Br <"H"lf> <"datatable-scroll"t> <"F"ip>',
 		deferRender: true,
     buttons: [
       {
-        text: '<i class="fa fa-plus"></i> Add new date',
-        action: function () {
-          window.open("/arch_objects/new");
-        }
-      },
-      {
-        text: '<i class="fa fa-edit"></i> Edit selected date',
-        action: function ( e, dt, node, config ) {
-          var rows = dt.rows( { selected: true } ).count();
-          var selected_rows = dt.rows( {selected: true} ).data();
-          if (selected_rows.length > 1) {
-            alert("Only one date can be edited at once.")
-          } else {
-            window.open('/arch_objects/' + selected_rows[0].arch_object_id + '/edit');
-          }
-        }
-      },
-      {
         text: '<i class="fa fa-circle"></i> Select all dates',
         action: function ( e, dt, node, config ) {
           dt.rows().select();
-        }
+        },
+        className: 'btn-sm'
       },
       {
         text: '<i class="fa fa-circle-o"></i> Select no dates',
         action: function ( e, dt, node, config ) {
           dt.rows().deselect();
-        }
+        },
+        className: 'btn-sm'
       },
       {
         extend: 'selected',
-        text: '<i class="fa fa-filter"></i><i class="fa fa-circle"> Only keep selected dates',
+        text: '<i class="fa fa-filter"></i><i class="fa fa-circle"></i> Only keep selected dates',
         action: function ( e, dt, node, config ) {
           var rows = dt.rows( { selected: true } ).count();
           var selected_rows = dt.rows( {selected: true} ).data();
@@ -60,10 +46,11 @@ jQuery(document).ready(function() {
                 return console.log(e);
               }
           });
-        }
+        },
+        className: 'btn-sm'
       },
       {
-        text: '<i class="fa fa-filter"></i><i class="fa fa-circle-o"> Disable manual selection filter',
+        text: '<i class="fa fa-filter"></i><i class="fa fa-circle-o"></i> Disable manual selection filter',
         action: function () {
           $.ajax({
               type: "get",
@@ -76,7 +63,8 @@ jQuery(document).ready(function() {
                 return console.log(e);
               }
           });
-        }
+        },
+        className: 'btn-sm'
       },
       {
         extend: 'selected',
@@ -93,7 +81,8 @@ jQuery(document).ready(function() {
           } else {
             window.open('/c14_measurements/' + selected_rows[0].c14_measurement_id + '/calibrate', 'Calibration', 'height=800,width=1000,resizable=yes,scrollbars=yes,status=yes');
           }
-        }
+        },
+        className: 'btn-sm'
       },
       {
         extend: 'selected',
@@ -106,13 +95,8 @@ jQuery(document).ready(function() {
             values = values + 'ids[]=' + selected_rows[i].c14_measurement_id + '&';
           };
           window.open('/c14_measurements/1/calibrate_sum?' + values, 'Calibration', 'height=800,width=1000,resizable=yes,scrollbars=yes,status=yes');
-        }
-      },
-      {
-        text: '<i class="fa fa-download"></i> Download all dates as .csv-file',
-        action: function () {
-          window.open("?format=csv");
-        }
+        },
+        className: 'btn-sm'
       }
     ],
     "processing": true,

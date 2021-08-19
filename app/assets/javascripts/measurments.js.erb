@@ -1,0 +1,7 @@
+$(document).ready(function() {
+setTimeout(function() {
+	var sites = JSON.parse(gon.selected_sites);
+	map.setView(new L.LatLng(sites[0].lat, sites[0].lng), 8); 
+	;
+	}, 100);
+});

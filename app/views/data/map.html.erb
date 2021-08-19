@@ -1,5 +1,9 @@
+<% content_for :head do %>
+  <%= javascript_include_tag 'map' %>
+<% end %>
+
 <!-- #### Background map #### -->
-<div id="background_map" style="height:100vH; position: relative;outline: none;" class="container-fluid"></div>
+<div id="background_map" style="height:90vH; position: relative;outline: none;" class="container-fluid"></div>
 
 
 <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="filterDataOffcanvas" aria-labelledby="offcanvasScrollingLabel">

@@ -1,3 +1,4 @@
+<body class="container bg-primary">
 <div style="overflow:auto; width:950;">
 <%
 anzahl=@data.length
@@ -73,8 +74,7 @@ axis_string=axis.reverse.join(',').html_safe
 handles_string = "
 <div style='width: 10%;float:left;'>
 <p style='color: #dddddd;'>◀ Use these buttons for export/print</p>
-<h2 style='color: #dddddd;'>Sort</h2>
-<h2 style='color: #dddddd;'>Sort manually</h2>
+<h5 style='color: #dddddd;'>Sort manually</h5>
 <p style='color:#dddddd;'>Drag and drop the buttons below to determine the order of the plot:</p>
 <ul id='sortable' style='width:100%;'>" + handles.join('') + '</ul></div>'
 %>
@@ -172,8 +172,8 @@ $(function () {
       }
     },
     credits: {
-        text: 'radon.ufg.uni-kiel.de',
-        href: 'http://radon.ufg.uni-kiel.de'
+	        text: 'xronos.ch',
+	        href: 'https://xronos.ch'
     },
     yAxis: [<%=axis_string%>]
   });
@@ -198,3 +198,4 @@ $(function () {
 
 <%=handles_string.html_safe%>
 </div>
+</body>

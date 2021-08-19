@@ -70,6 +70,8 @@ class MeasurementsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_measurement
       @measurement = Measurement.find(params[:id])
+      site = @measurement.sample.arch_object.site_phase.site
+      gon.selected_sites = [{id: site.id, name: site.name, lat: site.lat, lng: site.lng}].to_json
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

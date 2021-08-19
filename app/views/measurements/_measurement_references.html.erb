@@ -1,0 +1,19 @@
+<table class="table table-striped table-sm">
+  <thead>
+    <tr>
+    	<th colspan="2" scope="col">References</th>
+	</tr>
+    <tr>
+      <th scope="col">Handle</th>
+      <th scope="col">Bibtex</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% references.each do |reference|%>
+    <tr>
+      <td><%= reference.short_ref%></td>
+      <td><pre><code><%= reference.bibtex %></code></pre></td>
+    </tr>
+<%end%>
+  </tbody>
+</table>

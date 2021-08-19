@@ -1,0 +1,74 @@
+<div class="jumbotron jumbotron-fluid hero">
+  <div class="container">
+<div class="row">
+<div class="col-8">  
+    <h2 class="display-4">Open Access Database for absolute chronological archaeological information</h2>
+    <p>XRONOS</p>
+  </div>
+  </div>
+  </div>
+<span class="hero_caption">Photo by <a href="https://unsplash.com/@sahinsezerdincer?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Şahin Sezer Dinçer</a> on <a href="https://unsplash.com/s/photos/hourglass?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></span>
+</div>
+
+
+<div class="hero_caption text-muted"><span class="hero_caption">Photo by <a href="https://unsplash.com/@sahinsezerdincer?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Şahin Sezer Dinçer</a> on <a href="https://unsplash.com/s/photos/hourglass?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></span></div>
+
+  
+
+
+<div class="container pt-5">
+
+<div class="row">
+<div class="col-6">
+<p>
+In the spirit of the Open Science, the XRONOS project aims at developing a worldwide unique and novel database, to compile and manage the two most important forms of absolute chronological information – radiocarbon and dendrochronological data – to enable a multitude of transdisciplinary research projects on population dynamics, human-environmental dependencies and thus fundamental transformations in the past.
+</p>
+
+<pre>
+<code><%= request.original_url %>/v1/data</code>
+</pre>
+
+<p>
+  You can also filter the data with this interface to only access the subsets relevant for you.
+  With the following URL you get - for example - only one date with the Lab Number <b>AAR-1847</b>.
+</p>
+
+<pre>
+<code><%= request.original_url %>/v1/data<b>?query_labnr=AAR-1847</b></code>
+</pre>
+
+<p>
+  The <b>|</b> ("pipe") operator allows you to combine multiple filter keys. <b>|</b> represents a
+  logical <b>OR</b>. That means the following URL will give you both dates <b>AAR-1847</b> and <b>KN-2506</b>.
+</p>
+
+<pre>
+<code><%= request.original_url %>/v1/data<b>?query_labnr=AAR-1847|KN-2506</b></code>
+</pre>
+
+<p>
+  You can also combine multiple filter criteria by adding filter parameters to the URL with the
+  <b>&</b> ("and") operator. The parameters are combined with a logical <b>AND</b>.
+  The following query will therefore give you all dates measured on charcoal from Germany.
+</p>
+
+<pre>
+<code><%= request.original_url %>/v1/data<b>?query_country=Germany&query_material=charcoal</b></code>
+</pre>
+
+<p>
+  Heres a <b>list of the available filter criteria</b>:
+</p>
+
+<ul>
+  <li>query_labnr</li>
+  <li>query_site</li>
+  <li>query_site_type</li>
+  <li>query_country</li>
+  <li>query_feature</li>
+  <li>query_material</li>
+  <li>query_species</li>
+</ul>
+</div>
+</div>
+</div>

@@ -53,6 +53,7 @@ Rails.application.routes.draw do
 #  root 'data#index'
   root to: "data#map"
   get '/api' => 'pages#api'
+  get '/home' => 'pages#home'
   get '/about' => 'pages#about'
   get '/database' => 'pages#database'
   get '/resetfilter', :to=>'data#reset_filter_session_variable'

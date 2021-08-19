@@ -22,7 +22,7 @@ $(document).ready(function() {
   }
 
   $uncal_range.ionRangeSlider({
-    skin: "flat",
+    skin: "round",
     type: "double",
     min: min,
     max: max,
@@ -47,7 +47,7 @@ $(document).ready(function() {
     max = 0;
 
   $cal_range.ionRangeSlider({
-    skin: "flat",
+    skin: "round",
     type: "double",
     min: min,
     max: max,

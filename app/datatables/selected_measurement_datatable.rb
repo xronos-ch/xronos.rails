@@ -37,7 +37,7 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
         "measurement_id": record.id,
         "c14_measurement_id": record.c14_measurement_id,
         "select": "",
-        "labnr": record.labnr,
+        "labnr": link_to(record.labnr, record),
         "bp": record.c14_measurement.bp,
         "std": record.c14_measurement.std,
         "cal_bp": record.c14_measurement.cal_bp,

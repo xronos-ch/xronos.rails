@@ -18,15 +18,17 @@
 //= require best_in_place.jquery-ui
 //= require autocomplete-rails
 //= require activestorage
-//= require datatables
 //= require cocoon
 //= require loading_screen
 //= require ion.rangeSlider
 //= require cable
 //= require calibrate
-//= require data
 //= require datatables
+//= require select.bootstrap5.min
 //= require bootstrap.bundle.min
+//= require dataTables.bootstrap5.min.js
+//= require dataTables.buttons.min.js
+//= require buttons.bootstrap5.min.js
 
 
 // initialize datatables

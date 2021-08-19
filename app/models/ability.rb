@@ -8,6 +8,7 @@ class Ability
 
     # permissions for every user, even if not logged in
     can :read, :all
+    cannot :read, [UserProfile]
     can :calibrate, :all
     can :calibrate_multi, :all
     can :calibrate_sum, :all
@@ -15,6 +16,7 @@ class Ability
     # additional permissions for logged in users (they can manage their posts)
     if user.present?
       can :create, :all
+      can [:read, :update], [UserProfile], :user_id => user.id
       if user.admin?  # additional permissions for administrators
         can :manage, :all
       end

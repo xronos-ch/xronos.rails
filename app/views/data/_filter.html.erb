@@ -6,15 +6,21 @@
 
     <div class="accordion" id="accordionFilterPanel">
       <div class="accordion-item">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseSpatialLasso" aria-expanded="true" aria-controls="panelsStayOpen-collapseSpatialLasso">
+        <button class="accordion-button <% unless session[:spatial_lasso_selection].present? || !(session[:spatial_lasso_selection].nil?) %>collapsed<% end %>" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseSpatialLasso" aria-expanded="true" aria-controls="panelsStayOpen-collapseSpatialLasso">
           Spatial lasso selection
         </button>
         <div id="panelsStayOpen-collapseSpatialLasso" class="accordion-collapse collapse <% if session[:spatial_lasso_selection].present? || !(session[:spatial_lasso_selection].nil?) %>show<% end %>" aria-labelledby="panelsStayOpen-headingSpatialLasso">
           <div class="accordion-body">
-            <% if session[:spatial_lasso_selection].present? || !(session[:spatial_lasso_selection].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %>
-            Spatial lasso selection <br>
-            <button id="toggleLasso"><%= fa_icon "circle-o-notch" %> Lasso</button>
-            <button id="turnoffLasso"><%= fa_icon "times-circle" %> turn off</button>
+            <%=link_to("#", html_options = {id: "toggleLasso", class: "btn btn-primary btn-sm"}) do%>
+              <%= fa_icon "circle-o-notch" %> Lasso
+            <%end%>
+            <% if session[:spatial_lasso_selection].present? || !(session[:spatial_lasso_selection].nil?) %>
+              <%=link_to("#", html_options = {id: "turnoffLasso", class: "btn btn-danger btn-sm"}) do%>
+                <%= fa_icon "times-circle" %> Turn off lasso
+              <%end%>
+            <% end %>
+
+
           </div>
         </div>
       </div>
@@ -198,6 +204,8 @@
 </div>
 </div>
 </div>
+
+
 
 
 
