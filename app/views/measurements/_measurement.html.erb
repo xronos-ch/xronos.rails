@@ -28,7 +28,7 @@
         <div class="row">
           <div class="col">
             <div class="d-flex justify-content-start">
-              <p>Original Dataset from <%=measurement.source_database.name%>, <%=measurement.measurement_state.name%><p>
+              <p>Original Dataset from <%=measurement.source_database.name%><% unless measurement.measurement_state.nil? %>, <%=measurement.measurement_state.name%><% end %><p>
             </div>
           </div>
         </div>
