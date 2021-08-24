@@ -36,6 +36,9 @@ EXPOSE 3000
 # set environment variables
 ENV RAILS_ENV=production
 
+# precompile assets
+RUN RAILS_ENV=production bundle exec rake assets:precompile
+
 # permission management
 RUN chmod +x ./entrypoint.sh
 RUN mkdir -p ./tmp
