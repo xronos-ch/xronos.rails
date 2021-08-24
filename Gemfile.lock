@@ -172,8 +172,6 @@ GEM
     listen (3.6.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
-    loading_screen (0.2.4)
-      jquery-rails (~> 4.3, >= 4.3.1)
     loofah (2.11.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -393,7 +391,6 @@ DEPENDENCIES
   jquery-ui-rails
   leaflet-rails
   listen
-  loading_screen (~> 0.2.3)
   minitest
   oj
   paper_trail
