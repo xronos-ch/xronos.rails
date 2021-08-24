@@ -20,7 +20,7 @@ ADD Gemfile.lock .
 RUN gem install bundler
 
 # bundle install
-RUN bundle install --system
+RUN bundle config set --local system 'true'
 
 # copy app into container
 ADD . .
@@ -35,6 +35,9 @@ EXPOSE 3001
 
 # set environment variables
 ENV RAILS_ENV=staging
+
+# precompile assets
+RUN RAILS_ENV=production bundle exec rake assets:precompile
 
 # permission management
 RUN chmod +x ./entrypoint.sh
