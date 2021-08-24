@@ -8,15 +8,15 @@
   <tbody>
     <tr>
       <td>Material</th>
-      <td><%= arch_object.material.name if measurement.lab.present? %></td>
+      <td><%= arch_object.material.name if arch_object.material.present? %></td>
     </tr>
     <tr>
       <td>Species</th>
-      <td><%= arch_object.species.name  if measurement.lab.present? %></td>
+      <td><%= arch_object.species.name  if arch_object.species.present? %></td>
     </tr>
     <tr>
       <td>Site Phase</th>
-      <td><%= arch_object.site_phase.name if measurement.lab.present?%></td>
+      <td><%= arch_object.site_phase.name if arch_object.site_phase.present?%></td>
     </tr>
   </tbody>
 </table>
