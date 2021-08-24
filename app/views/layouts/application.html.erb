@@ -8,10 +8,11 @@
 
     <%= stylesheet_link_tag 'application', media: 'all' %>
     <%= javascript_pack_tag 'application' %>
-    <%= javascript_include_tag 'application' %>
-    <%= javascript_include_tag 'frontend' %>
+    <%#= javascript_include_tag 'application' %>
+    <%= javascript_pack_tag 'frontend' %>
 
-    <%= javascript_include_tag params[:controller], :media => "all"  if javascript_exists?(params[:controller]) %>
+    <%= javascript_pack_tag params[:controller], :media => "all"  if javascript_exists?(params[:controller])
+    %>
 
     <%= include_gon %>
 
@@ -21,10 +22,8 @@
   </head>
 
   <body>
-
-    <%= loading_screen style: :rectangle_bounce, color: "#232323", background: "rgba(0, 0, 0, 0.0)" %>
-
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-3">
+	
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-0 main-nav">
       <div class="container-fluid">
         <a class="navbar-brand" href="/"><%= image_tag "logo.white.png", height: '20' %></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,12 +31,24 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <% if request.path == "/" %>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Get Data
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item nav-link text-dark" href="/map">Map</a></li>
+                <li><a class="dropdown-item nav-link text-dark" href="/table">Table</a></li>
+              </ul>
+            </li>
+            <%else%>
             <li class="nav-item">
               <a class="nav-link" aria-current="page" href="/table">Table</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" aria-current="page" href="/map">Map</a>
-            </li>
+            </li>            
+            <%end%>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 About
@@ -102,11 +113,11 @@
         </div>
       </div>
     </nav>
-    <div class="container-fluid flex-grow-1">
-      <%= yield %>
-    </div>
+
+    <%= yield %>
+
     <footer class="page-footer">
-      <div class="container-fluid pb-0 mb-0 mt-3 justify-content-center text-light bg-primary">
+      <div class="container-fluid pb-0 mb-0 justify-content-center text-light bg-primary">
         <div class="row py-3">
           <div class="d-flex justify-content-center link-light nav-link">
 
@@ -164,11 +175,4 @@
       </div>
   </body>
 </html>
-
-
-
-
-
-
-
 

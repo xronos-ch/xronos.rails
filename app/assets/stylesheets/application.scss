@@ -14,13 +14,14 @@
  *= require_self
  *= require leaflet
  *= require font-awesome
- *= require loading_screen
  *= require jquery-ui
  *= require ion.rangeSlider.css
  *= require dataTables.bootstrap5.min
  *= require buttons.bootstrap5.min.css
 */
-$primary:    #1768ac;
+
+$primary:    #424242;
+$secondary:  #1768ac;
 $success:    #496f5d;
 $info:       #7CDEDC;
 $warning:    #FFEC51;

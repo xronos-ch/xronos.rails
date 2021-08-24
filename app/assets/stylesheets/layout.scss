@@ -405,7 +405,7 @@ div.hero {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  height: 30vh;
+  height: 40vh;
 }
 
 
@@ -415,10 +415,16 @@ div.hero_caption {
   right: 0px;
   font-style: italic
 }
+
 span.hero_caption {
  padding: 5px;
 }
 
 span.hero_caption:hover {
  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.main-nav:hover {
+   background-color:#FF0000;
+
 }

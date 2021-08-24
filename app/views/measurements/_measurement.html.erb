@@ -1,60 +1,96 @@
-<div class="row">
-  <div class="col">
-    <div class="d-flex justify-content-center">
-      <h1>
-        <%= measurement.labnr %>
-      </h1>
+<div class="container-flex" style="overflow-x:hidden">
+  <div class="row bg-secondary bg-opacity-50">
+    <div class="col">
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <div class="d-flex justify-content-start">
+              <h1>
+                <%= measurement.labnr %>
+              </h1>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="d-flex justify-content-start">
+              <p><b><%=measurement.type%> from <%= measurement.sample.arch_object.site_phase.site.name%></b><p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="d-flex justify-content-start">
+              <p><%=measurement.temporal_information%><p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="d-flex justify-content-start">
+              <p>Original Dataset from <%=measurement.source_database.name%>, <%=measurement.measurement_state.name%><p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-</div>
-<div class="row">
-  <div class="col">
-    <div class="d-flex justify-content-center">
-      <p><b><%=measurement.type%> from <%= measurement.sample.arch_object.site_phase.site.name%></b><p>
-    </div>
-  </div>
-</div>
-<div class="row">
-  <div class="col">
-    <div class="d-flex justify-content-center">
-      <p><%=measurement.temporal_information%><p>
-    </div>
-  </div>
-</div>
-<div class="row">
-  <div class="col">
-    <div class="d-flex justify-content-center">
-      <p>Original Dataset from <%=measurement.source_database.name%>, <%=measurement.measurement_state.name%><p>
-    </div>
-  </div>
-</div>
   <div class="row">
-    <div class="col"
-      <div id="background_map" style="height: 300px; width: 100vH; position: relative;"></div>
+                <% if measurement.type == "<sup>14</sup>C Measurement"%>
+            <div class="d-flex justify-content-center">
+                    <%= render 'c14_measurements/calibrate', :c14_measurement => measurement.c14_measurement %>
+                  </div>
+                <%else%>
+    <div class="col">
+      <div id="background_map" style="height: 300px; width: 100%; position: relative;">
+      </div>
     </div>
-<small>
-<div class="row mt-3">
-  <div class="col-md-6">
-    <%= render 'measurement_details', :measurement => measurement %>
+                    <%end%>
   </div>
-  <% if measurement.type == "<sup>14</sup>C Measurement"%>
-    <div class="col-md-6">
-      <%= render 'c14_measurements/c14_measurement_details', :c14_measurement => measurement.c14_measurement %>
+
+  <div class="row mt-5">
+
+    <div class="col">
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <small>
+              <div class="row mt-3">
+                <div class="col-md-6">
+                  <%= render 'measurement_details', :measurement => measurement %>
+                </div>
+                <% if measurement.type == "<sup>14</sup>C Measurement"%>
+                  <div class="col-md-6">
+                    <%= render 'c14_measurements/c14_measurement_details', :c14_measurement => measurement.c14_measurement %>
+                  </div>
+                <%end%>
+                <div class="col-md-6">
+                  <%= render 'sites/site_details', :site => measurement.sample.arch_object.site_phase.site %>
+                </div>
+                <div class="col-md-6">
+                  <%= render 'arch_objects/arch_object_details', :arch_object => measurement.sample.arch_object %>
+                </div>
+                <div class="col-md-6">
+                  <%= render 'on_site_object_positions/on_site_object_position_details', :on_site_object_position => measurement.sample.arch_object.on_site_object_position %>
+                </div>
+                <% unless measurement.references.count == 0 %>
+                  <div class="col-md-6">
+                    <%= render 'measurement_references', :references => measurement.references %>
+                  </div>
+                <% end %>
+              </div>
+            </small>
+
+          </div>
+        </div>
+
+      </div>
     </div>
-  <%end%>
-  <div class="col-md-6">
-    <%= render 'sites/site_details', :site => measurement.sample.arch_object.site_phase.site %>
+
   </div>
-  <div class="col-md-6">
-    <%= render 'arch_objects/arch_object_details', :arch_object => measurement.sample.arch_object %>
-  </div>
-  <div class="col-md-6">
-    <%= render 'on_site_object_positions/on_site_object_position_details', :on_site_object_position => measurement.sample.arch_object.on_site_object_position %>
-  </div>
-  <% unless measurement.references.count == 0 %>
-  <div class="col-md-6">
-    <%= render 'measurement_references', :references => measurement.references %>
-  </div>
-  <% end %>
 </div>
-</small>
+
+
+
+
+

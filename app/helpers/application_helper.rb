@@ -7,7 +7,7 @@ module ApplicationHelper
   end
 
   def javascript_exists?(script)
-    script = "#{Rails.root}/app/assets/javascripts/#{params[:controller]}.js"
+    script = "#{Rails.root}/app/javascript/packs/#{params[:controller]}.js"
     File.exists?(script) || File.exists?("#{script}.coffee") 
   end
 

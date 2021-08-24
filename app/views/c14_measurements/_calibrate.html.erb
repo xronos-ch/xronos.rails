@@ -1,9 +1,6 @@
-<body class="container bg-primary">
 <%= javascript_tag "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %>
 <%= stylesheet_link_tag 'application' %>
-<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.js" type="text/javascript"></script>
-<%= javascript_pack_tag "calibration" %>
+<%= javascript_include_tag "jquery", "highcharts", "modules/exporting" %>
 	<style>
 	#sortable { list-style-type: none; margin: 0; padding: 0; width: 10%; }
 	#sortable li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; background: #ffffff}
@@ -63,7 +60,7 @@
 	    },
 	    series: [{
 	      type: 'area',
-	      name: 'Sum Calibration',
+	      name: '<%=  Measurement.find_by(c14_measurement_id: c14_measurement.id).labnr.to_s %>',
 	      pointInterval: <%= @likelihood_res.to_i.year * 1000 %>,
 	      pointStart: <%= @likelihood_start.to_i * 1000 %>,
 	      data: [<%=@data.join(", ")%>],
@@ -102,7 +99,10 @@
 	    ],
 	    xAxis: {
 	      type: 'datetime',
-	      minorTickInterval: <%=50.years.to_i * 1000%>,
+	      dateTimeLabelFormats: {
+	        year: '%Y'
+	        },
+	      tickPixelInterval: 100,
 	      minorTickWidth: 1,
 	      minorTickLength: 3,
 	      minorGridLineWidth: 0,
@@ -112,12 +112,12 @@
 	         }
 	    },
 	    title: {
-	      text: 'Sum Calibration',
-	      align: 'right',
+	      text: '<%= Measurement.find_by(c14_measurement_id: c14_measurement.id).labnr.to_s %>',
+				align: 'right',
 	      x: -70
 	    },
 	    subtitle: {
-	      text: '<%=@curve%><br><%#= @log.gsub(/\n/, '<br>') %>',
+	      text: '<%=@curve%><br><%= @log.gsub(/\n/, '<br>').html_safe %>',
 	      align: 'right',
 	      x: -70,
 	      style: {
@@ -166,14 +166,24 @@
 	               color: '#4572A7'
 	            },
 	         },
+	         plotBands: [{
+	            from: <%=(c14_measurement.bp + c14_measurement.std).to_s%>,
+	            to: <%=(c14_measurement.bp - c14_measurement.std).to_s%>,
+	            color: 'rgba(69, 114, 167, 0.2)',
+	            label: {
+	               text: 'BP 1'+ String.fromCharCode(963),
+	               style: {
+	                  color: '#606060'
+	               }
+	            }
+	         }],
 
 	         startOnTick: false,
 	         endOnTick:false,
 	         minPadding: 0.8,
 	         maxPadding: 0
 	      }]
-	   });
+	  });
 	});
 
 </script>
-</body>

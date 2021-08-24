@@ -110,11 +110,12 @@ document.addEventListener('DOMContentLoaded',function(){
 		//alert(JSON.stringify(lasso_selected_sites));
 		$.ajax({
 			type: "post",
+			beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
 			url: '/data/index',
 			dataType: 'json',
 			data: { spatial_lasso_selection: JSON.stringify(lasso_selected_sites) },
 			success: function(data) {
-				return location.reload();
+				window.location.href = '/map'
 			},
 			error: function(e) {
 				alert("Oops! An error occurred, please try again");

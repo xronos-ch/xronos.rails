@@ -1,4 +1,5 @@
 class MeasurementsController < ApplicationController
+  include C14MeasurementsHelper
   load_and_authorize_resource
 
   before_action :set_measurement, only: [:show, :edit, :update, :destroy]
@@ -12,6 +13,7 @@ class MeasurementsController < ApplicationController
   # GET /measurements/1
   # GET /measurements/1.json
   def show
+    calibrate_from_external(@measurement.c14_measurement.id)
   end
 
   # GET /measurements/new

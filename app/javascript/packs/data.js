@@ -1,5 +1,14 @@
-jQuery(document).ready(function() {
-  $('#selected_measurements-datatable').dataTable({
+require("datatables.net")
+require('datatables.net-bs5')
+require("datatables.net-bs5/css/dataTables.bootstrap5.min.css")
+require("datatables.net-buttons")
+require("datatables.net-buttons-bs5")
+require("datatables.net-select")
+require("datatables.net-select-bs5")
+
+
+$(document).ready(function() {
+  $("#selected_measurements-datatable").dataTable({
     pageLength: 20,
     autoWidth: true,
     searching: false,
@@ -134,9 +143,4 @@ jQuery(document).ready(function() {
     // Check dataTables documentation to learn more about
     // available options.
   });
-});
-
-$(document).ready(function() {
-  /* Activating Best In Place */
-  jQuery(".best_in_place").best_in_place();
 });

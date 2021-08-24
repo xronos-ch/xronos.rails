@@ -2,52 +2,68 @@
   <%= javascript_include_tag 'map' %>
 <% end %>
 
-<p id="notice"><%= notice %></p>
-
-<div class="container">
-  <div class="row">
+<div class="container-flex" style="overflow-x:hidden">
+  <div class="row bg-secondary bg-opacity-50">
     <div class="col">
-      <div class="d-flex justify-content-center">
-        <h1>
-          <%= @site.name %>
-        </h1>
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <div class="d-flex justify-content-start">
+              <h1><b>
+                  <%= @site.name %>
+                </b></h1>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="d-flex justify-content-start">
+              <p><b>Site in <%= @site.country.name%></b><p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="d-flex justify-content-start">
+              <p><b>Coordinates:</b> <%= to_dms(@site.lng) %> <%= to_dms(@site.lat) %> (<%= @site.lng.round(2) %>, <%= @site.lat.round(2) %>)<p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
+
   <div class="row">
+
     <div class="col">
-      <div class="d-flex justify-content-center">
-        <p><b>Site in <%= @site.country.name%></b><p>
+      <div id="background_map" style="height: 300px; width: 100%; position: relative;">
       </div>
     </div>
   </div>
-  <div class="row">
+  <div class="row mt-5">
+
     <div class="col">
-      <div class="d-flex justify-content-center">
-        <p><b>Coordinates:</b> <%= to_dms(@site.lng) %> <%= to_dms(@site.lat) %> (<%= @site.lng.round(2) %>, <%= @site.lat.round(2) %>)<p>
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <% unless @site.measurements.nil? %>
+              <%= @site.name %> has <%= pluralize(@site.measurements.count, 'Measurement') %>:
+
+              <%= render "measurements/measurements_table_min", measurements: @site.measurements %>
+            <%end%>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-
-  <div class="row">
-    <div class="col"
-      <div id="background_map" style="height: 300px; width: 500px; position: relative;">
-      </div>
-    </div>
-  <div class="row">
-    <div class="col">
-      <% unless @site.measurements.nil? %>
-        <%= @site.name %> has <%= pluralize(@site.measurements.count, 'Measurement') %>:
-        
-       	<%= render "measurements/measurements_table_min", measurements: @site.measurements %>
-      <%end%>
-    </div>
-  </div>
-
-  <%= link_to 'Edit', edit_site_path(@site) %> |
-  <%= link_to 'Back', sites_path %>
-
 </div>
+
+
+
+
+
+
+
 
 
 

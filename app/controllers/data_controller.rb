@@ -12,26 +12,6 @@ class DataController < ApplicationController
   autocomplete :ecochronological_unit, :name, :full => true
   autocomplete :reference, :short_ref, :full => true
 
-  #### ui interaction ####
-  def activate_right_window
-    session[:right_window_active] = true
-  end
-  def deactivate_right_window
-    session[:right_window_active] = false
-  end
-  def activate_left_window
-    session[:left_window_active] = true
-  end
-  def deactivate_left_window
-    session[:left_window_active] = false
-  end
-  def extend_left_window
-    session[:left_window_big] = true
-  end
-  def reduce_left_window
-    session[:left_window_big] = false
-  end
-
   #### filter buttons ####
   def reset_filter_session_variable
     referrer_url = URI.parse(request.referrer) rescue URI.parse("/")
@@ -42,15 +22,17 @@ class DataController < ApplicationController
       end
     end
     session[:spatial_lasso_selection] = nil
-    redirect_to referrer_url.to_s
+    redirect_to :action => 'map'
   end
+  
   def turn_off_lasso
     session[:spatial_lasso_selection] = nil
-    redirect_to :root
+    redirect_to :action => 'map'
   end
+  
   def reset_manual_table_selection
     session[:manual_table_selection] = nil
-    redirect_to :root
+    redirect_to :action => 'table'
   end
 
   def index
@@ -61,6 +43,10 @@ class DataController < ApplicationController
   	get_data
   end
 
+  def table
+  	get_data
+  end
+  
   private
 
   def get_data
@@ -360,7 +346,7 @@ class DataController < ApplicationController
           id: session[:manual_table_selection]
        )
     end
-
+    
     #### provide data ####
 
     respond_to do |format|

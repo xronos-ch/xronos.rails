@@ -2,7 +2,6 @@
   <!-- #### Filter #### -->
   <!-- #### Filter inputs #### -->
 
-  <%= form_tag(request.path, method: "get") do %>
 
     <div class="accordion" id="accordionFilterPanel">
       <div class="accordion-item">
@@ -11,7 +10,7 @@
         </button>
         <div id="panelsStayOpen-collapseSpatialLasso" class="accordion-collapse collapse <% if session[:spatial_lasso_selection].present? || !(session[:spatial_lasso_selection].nil?) %>show<% end %>" aria-labelledby="panelsStayOpen-headingSpatialLasso">
           <div class="accordion-body">
-            <%=link_to("#", html_options = {id: "toggleLasso", class: "btn btn-primary btn-sm"}) do%>
+            <%=link_to("javascript:void(0)", html_options = {id: "toggleLasso", class: "btn btn-primary btn-sm"}) do%>
               <%= fa_icon "circle-o-notch" %> Lasso
             <%end%>
             <% if session[:spatial_lasso_selection].present? || !(session[:spatial_lasso_selection].nil?) %>
@@ -24,6 +23,7 @@
           </div>
         </div>
       </div>
+        <%= form_tag(request.path, method: "get") do %>
       <div class="accordion-item">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseSourceDB" aria-expanded="false" aria-controls="panelsStayOpen-collapseSourceDB">
           Source Database
@@ -193,14 +193,13 @@
           </div>
         </div>
       </div>
-    </div>
-
-    <br><br>
+          <br><br>
     <%= button_tag type: 'submit', class: "btn btn-primary" do %> <%= fa_icon "search" %> Filter dates<% end %>
-    <%= link_to(resetfilter_path, html_options = {class: "btn btn-danger"}) do %>
+    <%= link_to resetfilter_path, {class: "btn btn-danger", "data-turbolinks": "false"} do %>
       <%= fa_icon "undo" %> Reset Filter
     <% end %>
   <% end %>
+    </div>
 </div>
 </div>
 </div>

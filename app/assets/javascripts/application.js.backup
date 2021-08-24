@@ -21,23 +21,3 @@
 //= require cocoon
 //= require loading_screen
 //= require ion.rangeSlider
-//= require cable
-//= require calibrate
-//= require datatables
-//= require select.bootstrap5.min
-//= require bootstrap.bundle.min
-//= require dataTables.bootstrap5.min.js
-//= require dataTables.buttons.min.js
-//= require buttons.bootstrap5.min.js
-
-
-// initialize datatables
-$(document).ready(function() {
-  $("#dttb").dataTable();
-});
-
-// special popup window for calibration results
-$('a[calibration-popup]').live('click', function(e) {
-  window.open( $(this).attr('href'), "Calibration", "height=600,width=900,titlebar=0,resizable=yes,scrollbars=yes,status=yes");
-  e.preventDefault();
-});
