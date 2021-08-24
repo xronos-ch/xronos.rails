@@ -1,14 +1,64 @@
 {
-  "application.js": "/packs/js/application-abd4fc49c46866754344.js",
-  "application.js.map": "/packs/js/application-abd4fc49c46866754344.js.map",
+  "application.js": "/packs/js/application-3cfbffd04ba55c684dcc.js",
+  "application.js.map": "/packs/js/application-3cfbffd04ba55c684dcc.js.map",
+  "calibration.js": "/packs/js/calibration-75d2499fb44548178bd0.js",
+  "calibration.js.map": "/packs/js/calibration-75d2499fb44548178bd0.js.map",
+  "data.js": "/packs/js/data-5ea1526fa99940f1fa10.js",
+  "data.js.map": "/packs/js/data-5ea1526fa99940f1fa10.js.map",
   "entrypoints": {
     "application": {
       "js": [
-        "/packs/js/application-abd4fc49c46866754344.js"
+        "/packs/js/application-3cfbffd04ba55c684dcc.js"
       ],
       "js.map": [
-        "/packs/js/application-abd4fc49c46866754344.js.map"
+        "/packs/js/application-3cfbffd04ba55c684dcc.js.map"
+      ]
+    },
+    "calibration": {
+      "js": [
+        "/packs/js/calibration-75d2499fb44548178bd0.js"
+      ],
+      "js.map": [
+        "/packs/js/calibration-75d2499fb44548178bd0.js.map"
+      ]
+    },
+    "data": {
+      "js": [
+        "/packs/js/data-5ea1526fa99940f1fa10.js"
+      ],
+      "js.map": [
+        "/packs/js/data-5ea1526fa99940f1fa10.js.map"
+      ]
+    },
+    "frontend": {
+      "js": [
+        "/packs/js/frontend-de9f39e7461e34bde1b7.js"
+      ],
+      "js.map": [
+        "/packs/js/frontend-de9f39e7461e34bde1b7.js.map"
+      ]
+    },
+    "landing_page": {
+      "js": [
+        "/packs/js/landing_page-261467a253a20765e6cb.js"
+      ],
+      "js.map": [
+        "/packs/js/landing_page-261467a253a20765e6cb.js.map"
+      ]
+    },
+    "map": {
+      "js": [
+        "/packs/js/map-7457996c17346176d489.js"
+      ],
+      "js.map": [
+        "/packs/js/map-7457996c17346176d489.js.map"
       ]
     }
-  }
+  },
+  "frontend.js": "/packs/js/frontend-de9f39e7461e34bde1b7.js",
+  "frontend.js.map": "/packs/js/frontend-de9f39e7461e34bde1b7.js.map",
+  "landing_page.js": "/packs/js/landing_page-261467a253a20765e6cb.js",
+  "landing_page.js.map": "/packs/js/landing_page-261467a253a20765e6cb.js.map",
+  "map.js": "/packs/js/map-7457996c17346176d489.js",
+  "map.js.map": "/packs/js/map-7457996c17346176d489.js.map"
 }

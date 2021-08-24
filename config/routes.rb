@@ -51,7 +51,7 @@ Rails.application.routes.draw do
   get 'data/index'
 	post 'data/index'
 #  root 'data#index'
-  root to: "data#map"
+  root to: "pages#home"
   get '/api' => 'pages#api'
   get '/home' => 'pages#home'
   get '/about' => 'pages#about'

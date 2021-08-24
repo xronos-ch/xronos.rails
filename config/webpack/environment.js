@@ -10,6 +10,7 @@ environment.plugins.prepend(
       jquery: 'jquery',
       'window.jQuery': 'jquery',
       Popper: ['popper.js', 'default'],
+      DataTable: 'datatables.net-dt/js/dataTables.dataTables'
     })
 )
 

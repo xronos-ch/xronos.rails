@@ -1,16 +1,33 @@
 {
-  "name": "xronos",
-  "private": true,
-  "dependencies": {
-    "@popperjs/core": "^2.9.3",
-    "@rails/webpacker": "5.4.0",
-    "bootstrap": "^5.0",
-    "jquery": "^3.6.0",
-    "webpack": "^4.46.0",
-    "webpack-cli": "^3.3.12"
-  },
-  "devDependencies": {
-    "webpack-dev-server": "^3.11.2"
-  }
+	"name": "xronos",
+	"private": true,
+	"dependencies": {
+		"@popperjs/core": "^2.9.3",
+		"@rails/actioncable": "^6.1.4-1",
+		"@rails/activestorage": "^6.1.4-1",
+		"@rails/ujs": "^6.1.4-1",
+		"@rails/webpacker": "5.4.0",
+		"bootstrap": "^5.1",
+		"datatables": "^1.10.18",
+		"datatables.net": "^1.10.25",
+		"datatables.net-bs5": "^1.10.25",
+		"datatables.net-buttons": "^1.7.1",
+		"datatables.net-buttons-bs5": "^1.7.1",
+		"datatables.net-responsive": "^2.2.9",
+		"datatables.net-responsive-bs5": "^2.2.9",
+		"datatables.net-select": "^1.3.3",
+		"datatables.net-select-bs5": "^1.3.3",
+		"import-loader": "^1.0.1",
+		"jquery": "^3.6.0",
+		"jquery-ui": "^1.12.1",
+		"jquery-ujs": "^1.2.3",
+		"leaflet": "^1.7.1",
+		"leaflet-lasso": "^2.2.5",
+		"turbolinks": "^5.2.0",
+		"webpack": "^4.46.0",
+		"webpack-cli": "^3.3.12"
+	},
+	"devDependencies": {
+		"webpack-dev-server": "^4.0.0"
+	}
 }
-
