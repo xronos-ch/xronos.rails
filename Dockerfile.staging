@@ -21,6 +21,7 @@ RUN gem install bundler
 
 # bundle install
 RUN bundle config set --local system 'true'
+RUN bundle install 
 
 # copy app into container
 ADD . .
