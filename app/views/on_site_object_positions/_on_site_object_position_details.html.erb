@@ -32,7 +32,7 @@
     </tr>
     <tr>
       <td>Feature Type</th>
-      <td><%= on_site_object_position.feature_type.name%></td>
+      <td><%= on_site_object_position.feature_type.name if on_site_object_position.feature_type.present? %></td>
     </tr>
   </tbody>
 </table>

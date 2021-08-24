@@ -12,7 +12,7 @@
     </tr>
     <tr>
       <td>Laboratory Name</th>
-      <td><%=measurement.lab.name%></td>
+      <td><%=measurement.lab.name if measurement.lab.present?%></td>
     </tr>
   </tbody>
 </table>
