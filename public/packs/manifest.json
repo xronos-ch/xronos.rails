@@ -1,17 +1,17 @@
 {
-  "application.js": "/packs/js/application-53c52e6accb3f4d87cc4.js",
-  "application.js.map": "/packs/js/application-53c52e6accb3f4d87cc4.js.map",
+  "application.js": "/packs/js/application-1ec93ddae831400d3936.js",
+  "application.js.map": "/packs/js/application-1ec93ddae831400d3936.js.map",
   "calibration.js": "/packs/js/calibration-75d2499fb44548178bd0.js",
   "calibration.js.map": "/packs/js/calibration-75d2499fb44548178bd0.js.map",
-  "data.js": "/packs/js/data-965c1564ac66333f816a.js",
-  "data.js.map": "/packs/js/data-965c1564ac66333f816a.js.map",
+  "data.js": "/packs/js/data-d6745c86d8bbe91f4b1b.js",
+  "data.js.map": "/packs/js/data-d6745c86d8bbe91f4b1b.js.map",
   "entrypoints": {
     "application": {
       "js": [
-        "/packs/js/application-53c52e6accb3f4d87cc4.js"
+        "/packs/js/application-1ec93ddae831400d3936.js"
       ],
       "js.map": [
-        "/packs/js/application-53c52e6accb3f4d87cc4.js.map"
+        "/packs/js/application-1ec93ddae831400d3936.js.map"
       ]
     },
     "calibration": {
@@ -24,10 +24,10 @@
     },
     "data": {
       "js": [
-        "/packs/js/data-965c1564ac66333f816a.js"
+        "/packs/js/data-d6745c86d8bbe91f4b1b.js"
       ],
       "js.map": [
-        "/packs/js/data-965c1564ac66333f816a.js.map"
+        "/packs/js/data-d6745c86d8bbe91f4b1b.js.map"
       ]
     },
     "frontend": {
