@@ -3,8 +3,8 @@
   "application.js.map": "/packs/js/application-53c52e6accb3f4d87cc4.js.map",
   "calibration.js": "/packs/js/calibration-75d2499fb44548178bd0.js",
   "calibration.js.map": "/packs/js/calibration-75d2499fb44548178bd0.js.map",
-  "data.js": "/packs/js/data-bd1f8610ecd640729804.js",
-  "data.js.map": "/packs/js/data-bd1f8610ecd640729804.js.map",
+  "data.js": "/packs/js/data-b923458ca44cc430de90.js",
+  "data.js.map": "/packs/js/data-b923458ca44cc430de90.js.map",
   "entrypoints": {
     "application": {
       "js": [
@@ -24,10 +24,10 @@
     },
     "data": {
       "js": [
-        "/packs/js/data-bd1f8610ecd640729804.js"
+        "/packs/js/data-b923458ca44cc430de90.js"
       ],
       "js.map": [
-        "/packs/js/data-bd1f8610ecd640729804.js.map"
+        "/packs/js/data-b923458ca44cc430de90.js.map"
       ]
     },
     "frontend": {

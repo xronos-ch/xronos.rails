@@ -37,7 +37,7 @@ $(document).ready(function() {
           var rows = dt.rows( { selected: true } ).count();
           var selected_rows = dt.rows( {selected: true} ).data();
           var selected_ids = [];
-          for (i=0; i < rows; i++) {
+          for (let i=0; i < rows; i++) {
             selected_ids.push(selected_rows[i].measurement_id);
           };
 
@@ -83,7 +83,7 @@ $(document).ready(function() {
           var selected_rows = dt.rows( {selected: true} ).data();
           if (selected_rows.length > 1) {
             var values = '';
-            for (i=0; i < rows; i++) {
+            for (let i=0; i < rows; i++) {
               values = values + 'ids[]=' + selected_rows[i].c14_measurement_id + '&';
             };
             window.open('/c14_measurements/1/calibrate_multi?' + values, 'Calibration', 'height=800,width=1000,resizable=yes,scrollbars=yes,status=yes');
@@ -100,7 +100,7 @@ $(document).ready(function() {
           var rows = dt.rows( { selected: true } ).count();
           var selected_rows = dt.rows( {selected: true} ).data();
           var values = '';
-          for (i=0; i < rows; i++) {
+          for (let i=0; i < rows; i++) {
             values = values + 'ids[]=' + selected_rows[i].c14_measurement_id + '&';
           };
           window.open('/c14_measurements/1/calibrate_sum?' + values, 'Calibration', 'height=800,width=1000,resizable=yes,scrollbars=yes,status=yes');
