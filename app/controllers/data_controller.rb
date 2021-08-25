@@ -32,7 +32,7 @@ class DataController < ApplicationController
   
   def reset_manual_table_selection
     session[:manual_table_selection] = nil
-    redirect_to :action => 'table'
+    redirect_to :action => 'index'
   end
 
   def index
