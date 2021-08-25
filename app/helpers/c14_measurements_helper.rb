@@ -250,7 +250,7 @@ module C14MeasurementsHelper
 
       likelihood_probs.each_with_index do |likelihood,index|
         if index==0
-          tmp_data.push('{id: "' + Measurement.find_by(c14_measurement_id: @c14_measurement.id).labnr.to_s + '", x: ' + (Time.mktime(labels[index]).to_i*1000).to_s + ',y:' + likelihood.to_s + '}')
+          tmp_data.push('{id: "' + Measurement.find_by(c14_measurement_id: c14_measurement.id).labnr.to_s + '", x: ' + (Time.mktime(labels[index]).to_i*1000).to_s + ',y:' + likelihood.to_s + '}')
         else
           tmp_data.push('{x: ' + (Time.mktime(labels[index]).to_i*1000).to_s + ', y:' + likelihood.to_s + '}')
         end
