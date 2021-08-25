@@ -144,3 +144,6 @@ $(document).ready(function() {
     // available options.
   });
 });
+
+import 'jquery-ui/ui/widgets/autocomplete.js';
+require("../src/autocomplete-rails.js")

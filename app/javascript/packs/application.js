@@ -42,12 +42,6 @@ import "../src/ion.rangeSlider.js"
 
 import "../src/layout_special_filter_tools.js"
 
-//import '../src/bootstrap.bundle.min';
-//import '../src/datatables.js';
-//import '../src/dataTables.bootstrap5.min.js';
-//import '../src/dataTables.buttons.min.js';
-//import '../src/buttons.bootstrap5.min.js';
-
 // special popup window for calibration results
 $('a[calibration-popup]').on('click', function(e) {
   window.open( $(this).attr('href'), "Calibration", "height=600,width=900,titlebar=0,resizable=yes,scrollbars=yes,status=yes");
