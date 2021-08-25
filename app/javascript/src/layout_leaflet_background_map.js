@@ -8,9 +8,14 @@ document.addEventListener('DOMContentLoaded',function(){
 
 	// define base map
 	map = L.map('background_map',{
-			maxBounds: bounds,
-			maxBoundsViscosity: 0.75
+		zoomControl: false,
+		maxBounds: bounds,
+		maxBoundsViscosity: 0.75
 	});
+	//add zoom control with your options
+	L.control.zoom({
+		position:'topright'
+	}).addTo(map);
 	L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 		maxZoom: 18,
@@ -222,5 +227,6 @@ document.addEventListener('DOMContentLoaded',function(){
 	L.Map.include(RestoreViewMixin);
 
 })();
+
 
 
