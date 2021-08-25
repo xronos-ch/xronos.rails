@@ -26,7 +26,7 @@
           <div class="col">
             <div class="d-flex justify-content-start">
              <% unless @site.lng.blank? || @site.lng.blank? %>
-              <p><b>Coordinates:</b> <%= to_dms(@site.lng) %> <%= to_dms(@site.lat) %> (<%= @site.lng.round(2) %>, <%= @site.lat.round(2) %>)<p>
+              <p><b>Coordinates:</b> <%= to_dms(@site.lng, "lon") %> <%= to_dms(@site.lat, "lat") %> (<%= @site.lng.round(2) %>, <%= @site.lat.round(2) %>)<p>
               <% else %>
               <p><b>No coordinates available.</b><p>
               <% end %>
