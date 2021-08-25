@@ -29,21 +29,3 @@ $danger:     #A44A3F;
 
 @import "bootstrap";
 
-#accordionFilterPanel .accordion-button{    
-       padding: 5px; //if not working use !important rule
-   } 
-   
-   //colors
-
-
-.irs--round .irs-from, .irs--round .irs-to, .irs--round .irs-single {
- background-color: #1768ac !important;
-}
-
-.irs--round .irs-handle {
-border: 4px solid #1768ac !important;
-}
-
-.irs--round .irs-bar {
- background-color: #1768ac !important;
-}

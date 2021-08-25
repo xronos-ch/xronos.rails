@@ -386,15 +386,6 @@ main.big {
     transition: transform .3s ease-in-out;
 }
 
-#button_filter_data {
-	left: 30px;
-    top: calc(100% - 240px);
-    display: inline-block;
-    cursor: pointer;
-    position: fixed;
-    z-index: 1;
-}
-
 a.nav-link {
 	font-size: 75%;
 }
@@ -427,4 +418,24 @@ span.hero_caption:hover {
 .main-nav:hover {
    background-color:#FF0000;
 
+}
+
+// Filter Panel
+#accordionFilterPanel .accordion-button{    
+       padding: 5px; //if not working use !important rule
+   } 
+   
+   //colors
+
+
+.irs--round .irs-from, .irs--round .irs-to, .irs--round .irs-single {
+ background-color: #1768ac !important;
+}
+
+.irs--round .irs-handle {
+border: 4px solid #1768ac !important;
+}
+
+.irs--round .irs-bar {
+ background-color: #1768ac !important;
 }
