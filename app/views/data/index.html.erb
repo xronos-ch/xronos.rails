@@ -9,7 +9,7 @@
           <table id="selected_measurements-datatable" class="table table-striped table-sm" data-source="<%= table_path(format: :json) %>" style="width: 100%">
             <thead>
               <tr>
-                <th></th>
+		        <th class="select-checkbox"><input id="selectAll" type="checkbox"></th>
                 <th>labnr</th>
                 <th>bp</th>
                 <th>std</th>

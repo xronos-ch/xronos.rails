@@ -8,7 +8,7 @@ require("datatables.net-select-bs5")
 
 
 $(document).ready(function() {
-  $("#selected_measurements-datatable").dataTable({
+  let selected_measurements_datatable = $("#selected_measurements-datatable").DataTable({
     pageLength: 20,
     autoWidth: true,
     searching: false,
@@ -16,20 +16,6 @@ $(document).ready(function() {
     sDom: 'Br <"H"lf> <"datatable-scroll"t> <"F"ip>',
 		deferRender: true,
     buttons: [
-      {
-        text: '<i class="fa fa-circle"></i> Select all dates',
-        action: function ( e, dt, node, config ) {
-          dt.rows().select();
-        },
-        className: 'btn-sm'
-      },
-      {
-        text: '<i class="fa fa-circle-o"></i> Select no dates',
-        action: function ( e, dt, node, config ) {
-          dt.rows().deselect();
-        },
-        className: 'btn-sm'
-      },
       {
         extend: 'selected',
         text: '<i class="fa fa-filter"></i><i class="fa fa-circle"></i> Only keep selected dates',
@@ -143,6 +129,16 @@ $(document).ready(function() {
     // Check dataTables documentation to learn more about
     // available options.
   });
+  
+  $('#selectAll').on('click', function() {
+	if ($('#selectAll').is(':checked')) {
+  	selected_measurements_datatable.rows().select();
+  }
+  else {
+  	selected_measurements_datatable.rows().deselect();
+  };
+});
+
 });
 
 import 'jquery-ui/ui/widgets/autocomplete.js';
