@@ -112,7 +112,8 @@ $(document).ready(function() {
 		// Check dataTables documentation to learn more about
 		// available options.
 		"language": {
-			        infoFiltered: ('(filtered from _MAX_ total entries)' + ($("#selected_measurements-datatable").data('manual-filter') ? '<a class="btn btn-danger btn-sm mx-2" href="/reset_manual_table_selection">Remove Manual Table Selection</>' : "") + ($("#selected_measurements-datatable").data('other-filter') ? '<a href="/resetfilter" class="btn btn-danger btn-sm mx-2">Remove Filter</a>' : ""))
+			        infoFiltered: ('(filtered from _MAX_ total entries)' + ($("#selected_measurements-datatable").data('manual-filter') ? '<a class="btn btn-danger btn-sm mx-2" href="/reset_manual_table_selection">Remove Manual Table Selection</>' : "") + ($("#selected_measurements-datatable").data('other-filter') ? '<a href="/resetfilter" class="btn btn-danger btn-sm mx-2">Remove Filter</a>' : "")),
+			        "info": "Showing _TOTAL_ entries"
 		}
 	});
 
