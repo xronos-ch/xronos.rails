@@ -22,17 +22,17 @@ class DataController < ApplicationController
       end
     end
     session[:spatial_lasso_selection] = nil
-    redirect_to :action => 'map'
+    redirect_to request.env["HTTP_REFERER"]#:action => 'map'
   end
   
   def turn_off_lasso
     session[:spatial_lasso_selection] = nil
-    redirect_to :action => 'map'
+    redirect_to request.env["HTTP_REFERER"]#:action => 'map'
   end
   
   def reset_manual_table_selection
     session[:manual_table_selection] = nil
-    redirect_to :action => 'index'
+    redirect_to request.env["HTTP_REFERER"]#:action => 'index'
   end
 
   def index
