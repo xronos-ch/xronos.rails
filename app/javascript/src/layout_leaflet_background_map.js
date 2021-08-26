@@ -74,17 +74,14 @@ document.addEventListener('DOMContentLoaded',function(){
 					id: sites[i].id
 				}
 			).bindPopup(
-				'<div class="card border-light">' + 
-				'<h5 class="card-header">' + sites[i].name + '</h5>' + 
-				'<div class="card-body">' + 
+				'<h5>' + sites[i].name + '</h5>' + 
+				'<hr/>' + 
 				'<button class="btn btn-secondary btn-sm" type="submit" onclick="window.location=\'' + '/sites/' + sites[i].id + '\';">' +
 				"<i class=\'fa fa-binoculars\'></i> Site" +
 				"</button>" +
 				'<button class="btn btn-light btn-sm" type="submit" onclick="window.location=\'' + '/table?utf8=✓&query_site=' + sites[i].name + '\';">' +
 				"<i class=\'fa fa-filter\'></i> Measurements" +
-				"</button>" + 
-				'</div>' + 
-				'</div>'
+				"</button>"
 			);
 		}
 
