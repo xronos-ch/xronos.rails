@@ -3,8 +3,7 @@
 <% end %>
 
 <!-- #### Background map #### -->
-<div id="background_map" style="height:80vH; position: relative;outline: none;" class="container-fluid"><button class="btn btn-light m-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterDataOffcanvas" aria-controls="filterDataOffcanvas" id="button_filter_data_map"><%= fa_icon "search" %>Show data filter</button></div>
-
+<div id="background_map" style="height:80vH; position: relative;outline: none;" class="container-fluid"></div>
 <div id="filter-info">
   <table id="selected_measurements-datatable" class="table table-striped table-sm" data-source="<%= table_path(format: :json) %>" style="width: 100%" data-manual-filter="<%= session.keys.any? { |key| key.to_s == "manual_table_selection"}%>" data-other-filter="<%=session.keys.any? { |key| key.to_s.match(/^query_.+/)} %>">
     <thead>

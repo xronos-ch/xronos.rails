@@ -24,6 +24,29 @@ document.addEventListener('DOMContentLoaded',function(){
 
 	}).addTo(map);
 
+	L.Control.FilterButton = L.Control.extend({
+		onAdd: function(map) {
+			var button = L.DomUtil.create('button', "btn btn-light mb-3");
+			button.setAttribute('data-bs-toggle', 'offcanvas');
+			button.setAttribute('data-bs-target', '#filterDataOffcanvas');
+			button.setAttribute('aria-controls', 'filterDataOffcanvas');
+			button.id='button_filter_data_table';
+			button.innerHTML='<i class="fa fa-search"></i> Show data filter';
+
+			return button;
+		},
+
+		onRemove: function(map) {
+			// Nothing to do here
+		}
+	});
+
+	L.control.filter_button = function(opts) {
+		return new L.Control.FilterButton(opts);
+	}
+
+	L.control.filter_button({ position: 'topleft' }).addTo(map);
+
 	if (!map.restoreView()) {
 		map.setView([45, 7], 3);
 	}
@@ -172,9 +195,9 @@ document.addEventListener('DOMContentLoaded',function(){
 		//lai.style.display = "none";
 
 	});
-
+	
 });
-
+	
 // https://github.com/makinacorpus/Leaflet.RestoreView
 (function() {
 	var RestoreViewMixin = {
@@ -227,6 +250,7 @@ document.addEventListener('DOMContentLoaded',function(){
 	L.Map.include(RestoreViewMixin);
 
 })();
+
 
 
 
