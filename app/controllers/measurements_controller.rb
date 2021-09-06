@@ -1,4 +1,5 @@
 class MeasurementsController < ApplicationController
+  include C14MeasurementsHelper
   load_and_authorize_resource
 
   before_action :set_measurement, only: [:show, :edit, :update, :destroy]
@@ -12,6 +13,7 @@ class MeasurementsController < ApplicationController
   # GET /measurements/1
   # GET /measurements/1.json
   def show
+    calibrate_from_external(@measurement.c14_measurement.id)
   end
 
   # GET /measurements/new
@@ -70,6 +72,8 @@ class MeasurementsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_measurement
       @measurement = Measurement.find(params[:id])
+      site = @measurement.sample.arch_object.site_phase.site
+      gon.selected_sites = [{id: site.id, name: site.name, lat: site.lat, lng: site.lng}].to_json
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
@@ -80,6 +84,7 @@ class MeasurementsController < ApplicationController
         :_destroy,
         :sample_id,
         :lab_id,
+        :measurement_state_id,
         :c14_measurement_id,
         :c14_measurement_attributes => [
           :id,
@@ -111,6 +116,12 @@ class MeasurementsController < ApplicationController
           :id,
           :short_ref,
           :bibtex,
+          :_destroy
+        ],
+        :measurement_state_attributes => [
+          :id,
+          :name,
+          :description,
           :_destroy
         ]
       )

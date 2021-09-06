@@ -1,19 +1,9 @@
-<p id="notice"><%= notice %></p>
+<% content_for :head do %>
+  <%= javascript_pack_tag 'map' %>
+<% end %>
 
-<p>
-  <strong>Labnr:</strong>
-  <%= @measurement.labnr %>
-</p>
+<div id="notice"><%= notice %></div>
 
-<p>
-  <strong>Sample:</strong>
-  <%= @measurement.sample %>
-</p>
 
-<p>
-  <strong>Lab:</strong>
-  <%= @measurement.lab %>
-</p>
+  <%= render "measurement", measurement: @measurement%>
 
-<%= link_to 'Edit', edit_measurement_path(@measurement) %> |
-<%= link_to 'Back', measurements_path %>

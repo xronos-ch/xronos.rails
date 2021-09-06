@@ -1,0 +1,210 @@
+<div class="filter_data">
+  <!-- #### Filter #### -->
+  <!-- #### Filter inputs #### -->
+
+
+    <div class="accordion" id="accordionFilterPanel">
+      <div class="accordion-item">
+        <button class="accordion-button <% unless session[:spatial_lasso_selection].present? || !(session[:spatial_lasso_selection].nil?) %>collapsed<% end %>" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseSpatialLasso" aria-expanded="true" aria-controls="panelsStayOpen-collapseSpatialLasso">
+          Spatial lasso selection
+        </button>
+        <div id="panelsStayOpen-collapseSpatialLasso" class="accordion-collapse collapse <% if session[:spatial_lasso_selection].present? || !(session[:spatial_lasso_selection].nil?) %>show<% end %>" aria-labelledby="panelsStayOpen-headingSpatialLasso">
+          <div class="accordion-body">
+            <%=link_to("javascript:void(0)", html_options = {id: "toggleLasso", class: "btn btn-primary btn-sm"}) do%>
+              <%= fa_icon "circle-o-notch" %> Lasso
+            <%end%>
+            <% if session[:spatial_lasso_selection].present? || !(session[:spatial_lasso_selection].nil?) %>
+              <%=link_to("#", html_options = {id: "turnoffLasso", class: "btn btn-danger btn-sm"}) do%>
+                <%= fa_icon "times-circle" %> Turn off lasso
+              <%end%>
+            <% end %>
+
+
+          </div>
+        </div>
+      </div>
+        <%= form_tag(request.path, method: "get") do %>
+      <div class="accordion-item">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseSourceDB" aria-expanded="false" aria-controls="panelsStayOpen-collapseSourceDB">
+          Source Database
+        </button>
+        <div id="panelsStayOpen-collapseSourceDB" class="accordion-collapse collapse <% if !(session[:query_source_database].nil?) %> show<% end %>" aria-labelledby="panelsStayOpen-headingSourceDB">
+          <div class="accordion-body">
+            <label for="query_source_database"><% if !(session[:query_source_database].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Source database</label>
+            <%= autocomplete_field_tag(:query_source_database, session[:query_source_database], data_autocomplete_source_database_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseLabNr" aria-expanded="false" aria-controls="panelsStayOpen-collapseLabNr">
+          Lab Number
+        </button>
+        <div id="panelsStayOpen-collapseLabNr" class="accordion-collapse collapse <% if !(session[:query_labnr].nil?) %>show<% end %>" aria-labelledby="panelsStayOpen-headingLabNr">
+          <div class="accordion-body">
+            <label for="query_labnr"><% if !(session[:query_labnr].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Lab number</label>
+            <%= text_field_tag(:query_labnr, (session[:query_labnr] or "")) %>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseUncalBP" aria-expanded="false" aria-controls="panelsStayOpen-collapseUncalBP">
+          Uncalibrated BP
+        </button>
+        <div id="panelsStayOpen-collapseUncalBP" class="accordion-collapse collapse <% unless (session[:query_uncal_age_start].nil? || session[:query_uncal_age_start] == 50000) && (session[:query_uncal_age_stop].nil? || session[:query_uncal_age_stop] == 0) %>show<% end %>" aria-labelledby="panelsStayOpen-headingUncalBP">
+          <div class="accordion-body">
+            <label for="uncal_age_slider"><% if (session[:query_uncal_age_start].nil? || session[:query_uncal_age_start] == 50000) && (session[:query_uncal_age_stop].nil? || session[:query_uncal_age_stop] == 0) %> <%= fa_icon "times" %> <% else %> <%= fa_icon "check" %> <% end %> Uncalibrated age BP</label>
+            <input id="uncal_age_slider" class="uncal-range-slider"></input>
+            <%= hidden_field_tag(:query_uncal_age_start, session[:query_uncal_age_start]) %>
+            <%= hidden_field_tag(:query_uncal_age_stop, session[:query_uncal_age_stop]) %>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseCalBP" aria-expanded="false" aria-controls="panelsStayOpen-collapseCalBP">
+          Calibrated BP
+        </button>
+        <div id="panelsStayOpen-collapseCalBP" class="accordion-collapse collapse <% unless (session[:query_cal_age_start].nil? || session[:query_cal_age_start] == 50000) && (session[:query_cal_age_stop].nil? || session[:query_cal_age_stop] == 0) %>show<% end %>" aria-labelledby="panelsStayOpen-headingCalBP">
+          <div class="accordion-body">
+            <label for="cal_age_slider"><% if (session[:query_cal_age_start].nil? || session[:query_cal_age_start] == 50000) && (session[:query_cal_age_stop].nil? || session[:query_cal_age_stop] == 0) %> <%= fa_icon "times" %> <% else %> <%= fa_icon "check" %> <% end %> Calibrated age BP</label>
+            <input id="cal_age_slider" class="cal-range-slider"></input>
+            <%= hidden_field_tag(:query_cal_age_start, session[:query_cal_age_start]) %>
+            <%= hidden_field_tag(:query_cal_age_stop, session[:query_cal_age_stop]) %>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseSiteName" aria-expanded="false" aria-controls="panelsStayOpen-collapseSiteName">
+          Site Name
+        </button>
+        <div id="panelsStayOpen-collapseSiteName" class="accordion-collapse collapse <% if !(session[:query_site].nil?) %>show<% end %>" aria-labelledby="panelsStayOpen-headingSiteName">
+          <div class="accordion-body">
+            <label for="query_site"><% if !(session[:query_site].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Site name</label>
+            <%= autocomplete_field_tag(:query_site, session[:query_site], data_autocomplete_site_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseSiteType" aria-expanded="false" aria-controls="panelsStayOpen-collapseSiteType">
+          Site Type
+        </button>
+        <div id="panelsStayOpen-collapseSiteType" class="accordion-collapse collapse <% if !(session[:query_type].nil?) %>show<% end %>" aria-labelledby="panelsStayOpen-headingSiteType">
+          <div class="accordion-body">
+            <label for="query_site_type"><% if !(session[:query_site_type].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Site type</label>
+            <%= autocomplete_field_tag(:query_site_type, session[:query_site_type], data_autocomplete_site_type_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFeature" aria-expanded="false" aria-controls="panelsStayOpen-collapseFeature">
+          Feature
+        </button>
+        <div id="panelsStayOpen-collapseFeature" class="accordion-collapse collapse <% if !(session[:query_feature].nil?) %>show<% end %>" aria-labelledby="panelsStayOpen-headingFeature">
+          <div class="accordion-body">
+            <label for="query_feature"><% if !(session[:query_feature].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Feature</label>
+            <%= text_field_tag(:query_feature, (session[:query_feature] or "")) %>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFeatureType" aria-expanded="false" aria-controls="panelsStayOpen-collapseFeatureType">
+          Feature Type
+        </button>
+        <div id="panelsStayOpen-collapseFeatureType" class="accordion-collapse collapse <% unless (session[:query_feature_type].nil?) %>show<% end %>" aria-labelledby="panelsStayOpen-headingFeatureType">
+          <div class="accordion-body">
+            <label for="query_feature_type"><% if !(session[:query_feature_type].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Feature type</label>
+            <%= autocomplete_field_tag(:query_feature_type, session[:query_feature_type], data_autocomplete_feature_type_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapsePeriod" aria-expanded="false" aria-controls="panelsStayOpen-collapsePeriod">
+          Period
+        </button>
+        <div id="panelsStayOpen-collapsePeriod" class="accordion-collapse collapse <% unless (session[:query_period].nil?) %>show<% end %>" aria-labelledby="panelsStayOpen-headingPeriod">
+          <div class="accordion-body">
+            <label for="query_period"><% if !(session[:query_period].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Period</label>
+            <%= autocomplete_field_tag(:query_period, session[:query_period], data_autocomplete_period_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTypochronologicalUnit" aria-expanded="false" aria-controls="panelsStayOpen-collapseTypochronologicalUnit">
+          Typochronological Unit
+        </button>
+        <div id="panelsStayOpen-collapseTypochronologicalUnit" class="accordion-collapse collapse <% unless (session[:query_typochronological_unit].nil?) %>show<% end %>" aria-labelledby="panelsStayOpen-headingTypochronologicalUnit">
+          <div class="accordion-body">
+            <label for="query_typochronological_unit"><% if !(session[:query_typochronological_unit].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Typochronological unit</label>
+            <%= autocomplete_field_tag(:query_typochronological_unit, session[:query_typochronological_unit], data_autocomplete_typochronological_unit_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseEcochronologicalUnit" aria-expanded="false" aria-controls="panelsStayOpen-collapseEcochronologicalUnit">
+          Ecochronological Unit
+        </button>
+        <div id="panelsStayOpen-collapseEcochronologicalUnit" class="accordion-collapse collapse <% unless (session[:query_ecochronological_unit].nil?) %>show<% end %>" aria-labelledby="panelsStayOpen-headingEcochronologicalUnit">
+          <div class="accordion-body">
+            <label for="query_ecochronological_unit"><% if !(session[:query_ecochronological_unit].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Ecochronological unit</label>
+            <%= autocomplete_field_tag(:query_ecochronological_unit, session[:query_ecochronological_unit], data_autocomplete_ecochronological_unit_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseMaterial" aria-expanded="false" aria-controls="panelsStayOpen-collapseMaterial">
+          Material
+        </button>
+        <div id="panelsStayOpen-collapseMaterial" class="accordion-collapse collapse <% unless (session[:query_material].nil?) %>show<% end %>" aria-labelledby="panelsStayOpen-headingMaterial">
+          <div class="accordion-body">
+            <label for="query_material"><% if !(session[:query_material].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Material</label>
+            <%= autocomplete_field_tag(:query_material, session[:query_material], data_autocomplete_material_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseSpecies" aria-expanded="false" aria-controls="panelsStayOpen-collapseSpecies">
+          Species
+        </button>
+        <div id="panelsStayOpen-collapseSpecies" class="accordion-collapse collapse <% unless (session[:query_species].nil?) %>show<% end %>" aria-labelledby="panelsStayOpen-headingSpecies">
+          <div class="accordion-body">
+            <label for="query_species"><% if !(session[:query_species].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Species</label>
+            <%= text_field_tag(:query_species, (session[:query_species] or "")) %>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseCountry" aria-expanded="false" aria-controls="panelsStayOpen-collapseCountry">
+          Country
+        </button>
+        <div id="panelsStayOpen-collapseCountry" class="accordion-collapse collapse <% unless (session[:query_country].nil?) %>show<% end %>" aria-labelledby="panelsStayOpen-headingCountry">
+          <div class="accordion-body">
+            <label for="query_country"><% if !(session[:query_country].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Country</label>
+            <%= autocomplete_field_tag(:query_country, session[:query_country], data_autocomplete_country_name_path, 'data-delimiter' => '|', multiple: true) %>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseReference" aria-expanded="false" aria-controls="panelsStayOpen-collapseReference">
+          Reference
+        </button>
+        <div id="panelsStayOpen-collapseReference" class="accordion-collapse collapse <% unless (session[:query_reference].nil?) %>show<% end %>" aria-labelledby="panelsStayOpen-headingReference">
+          <div class="accordion-body">
+            <label for="query_reference"><% if !(session[:query_reference].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Reference</label>
+            <%= autocomplete_field_tag(:query_reference, session[:query_reference], data_autocomplete_reference_short_ref_path, 'data-delimiter' => '|', multiple: true) %>
+          </div>
+        </div>
+      </div>
+          <br><br>
+    <%= button_tag type: 'submit', class: "btn btn-primary" do %> <%= fa_icon "search" %> Filter dates<% end %>
+    <%= link_to resetfilter_path, {class: "btn btn-danger", "data-turbolinks": "false"} do %>
+      <%= fa_icon "undo" %> Reset Filter
+    <% end %>
+  <% end %>
+    </div>
+</div>
+</div>
+</div>
+
+
+
+
+

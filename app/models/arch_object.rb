@@ -1,5 +1,7 @@
 class ArchObject < ApplicationRecord
 
+  has_paper_trail
+  
   belongs_to :site_phase, optional: true
   accepts_nested_attributes_for :site_phase, :reject_if => proc { |attributes| attributes.all? { |key, value| key == "_destroy" || value.blank? || (value.is_a?(Hash) && value.values.all?(&:blank?)) } }
   validates_associated :site_phase
@@ -19,5 +21,5 @@ class ArchObject < ApplicationRecord
 	has_many :samples, inverse_of: :arch_object
 	accepts_nested_attributes_for :samples, reject_if: :all_blank, allow_destroy: true
 	validates_associated :samples
-
+  has_many :measurements, through: :samples
 end

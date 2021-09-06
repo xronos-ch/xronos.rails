@@ -4,7 +4,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '3.0.2'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 6.1.4'
+gem 'rails', '~> 6.1.4.1'
 # gem 'rails', '~> 5.2.6'
 
 # Use sqlite3 as the database for Active Record
@@ -117,9 +117,6 @@ gem 'rabl'
 # a session store backed by an Active Record class to avoid cookie overflow with lasso
 gem 'activerecord-session_store'
 
-# loading screen
-gem 'loading_screen', '~> 0.2.3'
-
 # recaptcha for user registration
 gem "recaptcha"
 
@@ -135,4 +132,20 @@ gem 'dotenv-rails', groups: [:development, :test]
 # Rubocop for code checking
 gem 'rubocop', require: false
 gem 'rubocop-rails', require: false
+
+# Paper Trail for versioning
+gem 'paper_trail'
+
+# Door Keeper for Oauth2-api
+gem 'doorkeeper'
+
+# WebPacker for up-to-date asset serving
+gem 'webpacker'
+
+# Eye Candy
+gem 'bootstrap', '~> 5.1'
+
+# Getting the blog posts from blog.xronos.ch
+gem "feedjira"
+gem "httparty"
 

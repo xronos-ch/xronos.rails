@@ -1,19 +1,76 @@
-<p id="notice"><%= notice %></p>
+<% content_for :head do %>
+  <%= javascript_pack_tag 'map' %>
+<% end %>
 
-<p>
-  <strong>Name:</strong>
-  <%= @site.name %>
-</p>
+<div class="container-flex" style="overflow-x:hidden">
+  <div class="row bg-secondary bg-opacity-50">
+    <div class="col">
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <div class="d-flex justify-content-start">
+              <h1><b>
+                  <%= @site.name %>
+                </b></h1>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="d-flex justify-content-start">
+              <p><b>Site in <%= @site.country.name%></b><p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="d-flex justify-content-start">
+             <% unless @site.lng.blank? || @site.lng.blank? %>
+              <p><b>Coordinates:</b> <%= to_dms(@site.lng, "lon") %> <%= to_dms(@site.lat, "lat") %> (<%= @site.lng.round(2) %>, <%= @site.lat.round(2) %>)<p>
+              <% else %>
+              <p><b>No coordinates available.</b><p>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<p>
-  <strong>Lat:</strong>
-  <%= @site.lat %>
-</p>
+  <div class="row">
 
-<p>
-  <strong>Lng:</strong>
-  <%= @site.lng %>
-</p>
+    <div class="col">
+      <div id="background_map" style="height: 300px; width: 100%; position: relative;">
+      </div>
+    </div>
+  </div>
+  <div class="row mt-5">
 
-<%= link_to 'Edit', edit_site_path(@site) %> |
-<%= link_to 'Back', sites_path %>
+    <div class="col">
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <% unless @site.measurements.nil? %>
+              <%= @site.name %> has <%= pluralize(@site.measurements.count, 'Measurement') %>:
+
+              <%= render "measurements/measurements_table_min", measurements: @site.measurements %>
+            <%end%>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+

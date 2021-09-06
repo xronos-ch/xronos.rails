@@ -1,54 +1,64 @@
-<h1>API</h1>
+<div class="container">
+  <div class="row m-3">
 
-<hr>
+    <div class="col">
+      <h1>API</h1>
 
-<p>
-  The data in this application can also be accessed in JSON format with direct requests to an API.
-  Use the following URL to access all (public) dates.
-</p>
+      <hr>
 
-<pre>
+      <p>
+      The data in this application can also be accessed in JSON format with direct requests to an API.
+      Use the following URL to access all (public) dates.
+      </p>
+
+      <pre>
 <code><%= request.original_url %>/v1/data</code>
-</pre>
+      </pre>
 
-<p>
-  You can also filter the data with this interface to only access the subsets relevant for you.
-  With the following URL you get - for example - only one date with the Lab Number <b>AAR-1847</b>.
-</p>
+      <p>
+      You can also filter the data with this interface to only access the subsets relevant for you.
+      With the following URL you get - for example - only one date with the Lab Number <b>AAR-1847</b>.
+      </p>
 
-<pre>
+      <pre>
 <code><%= request.original_url %>/v1/data<b>?query_labnr=AAR-1847</b></code>
-</pre>
+      </pre>
 
-<p>
-  The <b>|</b> ("pipe") operator allows you to combine multiple filter keys. <b>|</b> represents a
-  logical <b>OR</b>. That means the following URL will give you both dates <b>AAR-1847</b> and <b>KN-2506</b>.
-</p>
+      <p>
+      The <b>|</b> ("pipe") operator allows you to combine multiple filter keys. <b>|</b> represents a
+      logical <b>OR</b>. That means the following URL will give you both dates <b>AAR-1847</b> and <b>KN-2506</b>.
+      </p>
 
-<pre>
+      <pre>
 <code><%= request.original_url %>/v1/data<b>?query_labnr=AAR-1847|KN-2506</b></code>
-</pre>
+      </pre>
 
-<p>
-  You can also combine multiple filter criteria by adding filter parameters to the URL with the
-  <b>&</b> ("and") operator. The parameters are combined with a logical <b>AND</b>.
-  The following query will therefore give you all dates measured on charcoal from Germany.
-</p>
+      <p>
+      You can also combine multiple filter criteria by adding filter parameters to the URL with the
+      <b>&</b> ("and") operator. The parameters are combined with a logical <b>AND</b>.
+      The following query will therefore give you all dates measured on charcoal from Germany.
+      </p>
 
-<pre>
+      <pre>
 <code><%= request.original_url %>/v1/data<b>?query_country=Germany&query_material=charcoal</b></code>
-</pre>
+      </pre>
 
-<p>
-  Heres a <b>list of the available filter criteria</b>:
-</p>
+      <p>
+      Heres a <b>list of the available filter criteria</b>:
+      </p>
 
-<ul>
-  <li>query_labnr</li>
-  <li>query_site</li>
-  <li>query_site_type</li>
-  <li>query_country</li>
-  <li>query_feature</li>
-  <li>query_material</li>
-  <li>query_species</li>
-</ul>
+      <ul>
+        <li>query_labnr</li>
+        <li>query_site</li>
+        <li>query_site_type</li>
+        <li>query_country</li>
+        <li>query_feature</li>
+        <li>query_material</li>
+        <li>query_species</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+

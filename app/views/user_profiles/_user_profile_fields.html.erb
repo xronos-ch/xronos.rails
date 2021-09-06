@@ -1,0 +1,14 @@
+<% disabled ||= false  
+   #We do this so if disabled is not passed to the partial it doesn't crash. 
+   # We default it to false 
+%>
+
+  <div class="mb-3">
+    <%= form.label :first_name, class: "form-label" %>
+    <%= form.text_field :first_name, class: "form-control", disabled: disabled %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :last_name, class: "form-label" %>
+    <%= form.text_field :last_name, class: "form-control", disabled: disabled %>
+  </div>

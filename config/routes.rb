@@ -1,5 +1,10 @@
 Rails.application.routes.draw do
 
+  get "/table" => "data#index"
+  get "/map" => "data#map"
+  resources :user_profiles
+  use_doorkeeper
+  resources :measurement_states
   resources :source_databases
   get 'data/autocomplete_source_database_name'
   namespace :api, defaults: {format: 'json'} do
@@ -46,8 +51,9 @@ Rails.application.routes.draw do
   get 'data/index'
 	post 'data/index'
 #  root 'data#index'
-  root to: "data#index"
+  root to: "pages#home"
   get '/api' => 'pages#api'
+  get '/home' => 'pages#home'
   get '/about' => 'pages#about'
   get '/database' => 'pages#database'
   get '/resetfilter', :to=>'data#reset_filter_session_variable'

@@ -1,13 +1,22 @@
-<div class='nested-fields'>
+<% disabled ||= false  
+#We do this so if disabled is not passed to the partial it doesn't crash. 
+# We default it to false 
+%>
 
-  <div class="field_master_top">
-    <b><%= f.label :reference %></b>
+  <div class='nested-fields'>
+<div class='card'>
+  <div class="card-header">
+    <%= f.label :reference %>
   </div>
 
-  <%= render  'references/reference_fields', f: f %>
-
-  <%= fa_icon "minus" %> <%= link_to_remove_association "remove reference", f %>
-
-  <hr>
+    <div class="card-body">
+      <%= render  'references/reference_fields', f: f, disabled: disabled %>
+      <% unless disabled %>
+        <%= fa_icon "minus" %> <%= link_to_remove_association "remove reference", f %>
+      <%end%>
+    </div>
+  </div>
 
 </div>
+
+

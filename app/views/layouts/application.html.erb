@@ -1,173 +1,178 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Xronos</title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <%= stylesheet_link_tag    'application', media: 'all' %>
-    <%= javascript_include_tag 'application' %>
+    <%= stylesheet_link_tag 'application', media: 'all' %>
+    <%= javascript_pack_tag 'application' %>
+    <%#= javascript_include_tag 'application' %>
+    <%= javascript_pack_tag 'frontend' %>
+
+    <%= javascript_pack_tag params[:controller], :media => "all"  if javascript_exists?(params[:controller])
+    %>
 
     <%= include_gon %>
+
+    <%= yield :head %>
 
     <%= favicon_link_tag asset_path('favicon.ico') %>
   </head>
 
   <body>
-
-    <%= loading_screen style: :rectangle_bounce, color: "#232323", background: "rgba(0, 0, 0, 0.0)" %>
-
-    <div id="notch_wrap">
-      <div id="notch">
-        <b> <a href="https://blog.xronos.ch"><%= image_tag "logo.svg.png", height: '20' %> </a></b>
-		<!--
-			### Login and (Self) Registration currently not enabled ###
-        <div id="notch_login_status">
-          <% if user_signed_in? %>
-            <%= fa_icon "user" %> <% if current_user.admin? %> <%= fa_icon "legal" %> <% end %> <%= current_user.email[0...15] + "..." %>
-            <%= fa_icon "edit" %> <%= link_to('Edit registration', edit_user_registration_path, class: "user_edit_link") %>
-            <%= fa_icon "sign-out" %> <%= link_to('Logout', destroy_user_session_path, method: :delete) %>
-          <% else %>
-            <%= fa_icon "sign-in" %> <%= link_to('Login', new_user_session_path, class: "user_edit_link") %>
-            <%= fa_icon "user-plus" %> <%= link_to('Register', new_user_registration_path, class: "user_edit_link") %>
-          <% end %>
-        </div>
-		-->
-      </div>
-    </div>
-
-		<!-- #### left_window #### -->
-		<div class="left_window_menu <%= 'active' if session[:left_window_active] %>">
-
-			<button id="left_window_nav_general" type="button" aria-label="toggle left_window_menu">
-        <%= fa_icon "database" %>
-			</button>
-
-			<nav class="left_window_nav <%= 'big' if session[:left_window_big] %>">
-
-        <button id="left_window_nav_extend" type="button" aria-label="extend left_window_menu">
-          <%= fa_icon "expand" %>
+	
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-0 main-nav">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/"><%= image_tag "logo.white.png", height: '20' %></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
         </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <% if request.path == "/" %>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Get Data
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item nav-link text-dark" href="/map">Map</a></li>
+                <li><a class="dropdown-item nav-link text-dark" href="/table">Table</a></li>
+              </ul>
+            </li>
+            <%else%>
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="/table">Table</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="/map">Map</a>
+            </li>            
+            <%end%>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                About
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item nav-link text-dark" href="/about">About this Project</a></li>
+                <li><a class="dropdown-item nav-link text-dark" href="/database">About this Database</a></li>
+                <li><a class="dropdown-item nav-link text-dark" href="/api">API</a></li>
+                <li><a class="dropdown-item nav-link text-dark" href="https://blog.xronos.ch">Blog</a></li>
+              </ul>
+            </li>
+          </ul>
 
-				<div id="content">
+          <div class="d-flex">
+            <% if user_signed_in? %>
+              <div class="dropdown">
+                <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                  <%= current_user.email %>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                  <li> <%= link_to(edit_user_registration_path, class: "dropdown-item") do%><%= fa_icon "edit" %> Edit registration<% end %></li>
+                  <li> <%= link_to(destroy_user_session_path, method: :delete, class: "dropdown-item") do %><%= fa_icon "sign-out" %> Logout<% end %></li>
+                </ul>
+              </div>
 
-					<nav id="nav">
-						<%= render_navigation renderer: :links %>
-					</nav>
 
-					<!-- #### Pages #### -->
-					<main class="<%= 'big' if session[:left_window_big] %>">
+            <% else %>
+              <div class="dropdown">
+                <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                  Sign in
+                </button>
 
-            <nav id="breadcrumbs_nav">
-              <%= render_navigation renderer: :breadcrumbs, join_with: ' &gt; ' %>
-            </nav>
-
-						<% flash.each do |name, msg| %>
-              <% if msg.is_a?(String) %>
-						    <div id="flash_container">
-							    <%= content_tag :div, msg %>
+                <div class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="dropdownMenuLink" style="width: 300px">
+                  <%= form_for :user, :url => session_path(:user), :html => {:class => "px-4"}  do |f| %>
+                    <div class="form-group">
+                      <%= f.label :email, class: "sr-only col-form-label col-form-label-sm" %>
+                      <div class="input-group">
+                        <div class="input-group-text" style="width: 35px;"><%= fa_icon "user" %></div>
+                        <%= f.text_field :email, class: "form-control form-control-sm", placeholder: "email@example.com"  %>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <%= f.label :password, class: "sr-only col-form-label col-form-label-sm" %>
+                      <div class="input-group">
+                        <div class="input-group-text" style="width: 35px;"><%= fa_icon "unlock" %></div>
+                        <%= f.password_field :password, class: "form-control form-control-sm", placeholder: "password"  %>
+                      </div>
+                    </div>
+                    <div class="form-check" style="display: inline-block;">
+                      <%= f.check_box :remember_me, class: "form-check-input form-check-input-sm"  %>
+                      <%= f.label :remember_me, "Remember me", class: "form-check-label col-form-label-sm" %>
+                    </div>
+                    <%= f.submit 'Sign in', class: "btn btn-primary btn-sm pull-right" %>
+                  <% end %>
+                  <!-- <div class="dropdown-divider"></div>
+                    <%= link_to "Forgot your password?", new_password_path(:user), class: "dropdown-item" %>
+                    <%= link_to('New around here? Sign up', new_user_registration_path, class: "dropdown-item") %> -->
                 </div>
-             <% end %>
-           <% end %>
-
-  					<!-- #### Home #### -->
-						<div id="Home" class="page default">
-
-							<%= yield %>
-
-						</div>
-
-					</main>
-
-			</nav>
-
-		</div>
-
-		<!-- #### right_window #### -->
-    <div class="right_window_menu <%= 'active' if session[:right_window_active] %>">
-
-      <button id="right_window_nav_general" type="button" aria-label="toggle right_window_menu">
-        <%= fa_icon "search" %>
-      </button>
-
-      <nav class="right_window_nav">
-
-        <div id="right_window_body">
-
-          <!-- #### Filter inputs #### -->
-          <% if session[:spatial_lasso_selection].present? || !(session[:spatial_lasso_selection].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %>
-          Spatial lasso selection <br>
-          <button id="toggleLasso"><%= fa_icon "circle-o-notch" %> Lasso</button>
-          <button id="turnoffLasso"><%= fa_icon "times-circle" %> turn off</button>
-
-          <%= form_tag(root_path, method: "get") do %>
-
-            <label for="query_source_database"><% if !(session[:query_source_database].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Source database</label>
-            <%= autocomplete_field_tag(:query_source_database, session[:query_source_database], data_autocomplete_source_database_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
-
-            <label for="query_labnr"><% if !(session[:query_labnr].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Lab number</label>
-            <%= text_field_tag(:query_labnr, (session[:query_labnr] or "")) %>
-
-            <label for="uncal_age_slider"><% if (session[:query_uncal_age_start].nil? || session[:query_uncal_age_start] == 50000) && (session[:query_uncal_age_stop].nil? || session[:query_uncal_age_stop] == 0) %> <%= fa_icon "times" %> <% else %> <%= fa_icon "check" %> <% end %> Uncalibrated age BP</label>
-            <input id="uncal_age_slider" class="uncal-range-slider"></input>
-            <%= hidden_field_tag(:query_uncal_age_start, session[:query_uncal_age_start]) %>
-            <%= hidden_field_tag(:query_uncal_age_stop, session[:query_uncal_age_stop]) %>
-
-            <label for="cal_age_slider"><% if (session[:query_cal_age_start].nil? || session[:query_cal_age_start] == 50000) && (session[:query_cal_age_stop].nil? || session[:query_cal_age_stop] == 0) %> <%= fa_icon "times" %> <% else %> <%= fa_icon "check" %> <% end %> Calibrated age BP</label>
-            <input id="cal_age_slider" class="cal-range-slider"></input>
-            <%= hidden_field_tag(:query_cal_age_start, session[:query_cal_age_start]) %>
-            <%= hidden_field_tag(:query_cal_age_stop, session[:query_cal_age_stop]) %>
-
-            <label for="query_site"><% if !(session[:query_site].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Site name</label>
-            <%= autocomplete_field_tag(:query_site, session[:query_site], data_autocomplete_site_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
-
-            <label for="query_site_type"><% if !(session[:query_site_type].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Site type</label>
-            <%= autocomplete_field_tag(:query_site_type, session[:query_site_type], data_autocomplete_site_type_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
-
-            <label for="query_feature"><% if !(session[:query_feature].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Feature</label>
-            <%= text_field_tag(:query_feature, (session[:query_feature] or "")) %>
-
-            <label for="query_feature_type"><% if !(session[:query_feature_type].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Feature type</label>
-            <%= autocomplete_field_tag(:query_feature_type, session[:query_feature_type], data_autocomplete_feature_type_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
-
-            <label for="query_period"><% if !(session[:query_period].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Period</label>
-            <%= autocomplete_field_tag(:query_period, session[:query_period], data_autocomplete_period_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
-
-            <label for="query_typochronological_unit"><% if !(session[:query_typochronological_unit].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Typochronological unit</label>
-            <%= autocomplete_field_tag(:query_typochronological_unit, session[:query_typochronological_unit], data_autocomplete_typochronological_unit_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
-
-            <label for="query_ecochronological_unit"><% if !(session[:query_ecochronological_unit].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Ecochronological unit</label>
-            <%= autocomplete_field_tag(:query_ecochronological_unit, session[:query_ecochronological_unit], data_autocomplete_ecochronological_unit_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
-
-            <label for="query_material"><% if !(session[:query_material].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Material</label>
-            <%= autocomplete_field_tag(:query_material, session[:query_material], data_autocomplete_material_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
-
-            <label for="query_species"><% if !(session[:query_species].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Species</label>
-            <%= text_field_tag(:query_species, (session[:query_species] or "")) %>
-
-            <label for="query_country"><% if !(session[:query_country].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Country</label>
-            <%= autocomplete_field_tag(:query_country, session[:query_country], data_autocomplete_country_name_path, 'data-delimiter' => '|', multiple: true) %>
-
-            <label for="query_reference"><% if !(session[:query_reference].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Reference</label>
-            <%= autocomplete_field_tag(:query_reference, session[:query_reference], data_autocomplete_reference_short_ref_path, 'data-delimiter' => '|', multiple: true) %>
-
-            <br><br>
-            <%= button_tag type: 'submit' do %> <%= fa_icon "search" %> Filter dates<% end %>
-
-          <% end %>
-
-          <%= fa_icon "times" %> <%= link_to('Reset Filter', resetfilter_url) %>
-
+              </div>
+            <% end %>
+          </div>
         </div>
+      </div>
+    </nav>
 
-      </nav>
+    <%= yield %>
 
-		</div>
+    <footer class="page-footer">
+      <div class="container-fluid pb-0 mb-0 justify-content-center text-light bg-primary">
+        <div class="row py-3">
+          <div class="d-flex justify-content-center link-light nav-link">
 
-		<!-- #### Background map #### -->
-		<div id="background_map"></div>
-
-
-
+            <a href="/about" class="link-light nav-link">About this Project</a>|
+            <a href="/database" class="link-light nav-link">About this Database</a>|
+            <a href="/api" class="link-light nav-link">API</a>|
+            <a href="https://blog.xronos.ch" class="link-light nav-link">Blog</a>
+          </div>
+        </div>
+      </div>
+      </div>
+      <div class="container-fluid pb-0 mb-0 justify-content-center text-light bg-dark">
+        <div class="row justify-content-center py-3">
+          <div class="col-11">
+            <div class="row ">
+              <div class="col-xl-3 col-md-3 col-sm-3 col-12 my-auto mx-auto a">
+                <%= image_tag "logo.white.png", class: "img-fluid"  %>
+              </div>
+              <div class="col-xl-3 col-md-3 col-sm-3 col-12">
+                <h6 class="mb-3 mb-lg-4 bold-text text-muted"><b>Funded by</b></h6>
+                <%= image_tag "snf_logo.png", class: "img-fluid"  %>
+              </div>
+              <div class="col-xl-3 col-md-3 col-sm-3 col-12">
+                <h6 class="mb-3 mb-lg-4 bold-text text-muted"><b>Hosted by</b></h6>
+                <div style="max-width: 200px">
+                  <%= image_tag "Unibe_Logo_16pt_weiss.png", class: "img-fluid"  %>
+                </div>
+              </div>
+              <div class="col-xl-3 col-md-3 col-sm-3 col-12">
+                <h6 class="mb-3 mb-lg-4 text-muted bold-text mt-sm-0 mt-5"><b>Contact</b></h6><small>
+                  <p class="mb-1">SNFS Project XRONOS</p>
+                  <p class="mb-1">Department of Prehistoric Archaeology</p>
+                  <p class="mb-1">Institute of Archaeological Sciences</p>
+                  <p class="mb-1">Mittelstrasse 43</p>
+                  <p class="mb-1">University of Bern</p>
+                  <p class="mb-1">3012 Bern</p>
+                  <p class="mb-1">Switzerland</p>
+                </small>
+              </div>
+            </div>
+            <div class="row ">
+              <div class="col-xl-8 col-md-4 col-sm-4 col-auto my-md-0 mt-5 order-sm-1 order-3 align-self-end">
+                <small class="rights"><span>&#174;</span> 2021 XRONOS Project</small>
+              </div>
+              <div class="col-xl-2 col-md-4 col-sm-4 col-auto order-1 align-self-end ">
+                <h6 class="mt-55 mt-2 text-muted bold-text"><b>Martin Hinz</b></h6><small> <span><i class="fa fa-envelope" aria-hidden="true"></i></span> martin.hinz@iaw.unibe.ch</small>
+              </div>
+              <div class="col-xl-2 col-md-4 col-sm-4 col-auto order-2 align-self-end mt-3 ">
+                <h6 class="text-muted bold-text"><b>Joe Roe</b></h6><small><span><i class="fa fa-envelope" aria-hidden="true"></i></span> joseph.roe@iaw.unibe.ch</small>
+              </div>
+            </div>
+          </div>
+        </div>
+    </footer>
+      </div>
   </body>
 </html>
+

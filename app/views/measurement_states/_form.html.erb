@@ -1,0 +1,19 @@
+<%= form_with(model: measurement_state, local: true) do |f| %>
+  <% if measurement_state.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(measurement_state.errors.count, "error") %> prohibited this measurement_state from being saved:</h2>
+
+      <ul>
+      <% measurement_state.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= render  'measurement_states/measurement_state_fields', f: f %>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

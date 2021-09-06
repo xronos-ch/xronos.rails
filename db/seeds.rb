@@ -11,3 +11,5 @@ require 'factory_bot'
 FactoryBot.create(:user, :admin)
 
 FactoryBot.create_list(:measurement, 20, :is_14c)
+
+FactoryBot.create_list(:fell_phase, 2)
