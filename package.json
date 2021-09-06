@@ -6,7 +6,7 @@
 		"@rails/actioncable": "^6.1.4-1",
 		"@rails/activestorage": "^6.1.4-1",
 		"@rails/ujs": "^6.1.4-1",
-		"@rails/webpacker": "5.4.0",
+		"@rails/webpacker": "5.4.2",
 		"bootstrap": "^5.1",
 		"datatables": "^1.10.18",
 		"datatables.net": "^1.10.25",
@@ -25,8 +25,8 @@
 		"leaflet-lasso": "^2.2.5",
 		"rails-erb-loader": "^5.5.2",
 		"turbolinks": "^5.2.0",
-		"webpack": "^4.46.0",
-		"webpack-cli": "^3.3.12"
+		"webpack": "^5.52.0",
+		"webpack-cli": "^4.8.0"
 	},
 	"devDependencies": {
 		"webpack-dev-server": "^4.0.0"
