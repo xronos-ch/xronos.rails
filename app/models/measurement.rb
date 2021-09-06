@@ -16,7 +16,7 @@ class Measurement < ApplicationRecord
   accepts_nested_attributes_for :c14_measurement, reject_if: :all_blank
   validates_associated :c14_measurement
 
-  has_and_belongs_to_many :references
+  has_and_belongs_to_many :references, optional: true
   accepts_nested_attributes_for :references, reject_if: :all_blank
   validates_associated :references
 
