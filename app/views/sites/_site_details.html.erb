@@ -20,7 +20,7 @@
     </tr>
     <tr>
       <td>Country</th>
-      <td><%= site.country.name%></td>
+      <td><%= site.country.name if site.country.present?%></td>
     </tr>
   </tbody>
 </table>

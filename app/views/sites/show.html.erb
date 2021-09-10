@@ -18,7 +18,7 @@
         <div class="row">
           <div class="col">
             <div class="d-flex justify-content-start">
-              <p><b>Site in <%= @site.country.name%></b><p>
+              <p><b>Site <% if @site.country.present? %> in <%= @site.country.name%><%end%></b><p>
             </div>
           </div>
         </div>
