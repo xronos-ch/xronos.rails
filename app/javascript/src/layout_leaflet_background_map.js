@@ -10,7 +10,8 @@ document.addEventListener('DOMContentLoaded',function(){
 	map = L.map('background_map',{
 		zoomControl: false,
 		maxBounds: bounds,
-		maxBoundsViscosity: 0.75
+		maxBoundsViscosity: 0.75,
+		renderer: L.canvas()
 	});
 	//add zoom control with your options
 	L.control.zoom({
@@ -51,8 +52,8 @@ document.addEventListener('DOMContentLoaded',function(){
 		map.setView([45, 7], 3);
 	}
 
-
-
+	var cluster = L.markerClusterGroup();
+	
 	// load data and add markers to map
 	if (typeof gon === 'undefined') {
 		// nothing...
@@ -62,7 +63,7 @@ document.addEventListener('DOMContentLoaded',function(){
 		// console.log(sites);
 
 		// prepare markers
-		const markers = new Array(sites.length)
+		var markers = new Array(sites.length)
 		for (var i = 0; i < markers.length; i++) {
 			markers[i] = L.circleMarker(
 				[sites[i].lat, sites[i].lng], {
@@ -85,14 +86,22 @@ document.addEventListener('DOMContentLoaded',function(){
 			);
 		}
 
+		cluster.addLayers(markers);
+			
 		const layers = [
 			...markers
 		];
+		
 
-		const featureGroup = L.featureGroup(
+/*		const featureGroup = L.featureGroup(
 			layers
-		).addTo(map);
-		map.fitBounds(featureGroup.getBounds(), {maxZoom: 8});
+		).addTo(map);*/
+		
+/*		cluster.addLayer(markers);*/
+		map.addLayer(cluster);
+
+		
+/*		map.fitBounds(featureGroup.getBounds(), {maxZoom: 8});*/
 	}
 
 
@@ -153,18 +162,22 @@ document.addEventListener('DOMContentLoaded',function(){
 	}
 
 	map.on('mousedown', () => {
-		resetSelectedState();
+		/*resetSelectedState();
+		cluster.refreshClusters(markers);*/
 	});
 
 	map.on('lasso.finished', event => {
+		//cluster.disableClustering()
 		setSelectedLayers(event.layers);
 	});
 
 	map.on('lasso.enabled', () => {
+		cluster.disableClustering()
 		resetSelectedState();
 	});
 
 	map.on('lasso.disabled', () => {
+		//cluster.enableClustering()
 	});
 
 	toggleLasso.addEventListener('click', () => {
