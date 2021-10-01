@@ -9,7 +9,7 @@
 		"@rails/webpacker": "5.4.0",
 		"bootstrap": "^5.1",
 		"datatables": "^1.10.18",
-		"datatables.net": "^1.10.25",
+		"datatables.net": "^1.11.3",
 		"datatables.net-bs5": "^1.10.25",
 		"datatables.net-buttons": "^1.7.1",
 		"datatables.net-buttons-bs5": "^1.7.1",
