@@ -14,7 +14,6 @@
  *= require_self
  *= require leaflet
  *= require leaflet.markercluster
- *= require leaflet.markercluster.default
  *= require font-awesome
  *= require jquery-ui
  *= require ion.rangeSlider.css
@@ -30,4 +29,4 @@ $warning:    #FFEC51;
 $danger:     #A44A3F;
 
 @import "bootstrap";
-
+@import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
