@@ -33,7 +33,9 @@ document.addEventListener('DOMContentLoaded',function(){
 			button.setAttribute('aria-controls', 'filterDataOffcanvas');
 			button.id='button_filter_data_table';
 			button.innerHTML='<i class="fa fa-search"></i> Show data filter';
-
+			
+			L.DomEvent.disableClickPropagation(button);
+						
 			return button;
 		},
 
