@@ -13,6 +13,8 @@
  *= require_tree .
  *= require_self
  *= require leaflet
+ *= require leaflet.markercluster
+ *= require leaflet.markercluster.default
  *= require font-awesome
  *= require jquery-ui
  *= require ion.rangeSlider.css
