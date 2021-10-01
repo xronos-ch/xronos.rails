@@ -16,13 +16,14 @@ class DataController < ApplicationController
   def reset_filter_session_variable
     referrer_url = URI.parse(request.referrer) rescue URI.parse("/")
     referrer_url.query = Rack::Utils.parse_nested_query(referrer_url.query).delete_if { |key, value| key.to_s.match(/^query_.+/) }.to_query
+    
     session.keys.each do |key|
       if key.to_s.match(/^query_.+/)
         session[key] = nil
       end
     end
     session[:spatial_lasso_selection] = nil
-    redirect_to request.env["HTTP_REFERER"]#:action => 'map'
+    redirect_to referrer_url.to_s
   end
   
   def turn_off_lasso
