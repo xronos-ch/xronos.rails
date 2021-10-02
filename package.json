@@ -6,7 +6,7 @@
 		"@rails/actioncable": "^6.1.4-1",
 		"@rails/activestorage": "^6.1.4-1",
 		"@rails/ujs": "^6.1.4-1",
-		"@rails/webpacker": "5.4.0",
+		"@rails/webpacker": "5.4.3",
 		"bootstrap": "^5.1",
 		"datatables.net": "^1.11.3",
 		"datatables.net-bs5": "^1.11.3",
@@ -25,8 +25,7 @@
 		"leaflet.markercluster": "^1.5.1",
 		"rails-erb-loader": "^5.5.2",
 		"turbolinks": "^5.2.0",
-		"webpack": "^4.46.0",
-		"webpack-cli": "^3.3.12"
+		"webpack": "^4.46.0"
 	},
 	"devDependencies": {
 		"webpack-dev-server": "^4.3.0"
