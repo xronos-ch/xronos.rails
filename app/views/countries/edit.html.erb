@@ -1,8 +1,8 @@
-<div class="field_master_top">
-  <b>Editing Country</b>
+<div class="container">
+  <h1>Edit country</h1>
+
+  <%= render 'form', country: @country %>
+
+  <%= link_to 'Show', @country %> |
+  <%= link_to 'Back', countries_path %>
 </div>
-
-<%= render 'form', country: @country %>
-
-<%= link_to 'Show', @country %> |
-<%= link_to 'Back', countries_path %>

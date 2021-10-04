@@ -21,5 +21,7 @@ class ApplicationController < ActionController::Base
   def user_for_paper_trail
     current_user.id if user_signed_in?
   end
+
+  default_form_builder FormHelper::BS5FormBuilder
     
 end
