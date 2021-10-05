@@ -1,8 +1,8 @@
-<div class="field_master_top">
-  <b>Editing Lab</b>
+<div class="container">
+  <h1>Edit lab</h1>
+
+  <%= render 'form', lab: @lab %>
+
+  <%= link_to 'Show', @lab %> |
+  <%= link_to 'Back', labs_path %>
 </div>
-
-<%= render 'form', lab: @lab %>
-
-<%= link_to 'Show', @lab %> |
-<%= link_to 'Back', labs_path %>

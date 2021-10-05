@@ -21,6 +21,26 @@ module FormsHelper
       )
     end
 
+    def check_box(attribute, options = {})
+      validated = self.object.errors.present?
+      valid = !self.object.errors[attribute].present?
+
+      control_class = ['form-check-input']
+      if validated
+        valid ? control_class.push('is-valid') : control_class.push('is-invalid')
+      end
+
+      @template.tag.div(
+        super(attribute, { 
+          class: control_class.join(' '),
+          aria: { describedby: described_by(attribute, options) }
+        }) + 
+        label(attribute, class: 'form-check-label') +
+        (validated && !valid ? error_for(attribute) : hint_for(attribute, options)),
+        class: 'form-check mb-3'
+      )
+    end
+
     def submit
       super(class: 'btn btn-secondary')
     end
