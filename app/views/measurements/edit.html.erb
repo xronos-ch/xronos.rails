@@ -1,8 +1,8 @@
-<div class="field_master_top">
-  <b>Editing Measurement</b>
+<div class="container">
+  <b>Editing measurement</b>
+
+  <%= render 'form', measurement: @measurement %>
+
+  <%= link_to 'Show', @measurement %> |
+  <%= link_to 'Back', measurements_path %>
 </div>
-
-<%= render 'form', measurement: @measurement %>
-
-<%= link_to 'Show', @measurement %> |
-<%= link_to 'Back', measurements_path %>

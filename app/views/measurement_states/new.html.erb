@@ -1,7 +1,7 @@
-<div class="field_master_top">
-  <b>New Measurement State</b>
+<div class="conatiner">
+  <h1>New measurement state</h1>
+
+  <%= render 'form', measurement_state: @measurement_state %>
+
+  <%= link_to 'Back', measurement_states_path %>
 </div>
-
-<%= render 'form', measurement_state: @measurement_state %>
-
-<%= link_to 'Back', measurement_states_path %>

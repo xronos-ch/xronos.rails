@@ -1,45 +1,18 @@
+<%= f.text_field :feature %>
+<%= f.text_field :site_grid_square %>
+<%= f.text_field :coord_reference_system %>
+<%= f.text_field :coord_X %>
+<%= f.text_field :coord_Y %>
+<%= f.text_field :coord_Z %>
+
+<div class="field_master_top">
+  <b><%= f.label :feature_type %></b>
+</div>
 <div class="field_master">
-
   <div class="field">
-    <%= f.label :feature %>
-    <%= f.text_field :feature %>
+    <%= f.collection_select :feature_type_id, FeatureType.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"}  %>
   </div>
-
-  <div class="field">
-    <%= f.label :site_grid_square %>
-    <%= f.text_field :site_grid_square %>
-  </div>
-
-  <div class="field">
-    <%= f.label :coord_reference_system %>
-    <%= f.text_field :coord_reference_system %>
-  </div>
-
-  <div class="field">
-    <%= f.label :coord_X %>
-    <%= f.text_field :coord_X %>
-  </div>
-
-  <div class="field">
-    <%= f.label :coord_Y %>
-    <%= f.text_field :coord_Y %>
-  </div>
-
-  <div class="field">
-    <%= f.label :coord_Z %>
-    <%= f.text_field :coord_Z %>
-  </div>
-
-  <div class="field_master_top">
-    <b><%= f.label :feature_type %></b>
-  </div>
-  <div class="field_master">
-    <div class="field">
-      <%= f.collection_select :feature_type_id, FeatureType.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"}  %>
-    </div>
-    <%= f.fields_for :feature_type, :include_id => false do |feature_type| %>
-      <%= render 'feature_types/feature_type_fields', :f => feature_type %>
-    <% end %>
-  </div>
-
+  <%= f.fields_for :feature_type, :include_id => false do |feature_type| %>
+    <%= render 'feature_types/feature_type_fields', :f => feature_type %>
+  <% end %>
 </div>

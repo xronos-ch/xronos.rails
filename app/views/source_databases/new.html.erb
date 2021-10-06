@@ -1,7 +1,7 @@
-<div class="field_master_top">
-  <b>New Source Database</b>
+<div class="container">
+  <h1>New source database</h1>
+
+  <%= render 'form', source_database: @source_database %>
+
+  <%= link_to 'Back', source_databases_path %>
 </div>
-
-<%= render 'form', source_database: @source_database %>
-
-<%= link_to 'Back', source_databases_path %>

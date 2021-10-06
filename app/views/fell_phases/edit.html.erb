@@ -1,8 +1,8 @@
-<div class="field_master_top">
-  <b>Editing Fell Phase</b>
+<div class="container">
+  <h1>Edit fell phase</h1>
+
+  <%= render 'form', fell_phase: @fell_phase %>
+
+  <%= link_to 'Show', @fell_phase %> |
+  <%= link_to 'Back', fell_phases_path %>
 </div>
-
-<%= render 'form', fell_phase: @fell_phase %>
-
-<%= link_to 'Show', @fell_phase %> |
-<%= link_to 'Back', fell_phases_path %>

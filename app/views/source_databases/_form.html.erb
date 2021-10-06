@@ -1,19 +1,4 @@
-<%= form_with(model: source_database, local: true) do |f| %>
-  <% if source_database.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(source_database.errors.count, "error") %> prohibited this source_database from being saved:</h2>
-
-      <ul>
-      <% source_database.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
-
+<%= bs5_form_with(model: source_database, local: true) do |f| %>
   <%= render  'source_databases/source_database_fields', f: f %>
-
-  <div class="actions">
-    <%= f.submit %>
-  </div>
+  <%= f.submit %>
 <% end %>

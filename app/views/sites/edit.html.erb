@@ -1,8 +1,8 @@
-<div class="field_master_top">
-  <b>Editing Site</b>
+<div class="container">
+  <h1>Edit site</h1>
+
+  <%= render 'form', site: @site %>
+
+  <%= link_to 'Show', @site %> |
+  <%= link_to 'Back', sites_path %>
 </div>
-
-<%= render 'form', site: @site %>
-
-<%= link_to 'Show', @site %> |
-<%= link_to 'Back', sites_path %>

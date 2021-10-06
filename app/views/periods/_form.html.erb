@@ -1,19 +1,4 @@
-<%= form_with(model: period, local: true) do |f| %>
-  <% if period.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(period.errors.count, "error") %> prohibited this period from being saved:</h2>
-
-      <ul>
-      <% period.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
-    </div>s
-  <% end %>
-
+<%= bs5_form_with(model: period, local: true) do |f| %>
   <%= render  'periods/period_fields', f: f %>
-
-  <div class="actions">
-    <%= f.submit %>
-  </div>
+  <%= f.submit %>
 <% end %>

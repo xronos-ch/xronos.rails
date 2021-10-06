@@ -1,19 +1,4 @@
-<%= form_with(model: ecochronological_unit, local: true) do |f| %>
-  <% if ecochronological_unit.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(ecochronological_unit.errors.count, "error") %> prohibited this ecochronological_unit from being saved:</h2>
-
-      <ul>
-      <% ecochronological_unit.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
-
+<%= bs5_form_with(model: ecochronological_unit, local: true) do |f| %>
   <%= render  'ecochronological_units/ecochronological_unit_fields', f: f %>
-
-  <div class="actions">
-    <%= f.submit %>
-  </div>
+  <%= f.submit %>
 <% end %>

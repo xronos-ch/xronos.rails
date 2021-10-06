@@ -1,7 +1,7 @@
-<div class="field_master_top">
-  <b>New Feature Type</b>
+<div class="container">
+  <h1>New feature type</h1>
+
+  <%= render 'form', feature_type: @feature_type %>
+
+  <%= link_to 'Back', feature_types_path %>
 </div>
-
-<%= render 'form', feature_type: @feature_type %>
-
-<%= link_to 'Back', feature_types_path %>

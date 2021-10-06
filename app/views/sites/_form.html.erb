@@ -1,19 +1,4 @@
-<%= form_with(model: site, local: true) do |f| %>
-  <% if site.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(site.errors.count, "error") %> prohibited this site from being saved:</h2>
-
-      <ul>
-      <% site.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
-
+<%= bs5_form_with(model: site, local: true) do |f| %>
   <%= render  'sites/site_fields', f: f %>
-
-  <div class="actions">
-    <%= f.submit %>
-  </div>
+  <%= f.submit %>
 <% end %>

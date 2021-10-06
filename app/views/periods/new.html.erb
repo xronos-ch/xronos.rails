@@ -1,7 +1,7 @@
-<div class="field_master_top">
-  <b>New Period</b>
+<div class="container">
+  <h1>New period</h1>
+
+  <%= render 'form', period: @period %>
+
+  <%= link_to 'Back', periods_path %>
 </div>
-
-<%= render 'form', period: @period %>
-
-<%= link_to 'Back', periods_path %>

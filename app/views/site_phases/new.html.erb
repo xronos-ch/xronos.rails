@@ -1,7 +1,7 @@
-<div class="field_master_top">
-  <b>New Site Phase</b>
+<div class="container">
+  <b>New site phase</b>
+
+  <%= render 'form', site_phase: @site_phase %>
+
+  <%= link_to 'Back', site_phases_path %>
 </div>
-
-<%= render 'form', site_phase: @site_phase %>
-
-<%= link_to 'Back', site_phases_path %>
