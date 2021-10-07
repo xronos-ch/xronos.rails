@@ -1,8 +1,8 @@
-<%= f.text_field :name %>
+<%= f.text_control :name %>
 
 <div class="row">
-  <%= f.text_field :lat, label: 'Latitude' %>
-  <%= f.text_field :lng, label: 'Longitude' %>
+  <%= f.degree_control :lat, label: 'Latitude' %>
+  <%= f.degree_control :lng, label: 'Longitude' %>
 </div>
 
 <div class="field_master_top">

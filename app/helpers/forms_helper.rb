@@ -3,7 +3,7 @@ module FormsHelper
 
     # BOOTSTRAPPED STANDARD FIELDS
     
-    def text_field(attribute, options = {})
+    def text_control(attribute, options = {})
       control_class = ['form-control']
       if is_validated
         is_valid(attribute) ? control_class.push('is-valid') : control_class.push('is-invalid')
@@ -11,7 +11,7 @@ module FormsHelper
 
       form_group(
         form_floating(
-          super(attribute, { 
+          text_field(attribute, { 
             class: control_class.join(' '),
             placeholder: options.fetch(:placeholder, attribute),
             aria: { describedby: described_by(attribute, options) }
@@ -22,14 +22,14 @@ module FormsHelper
       )
     end
 
-    def number_field(attribute, options = {})
+    def number_control(attribute, options = {})
       control_class = ['form-control']
       if is_validated
         is_valid(attribute) ? control_class.push('is-valid') : control_class.push('is-invalid')
       end
 
       @template.tag.div(
-        super(attribute, { 
+        number_field(attribute, { 
           class: control_class.join(' '),
           placeholder: options.fetch(:placeholder, attribute),
           aria: { describedby: described_by(attribute, options) }
@@ -64,13 +64,42 @@ module FormsHelper
     # CUSTOM FIELDS
 
     # Year with era select box, e.g. for start/end times
-    def year_field(attribute, options = {})
+    def year_control(attribute, options = {})
       number_field(attribute, options)
+    end
+
+    # Geographic degrees, indicating N/E
+    def degree_control(attribute, options = {})
+      control_class = ['form-control']
+      if is_validated
+        is_valid(attribute) ? control_class.push('is-valid') : control_class.push('is-invalid')
+      end
+
+      input_group(
+        form_floating(
+          number_field(attribute, { 
+            class: control_class.join(' '),
+            placeholder: options.fetch(:placeholder, attribute),
+            aria: { describedby: described_by(attribute, options) }
+          }) + 
+          form_label(attribute, options) +
+          (is_validated && !is_valid(attribute) ? error_for(attribute) : hint_for(attribute, options))
+        ) +
+        input_group_text('° N')
+      )
     end
 
     # BUILDING BLOCKS
     def form_group(content)
       @template.tag.div(content, class: 'mb-3 col-sm')
+    end
+
+    def input_group(content)
+      @template.tag.div(content, class: 'input-group mb-3 col-sm')
+    end
+
+    def input_group_text(content)
+      @template.tag.span(content, class: 'input-group-text')
     end
     
     def form_floating(content)

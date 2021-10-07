@@ -1,6 +1,6 @@
-<%= f.text_field :name %>
+<%= f.text_control :name %>
 
-<%= f.number_field :approx_start_time %>
-<%= f.number_field :approx_end_time %>
+<%= f.number_control :approx_start_time %>
+<%= f.number_control :approx_end_time %>
 
 <%= f.collection_select :parent_id, EcochronologicalUnit.all, :id, :name, :include_blank => true %>
