@@ -1,14 +1,16 @@
-<p id="notice"><%= notice %></p>
+<div class="container">
+  <%= render 'shared/action_breadcrumbs', i: @site_type %>
+  <%= render 'shared/notice' %>
 
-<p>
+  <p>
   <strong>Name:</strong>
   <%= @site_type.name %>
-</p>
+  </p>
 
-<p>
+  <p>
   <strong>Description:</strong>
   <%= @site_type.description %>
-</p>
+  </p>
 
-<%= link_to 'Edit', edit_site_type_path(@site_type) %> |
-<%= link_to 'Back', site_types_path %>
+  <%= render 'shared/action_buttons', i: @site_type %>
+</div>

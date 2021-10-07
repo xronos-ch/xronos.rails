@@ -1,7 +1,7 @@
 <div class="container">
   <%= render 'shared/notice' %>
 
-  <h1>Site Phases</h1>
+  <h1>Site phases</h1>
 
   <table class="responsive nowrap table table-hover" id="dttb-site_phases" data-sort="true" data-source="<%= url_for(format: :json)%>">
     <thead>
@@ -30,5 +30,5 @@
 
   <br>
 
-  <%= link_to 'New Site Phase', new_site_phase_path %>
+  <%= link_to 'New Site Phase', new_site_phase_path, class: 'btn btn-secondary' %>
 </div>

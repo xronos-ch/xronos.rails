@@ -1,8 +1,6 @@
 <div class="container">
+  <%= render 'shared/action_breadcrumbs', i: @feature_type %>
   <h1>Edit feature type</h1>
 
   <%= render 'form', feature_type: @feature_type %>
-
-  <%= link_to 'Show', @feature_type %> |
-  <%= link_to 'Back', feature_types_path %>
 </div>

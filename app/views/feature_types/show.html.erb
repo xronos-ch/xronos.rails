@@ -1,14 +1,16 @@
-<p id="notice"><%= notice %></p>
+<div class="container">
+  <%= render 'shared/action_breadcrumbs', i: @feature_type %>
+  <%= render 'shared/notice' %>
 
-<p>
+  <p>
   <strong>Name:</strong>
   <%= @feature_type.name %>
-</p>
+  </p>
 
-<p>
+  <p>
   <strong>Description:</strong>
   <%= @feature_type.description %>
-</p>
+  </p>
 
-<%= link_to 'Edit', edit_feature_type_path(@feature_type) %> |
-<%= link_to 'Back', feature_types_path %>
+  <%= render 'shared/action_buttons', i: @feature_type %>
+</div>

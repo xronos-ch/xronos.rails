@@ -1,9 +1,8 @@
-<p id="notice"><%= notice %></p>
+<div class="container">
+  <%= render 'shared/action_breadcrumbs', i: @country %>
+  <%= render 'shared/notice' %>
 
-<p>
-  <strong>Name:</strong>
-  <%= @country.name %>
-</p>
+  <h1><%= @country.name %></h1>
 
-<%= link_to 'Edit', edit_country_path(@country) %> |
-<%= link_to 'Back', countries_path %>
+  <%= render 'shared/action_buttons', i: @country %>
+</div>

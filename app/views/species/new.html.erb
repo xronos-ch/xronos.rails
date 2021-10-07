@@ -1,7 +1,6 @@
 <div class="container">
+  <%= render 'shared/action_breadcrumbs', i: @species %>
   <h1>New species</h1>
 
   <%= render 'form', species: @species %>
-
-  <%= link_to 'Back', species_index_path %>
 </div>

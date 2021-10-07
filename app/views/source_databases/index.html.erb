@@ -1,7 +1,7 @@
 <div class="container">
   <%= render 'shared/notice' %>
 
-  <h1>Source Databases</h1>
+  <h1>Source databases</h1>
 
   <table class="responsive nowrap table table-hover" id="dttb-source_databases" data-sort="true" data-source="<%= url_for(format: :json)%>">
     <thead>
@@ -18,5 +18,5 @@
 
   <br>
 
-  <%= link_to 'New Source Database', new_source_database_path %>
+  <%= link_to 'New source database', new_source_database_path, class: 'btn btn-secondary' %>
 </div>

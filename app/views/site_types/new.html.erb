@@ -1,7 +1,6 @@
 <div class="container">
+  <%= render 'shared/action_breadcrumbs', i: @site_type %>
   <h1>New site type</h1>
 
   <%= render 'form', site_type: @site_type %>
-
-  <%= link_to 'Back', site_types_path %>
 </div>

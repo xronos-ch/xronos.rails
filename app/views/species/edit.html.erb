@@ -1,8 +1,6 @@
 <div class="container">
-  <h1>Editing species</h1>
+  <%= render 'shared/action_breadcrumbs', i: @species %>
+  <h1>Edit species</h1>
 
   <%= render 'form', species: @species %>
-
-  <%= link_to 'Show', @species %> |
-  <%= link_to 'Back', species_index_path %>
 </div>

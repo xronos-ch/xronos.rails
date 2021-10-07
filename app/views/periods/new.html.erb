@@ -1,7 +1,6 @@
 <div class="container">
+  <%= render 'shared/action_breadcrumbs', i: @period %>
   <h1>New period</h1>
 
   <%= render 'form', period: @period %>
-
-  <%= link_to 'Back', periods_path %>
 </div>

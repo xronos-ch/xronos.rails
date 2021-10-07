@@ -1,8 +1,7 @@
 <div class="container">
+  <%= render 'shared/action_breadcrumbs', i: @country %>
+
   <h1>Edit country</h1>
 
   <%= render 'form', country: @country %>
-
-  <%= link_to 'Show', @country %> |
-  <%= link_to 'Back', countries_path %>
 </div>

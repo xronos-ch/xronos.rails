@@ -1,14 +1,16 @@
-<p id="notice"><%= notice %></p>
+<div class="container">
+  <%= render 'shared/action_breadcrumbs', i: @measurement_state %>
+  <%= render 'shared/notice' %>
 
-<p>
+  <p>
   <strong>Name:</strong>
   <%= @measurement_state.name %>
-</p>
+  </p>
 
-<p>
+  <p>
   <strong>Description:</strong>
   <%= @measurement_state.description %>
-</p>
+  </p>
 
-<%= link_to 'Edit', edit_measurement_state_path(@measurement_state) %> |
-<%= link_to 'Back', measurement_states_path %>
+  <%= render 'shared/action_buttons', i: @measurement_state %>
+</div>

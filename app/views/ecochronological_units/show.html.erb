@@ -1,19 +1,20 @@
-<p id="notice"><%= notice %></p>
+<div class="container">
+  <%= render 'shared/action_breadcrumbs', i: @ecochronological_unit %>
 
-<p>
+  <p>
   <strong>Name:</strong>
   <%= @ecochronological_unit.name %>
-</p>
+  </p>
 
-<p>
+  <p>
   <strong>Approx start time:</strong>
   <%= @ecochronological_unit.approx_start_time %>
-</p>
+  </p>
 
-<p>
+  <p>
   <strong>Approx end time:</strong>
   <%= @ecochronological_unit.approx_end_time %>
-</p>
+  </p>
 
-<%= link_to 'Edit', edit_ecochronological_unit_path(@ecochronological_unit) %> |
-<%= link_to 'Back', ecochronological_units_path %>
+  <%= render 'shared/action_buttons', i: @ecochronological_unit %>
+</div>

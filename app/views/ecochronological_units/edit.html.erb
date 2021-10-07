@@ -1,8 +1,6 @@
 <div class="container">
+  <%= render 'shared/action_breadcrumbs', i: @ecochronological_unit %>
   <h1>Edit ecochronological unit</h1>
 
   <%= render 'form', ecochronological_unit: @ecochronological_unit %>
-
-  <%= link_to 'Show', @ecochronological_unit %> |
-  <%= link_to 'Back', ecochronological_units_path %>
 </div>

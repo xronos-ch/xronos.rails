@@ -1,19 +1,21 @@
-<p id="notice"><%= notice %></p>
+<div class="container">
+  <%= render 'shared/action_breadcrumbs', i: @site_phase %>
+  <%= render 'shared/notice' %>
 
-<p>
+  <p>
   <strong>Name:</strong>
   <%= @site_phase.name %>
-</p>
+  </p>
 
-<p>
+  <p>
   <strong>Approx start time:</strong>
   <%= @site_phase.approx_start_time %>
-</p>
+  </p>
 
-<p>
+  <p>
   <strong>Approx end time:</strong>
   <%= @site_phase.approx_end_time %>
-</p>
+  </p>
 
-<%= link_to 'Edit', edit_site_phase_path(@site_phase) %> |
-<%= link_to 'Back', site_phases_path %>
+  <%= render 'shared/action_buttons', i: @site_phase %>
+</div>

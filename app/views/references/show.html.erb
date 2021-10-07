@@ -1,14 +1,16 @@
-<p id="notice"><%= notice %></p>
+<div class="container">
+  <%# render 'shared/action_breadcrumbs', i: @reference %>
+  <%= render 'shared/notice' %>
 
-<p>
+  <p>
   <strong>Short Reference:</strong>
   <%= @reference.short_ref %>
-</p>
+  </p>
 
-<p>
+  <p>
   <strong>Bibtex:</strong>
   <%= @reference.bibtex %>
-</p>
+  </p>
 
-<%= link_to 'Edit', edit_reference_path(@reference) %> |
-<%= link_to 'Back', references_path %>
+  <%= render 'shared/action_buttons', i: @reference %>
+</div>

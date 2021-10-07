@@ -1,8 +1,6 @@
 <div class="container">
+  <%# render 'shared/action_breadcrumbs', i: @reference %>
   <h1>Edit reference</h1>
 
   <%= render 'form', reference: @reference %>
-
-  <%= link_to 'Show', @reference %> |
-  <%= link_to 'Back', references_path %>
 </div>

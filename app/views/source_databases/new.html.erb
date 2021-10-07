@@ -1,7 +1,6 @@
 <div class="container">
+  <%= render 'shared/action_breadcrumbs', i: @source_database %>
   <h1>New source database</h1>
 
   <%= render 'form', source_database: @source_database %>
-
-  <%= link_to 'Back', source_databases_path %>
 </div>
