@@ -1,12 +1,12 @@
 module FormsHelper
   class BS5FormBuilder < ActionView::Helpers::FormBuilder
-    def text_field(attribute, options = {})
-      validated = self.object.errors.present?
-      valid = !self.object.errors[attribute].present?
 
+    # BOOTSTRAPPED STANDARD FIELDS
+    
+    def text_field(attribute, options = {})
       control_class = ['form-control']
-      if validated
-        valid ? control_class.push('is-valid') : control_class.push('is-invalid')
+      if is_validated
+        is_valid(attribute) ? control_class.push('is-valid') : control_class.push('is-invalid')
       end
 
       @template.tag.div(
@@ -16,18 +16,33 @@ module FormsHelper
           aria: { describedby: described_by(attribute, options) }
         }) + 
         label(attribute, class: 'form-label') +
-        (validated && !valid ? error_for(attribute) : hint_for(attribute, options)),
+        (is_validated && !is_valid(attribute) ? error_for(attribute) : hint_for(attribute, options)),
+        class: 'form-floating mb-3'
+      )
+    end
+
+    def number_field(attribute, options = {})
+      control_class = ['form-control']
+      if is_validated
+        is_valid(attribute) ? control_class.push('is-valid') : control_class.push('is-invalid')
+      end
+
+      @template.tag.div(
+        super(attribute, { 
+          class: control_class.join(' '),
+          placeholder: options.fetch(:placeholder, attribute),
+          aria: { describedby: described_by(attribute, options) }
+        }) + 
+        label(attribute, class: 'form-label') +
+        (is_validated && !is_valid(attribute) ? error_for(attribute) : hint_for(attribute, options)),
         class: 'form-floating mb-3'
       )
     end
 
     def check_box(attribute, options = {})
-      validated = self.object.errors.present?
-      valid = !self.object.errors[attribute].present?
-
       control_class = ['form-check-input']
-      if validated
-        valid ? control_class.push('is-valid') : control_class.push('is-invalid')
+      if is_validated
+        is_valid(attribute) ? control_class.push('is-valid') : control_class.push('is-invalid')
       end
 
       @template.tag.div(
@@ -36,7 +51,7 @@ module FormsHelper
           aria: { describedby: described_by(attribute, options) }
         }) + 
         label(attribute, class: 'form-check-label') +
-        (validated && !valid ? error_for(attribute) : hint_for(attribute, options)),
+        (is_validated && !is_valid(attribute) ? error_for(attribute) : hint_for(attribute, options)),
         class: 'form-check mb-3'
       )
     end
@@ -45,8 +60,25 @@ module FormsHelper
       super(class: 'btn btn-secondary')
     end
 
+    # CUSTOM FIELDS
+
+    # Year with era select box, e.g. for start/end times
+    def year_field(attribute, options = {})
+      number_field(attribute, options)
+    end
+
+    # HELPERS
+    
+    def is_validated
+      self.object.errors.present?
+    end
+
+    def is_valid(attribute)
+      !self.object.errors[attribute].present?
+    end
+    
     def error_for(attribute)
-      if self.object.errors[attribute].present?
+      if !is_valid(attribute)
         @template.tag.div(
           self.object.errors.full_messages_for(attribute).join("; "),
           id: tag_id_for(attribute) + '_error',
