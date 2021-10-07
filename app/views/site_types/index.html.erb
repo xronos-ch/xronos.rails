@@ -1,29 +1,31 @@
-<p id="notice"><%= notice %></p>
+<div class="container">
+  <p id="notice"><%= notice %></p>
 
-<h1>Site Types</h1>
+  <h1>Site Types</h1>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Description</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @site_types.each do |site_type| %>
+  <table>
+    <thead>
       <tr>
-        <td><%= site_type.name %></td>
-        <td><%= site_type.description %></td>
-        <td><%= link_to 'Show', site_type %></td>
-        <td><%= link_to 'Edit', edit_site_type_path(site_type) %></td>
-        <td><%= link_to 'Destroy', site_type, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <th>Name</th>
+        <th>Description</th>
+        <th colspan="3"></th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
 
-<br>
+    <tbody>
+      <% @site_types.each do |site_type| %>
+        <tr>
+          <td><%= site_type.name %></td>
+          <td><%= site_type.description %></td>
+          <td><%= link_to 'Show', site_type %></td>
+          <td><%= link_to 'Edit', edit_site_type_path(site_type) %></td>
+          <td><%= link_to 'Destroy', site_type, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 
-<%= link_to 'New Site Type', new_site_type_path %>
+  <br>
+
+  <%= link_to 'New Site Type', new_site_type_path %>
+</div>

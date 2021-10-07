@@ -1,37 +1,39 @@
-<p id="notice"><%= notice %></p>
+<div class="container">
+  <p id="notice"><%= notice %></p>
 
-<h1>On Site Object Positions</h1>
+  <h1>On Site Object Positions</h1>
 
-<table>
-  <thead>
-    <tr>
-      <th>Feature</th>
-      <th>Site grid square</th>
-      <th>Coord reference system</th>
-      <th>Coord x</th>
-      <th>Coord y</th>
-      <th>Coord z</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @on_site_object_positions.each do |on_site_object_position| %>
+  <table>
+    <thead>
       <tr>
-        <td><%= on_site_object_position.feature %></td>
-        <td><%= on_site_object_position.site_grid_square %></td>
-        <td><%= on_site_object_position.coord_reference_system %></td>
-        <td><%= on_site_object_position.coord_X %></td>
-        <td><%= on_site_object_position.coord_Y %></td>
-        <td><%= on_site_object_position.coord_Z %></td>
-        <td><%= link_to 'Show', on_site_object_position %></td>
-        <td><%= link_to 'Edit', edit_on_site_object_position_path(on_site_object_position) %></td>
-        <td><%= link_to 'Destroy', on_site_object_position, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <th>Feature</th>
+        <th>Site grid square</th>
+        <th>Coord reference system</th>
+        <th>Coord x</th>
+        <th>Coord y</th>
+        <th>Coord z</th>
+        <th colspan="3"></th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
 
-<br>
+    <tbody>
+      <% @on_site_object_positions.each do |on_site_object_position| %>
+        <tr>
+          <td><%= on_site_object_position.feature %></td>
+          <td><%= on_site_object_position.site_grid_square %></td>
+          <td><%= on_site_object_position.coord_reference_system %></td>
+          <td><%= on_site_object_position.coord_X %></td>
+          <td><%= on_site_object_position.coord_Y %></td>
+          <td><%= on_site_object_position.coord_Z %></td>
+          <td><%= link_to 'Show', on_site_object_position %></td>
+          <td><%= link_to 'Edit', edit_on_site_object_position_path(on_site_object_position) %></td>
+          <td><%= link_to 'Destroy', on_site_object_position, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 
-<%= link_to 'New On Site Object Position', new_on_site_object_position_path %>
+  <br>
+
+  <%= link_to 'New On Site Object Position', new_on_site_object_position_path %>
+</div>

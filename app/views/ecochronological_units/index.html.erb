@@ -1,30 +1,32 @@
-<h1>Ecochronological Units</h1>
+<div class="container">
+  <h1>Ecochronological Units</h1>
 
-<table class="responsive nowrap table table-hover" id="dttb-ecochronological_units" data-sort="true" data-source="<%= url_for(format: :json)%>">
-  <thead>
-    <tr>
-      <th data-data="name">Name</th>
-      <th data-data="approx_start_time">Approx start time</th>
-      <th data-data="approx_end_time">Approx end time</th>
-      <th data-data="url" data-orderable="false" data-class-name="all" data-searchable="false" class="skip-export" width="100px"></th>
-    </tr>
-  </thead>
+  <table class="responsive nowrap table table-hover" id="dttb-ecochronological_units" data-sort="true" data-source="<%= url_for(format: :json)%>">
+    <thead>
+      <tr>
+        <th data-data="name">Name</th>
+        <th data-data="approx_start_time">Approx start time</th>
+        <th data-data="approx_end_time">Approx end time</th>
+        <th data-data="url" data-orderable="false" data-class-name="all" data-searchable="false" class="skip-export" width="100px"></th>
+      </tr>
+    </thead>
 
-  <tbody>
-  <% @ecochronological_units.each do |ecochronological_unit| %>
-    <tr>
-      <td><%= ecochronological_unit.name %></td>
-      <td><%= ecochronological_unit.approx_start_time %></td>
-      <td><%= ecochronological_unit.approx_end_time %></td>
-      <td><%= link_to 'Show', ecochronological_unit %></td>
-      <td><%= link_to 'Edit', edit_ecochronological_unit_path(ecochronological_unit) %></td>
-      <td><%= link_to 'Destroy', ecochronological_unit, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-    </tr>
-  <% end %>
-  </tbody>  
-  
-</table>
+    <tbody>
+      <% @ecochronological_units.each do |ecochronological_unit| %>
+        <tr>
+          <td><%= ecochronological_unit.name %></td>
+          <td><%= ecochronological_unit.approx_start_time %></td>
+          <td><%= ecochronological_unit.approx_end_time %></td>
+          <td><%= link_to 'Show', ecochronological_unit %></td>
+          <td><%= link_to 'Edit', edit_ecochronological_unit_path(ecochronological_unit) %></td>
+          <td><%= link_to 'Destroy', ecochronological_unit, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        </tr>
+      <% end %>
+    </tbody>  
 
-<br>
+  </table>
 
-<%= link_to 'New Ecochronological Unit', new_ecochronological_unit_path %>
+  <br>
+
+  <%= link_to 'New Ecochronological Unit', new_ecochronological_unit_path %>
+</div>
