@@ -1,7 +1,9 @@
 <%= f.text_field :name %>
 
-<%= f.text_field :lat %>
-<%= f.text_field :lng %>
+<div class="row">
+  <%= f.text_field :lat, label: 'Latitude' %>
+  <%= f.text_field :lng, label: 'Longitude' %>
+</div>
 
 <div class="field_master_top">
   <b><%= f.label :country %></b>

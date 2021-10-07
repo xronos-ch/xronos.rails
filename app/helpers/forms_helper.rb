@@ -9,15 +9,16 @@ module FormsHelper
         is_valid(attribute) ? control_class.push('is-valid') : control_class.push('is-invalid')
       end
 
-      @template.tag.div(
-        super(attribute, { 
-          class: control_class.join(' '),
-          placeholder: options.fetch(:placeholder, attribute),
-          aria: { describedby: described_by(attribute, options) }
-        }) + 
-        label(attribute, class: 'form-label') +
-        (is_validated && !is_valid(attribute) ? error_for(attribute) : hint_for(attribute, options)),
-        class: 'form-floating mb-3'
+      form_group(
+        form_floating(
+          super(attribute, { 
+            class: control_class.join(' '),
+            placeholder: options.fetch(:placeholder, attribute),
+            aria: { describedby: described_by(attribute, options) }
+          }) + 
+          form_label(attribute, options) +
+          (is_validated && !is_valid(attribute) ? error_for(attribute) : hint_for(attribute, options))
+        )
       )
     end
 
@@ -65,6 +66,20 @@ module FormsHelper
     # Year with era select box, e.g. for start/end times
     def year_field(attribute, options = {})
       number_field(attribute, options)
+    end
+
+    # BUILDING BLOCKS
+    def form_group(content)
+      @template.tag.div(content, class: 'mb-3 col-sm')
+    end
+    
+    def form_floating(content)
+      @template.tag.div(content, class: 'form-floating')
+    end
+
+    def form_label(attribute, options)
+      label = options.fetch(:label, attribute.to_s)
+      label(label, class: 'form-label')
     end
 
     # HELPERS
