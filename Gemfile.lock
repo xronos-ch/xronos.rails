@@ -203,7 +203,7 @@ GEM
     pg (1.2.3)
     popper_js (2.9.3)
     public_suffix (4.0.6)
-    puma (5.5.0)
+    puma (5.5.1)
       nio4r (~> 2.0)
     rabl (0.14.5)
       activesupport (>= 2.3.14)
