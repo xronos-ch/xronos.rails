@@ -3,25 +3,23 @@
 
   <h1>Ecochronological units</h1>
 
-  <table class="responsive nowrap table table-hover" id="dttb-ecochronological_units" data-sort="true" data-source="<%= url_for(format: :json)%>">
+  <table class="responsive nowrap table table-hover align-middle" id="dttb-ecochronological_units" data-sort="true" data-source="<%= url_for(format: :json)%>">
     <thead>
       <tr>
         <th data-data="name">Name</th>
         <th data-data="approx_start_time">Approx start time</th>
         <th data-data="approx_end_time">Approx end time</th>
-        <th data-data="url" data-orderable="false" data-class-name="all" data-searchable="false" class="skip-export" width="100px"></th>
+        <th data-data="url" data-orderable="false" data-class-name="all" data-searchable="false" class="skip-export" width="100px">Actions</th>
       </tr>
     </thead>
 
     <tbody>
       <% @ecochronological_units.each do |ecochronological_unit| %>
         <tr>
-          <td><%= ecochronological_unit.name %></td>
+          <td><%= link_to ecochronological_unit.name, ecochronological_unit %></td>
           <td><%= ecochronological_unit.approx_start_time %></td>
           <td><%= ecochronological_unit.approx_end_time %></td>
-          <td><%= link_to 'Show', ecochronological_unit %></td>
-          <td><%= link_to 'Edit', edit_ecochronological_unit_path(ecochronological_unit) %></td>
-          <td><%= link_to 'Destroy', ecochronological_unit, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+          <td><%= render 'shared/action_buttons_compact', i: ecochronological_unit %></td>
         </tr>
       <% end %>
     </tbody>  

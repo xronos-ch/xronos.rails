@@ -1,0 +1,8 @@
+<div class="btn-group" role="group" aria-label="Actions for this record">
+  <%= link_to edit_polymorphic_path(i), class: 'btn btn-secondary btn-sm' do
+    fa_icon 'pencil', title: 'Edit' 
+  end %>
+  <%= link_to i, method: :delete, class: 'btn btn-danger btn-sm', data: { confirm: 'Are you sure?' } do
+    fa_icon 'trash', title: 'Delete'
+  end %>
+</div>

@@ -3,29 +3,25 @@
 
   <h1>References</h1>
 
-  <table>
+  <table class="responsive nowrap table table-hover align-middle">
     <thead>
       <tr>
-        <th>Short Reference</th>
-        <th>Bibtex</th>
-        <th colspan="3"></th>
+        <th>Label</th>
+        <th>BibTeX</th>
+        <th>Actions</th>
       </tr>
     </thead>
 
     <tbody>
       <% @references.each do |reference| %>
         <tr>
-          <td><%= reference.short_ref %></td>
+          <td><%= link_to reference.short_ref, reference %></td>
           <td><%= reference.bibtex %></td>
-          <td><%= link_to 'Show', reference %></td>
-          <td><%= link_to 'Edit', edit_reference_path(reference) %></td>
-          <td><%= link_to 'Destroy', reference, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+          <td><%= render 'shared/action_buttons_compact', i: reference %></td>
         </tr>
       <% end %>
     </tbody>
   </table>
 
-  <br>
-
-  <%= link_to 'New Reference', new_reference_path, class: 'btn btn-secondary' %>
+  <%= link_to 'New reference', new_reference_path, class: 'btn btn-secondary' %>
 </div>

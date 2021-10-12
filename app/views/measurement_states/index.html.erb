@@ -3,27 +3,23 @@
 
   <h1>Measurement states</h1>
 
-  <table>
+  <table class="responsive nowrap table table-hover align-middle">
     <thead>
       <tr>
         <th>Name</th>
-        <th colspan="3"></th>
+        <th>Actions</th>
       </tr>
     </thead>
 
     <tbody>
       <% @measurement_states.each do |measurement_state| %>
         <tr>
-          <td><%= measurement_state.name %></td>
-          <td><%= link_to 'Show', measurement_state %></td>
-          <td><%= link_to 'Edit', edit_measurement_state_path(measurement_state) %></td>
-          <td><%= link_to 'Destroy', measurement_state, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+          <td><%= link_to measurement_state.name, measurement_state %></td>
+          <td><%= render 'shared/action_buttons_compact', i: measurement_state %></td>
         </tr>
       <% end %>
     </tbody>
   </table>
 
-  <br>
-
-  <%= link_to 'New Measurement State', new_measurement_state_path, class: 'btn btn-secondary' %>
+  <%= link_to 'New measurement state', new_measurement_state_path, class: 'btn btn-secondary' %>
 </div>

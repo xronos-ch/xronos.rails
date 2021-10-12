@@ -3,7 +3,7 @@
 
   <h1>C14 measurements</h1>
 
-  <table class="responsive nowrap table table-hover" id="dttb-c14_measurements" data-sort="true" data-source="<%= url_for(format: :json)%>">
+  <table class="responsive nowrap table table-hover align-middle" id="dttb-c14_measurements" data-sort="true" data-source="<%= url_for(format: :json)%>">
     <thead>
       <tr>
         <th data-data="bp">Bp</th>
@@ -13,7 +13,7 @@
         <th data-data="delta_c13">Delta c13</th>
         <th data-data="delta_c13_std">Delta c13 std</th>
         <th data-data="method">Method</th>
-        <th data-data="url" data-orderable="false" data-class-name="all" data-searchable="false" class="skip-export" width="100px"></th>
+        <th colspan=2 data-data="url" data-orderable="false" data-class-name="all" data-searchable="false" class="skip-export" width="100px">Actions</th>
       </tr>
     </thead>
 
@@ -28,8 +28,7 @@
           <td><%= c14_measurement.delta_c13_std %></td>
           <td><%= c14_measurement.method %></td>
           <td><%= link_to 'Show', c14_measurement %></td>
-          <td><%= link_to 'Edit', edit_c14_measurement_path(c14_measurement) %></td>
-          <td><%= link_to 'Destroy', c14_measurement, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+          <td><%= render 'shared/action_buttons_compact', i: c14_measurement %></td>
         </tr>
       <% end %>
     </tbody>

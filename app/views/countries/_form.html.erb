@@ -1,4 +1,4 @@
-<%= form_with(model: country, builder: FormsHelper::BS5FormBuilder, local: true) do |f| %>
+<%= bs5_form_with(model: country, local: true) do |f| %>
   <%= render  'countries/country_fields', f: f %>
   <%= f.submit %>
 <% end %>

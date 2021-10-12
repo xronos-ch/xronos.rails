@@ -3,32 +3,28 @@
 
   <h1>Periods</h1>
 
-  <table class="responsive nowrap table table-hover" id="dttb-periods" data-sort="true" data-source="<%= url_for(format: :json)%>">
+  <table class="responsive nowrap table table-hover align-middle" id="dttb-periods" data-sort="true" data-source="<%= url_for(format: :json)%>">
     <thead>
       <tr>
         <th data-data="name">Name</th>
         <th data-data="approx_start_time">Approx start time</th>
         <th data-data="approx_end_time">Approx end time</th>
-        <th data-data="url" data-orderable="false" data-class-name="all" data-searchable="false" class="skip-export" width="100px"></th>
+        <th data-data="url" data-orderable="false" data-class-name="all" data-searchable="false" class="skip-export" width="100px">Actions</th>
       </tr>
     </thead>
 
     <tbody>
       <% @periods.each do |period| %>
         <tr>
-          <td><%= period.name %></td>
+          <td><%= link_to period.name, period %></td>
           <td><%= period.approx_start_time %></td>
           <td><%= period.approx_end_time %></td>
-          <td><%= link_to 'Show', period %></td>
-          <td><%= link_to 'Edit', edit_period_path(period) %></td>
-          <td><%= link_to 'Destroy', period, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+          <td><%= render 'shared/action_buttons_compact', i: period %></td>
         </tr>
       <% end %>
     </tbody>
 
   </table>
 
-  <br>
-
-  <%= link_to 'New Period', new_period_path, class: 'btn btn-secondary' %>
+  <%= link_to 'New period', new_period_path, class: 'btn btn-secondary' %>
 </div>
