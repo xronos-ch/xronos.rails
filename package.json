@@ -2,6 +2,7 @@
 	"name": "xronos",
 	"private": true,
 	"dependencies": {
+		"@nathanvda/cocoon": "^1.2.14",
 		"@popperjs/core": "^2.9.3",
 		"@rails/actioncable": "^6.1.4-1",
 		"@rails/activestorage": "^6.1.4-1",
