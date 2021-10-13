@@ -22,6 +22,25 @@ module FormsHelper
       )
     end
 
+    def text_control_multiline(attribute, options = {})
+      control_class = ['form-control']
+      if is_validated
+        is_valid(attribute) ? control_class.push('is-valid') : control_class.push('is-invalid')
+      end
+
+      form_group(
+        form_floating(
+          text_area(attribute, { 
+            class: control_class.join(' '),
+            placeholder: options.fetch(:placeholder, attribute),
+            aria: { describedby: described_by(attribute, options) }
+          }) + 
+          form_label(attribute, options) +
+          (is_validated && !is_valid(attribute) ? error_for(attribute) : hint_for(attribute, options))
+        )
+      )
+    end
+
     def number_control(attribute, options = {})
       control_class = ['form-control']
       if is_validated
