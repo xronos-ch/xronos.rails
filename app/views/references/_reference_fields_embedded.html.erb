@@ -1,0 +1,19 @@
+<% disabled ||= false  
+#We do this so if disabled is not passed to the partial it doesn't crash. 
+# We default it to false 
+%>
+
+<div class="card mb-3">
+  <div class="card-body row">
+    <%= render 'references/reference_fields', f: f, disabled: disabled %>
+    <% unless disabled %>
+      <div class="col-sm-1"> 
+        <%= 
+          link_to_remove_association(f, class: 'btn btn-danger btn') do
+            fa_icon 'minus', title: 'Remove reference'
+          end
+        %>
+      </div>
+    <% end %>
+  </div>
+</div>
