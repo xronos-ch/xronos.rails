@@ -1,6 +1,6 @@
-    <%= f.text_control :name %>
+<%= f.text_control :name %>
 
-    <%= f.year_control :approx_start_time %>
-    <%= f.year_control :approx_end_time %>
-    
-    <%= f.collection_select :parent_id, TypochronologicalUnit.all, :id, :name, :include_blank => true %>
+<%= f.number_control :approx_start_time %>
+<%= f.number_control :approx_end_time %>
+
+<%= f.collection_select :parent_id, TypochronologicalUnit.all, :id, :name, :include_blank => true %>

@@ -5,14 +5,7 @@
 <%= f.text_control :coord_Y %>
 <%= f.text_control :coord_Z %>
 
-<div class="field_master_top">
-  <b><%= f.label :feature_type %></b>
-</div>
-<div class="field_master">
-  <div class="field">
-    <%= f.collection_select :feature_type_id, FeatureType.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"}  %>
-  </div>
-  <%= f.fields_for :feature_type, :include_id => false do |feature_type| %>
-    <%= render 'feature_types/feature_type_fields', :f => feature_type %>
-  <% end %>
-</div>
+<%= f.collection_select :feature_type_id, FeatureType.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"}  %>
+<%= f.fields_for :feature_type, :include_id => false do |feature_type| %>
+  <%= render 'feature_types/feature_type_fields', :f => feature_type %>
+<% end %>
