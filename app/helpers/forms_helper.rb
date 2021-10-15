@@ -47,15 +47,16 @@ module FormsHelper
         is_valid(attribute) ? control_class.push('is-valid') : control_class.push('is-invalid')
       end
 
-      @template.tag.div(
-        number_field(attribute, { 
-          class: control_class.join(' '),
-          placeholder: options.fetch(:placeholder, attribute),
-          aria: { describedby: described_by(attribute, options) }
-        }) + 
-        label(attribute, class: 'form-label') +
-        (is_validated && !is_valid(attribute) ? error_for(attribute) : hint_for(attribute, options)),
-        class: 'form-floating mb-3'
+      form_group(
+        form_floating(
+          number_field(attribute, { 
+            class: control_class.join(' '),
+            placeholder: options.fetch(:placeholder, attribute),
+            aria: { describedby: described_by(attribute, options) }
+          }) + 
+          label(attribute, class: 'form-label') +
+          (is_validated && !is_valid(attribute) ? error_for(attribute) : hint_for(attribute, options))
+        )
       )
     end
 
@@ -76,6 +77,22 @@ module FormsHelper
       )
     end
 
+    def collection_select(attribute, collection, value_method, text_method, options = {}, html_options = {})
+      control_class = ['form-select']
+      if is_validated
+        is_valid(attribute) ? control_class.push('is-valid') : control_class.push('is-invalid')
+      end
+
+      form_group(
+        label(attribute, class: 'form-label') +
+        super(attribute, collection, value_method, text_method, options, html_options = { 
+          class: control_class.join(' '),
+          placeholder: options.fetch(:placeholder, attribute),
+          aria: { describedby: described_by(attribute, html_options) }
+        }) + 
+        (is_validated && !is_valid(attribute) ? error_for(attribute) : hint_for(attribute, html_options))
+      )
+    end
     def submit
       super(class: 'btn btn-secondary')
     end

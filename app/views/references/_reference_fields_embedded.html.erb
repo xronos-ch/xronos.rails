@@ -3,17 +3,22 @@
 # We default it to false 
 %>
 
-<div class="card mb-3">
-  <div class="card-body row">
-    <%= render 'references/reference_fields', f: f, disabled: disabled %>
-    <% unless disabled %>
-      <div class="col-sm-1"> 
-        <%= 
-          link_to_remove_association(f, class: 'btn btn-danger btn') do
-            fa_icon 'minus', title: 'Remove reference'
-          end
-        %>
-      </div>
-    <% end %>
+<div class="nested-fields card mb-3">
+
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h5 class="card-title mb-0">New reference</h5>
+    <%= 
+      unless disabled
+        link_to_remove_association(f, class: 'btn btn-danger btn-sm') do
+          fa_icon 'minus', title: 'Remove reference'
+        end
+      end
+    %>
   </div>
+
+  <div class="card-body row">
+      <%= render 'references/reference_fields', f: f, disabled: disabled %>
+  </div>
+
+
 </div>
