@@ -24,10 +24,13 @@
 		"leaflet-lasso": "^2.2.5",
 		"leaflet.markercluster": "^1.5.1",
 		"rails-erb-loader": "^5.5.2",
-		"turbolinks": "^5.2.0",
-		"webpack": "^4.46.0"
+		"turbolinks": "^5.2.0"
 	},
 	"devDependencies": {
 		"webpack-dev-server": "^4.3.0"
+	},
+	"resolutions": {
+		"glob-parent": "5.1.2",
+		"postcss": "^8.2.10"
 	}
 }
