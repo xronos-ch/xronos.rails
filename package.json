@@ -6,7 +6,7 @@
 		"@rails/actioncable": "^6.1.4-1",
 		"@rails/activestorage": "^6.1.4-1",
 		"@rails/ujs": "^6.1.4-1",
-		"@rails/webpacker": "5.4.3",
+		"@rails/webpacker": "v6.0.0.rc.6",
 		"bootstrap": "^5.1",
 		"datatables.net": "^1.11.3",
 		"datatables.net-bs5": "^1.11.3",
