@@ -169,6 +169,8 @@ GEM
     jquery-ui-rails (6.0.1)
       railties (>= 3.2.16)
     json (2.6.1)
+    kramdown (2.3.1)
+      rexml
     leaflet-rails (1.7.0)
       rails (>= 4.2.0)
     listen (3.7.1)
@@ -393,6 +395,7 @@ DEPENDENCIES
   jquery-datatables
   jquery-rails
   jquery-ui-rails
+  kramdown
   leaflet-rails
   listen
   minitest
