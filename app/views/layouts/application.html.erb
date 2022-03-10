@@ -49,17 +49,22 @@
               <a class="nav-link" aria-current="page" href="/map">Map</a>
             </li>            
             <%end%>
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="/database">Schema</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="/api">API</a>
+            </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 About
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item nav-link text-dark" href="/about">About this Project</a></li>
-                <li><a class="dropdown-item nav-link text-dark" href="/database">About this Database</a></li>
-                <li><a class="dropdown-item nav-link text-dark" href="/api">API</a></li>
-                <li><a class="dropdown-item nav-link text-dark" href="https://blog.xronos.ch">Blog</a></li>
-                <li><a class="dropdown-item nav-link text-dark" href="/acknowledgements">Acknowledgements</a></li>
+                <%= render "about/nav", linkclass: "dropdown-item nav-link text-dark" %>
               </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="https://blog.xronos.ch">Blog</a>
             </li>
           </ul>
 
