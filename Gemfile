@@ -149,3 +149,5 @@ gem 'bootstrap', '~> 5.1'
 gem "feedjira"
 gem "httparty"
 
+# Markdown static pages
+gem "kramdown"

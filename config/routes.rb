@@ -52,10 +52,18 @@ Rails.application.routes.draw do
 	post 'data/index'
 #  root 'data#index'
   root to: "pages#home"
-  get '/api' => 'pages#api'
+  
+  # Static pages
   get '/home' => 'pages#home'
-  get '/about' => 'pages#about'
   get '/database' => 'pages#database'
+  get '/api' => 'pages#api'
+
+  # Static about pages
+  get '/about', to: 'about#show', defaults: { page: 'about' }
+  get '/about/about', to: redirect('/about')
+  get '/about/:page' => 'about#show'
+  
+  # Data filter controls
   get '/resetfilter', :to=>'data#reset_filter_session_variable'
   get '/turn_off_lasso', :to=>'data#turn_off_lasso'
   get '/reset_manual_table_selection', :to=>'data#reset_manual_table_selection'
