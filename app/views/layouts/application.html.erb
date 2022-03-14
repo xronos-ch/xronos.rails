@@ -24,7 +24,7 @@
   <body>
 	
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-0 main-nav">
-      <div class="container-fluid">
+      <div class="container">
         <a class="navbar-brand" href="/"><%= image_tag "logo.white.png", height: '20' %></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -60,7 +60,7 @@
                 About
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <%= render "about/nav", linkclass: "dropdown-item nav-link text-dark" %>
+                <%= render "about/nav", {itemclass: "", linkclass: "dropdown-item nav-link text-dark" } %>
               </ul>
             </li>
             <li class="nav-item">
@@ -122,62 +122,53 @@
 
     <%= yield %>
 
-    <footer class="page-footer">
-      <div class="container-fluid pb-0 mb-0 justify-content-center text-light bg-primary">
-        <div class="row py-3">
-          <div class="d-flex justify-content-center link-light nav-link">
+    <footer class="container-fluid page-footer pb-3 bg-dark text-muted">
+      <div class="container">
 
-            <a href="/about" class="link-light nav-link">About this Project</a>|
-            <a href="/database" class="link-light nav-link">About this Database</a>|
-            <a href="/api" class="link-light nav-link">API</a>|
-            <a href="https://blog.xronos.ch" class="link-light nav-link">Blog</a>
-          </div>
-        </div>
-      </div>
-      </div>
-      <div class="container-fluid pb-0 mb-0 justify-content-center text-light bg-dark">
-        <div class="row justify-content-center py-3">
-          <div class="col-11">
-            <div class="row ">
-              <div class="col-xl-3 col-md-3 col-sm-3 col-12 my-auto mx-auto a">
-                <%= image_tag "logo.white.png", class: "img-fluid"  %>
-              </div>
-              <div class="col-xl-3 col-md-3 col-sm-3 col-12">
-                <h6 class="mb-3 mb-lg-4 bold-text text-muted"><b>Funded by</b></h6>
-                <%= image_tag "snf_logo.png", class: "img-fluid"  %>
-              </div>
-              <div class="col-xl-3 col-md-3 col-sm-3 col-12">
-                <h6 class="mb-3 mb-lg-4 bold-text text-muted"><b>Hosted by</b></h6>
-                <div style="max-width: 200px">
-                  <%= image_tag "Unibe_Logo_16pt_weiss.png", class: "img-fluid"  %>
-                </div>
-              </div>
-              <div class="col-xl-3 col-md-3 col-sm-3 col-12">
-                <h6 class="mb-3 mb-lg-4 text-muted bold-text mt-sm-0 mt-5"><b>Contact</b></h6><small>
-                  <p class="mb-1">SNFS Project XRONOS</p>
-                  <p class="mb-1">Department of Prehistoric Archaeology</p>
-                  <p class="mb-1">Institute of Archaeological Sciences</p>
-                  <p class="mb-1">Mittelstrasse 43</p>
-                  <p class="mb-1">University of Bern</p>
-                  <p class="mb-1">3012 Bern</p>
-                  <p class="mb-1">Switzerland</p>
-                </small>
+          <div class="row">
+
+            <div class="col-6 mt-5 mb-5">
+              <%= image_tag "logo.white.png", class: "mt-3 mb-3", style: "max-height: 4rem;" %>
+              <p class="mt-0 mb-3 text-light">XRONOS is an open repository and curation platform for chronometric data from archaeological contexts worldwide.</p>
+
+              <div class="row mt-5">
+                <div class="col"><a href="https://www.snf.ch"><%= image_tag "snf_logo.png", style: "max-height: 3rem;" %></a></div>
+                <div class="col"><a href="https://www.unibe.ch"><%= image_tag "ub_Logo_english_2019_neg.png", style: "max-height: 3rem;"  %></a></div>
               </div>
             </div>
-            <div class="row ">
-              <div class="col-xl-8 col-md-4 col-sm-4 col-auto my-md-0 mt-5 order-sm-1 order-3 align-self-end">
-                <small class="rights"><span>&#174;</span> 2021 XRONOS Project</small>
-              </div>
-              <div class="col-xl-2 col-md-4 col-sm-4 col-auto order-1 align-self-end ">
-                <h6 class="mt-55 mt-2 text-muted bold-text"><b>Martin Hinz</b></h6><small> <span><i class="fa fa-envelope" aria-hidden="true"></i></span> martin.hinz@iaw.unibe.ch</small>
-              </div>
-              <div class="col-xl-2 col-md-4 col-sm-4 col-auto order-2 align-self-end mt-3 ">
-                <h6 class="text-muted bold-text"><b>Joe Roe</b></h6><small><span><i class="fa fa-envelope" aria-hidden="true"></i></span> joseph.roe@iaw.unibe.ch</small>
-              </div>
+
+            <div class="col-3 mt-5 text-end">
+              <h6 class="mt-3 fw-bold text-uppercase">Get data</h6>
+              <ul class="nav flex-column mb-3">
+                <li class="nav-item"><a class="nav-link pe-0 link-light" href="/table">Table</a></li>
+                <li class="nav-item"><a class="nav-link pe-0 link-light" href="/map">Map</a></li>            
+                <li class="nav-item"><a class="nav-link pe-0 link-light" href="/database">Schema</a></li>
+                <li class="nav-item"><a class="nav-link pe-0 link-light" href="/api">API</a></li>
+              </ul>
             </div>
+
+            <div class="col-3 mt-5 mb-5 text-end">
+              <h6 class="mt-3 fw-bold text-uppercase">About</h6>
+              <ul class="nav flex-column mb-3">
+                <%= render "about/nav", { itemclass: "nav-item", linkclass: "nav-link pe-0 link-light" } %>
+              </ul>
+            </div>
+
           </div>
+
+          <hr>
+          <div class="row">
+
+            <div class="col-9">
+              <small class="rights">This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</small>
+            </div>
+            <div class="col-3">
+              <!-- GitHub link -->
+            </div>
         </div>
+
     </footer>
+
       </div>
   </body>
 </html>
