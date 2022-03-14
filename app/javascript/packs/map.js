@@ -1,4 +1,5 @@
 import 'leaflet'
+import 'leaflet-providers'
 import 'leaflet-lasso'
 import { MarkerClusterGroup } from 'leaflet.markercluster';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';

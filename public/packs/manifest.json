@@ -48,10 +48,10 @@
     },
     "map": {
       "js": [
-        "/packs/js/map-50067ed6823898f0c4fb.js"
+        "/packs/js/map-12872e757f6115b5a131.js"
       ],
       "js.map": [
-        "/packs/js/map-50067ed6823898f0c4fb.js.map"
+        "/packs/js/map-12872e757f6115b5a131.js.map"
       ]
     }
   },
@@ -59,6 +59,6 @@
   "frontend.js.map": "/packs/js/frontend-de9f39e7461e34bde1b7.js.map",
   "landing_page.js": "/packs/js/landing_page-ef82a55178bbbc30996e.js",
   "landing_page.js.map": "/packs/js/landing_page-ef82a55178bbbc30996e.js.map",
-  "map.js": "/packs/js/map-50067ed6823898f0c4fb.js",
-  "map.js.map": "/packs/js/map-50067ed6823898f0c4fb.js.map"
+  "map.js": "/packs/js/map-12872e757f6115b5a131.js",
+  "map.js.map": "/packs/js/map-12872e757f6115b5a131.js.map"
 }

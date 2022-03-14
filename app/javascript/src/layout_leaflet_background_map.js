@@ -6,25 +6,33 @@ document.addEventListener('DOMContentLoaded',function(){
 
 	// #### map ####
 
-	// define base map
+	// Define base layers
+	var physical = L.tileLayer.provider('CartoDB.PositronNoLabels');
+	var satellite = L.tileLayer.provider('Esri.WorldImagery');
+	var baseMaps = {
+		"Map": physical,
+		"Satellite": satellite
+	};
+	var defaultBaseMap = physical;
+
+	// Create map
 	map = L.map('background_map',{
 		zoomControl: false,
 		maxBounds: bounds,
 		maxBoundsViscosity: 0.75,
-		renderer: L.canvas()
+		renderer: L.canvas(),
+		layers: [defaultBaseMap]
 	});
+
 	//add zoom control with your options
 	L.control.zoom({
 		position:'topright'
 	}).addTo(map);
-	L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-		attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-		maxZoom: 18,
-		id: 'mapbox.streets',
-		accessToken: 'your.mapbox.access.token'
 
-	}).addTo(map);
+	// Base map toggle
+	L.control.layers(baseMaps, null, { collapsed: false, position: 'bottomright' }).addTo(map);
 
+	// Data filter button
 	L.Control.FilterButton = L.Control.extend({
 		onAdd: function(map) {
 			var button = L.DomUtil.create('button', "btn btn-light mb-3");
