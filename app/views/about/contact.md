@@ -1,6 +1,6 @@
 # Contact us
 
-For enquiries regarding XRONOS, please contact Martin Hinz (martin.hinz@iaw.unibe.ch) or Joe Roe (joe@joeroe.io).
+For enquiries regarding XRONOS, please contact Martin Hinz (martin.hinz@iaw.unibe.ch) or Joe Roe (joseph.roe@iaw.unibe.ch).
 
 ## Office
 
