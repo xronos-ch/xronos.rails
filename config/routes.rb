@@ -2,6 +2,7 @@ Rails.application.routes.draw do
 
   get "/table" => "data#index"
   get "/map" => "data#map"
+  get "/curate" => "curate#dashboard"
   resources :user_profiles
   use_doorkeeper
   resources :measurement_states

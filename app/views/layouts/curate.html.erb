@@ -1,0 +1,31 @@
+<% content_for :content do %>
+  <div class="container-fluid d-flex align-items-stretch">
+
+    <nav class="nav flex-column mx-0 my-0 ps-3 pe-5 py-3 bg-light border-end text-muted">
+      <a class="nav-link ps-0" href="/curate">Dashboard</a>
+
+      <h3 class="h6 mt-4">Data entry</h3>
+      <a class="nav-link ps-0" href="#">Input data</a>
+      <a class="nav-link ps-0" href="#">Import data</a>
+
+      <h3 class="h6 mt-4">Quality control</h3>
+      <a class="nav-link ps-0" href="#">Duplicates</a>
+      <a class="nav-link ps-0" href="#">Issues</a>
+
+      <h3 class="h6 mt-4">Jobs</h3>
+
+      <h3 class="h6 mt-4">Reports</h3>
+      <a class="nav-link ps-0" href="#">Recent changes</a>
+    </nav>
+
+    <div class="flex-grow-1 mx-3 my-3">
+      <%= yield %>
+    </div>
+
+    <aside class="text-muted">
+      <h2 class="h6 border-bottom">Help</h2>
+      <%= yield :help_pane %>
+    </aside>
+  </div>
+<% end %>
+<%= render template: "layouts/application" %>

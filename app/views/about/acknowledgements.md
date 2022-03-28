@@ -23,3 +23,10 @@ XRONOS is continuously updated with data from a number of existing databases and
 It also incorporates data from the following publications:
 
 * Manning, K., Colledge, S., Crema, E., Shennan, S. and Timpson, A., 2016. The Cultural Evolution of Neolithic Europe. EUROEVOL Dataset 1: Sites, Phases and Radiocarbon Data. *Journal of Open Archaeology Data*, 5, p.e2. DOI: <http://doi.org/10.5334/joad.40>
+
+## Graphics and photos
+
+* [Ruin](https://thenounproject.com/icon/ruin-568421/) by João Archer from [NounProject.com](https://thenounproject.com)
+* [006 Carbon C](https://thenounproject.com/icon/006-carbon-c-1022338/) by Joel Wisneski, from [NounProject.com](https://thenounproject.com)
+* [Wood Texture](https://thenounproject.com/icon/wood-texture-3674579/) by Laura from [NounProject.com](https://thenounproject.com)
+* [Pottery](https://thenounproject.com/icon/pottery-3969143/) by Adrien Coquet from [NounProject.com](https://thenounproject.com)

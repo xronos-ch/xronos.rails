@@ -120,7 +120,7 @@
       </div>
     </nav>
 
-    <%= yield %>
+    <%= content_for?(:content) ? yield(:content) : yield %>
 
     <footer class="container-fluid page-footer pb-3 bg-dark text-muted">
       <div class="container">
