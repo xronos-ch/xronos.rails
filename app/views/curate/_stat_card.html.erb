@@ -1,0 +1,15 @@
+<div class="card">
+  <div class="card-body">
+    <div class="d-flex align-items-start">
+      <%= image_tag "icons/#{icon}.svg", width: 64, class: "me-4" %>
+      <div>
+        <p class="card-text">
+          <span class="display-5"><%= count %></span>
+          <span class="display-6"><%= entity.pluralize(count) %></span>
+        </p>
+        <a href="#" class="card-link">Input <%= entity.humanize(capitalize: false).pluralize %></a>
+        <a href="#" class="card-link">Import <%= entity.humanize(capitalize: false).pluralize %></a>
+      </div>
+    </div>
+  </div>
+</div>

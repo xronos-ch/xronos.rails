@@ -22,13 +22,16 @@
 		"jquery-ui": "^1.12.1",
 		"jquery-ujs": "^1.2.3",
 		"leaflet": "^1.7.1",
+		"leaflet-providers": "^1.13.0",
 		"leaflet-lasso": "^2.2.5",
 		"leaflet.markercluster": "^1.5.1",
 		"rails-erb-loader": "^5.5.2",
-		"turbolinks": "^5.2.0",
-		"webpack": "^4.46.0"
+		"turbolinks": "^5.2.0"
 	},
 	"devDependencies": {
-		"webpack-dev-server": "^4.3.0"
+		"webpack-dev-server": "^4.7.3"
+	},
+	"resolutions": {
+		"glob-parent": "5.1.2"
 	}
 }
