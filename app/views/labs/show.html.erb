@@ -1,14 +1,16 @@
-<p id="notice"><%= notice %></p>
+<div class="container">
+  <%= render 'shared/action_breadcrumbs', i: @lab %>
+  <%= render 'shared/notice' %>
 
-<p>
+  <p>
   <strong>Name:</strong>
   <%= @lab.name %>
-</p>
+  </p>
 
-<p>
+  <p>
   <strong>Active:</strong>
   <%= @lab.active %>
-</p>
+  </p>
 
-<%= link_to 'Edit', edit_lab_path(@lab) %> |
-<%= link_to 'Back', labs_path %>
+  <%= render 'shared/action_buttons', i: @lab %>
+</div>

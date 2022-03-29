@@ -1,8 +1,6 @@
-<div class="field_master_top">
-  <b>Editing Typochronological Unit</b>
+<div class="container">
+  <%= render 'shared/action_breadcrumbs', i: @typochronological_unit %>
+  <h1>Edit typochronological unit</h1>
+
+  <%= render 'form', typochronological_unit: @typochronological_unit %>
 </div>
-
-<%= render 'form', typochronological_unit: @typochronological_unit %>
-
-<%= link_to 'Show', @typochronological_unit %> |
-<%= link_to 'Back', typochronological_units_path %>

@@ -1,25 +1,27 @@
-<p id="notice"><%= notice %></p>
+<div class="container">
+  <%= render 'shared/notice' %>
 
-<h1>Arch Objects</h1>
+  <h1>Archaeological objects</h1>
 
-<table>
-  <thead>
-    <tr>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @arch_objects.each do |arch_object| %>
+  <table class="responsive nowrap table table-hover align-middle">
+    <thead>
       <tr>
-        <td><%= link_to 'Show', arch_object %></td>
-        <td><%= link_to 'Edit', edit_arch_object_path(arch_object) %></td>
-        <td><%= link_to 'Destroy', arch_object, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <th>ID</th>
+        <th>Actions</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
 
-<br>
+    <tbody>
+      <% @arch_objects.each do |arch_object| %>
+        <tr>
+          <td><%= link_to arch_object.id, arch_object %></td>
+          <td><%= render 'shared/action_buttons_compact', i: arch_object %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 
-<%= link_to 'New Arch Object', new_arch_object_path %>
+  <br>
+
+  <%= link_to 'New archaeological object', new_arch_object_path, class: 'btn btn-secondary' %>
+</div>

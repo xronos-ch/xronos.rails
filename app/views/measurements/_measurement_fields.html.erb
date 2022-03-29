@@ -66,11 +66,11 @@
   </div>
 <%end%>
 <%= f.fields_for :references do |reference| %>
-  <%= render 'references/reference_fields_ass', :f => reference, disabled: disabled %>
+  <%= render 'references/reference_fields_embedded', :f => reference, disabled: disabled %>
 <% end %>
 <% unless disabled %>
   <div class='links py-3'>
-    <%= fa_icon "plus" %> <%= link_to_add_association 'Add reference', f, :references, partial: 'references/reference_fields_ass'%>
+    <%= fa_icon "plus" %> <%= link_to_add_association 'Add reference', f, :references, partial: 'references/reference_fields_embedded' %>
   </div>
 <% end %>
 

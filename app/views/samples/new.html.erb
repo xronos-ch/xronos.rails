@@ -1,7 +1,7 @@
-<div class="field_master_top">
-  <b>New Sample</b>
+<div class="container">
+  <h1>New sample</h1>
+
+  <%= render 'form', sample: @sample %>
+
+  <%= link_to 'Back', samples_path %>
 </div>
-
-<%= render 'form', sample: @sample %>
-
-<%= link_to 'Back', samples_path %>

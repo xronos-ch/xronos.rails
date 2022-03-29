@@ -1,7 +1,6 @@
-<div class="field_master_top">
-  <b>New C14 Measurement</b>
+<div class="container">
+  <%# render 'shared/action_breadcrumbs', i: @c14_measurement %>
+  <h1>New C14 measurement</h1>
+
+  <%= render 'form', c14_measurement: @c14_measurement %>
 </div>
-
-<%= render 'form', c14_measurement: @c14_measurement %>
-
-<%= link_to 'Back', c14_measurements_path %>

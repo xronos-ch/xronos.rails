@@ -1,7 +1,6 @@
-<div class="field_master_top">
-  <b>New Material</b>
+<div class="container">
+  <%= render 'shared/action_breadcrumbs', i: @material %>
+  <h1>New material</h1>
+
+  <%= render 'form', material: @material %>
 </div>
-
-<%= render 'form', material: @material %>
-
-<%= link_to 'Back', materials_path %>

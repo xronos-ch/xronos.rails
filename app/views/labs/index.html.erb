@@ -1,29 +1,29 @@
-<p id="notice"><%= notice %></p>
+<div class="container">
+  <%= render 'shared/notice' %>
 
-<h1>Labs</h1>
+  <h1>Labs</h1>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Active</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @labs.each do |lab| %>
+  <table class="responsive nowrap table table-hover align-middle">
+    <thead>
       <tr>
-        <td><%= lab.name %></td>
-        <td><%= lab.active %></td>
-        <td><%= link_to 'Show', lab %></td>
-        <td><%= link_to 'Edit', edit_lab_path(lab) %></td>
-        <td><%= link_to 'Destroy', lab, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <th>Name</th>
+        <th>Active</th>
+        <th>Actions</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
 
-<br>
+    <tbody>
+      <% @labs.each do |lab| %>
+        <tr>
+          <td><%= link_to lab.name, lab %></td>
+          <td><%= lab.active %></td>
+          <td><%= render 'shared/action_buttons_compact', i: lab %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 
-<%= link_to 'New Lab', new_lab_path %>
+  <br>
+
+  <%= link_to 'New Lab', new_lab_path, class: 'btn btn-secondary' %>
+</div>

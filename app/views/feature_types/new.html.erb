@@ -1,7 +1,6 @@
-<div class="field_master_top">
-  <b>New Feature Type</b>
+<div class="container">
+  <%= render 'shared/action_breadcrumbs', i: @feature_type %>
+  <h1>New feature type</h1>
+
+  <%= render 'form', feature_type: @feature_type %>
 </div>
-
-<%= render 'form', feature_type: @feature_type %>
-
-<%= link_to 'Back', feature_types_path %>

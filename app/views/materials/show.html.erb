@@ -1,9 +1,10 @@
-<p id="notice"><%= notice %></p>
+<div class="container">
+  <%= render 'shared/action_breadcrumbs', i: @material %>
+  <%= render 'shared/notice' %>
 
-<p>
-  <strong>Name:</strong>
-  <%= @material.name %>
-</p>
+  <p>
+    <strong>Name:</strong> <%= @material.name %>
+  </p>
 
-<%= link_to 'Edit', edit_material_path(@material) %> |
-<%= link_to 'Back', materials_path %>
+  <%= render 'shared/action_buttons', i: @material %>
+</div>

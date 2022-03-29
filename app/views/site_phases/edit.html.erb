@@ -1,9 +1,6 @@
-<div class="field_master_top">
-  <b>Editing Site Phase</b>
+<div class="container">
+  <%= render 'shared/action_breadcrumbs', i: @site_phase %>
+  <h1>Edit site phase</h1>
+
+  <%= render 'form', site_phase: @site_phase %>
 </div>
-
-
-<%= render 'form', site_phase: @site_phase %>
-
-<%= link_to 'Show', @site_phase %> |
-<%= link_to 'Back', site_phases_path %>

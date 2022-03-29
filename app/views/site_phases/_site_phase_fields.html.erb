@@ -1,78 +1,64 @@
+<%= f.text_control :name %>
+
+<%= f.number_control :approx_start_time %>
+<%= f.number_control :approx_end_time %>
+
+<div class="field_master_top">
+  <b><%= f.label :periods %></b>
+</div>
 <div class="field_master">
+  <%= f.fields_for :periods do |period| %>
+    <%= render 'periods/period_fields_ass', :f => period %>
+  <% end %>
+  <div class='links'>
+    <%= fa_icon "plus" %> <%= link_to_add_association 'add period', f, :periods, partial: 'periods/period_fields_ass' %>
+  </div>
+</div>
 
+<div class="field_master_top">
+  <b><%= f.label :typochronological_units %></b>
+</div>
+<div class="field_master">
+  <%= f.fields_for :typochronological_units do |typochronological_unit| %>
+    <%= render 'typochronological_units/typochronological_unit_fields_ass', :f => typochronological_unit %>
+  <% end %>
+  <div class='links'>
+    <%= fa_icon "plus" %> <%= link_to_add_association 'add typochronological_unit', f, :typochronological_units, partial: 'typochronological_units/typochronological_unit_fields_ass' %>
+  </div>
+</div>
+
+<div class="field_master_top">
+  <b><%= f.label :ecochronological_units %></b>
+</div>
+<div class="field_master">
+  <%= f.fields_for :ecochronological_units do |ecochronological_unit| %>
+    <%= render 'ecochronological_units/ecochronological_unit_fields_ass', :f => ecochronological_unit %>
+  <% end %>
+  <div class='links'>
+    <%= fa_icon "plus" %> <%= link_to_add_association 'add ecochronological_unit', f, :ecochronological_units, partial: 'ecochronological_units/ecochronological_unit_fields_ass' %>
+  </div>
+</div>
+
+<div class="field_master_top">
+  <b><%= f.label :site_type %></b>
+</div>
+<div class="field_master">
   <div class="field">
-    <%= f.label :name %>
-    <%= f.text_field :name %>
+    <%= f.collection_select :site_type_id, SiteType.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"}  %>
   </div>
+  <%= f.fields_for :site_type do |site_type| %>
+    <%= render 'site_types/site_type_fields', :f => site_type %>
+  <% end %>
+</div>
 
+<div class="field_master_top">
+  <b><%= f.label :site %></b>
+</div>
+<div class="field_master">
   <div class="field">
-    <%= f.label :approx_start_time %>
-    <%= f.number_field :approx_start_time %>
+    <%= f.collection_select :site_id, Site.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"}  %>
   </div>
-
-  <div class="field">
-    <%= f.label :approx_end_time %>
-    <%= f.number_field :approx_end_time %>
-  </div>
-
-  <div class="field_master_top">
-    <b><%= f.label :periods %></b>
-  </div>
-    <div class="field_master">
-    <%= f.fields_for :periods do |period| %>
-      <%= render 'periods/period_fields_ass', :f => period %>
-    <% end %>
-    <div class='links'>
-      <%= fa_icon "plus" %> <%= link_to_add_association 'add period', f, :periods, partial: 'periods/period_fields_ass' %>
-    </div>
-  </div>
-
-  <div class="field_master_top">
-    <b><%= f.label :typochronological_units %></b>
-  </div>
-    <div class="field_master">
-    <%= f.fields_for :typochronological_units do |typochronological_unit| %>
-      <%= render 'typochronological_units/typochronological_unit_fields_ass', :f => typochronological_unit %>
-    <% end %>
-    <div class='links'>
-      <%= fa_icon "plus" %> <%= link_to_add_association 'add typochronological_unit', f, :typochronological_units, partial: 'typochronological_units/typochronological_unit_fields_ass' %>
-    </div>
-  </div>
-
-  <div class="field_master_top">
-    <b><%= f.label :ecochronological_units %></b>
-  </div>
-    <div class="field_master">
-    <%= f.fields_for :ecochronological_units do |ecochronological_unit| %>
-      <%= render 'ecochronological_units/ecochronological_unit_fields_ass', :f => ecochronological_unit %>
-    <% end %>
-    <div class='links'>
-      <%= fa_icon "plus" %> <%= link_to_add_association 'add ecochronological_unit', f, :ecochronological_units, partial: 'ecochronological_units/ecochronological_unit_fields_ass' %>
-    </div>
-  </div>
-
-  <div class="field_master_top">
-    <b><%= f.label :site_type %></b>
-  </div>
-  <div class="field_master">
-    <div class="field">
-      <%= f.collection_select :site_type_id, SiteType.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"}  %>
-    </div>
-    <%= f.fields_for :site_type do |site_type| %>
-      <%= render 'site_types/site_type_fields', :f => site_type %>
-    <% end %>
-  </div>
-
-  <div class="field_master_top">
-    <b><%= f.label :site %></b>
-  </div>
-  <div class="field_master">
-    <div class="field">
-      <%= f.collection_select :site_id, Site.all, :id, :name, { include_blank: 'Create new' }, {:class => "observed_select"}  %>
-    </div>
-    <%= f.fields_for :site do |site| %>
-      <%= render 'sites/site_fields', :f => site %>
-    <% end %>
-  </div>
-
+  <%= f.fields_for :site do |site| %>
+    <%= render 'sites/site_fields', :f => site %>
+  <% end %>
 </div>

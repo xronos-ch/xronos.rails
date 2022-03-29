@@ -1,30 +1,30 @@
-<h1>Typochronological Units</h1>
+<div class="container">
+  <%= render 'shared/notice' %>
 
-<table class="responsive nowrap table table-hover" id="dttb-typochronological_units" data-sort="true" data-source="<%= url_for(format: :json)%>">
-  <thead>
-    <tr>
-      <th data-data="name">Name</th>
-      <th data-data="approx_start_time">Approx start time</th>
-      <th data-data="approx_end_time">Approx end time</th>
-      <th data-data="url" data-orderable="false" data-class-name="all" data-searchable="false" class="skip-export" width="100px"></th>
-    </tr>
-  </thead>
+  <h1>Typochronological Units</h1>
 
-  <tbody>
-  <% @typochronological_units.each do |typochronological_unit| %>
-    <tr>
-      <td><%= typochronological_unit.name %></td>
-      <td><%= typochronological_unit.approx_start_time %></td>
-      <td><%= typochronological_unit.approx_end_time %></td>
-      <td><%= link_to 'Show', typochronological_unit %></td>
-      <td><%= link_to 'Edit', edit_typochronological_unit_path(typochronological_unit) %></td>
-      <td><%= link_to 'Destroy', typochronological_unit, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-    </tr>
-  <% end %>
-  </tbody>
+  <table class="responsive nowrap table table-hover align-middle" id="dttb-typochronological_units" data-sort="true" data-source="<%= url_for(format: :json)%>">
+    <thead>
+      <tr>
+        <th data-data="name">Name</th>
+        <th data-data="approx_start_time">Approx start time</th>
+        <th data-data="approx_end_time">Approx end time</th>
+        <th data-data="url" data-orderable="false" data-class-name="all" data-searchable="false" class="skip-export" width="100px">Actions</th>
+      </tr>
+    </thead>
 
-</table>
+    <tbody>
+      <% @typochronological_units.each do |typochronological_unit| %>
+        <tr>
+          <td><%= link_to typochronological_unit.name, typochronological_unit %></td>
+          <td><%= typochronological_unit.approx_start_time %></td>
+          <td><%= typochronological_unit.approx_end_time %></td>
+          <td><%= render 'shared/action_buttons_compact', i: typochronological_unit %></td>
+        </tr>
+      <% end %>
+    </tbody>
 
-<br>
+  </table>
 
-<%= link_to 'New Typochronological Unit', new_typochronological_unit_path %>
+  <%= link_to 'New typochronological unit', new_typochronological_unit_path, class: 'btn btn-secondary' %>
+</div>

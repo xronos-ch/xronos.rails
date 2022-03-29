@@ -1,7 +1,6 @@
-<div class="field_master_top">
-  <b>New Measurement</b>
+<div class="container">
+  <%# render 'shared/action_breadcrumbs', i: @measurement %>
+  <h1>New measurement</h1>
+
+  <%= render 'form', measurement: @measurement %>
 </div>
-
-<%= render 'form', measurement: @measurement %>
-
-<%= link_to 'Back', measurements_path %>

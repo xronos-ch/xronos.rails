@@ -1,31 +1,27 @@
-<p id="notice"><%= notice %></p>
+<div class="container">
+  <%= render 'shared/notice' %>
 
-<h1>Sites</h1>
+  <h1>Sites</h1>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Lat</th>
-      <th>Lng</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @sites.each do |site| %>
+  <table class="responsive nowrap table table-hover align-middle">
+    <thead>
       <tr>
-        <td><%= site.name %></td>
-        <td><%= site.lat %></td>
-        <td><%= site.lng %></td>
-        <td><%= link_to 'Show', site %></td>
-        <td><%= link_to 'Edit', edit_site_path(site) %></td>
-        <td><%= link_to 'Destroy', site, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <th>Name</th>
+        <th>Coordinates</th>
+        <th>Actions</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
 
-<br>
+    <tbody>
+      <% @sites.each do |site| %>
+        <tr>
+          <td><%= link_to site.name, site %></td>
+          <td><%= site.lat %>&deg; N, <%= site.lng %>&deg; E</td>
+          <td><%= render 'shared/action_buttons_compact', i: site %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 
-<%= link_to 'New Site', new_site_path %>
+  <%= link_to 'New site', new_site_path, class: 'btn btn-secondary' %>
+</div>

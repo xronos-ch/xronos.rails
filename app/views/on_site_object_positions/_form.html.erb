@@ -1,19 +1,4 @@
-<%= form_with(model: on_site_object_position, local: true) do |f| %>
-  <% if on_site_object_position.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(on_site_object_position.errors.count, "error") %> prohibited this on_site_object_position from being saved:</h2>
-
-      <ul>
-      <% on_site_object_position.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
-
+<%= bs5_form_with(model: on_site_object_position, local: true) do |f| %>
   <%= render 'on_site_object_positions/on_site_object_position_fields', f: f %>
-
-  <div class="actions">
-    <%= f.submit %>
-  </div>
+  <%= f.submit %>
 <% end %>

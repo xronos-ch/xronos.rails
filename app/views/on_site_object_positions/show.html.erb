@@ -1,34 +1,36 @@
-<p id="notice"><%= notice %></p>
+<div class="container">
+  <%# render 'shared/action_breadcrumbs', i: @on_site_object_position %>
+  <%= render 'shared/notice' %>
 
-<p>
+  <p>
   <strong>Feature:</strong>
   <%= @on_site_object_position.feature %>
-</p>
+  </p>
 
-<p>
+  <p>
   <strong>Site grid square:</strong>
   <%= @on_site_object_position.site_grid_square %>
-</p>
+  </p>
 
-<p>
+  <p>
   <strong>Coord reference system:</strong>
   <%= @on_site_object_position.coord_reference_system %>
-</p>
+  </p>
 
-<p>
+  <p>
   <strong>Coord x:</strong>
   <%= @on_site_object_position.coord_X %>
-</p>
+  </p>
 
-<p>
+  <p>
   <strong>Coord y:</strong>
   <%= @on_site_object_position.coord_Y %>
-</p>
+  </p>
 
-<p>
+  <p>
   <strong>Coord z:</strong>
   <%= @on_site_object_position.coord_Z %>
-</p>
+  </p>
 
-<%= link_to 'Edit', edit_on_site_object_position_path(@on_site_object_position) %> |
-<%= link_to 'Back', on_site_object_positions_path %>
+  <%= render 'shared/action_buttons', i: @on_site_object_position %>
+</div>

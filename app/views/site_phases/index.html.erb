@@ -1,30 +1,30 @@
-<h1>Site Phases</h1>
+<div class="container">
+  <%= render 'shared/notice' %>
 
-<table class="responsive nowrap table table-hover" id="dttb-site_phases" data-sort="true" data-source="<%= url_for(format: :json)%>">
-  <thead>
-    <tr>
-      <th data-data="name">Name</th>
-      <th data-data="approx_start_time">Approx start time</th>
-      <th data-data="approx_end_time">Approx end time</th>
-      <th data-data="url" data-orderable="false" data-class-name="all" data-searchable="false" class="skip-export" width="100px"></th>
-    </tr>
-  </thead>
+  <h1>Site-phases</h1>
 
-  <tbody>
-    <% @site_phases.each do |site_phase| %>
+  <table class="responsive nowrap table table-hover align-middle" id="dttb-site_phases" data-sort="true" data-source="<%= url_for(format: :json)%>">
+    <thead>
       <tr>
-        <td><%= site_phase.name %></td>
-        <td><%= site_phase.approx_start_time %></td>
-        <td><%= site_phase.approx_end_time %></td>
-        <td><%= link_to 'Show', site_phase %></td>
-        <td><%= link_to 'Edit', edit_site_phase_path(site_phase) %></td>
-        <td><%= link_to 'Destroy', site_phase, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <th data-data="name">Name</th>
+        <th data-data="approx_start_time">Approx start time</th>
+        <th data-data="approx_end_time">Approx end time</th>
+        <th data-data="url" data-orderable="false" data-class-name="all" data-searchable="false" class="skip-export" width="100px">Actions</th>
       </tr>
-    <% end %>
-  </tbody>
+    </thead>
 
-</table>
+    <tbody>
+      <% @site_phases.each do |site_phase| %>
+        <tr>
+          <td><%= link_to site_phase.name, site_phase %></td>
+          <td><%= site_phase.approx_start_time %></td>
+          <td><%= site_phase.approx_end_time %></td>
+          <td><%= render 'shared/action_buttons_compact', i: site_phase %></td>
+        </tr>
+      <% end %>
+    </tbody>
 
-<br>
+  </table>
 
-<%= link_to 'New Site Phase', new_site_phase_path %>
+  <%= link_to 'New site-phase', new_site_phase_path, class: 'btn btn-secondary' %>
+</div>

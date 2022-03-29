@@ -1,19 +1,21 @@
-<p id="notice"><%= notice %></p>
+<div class="container">
+  <%= render 'shared/action_breadcrumbs', i: @typochronological_unit %>
+  <%= render 'shared/notice' %>
 
-<p>
+  <p>
   <strong>Name:</strong>
   <%= @typochronological_unit.name %>
-</p>
+  </p>
 
-<p>
+  <p>
   <strong>Approx start time:</strong>
   <%= @typochronological_unit.approx_start_time %>
-</p>
+  </p>
 
-<p>
+  <p>
   <strong>Approx end time:</strong>
   <%= @typochronological_unit.approx_end_time %>
-</p>
+  </p>
 
-<%= link_to 'Edit', edit_typochronological_unit_path(@typochronological_unit) %> |
-<%= link_to 'Back', typochronological_units_path %>
+  <%= render 'shared/action_buttons', i: @typochronological_unit %>
+</div>

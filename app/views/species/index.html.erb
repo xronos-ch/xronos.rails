@@ -1,15 +1,26 @@
-<h1>Species</h1>
+<div class="container">
+  <%= render 'shared/notice' %>
 
-<table class="responsive nowrap table table-hover" id="dttb-species" data-sort="true" data-source="<%= url_for(format: :json)%>">
-  <thead>
-    <tr>
-      <th data-data="name">Name</th>
-      <th data-data="url" data-orderable="false" data-class-name="all" data-searchable="false" class="skip-export" width="100px"></th>
-    </tr>
-  </thead>
+  <h1>Species</h1>
 
-</table>
+  <table class="responsive nowrap table table-hover align-middle" id="dttb-species" data-sort="true" data-source="<%= url_for(format: :json)%>">
+    <thead>
+      <tr>
+        <th data-data="name">Name</th>
+        <th data-data="url" data-orderable="false" data-class-name="all" data-searchable="false" class="skip-export" width="100px">Actions</th>
+      </tr>
+    </thead>
 
-<br>
+    <tbody>
+      <% @species.each do |species| %>
+        <tr>
+          <td><%= link_to species.name, species %></td>
+          <td><%= render 'shared/action_buttons_compact', i: species %></td>
+        </tr>
+      <% end %>
+    </tbody>
 
-<%= link_to 'New Species', new_species_path %>
+  </table>
+
+  <%= link_to 'New species', new_species_path, class: 'btn btn-secondary' %>
+</div>

@@ -1,19 +1,4 @@
-<%= form_with(model: material, local: true) do |f| %>
-  <% if material.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(material.errors.count, "error") %> prohibited this material from being saved:</h2>
-
-      <ul>
-      <% material.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
-
+<%= bs5_form_with(model: material, local: true) do |f| %>
   <%= render  'materials/material_fields', f: f %>
-
-  <div class="actions">
-    <%= f.submit %>
-  </div>
+  <%= f.submit %>
 <% end %>

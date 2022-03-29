@@ -1,29 +1,27 @@
-<p id="notice"><%= notice %></p>
+<div class="container">
+  <%= render 'shared/notice' %>
 
-<h1>Site Types</h1>
+  <h1>Site types</h1>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Description</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @site_types.each do |site_type| %>
+  <table class="responsive nowrap table table-hover align-middle">
+    <thead>
       <tr>
-        <td><%= site_type.name %></td>
-        <td><%= site_type.description %></td>
-        <td><%= link_to 'Show', site_type %></td>
-        <td><%= link_to 'Edit', edit_site_type_path(site_type) %></td>
-        <td><%= link_to 'Destroy', site_type, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Actions</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
 
-<br>
+    <tbody>
+      <% @site_types.each do |site_type| %>
+        <tr>
+          <td><%= link_to site_type.name, site_type %></td>
+          <td><%= site_type.description %></td>
+          <td><%= render 'shared/action_buttons_compact', i: site_type %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 
-<%= link_to 'New Site Type', new_site_type_path %>
+  <%= link_to 'New site type', new_site_type_path, class: 'btn btn-secondary' %>
+</div>

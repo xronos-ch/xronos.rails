@@ -1,7 +1,7 @@
-<div class="field_master_top">
-  <b>New Country</b>
+<div class="container">
+  <%= render 'shared/action_breadcrumbs', i: @country %>
+
+  <h1>New country</h1>
+
+  <%= render 'form', country: @country %>
 </div>
-
-<%= render 'form', country: @country %>
-
-<%= link_to 'Back', countries_path %>

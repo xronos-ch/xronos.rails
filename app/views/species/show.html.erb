@@ -1,9 +1,11 @@
-<p id="notice"><%= notice %></p>
+<div class="container">
+  <%= render 'shared/action_breadcrumbs', i: @species %>
+  <%= render 'shared/notice' %>
 
-<p>
+  <p>
   <strong>Name:</strong>
   <%= @species.name %>
-</p>
+  </p>
 
-<%= link_to 'Edit', edit_species_path(@species) %> |
-<%= link_to 'Back', species_index_path %>
+  <%= render 'shared/action_buttons', i: @species %>
+</div>

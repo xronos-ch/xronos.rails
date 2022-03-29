@@ -1,8 +1,6 @@
-<div class="field_master_top">
-  <b>Editing Source Database</b>
+<div class="container">
+  <%= render 'shared/action_breadcrumbs', i: @source_database %>
+  <h1>Edit source database</h1>
+
+  <%= render 'form', source_database: @source_database %>
 </div>
-
-<%= render 'form', source_database: @source_database %>
-
-<%= link_to 'Show', @source_database %> |
-<%= link_to 'Back', source_databases_path %>

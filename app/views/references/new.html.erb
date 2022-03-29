@@ -1,9 +1,6 @@
-<div class="field_master_top">
-  <b>New Reference</b>
-</div>
+<div class="container">
+  <%# render 'shared/action_breadcrumbs', i: @reference %>
+  <h1>New reference</h1>
 
-<div class="field_master">
   <%= render 'form', reference: @reference %>
 </div>
-
-<%= link_to 'Back', references_path %>

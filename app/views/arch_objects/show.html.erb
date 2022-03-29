@@ -1,4 +1,10 @@
-<p id="notice"><%= notice %></p>
+<div class="container">
+  <%# render 'shared/action_breadcrumbs', i: i %>
+  <%= render 'shared/notice' %>
 
-<%= link_to 'Edit', edit_arch_object_path(@arch_object) %> |
-<%= link_to 'Back', arch_objects_path %>
+  <h1>Archaeological object</h1>
+
+  <p>ID: <%= @arch_object.id %></p>
+
+  <%= render 'shared/action_buttons', i: @arch_object %>
+</div>

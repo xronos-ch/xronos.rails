@@ -1,8 +1,6 @@
-<div class="field_master_top">
-  <b>Editing Measurement State</b>
+<div class="container">
+  <%= render 'shared/action_breadcrumbs', i: @measurement_state %>
+  <h1>Edit measurement state</h1>
+
+  <%= render 'form', measurement_state: @measurement_state %>
 </div>
-
-<%= render 'form', measurement_state: @measurement_state %>
-
-<%= link_to 'Show', @measurement_state %> |
-<%= link_to 'Back', measurement_states_path %>

@@ -3,17 +3,5 @@
 # We default it to false 
 %>
 
-<div class="row">
-
-    <div class="form-group col-md-6">
-      <%= f.label :short_ref, class: "form-label" %>
-      <%= f.text_field :short_ref, class: "form-control", disabled: disabled %>
-    </div>
-
-    <div class="form-group col-md-6">
-      <%= f.label :bibtex, class: "form-label" %>
-      <%= f.text_area :bibtex, class: "form-control", disabled: disabled %>
-    </div>
-
-</div>
-
+<%= f.text_control :short_ref, label: 'Label', placeholder: 'Libby1955', disabled: disabled %>
+<%= f.text_control_multiline :bibtex, label: 'BibTeX', disabled: disabled %>

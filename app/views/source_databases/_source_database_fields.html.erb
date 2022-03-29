@@ -1,23 +1,4 @@
-<div class="field_master">
-
-    <div class="field">
-      <%= f.label :name %>
-      <%= f.text_field :name %>
-    </div>
-
-    <div class="field">
-      <%= f.label :url %>
-      <%= f.text_field :url %>
-    </div>
-
-    <div class="field">
-      <%= f.label :citation %>
-      <%= f.text_area :citation %>
-    </div>
-
-    <div class="field">
-      <%= f.label :licence %>
-      <%= f.text_field :licence %>
-    </div>
-
-</div>
+<%= f.text_control :name %>
+<%= f.text_control :url %>
+<%= f.text_control_multiline :citation %>
+<%= f.text_control :licence %>
