@@ -1,4 +1,6 @@
 class CurateController < ApplicationController
+  before_action :authenticate_user!
+
   def dashboard
     @n_site = Site.count
     @n_c14 = C14Measurement.count
