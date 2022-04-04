@@ -20,9 +20,9 @@ Rails.application.routes.draw do
   get 'data/autocomplete_ecochronological_unit_name'
   resources :typochronological_units
   get 'data/autocomplete_typochronological_unit_name'
-  resources :periods
+  resources :typos
   get 'data/autocomplete_period_name'
-  resources :c14_measurements do
+  resources :c14s do
     member do
       get 'calibrate'
       get 'calibrate_multi'
@@ -32,10 +32,9 @@ Rails.application.routes.draw do
   devise_for :users, controllers: {
       registrations: "registrations"
     }
-  resources :measurements
+  resources :xrons
   resources :samples
-  resources :arch_objects
-  resources :labs
+  resources :c14_labs
   resources :references
   get 'data/autocomplete_reference_short_ref'
   resources :materials

@@ -2,6 +2,9 @@
 	"name": "xronos",
 	"private": true,
 	"dependencies": {
+		"@fontsource/fira-mono": "^4.5.7",
+		"@fontsource/inter": "^4.5.7",
+		"@fontsource/raleway": "^4.5.5",
 		"@nathanvda/cocoon": "^1.2.14",
 		"@popperjs/core": "^2.9.3",
 		"@rails/actioncable": "^6.1.4-1",
@@ -22,8 +25,8 @@
 		"jquery-ui": "^1.12.1",
 		"jquery-ujs": "^1.2.3",
 		"leaflet": "^1.7.1",
-		"leaflet-providers": "^1.13.0",
 		"leaflet-lasso": "^2.2.5",
+		"leaflet-providers": "^1.13.0",
 		"leaflet.markercluster": "^1.5.1",
 		"rails-erb-loader": "^5.5.2",
 		"turbolinks": "^5.2.0"

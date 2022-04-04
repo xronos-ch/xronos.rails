@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_30_114947) do
+ActiveRecord::Schema.define(version: 2022_03_31_082839) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -167,6 +167,13 @@ ActiveRecord::Schema.define(version: 2022_03_30_114947) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "site_types_sites", id: false, force: :cascade do |t|
+    t.bigint "site_id"
+    t.bigint "site_type_id"
+    t.index ["site_id"], name: "index_site_types_sites_on_site_id"
+    t.index ["site_type_id"], name: "index_site_types_sites_on_site_type_id"
+  end
+
   create_table "sites", force: :cascade do |t|
     t.string "name"
     t.decimal "lat"
@@ -174,13 +181,6 @@ ActiveRecord::Schema.define(version: 2022_03_30_114947) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "country_id"
-  end
-
-  create_table "sites_site_types", id: false, force: :cascade do |t|
-    t.bigint "site_id"
-    t.bigint "site_type_id"
-    t.index ["site_id"], name: "index_sites_site_types_on_site_id"
-    t.index ["site_type_id"], name: "index_sites_site_types_on_site_type_id"
   end
 
   create_table "source_databases", force: :cascade do |t|

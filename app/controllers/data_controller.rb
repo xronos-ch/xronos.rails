@@ -4,13 +4,8 @@ class DataController < ApplicationController
   autocomplete :source_database, :name, :full => true
   autocomplete :site, :name, :full => true
   autocomplete :site_type, :name, :full => true
-  autocomplete :feature_type, :name, :full => true
   autocomplete :country, :name, :full => true
   autocomplete :material, :name, :full => true
-  autocomplete :period, :name, :full => true
-  autocomplete :typochronological_unit, :name, :full => true
-  autocomplete :ecochronological_unit, :name, :full => true
-  autocomplete :reference, :short_ref, :full => true
 
   #### filter buttons ####
   def reset_filter_session_variable
@@ -103,12 +98,12 @@ class DataController < ApplicationController
       session[:query_source_database] = nil
     end
 
-    # labnr
-    if params.has_key?(:query_labnr)
-      session[:query_labnr] = params[:query_labnr]
+    # lab_identifier
+    if params.has_key?(:query_lab_identifier)
+      session[:query_lab_identifier] = params[:query_lab_identifier]
     end
-    if params.has_key?(:query_labnr) and params[:query_labnr].empty?
-      session[:query_labnr] = nil
+    if params.has_key?(:query_lab_identifier) and params[:query_lab_identifier].empty?
+      session[:query_lab_identifier] = nil
     end
 
     # site name
@@ -127,46 +122,6 @@ class DataController < ApplicationController
       session[:query_site_type] = nil
     end
 
-    # feature
-    if params.has_key?(:query_feature)
-      session[:query_feature] = params[:query_feature]
-    end
-    if params.has_key?(:query_feature) and params[:query_feature].empty?
-      session[:query_feature] = nil
-    end
-
-    # feature type
-    if params.has_key?(:query_feature_type)
-      session[:query_feature_type] = params[:query_feature_type]
-    end
-    if params.has_key?(:query_feature_type) and params[:query_feature_type].empty?
-      session[:query_feature_type] = nil
-    end
-
-    # period
-    if params.has_key?(:query_period)
-      session[:query_period] = params[:query_period]
-    end
-    if params.has_key?(:query_period) and params[:query_period].empty?
-      session[:query_period] = nil
-    end
-
-    # typochronological_unit
-    if params.has_key?(:query_typochronological_unit)
-      session[:query_typochronological_unit] = params[:query_typochronological_unit]
-    end
-    if params.has_key?(:query_typochronological_unit) and params[:query_typochronological_unit].empty?
-      session[:query_typochronological_unit] = nil
-    end
-
-    # ecochronological_unit
-    if params.has_key?(:query_ecochronological_unit)
-      session[:query_ecochronological_unit] = params[:query_ecochronological_unit]
-    end
-    if params.has_key?(:query_ecochronological_unit) and params[:query_ecochronological_unit].empty?
-      session[:query_ecochronological_unit] = nil
-    end
-
     # material
     if params.has_key?(:query_material)
       session[:query_material] = params[:query_material]
@@ -175,12 +130,12 @@ class DataController < ApplicationController
       session[:query_material] = nil
     end
 
-    # species
-    if params.has_key?(:query_species)
-      session[:query_species] = params[:query_species]
+    # taxon
+    if params.has_key?(:query_taxon)
+      session[:query_taxon] = params[:query_taxon]
     end
-    if params.has_key?(:query_species) and params[:query_species].empty?
-      session[:query_species] = nil
+    if params.has_key?(:query_taxon) and params[:query_taxon].empty?
+      session[:query_taxon] = nil
     end
 
     # country
@@ -222,122 +177,80 @@ class DataController < ApplicationController
     ##### select data #####
 
     # general dataset preparation
-    @data ||= Measurement.includes(
-      {c14_measurement: :source_database},
-      :references,
-      :lab,
-      sample: {arch_object: [{site_phase: [{site: :country}, :periods, :typochronological_units, :ecochronological_units]}, {on_site_object_position: :feature_type}, :material, :species]}
+    @data ||= C14.includes(
+      :source_database,
+      :c14_lab,
+      #sample: {arch_object: [{site_phase: [{site: :country}, :periods, :typochronological_units, :ecochronological_units]}, {on_site_object_position: :feature_type}, :material, :species]}
+      sample: [{context: {site: :country}}, :material, :taxon]
     )
 
     # uncal age
     unless session[:query_uncal_age_start].nil?
       @data = @data.where(
-        c14_measurements: {:bp => (session[:query_uncal_age_stop]..session[:query_uncal_age_start])}
+        c14s: {:bp => (session[:query_uncal_age_stop]..session[:query_uncal_age_start])}
       )
     end
 
     # cal age
     unless session[:query_cal_age_start].nil?
       @data = @data.where(
-        c14_measurements: {:cal_bp => (session[:query_cal_age_stop]..session[:query_cal_age_start])}
+        c14s: {:cal_bp => (session[:query_cal_age_stop]..session[:query_cal_age_start])}
       )
     end
 
     # source_database name
     unless session[:query_source_database].nil?
       @data = @data.where(
-        c14_measurement: {source_databases: {:name => session[:query_source_database].split('|')}}
+        c14s: {source_databases: {:name => session[:query_source_database].split('|')}}
       )
     end
 
-    # labnr
-    unless session[:query_labnr].nil?
+    # lab_identifier
+    unless session[:query_lab_identifier].nil?
       @data = @data.where(
-        labnr: params[:query_labnr].split('|')
+        lab_identifier: params[:query_lab_identifier].split('|')
       )
     end
 
     # site name
     unless session[:query_site].nil?
       @data = @data.where(
-        sample: {arch_object: {site_phase: {sites: {:name => session[:query_site].split('|')}}}}
+        sample: {context: {site: {:name => session[:query_site].split('|')}}}
       )
     end
 
     # site type
     unless session[:query_site_type].nil?
       @data = @data.where(
-        sample: {arch_object: {site_phase: {site_types: {name: session[:query_site_type].split('|')}}}}
-      )
-    end
-
-    # feature
-    unless session[:query_feature].nil?
-      @data = @data.where(
-        sample: {arch_object: {on_site_object_positions: {feature: session[:query_feature].split('|')}}}
-      )
-    end
-
-    # feature type
-    unless session[:query_feature_type].nil?
-      @data = @data.where(
-        sample: {arch_object: {on_site_object_positions: {feature_types: {name: session[:query_feature_type].split('|')}}}}
-      )
-    end
-
-    # period
-    unless session[:query_period].nil?
-      @data = @data.where(
-        sample: {arch_object: {site_phase: {periods: {name: session[:query_period].split('|')}}}}
-      )
-    end
-
-    # typochronological_unit
-    unless session[:query_typochronological_unit].nil?
-      @data = @data.where(
-        sample: {arch_object: {site_phase: {typochronological_units: {name: session[:query_typochronological_unit].split('|')}}}}
-      )
-    end
-
-    # ecochronological_unit
-    unless session[:query_ecochronological_unit].nil?
-      @data = @data.where(
-        sample: {arch_object: {site_phase: {ecochronological_units: {name: session[:query_ecochronological_unit].split('|')}}}}
+        sample: {context: {site: {site_types: {name: session[:query_site_type].split('|')}}}}
       )
     end
 
     # material
     unless session[:query_material].nil?
       @data = @data.where(
-        sample: {arch_object: {materials: {name: session[:query_material].split('|')}}}
+        sample: {material: {name: session[:query_material].split('|')}}
       )
     end
 
-    # species
-    unless session[:query_species].nil?
+    # taxon
+    unless session[:query_taxon].nil?
       @data = @data.where(
-        sample: {arch_object: {species: {name: session[:query_species].split('|')}}}
+        sample: {taxon: {name: session[:query_taxon].split('|')}}
       )
     end
 
     # country
     unless session[:query_country].nil?
       @data = @data.where(
-        sample: {arch_object: {site_phase: {site: {countries: {name: session[:query_country].split('|')}}}}}
-      )
-    end
-
-    # reference
-    unless session[:query_reference].nil?
-      @data = @data.where(
-        references: {short_ref: session[:query_reference].split('|')}
+        sample: {context: {site: {countries: {name: session[:query_country].split('|')}}}}
       )
     end
 
     # lasso
     unless session[:spatial_lasso_selection].nil?
        @data = @data.where(
-         sample: {arch_object: {site_phase: {sites: {id: session[:spatial_lasso_selection].split('|')}}}}
+         sample: {context: {sites: {id: session[:spatial_lasso_selection].split('|')}}}
        )
     end
 
@@ -353,8 +266,8 @@ class DataController < ApplicationController
     respond_to do |format|
       format.html {
       		# json data (for map)
-		arch_objects_ids = @data.joins(:sample).distinct.pluck(:arch_object_id)
-		gon.selected_sites = Site.distinct.joins(site_phases: :arch_objects).where(site_phases:{arch_objects: {id: arch_objects_ids}}).where.not(lat: nil).where.not(lng: nil).select(:id, :name, :lat, :lng)
+		sample_ids = @data.distinct.pluck(:id)
+		gon.selected_sites = Site.distinct.joins(contexts: :samples).where(samples: {id: sample_ids}).where.not(lat: nil).where.not(lng: nil).select(:id, :name, :lat, :lng)
 		gon.selected_sites = Oj.dump(gon.selected_sites)
       }
       # json data (for datatables)
@@ -368,7 +281,7 @@ class DataController < ApplicationController
             }
           ).data,
           recordsFiltered: @data.size,
-          recordsTotal: Measurement.count
+          recordsTotal: C14.count
         }
       }
       # csv data for the download button

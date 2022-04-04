@@ -1,8 +1,0 @@
-<%= f.text_control :name %>
-
-<div class="row">
-  <%= f.number_control :approx_start_time %>
-  <%= f.number_control :approx_end_time %>
-</div>
-
-<%= f.collection_select :parent_id, EcochronologicalUnit.all, :id, :name, :include_blank => true %>

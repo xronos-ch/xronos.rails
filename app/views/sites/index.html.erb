@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container my-5">
   <%= render 'shared/notice' %>
 
   <h1>Sites</h1>
@@ -7,8 +7,9 @@
     <thead>
       <tr>
         <th>Name</th>
-        <th>Coordinates</th>
-        <th>Actions</th>
+        <th>Country</th>
+        <th class="text-end">Coordinates</th>
+        <% if can? :manage, Site %><th><!-- Actions --></th><% end %>
       </tr>
     </thead>
 
@@ -16,12 +17,15 @@
       <% @sites.each do |site| %>
         <tr>
           <td><%= link_to site.name, site %></td>
-          <td><%= site.lat %>&deg; N, <%= site.lng %>&deg; E</td>
-          <td><%= render 'shared/action_buttons_compact', i: site %></td>
+          <td><%= site.country.present? ? site.country.name : na_value %></td>
+          <td class="text-end font-monospace"><%= site.coordinates %></td>
+          <% if can? :manage, Site %><td class="text-end"><%= render 'shared/action_buttons_compact', i: site %></td><% end %>
         </tr>
       <% end %>
     </tbody>
   </table>
+
+  <%== pagy_bootstrap_nav(@pagy) %>
 
   <%= link_to 'New site', new_site_path, class: 'btn btn-secondary' %>
 </div>

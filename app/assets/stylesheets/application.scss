@@ -10,15 +10,14 @@
  * files in this directory. Styles in this file should be added after the last require_* statement.
  * It is generally better to create a new file per style scope.
  *
- *= require_tree .
+ * require_tree is turned off, so @import application-wide stylesheets below.
+ * require_tree .
  *= require_self
  *= require leaflet
  *= require leaflet.markercluster
  *= require font-awesome
  *= require jquery-ui
  *= require ion.rangeSlider.css
- *= require dataTables.bootstrap5.min
- *= require buttons.bootstrap5.min.css
 */
 
 $primary:    #424242;
@@ -28,5 +27,28 @@ $info:       #7CDEDC;
 $warning:    #FFEC51;
 $danger:     #A44A3F;
 
+$font-family-sans-serif:
+	Inter,
+	Helvetica Neue, 
+	Helvetica, 
+	Nimbus Sans,
+	FreeSans,
+	Arial, 
+	Arimo,
+	Liberation Sans,
+	sans-serif;
+
+$headings-font-family: "Raleway", $font-family-sans-serif;
+
+// Bootstrap
 @import "bootstrap";
-@import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
+@import "buttons.bootstrap5.min.css";
+@import "select.bootstrap5.min.css";
+
+// Other gems
+@import "dataTables.bootstrap5.min.css";
+@import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+
+// Application 
+@import "frontend";
+@import "layout";

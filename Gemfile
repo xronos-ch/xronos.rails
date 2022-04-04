@@ -101,6 +101,9 @@ group :production do
   gem 'pg'
 end
 
+# pagination
+gem "pagy"
+
 # nested forms
 gem "cocoon"
 

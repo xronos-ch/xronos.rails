@@ -1,26 +1,46 @@
-<table class="table table-striped table-sm">
-  <thead>
-    <tr>
-      <th scope="col">Site</th>
-      <th scope="col"></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Site Name</th>
-      <td><%= site.name%></td>
-    </tr>
-    <tr>
-      <td>Longitude</th>
-      <td><%= site.lng%></td>
-    </tr>
-    <tr>
-      <td>Latitude</th>
-      <td><%= site.lat%></td>
-    </tr>
-    <tr>
-      <td>Country</th>
-      <td><%= site.country.name if site.country.present?%></td>
-    </tr>
-  </tbody>
-</table>
+<dl class="row gx-5">
+
+  <div class="col-lg">
+    <!-- Site metadata -->
+
+    <div class="row">
+      <dt class="col-sm-3"><%= "Site type".pluralize(site.site_types.count) %></dt>
+      <dd class="col-sm-9 text-end">
+        <% if site.site_types.any? %>
+          <%= site.site_types.collect(&:name).to_sentence.humanize %>
+        <% else %>
+          <%= na_value %>
+        <% end %>
+      </dd>
+    </div>
+
+  </div>
+
+  <div class="col-lg">
+    <!-- Location data -->
+
+    <div class="row">
+      <dt class="col-sm-3">Country</dt>
+      <dd class="col-sm-9 text-end">
+        <% if site.country.present? %>
+          <%= site.country.name %>
+        <% else %>
+          <%= na_value %>
+        <% end %>
+      </dd>
+    </div>
+
+    <div class="row">
+      <dt class="col-sm-3">Latitude</dt>
+      <dd class="col-sm-9 font-monospace text-end"><%= "#{to_dms(site.lat, 'lat')} (#{site.lat.round(5)})" %></dd>
+    </div>
+
+    <div class="row">
+      <dt class="col-sm-3">Longitude</dt>
+      <dd class="col-sm-9 font-monospace text-end"><%= "#{to_dms(site.lng, 'lon')} (#{site.lng.round(5)})" %></dd>
+    </div>
+
+  </div>
+
+</dl>
+

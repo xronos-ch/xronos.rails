@@ -16,7 +16,7 @@ module ApplicationHelper
                "Can not determine N/E/S/W"
              end
 
-    return dd.abs.floor.to_s + "°" + minutes.floor.to_s + "'" + seconds.floor.to_s + "''" + suffix
+    return dd.abs.floor.to_s + "° " + minutes.floor.to_s + "' " + seconds.floor.to_s + '" ' + suffix
   end
 
   def javascript_exists?(script)

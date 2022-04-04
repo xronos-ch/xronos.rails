@@ -1,0 +1,17 @@
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope=col>Classification</th>
+      <th scope=col class="text-end">Estimated age</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% typos.each do |typo| %>
+      <tr>
+        <td><%= link_to typo.name, typo %></td>
+        <td class="font-monospace text-end"><%= typo.age %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

@@ -1,0 +1,21 @@
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope=col>Lab ID</th>
+      <th scope=col>Context</th>
+      <th scope=col class="text-end">Uncalibrated age</th>
+      <th scope=col class="text-end">Calibrated age</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% c14s.each do |c14| %>
+      <tr>
+        <td class="font-monospace"><%= link_to c14.lab_identifier, c14 %></td>
+        <td class="font-monospace"><%= c14.sample.context.name %></td>
+        <td class="text-end font-monospace"><%= c14.uncal_age %></td>
+        <td class="text-end font-monospace"><%= c14.cal_age %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

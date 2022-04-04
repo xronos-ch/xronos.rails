@@ -1,76 +1,44 @@
+<% content_for :title, @site.name %>
 <% content_for :head do %>
   <%= javascript_pack_tag 'map' %>
 <% end %>
 
-<div class="container-flex" style="overflow-x:hidden">
-  <div class="row bg-secondary bg-opacity-50">
-    <div class="col">
-      <div class="container">
-        <div class="row">
-          <div class="col">
-            <div class="d-flex justify-content-start">
-              <h1><b>
-                  <%= @site.name %>
-                </b></h1>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col">
-            <div class="d-flex justify-content-start">
-              <p><b>Site <% if @site.country.present? %> in <%= @site.country.name%><%end%></b><p>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col">
-            <div class="d-flex justify-content-start">
-             <% unless @site.lng.blank? || @site.lng.blank? %>
-              <p><b>Coordinates:</b> <%= to_dms(@site.lng, "lon") %> <%= to_dms(@site.lat, "lat") %> (<%= @site.lng.round(2) %>, <%= @site.lat.round(2) %>)<p>
-              <% else %>
-              <p><b>No coordinates available.</b><p>
-              <% end %>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+<header id="site-header" class="bg-primary text-light">
+  <div class="container my-5">
+    <h1 class="display-1"><%= @site.name %></h1>
+    <h2 class="display-6">Site <% if @site.country.present? %> in <%= @site.country.name%><%end%></h2>
   </div>
+</header>
 
-  <div class="row">
+<section id="site-map">
+  <div id="background_map" style="height: 30rem; position: relative;"></div>
+</section>
 
-    <div class="col">
-      <div id="background_map" style="height: 300px; width: 100%; position: relative;">
-      </div>
-    </div>
+<section id="site-details" class="bg-body">
+  <div class="container my-5">
+    <%= render "site_details", site: @site %>
   </div>
-  <div class="row mt-5">
+</section>
 
-    <div class="col">
-      <div class="container">
-        <div class="row">
-          <div class="col">
-            <% unless @site.measurements.nil? %>
-              <%= @site.name %> has <%= pluralize(@site.measurements.count, 'Measurement') %>:
+<section id="site-xrons" class="bg-light">
+  <div class="container my-5">
 
-              <%= render "measurements/measurements_table_min", measurements: @site.measurements %>
-            <%end%>
-          </div>
-        </div>
-      </div>
-    </div>
+    <% unless @site.c14s.nil? %>
+      <section id="site-c14s" class="py-3">
+        <h2><%= C14.label.humanize.pluralize %></h2>
+        <p><%= @site.name %> has <%= pluralize(@site.c14s.count, C14.label) %>.</p>
+        <%= render "c14s/table", c14s: @site.c14s %>
+      </section>
+    <%end%>
+
+    <% unless @site.typos.nil? %>
+      <section id="site-typos" class="py-3">
+        <h2><%= Typo.label.humanize.pluralize %></h2>
+        <p><%= @site.name %> has <%= pluralize(@site.typos.count, Typo.label) %>.</p>
+        <%= render "typos/table", typos: @site.typos %>
+      </section>
+    <%end%>
+
   </div>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
+</section>
 

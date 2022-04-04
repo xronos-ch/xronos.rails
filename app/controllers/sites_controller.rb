@@ -1,4 +1,6 @@
 class SitesController < ApplicationController
+  include Pagy::Backend
+
   load_and_authorize_resource
 
   before_action :set_site, only: [:show, :edit, :update, :destroy]
@@ -13,7 +15,8 @@ class SitesController < ApplicationController
   # GET /sites
   # GET /sites.json
   def index
-    @sites = Site.all
+    @pagy, @sites = pagy(Site.all.order(:name))
+    #@sites = Site.all
   end
 
   # GET /sites/1
@@ -25,7 +28,6 @@ class SitesController < ApplicationController
   # GET /sites/new
   def new
     @site = Site.new
-    @site.fell_phases.build
     @site.build_country
   end
 
