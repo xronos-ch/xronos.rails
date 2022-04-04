@@ -1,41 +1,10 @@
-<div class="container">
+<div class="container my-5">
   <%= render 'shared/notice' %>
 
-  <h1>C14 measurements</h1>
+  <h1><%= C14.label.pluralize.humanize %></h1>
 
-  <table class="responsive nowrap table table-hover align-middle" id="dttb-c14_measurements" data-sort="true" data-source="<%= url_for(format: :json)%>">
-    <thead>
-      <tr>
-        <th data-data="bp">Bp</th>
-        <th data-data="std">Std</th>
-        <th data-data="cal_bp">Cal bp</th>
-        <th data-data="cal_std">Cal std</th>
-        <th data-data="delta_c13">Delta c13</th>
-        <th data-data="delta_c13_std">Delta c13 std</th>
-        <th data-data="method">Method</th>
-        <th colspan=2 data-data="url" data-orderable="false" data-class-name="all" data-searchable="false" class="skip-export" width="100px">Actions</th>
-      </tr>
-    </thead>
+  <%= render "table", c14s: @c14s %>
 
-    <tbody>
-      <% @c14_measurements.each do |c14_measurement| %>
-        <tr>
-          <td><%= c14_measurement.bp %></td>
-          <td><%= c14_measurement.std %></td>
-          <td><%= c14_measurement.cal_bp %></td>
-          <td><%= c14_measurement.cal_std %></td>
-          <td><%= c14_measurement.delta_c13 %></td>
-          <td><%= c14_measurement.delta_c13_std %></td>
-          <td><%= c14_measurement.method %></td>
-          <td><%= link_to 'Show', c14_measurement %></td>
-          <td><%= render 'shared/action_buttons_compact', i: c14_measurement %></td>
-        </tr>
-      <% end %>
-    </tbody>
-
-  </table>
-
-  <br>
-
-  <%= link_to 'New C14 measurement', new_c14_measurement_path, class: 'btn btn-secondary' %>
+  <%== pagy_bootstrap_nav(@pagy) %>
+  <%= link_to 'New C14 measurement', new_c14_path, class: 'btn btn-secondary' %>
 </div>

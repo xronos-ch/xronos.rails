@@ -9,6 +9,9 @@ class C14 < ApplicationRecord
   belongs_to :c14_lab
   belongs_to :source_database
 
+  has_one :context, :through => :sample
+  has_one :site, :through => :context
+
   def self.label
     "radiocarbon date"
   end

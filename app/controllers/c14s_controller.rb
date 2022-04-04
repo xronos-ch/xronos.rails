@@ -1,5 +1,6 @@
 class C14sController < ApplicationController
   include C14sHelper
+  include Pagy::Backend
 
   load_and_authorize_resource
 
@@ -8,7 +9,7 @@ class C14sController < ApplicationController
   # GET /c14s
   # GET /c14s.json
   def index
-    @c14s = C14.all
+    @pagy, @c14s = pagy(C14.all.order(:lab_identifier))
   end
 
   # GET /c14s/1

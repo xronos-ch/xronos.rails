@@ -1,4 +1,6 @@
 module C14sHelper
+  include Pagy::Frontend
+
   ################################
   #### calibration with oxcal ####
   ################################

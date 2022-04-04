@@ -4,6 +4,12 @@
     <!-- Site metadata -->
 
     <div class="row">
+      <dt class="col-sm-3">Canonical name</dt>
+      <dd class="col-sm-9 text-end"><%= site.name %></dd>
+
+      <dt class="col-sm-3">Other names</dt>
+      <dd class="col-sm-9 text-end"><!-- not yet implemented --><%= na_value %></dd>
+
       <dt class="col-sm-3"><%= "Site type".pluralize(site.site_types.count) %></dt>
       <dd class="col-sm-9 text-end">
         <% if site.site_types.any? %>
@@ -12,6 +18,7 @@
           <%= na_value %>
         <% end %>
       </dd>
+
     </div>
 
   </div>
