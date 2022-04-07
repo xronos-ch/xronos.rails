@@ -17,6 +17,14 @@
 <section id="site-details" class="bg-body">
   <div class="container my-5">
     <%= render "site_details", site: @site %>
+    <% if can? :edit, Site %>
+      <div class="text-end my-3">
+        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal">
+          <%= fa_icon "pencil", text: "Edit site details" %>
+        </button>
+        <%= render "edit_modal", site: @site %>
+      </div>
+    <% end %>
   </div>
 </section>
 
