@@ -14,6 +14,8 @@ module FormsHelper
           text_field(attribute, { 
             class: control_class.join(' '),
             placeholder: options.fetch(:placeholder, attribute),
+            autocomplete: options.fetch(:autocomplete, nil).present? ? "off" : "on",
+            data: { autocomplete: options.fetch(:autocomplete, false) },
             aria: { describedby: described_by(attribute, options) }
           }) + 
           form_label(attribute, options) +
