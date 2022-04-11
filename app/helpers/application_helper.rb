@@ -1,5 +1,9 @@
 module ApplicationHelper
 
+  def na_value
+    '<abbr title="Unknown or missing value" class="initialism text-muted">NA</abbr>'.html_safe
+  end
+
   def to_dms(dd, axis)
     minutes = dd%1.0*60
     seconds = minutes%1.0*60
@@ -25,5 +29,4 @@ module ApplicationHelper
   end
 
 end
-
 

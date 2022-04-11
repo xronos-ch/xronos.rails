@@ -18,7 +18,7 @@
         <tr>
           <td><%= link_to site.name, site %></td>
           <td><%= site.country.present? ? site.country.name : na_value %></td>
-          <td class="text-end font-monospace"><%= site.coordinates %></td>
+          <td class="text-end font-monospace"><%= site.coordinates.present? ? site.coordinates : na_value %></td>
           <% if can? :manage, Site %><td class="text-end"><%= render 'shared/action_buttons_compact', i: site %></td><% end %>
         </tr>
       <% end %>

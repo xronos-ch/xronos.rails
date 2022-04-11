@@ -17,7 +17,7 @@ class Site < ApplicationRecord
   has_many :typos, through: :contexts
 
   def coordinates(format = "dd")
-    return na_value if lat.blank? || lng.blank?
+    return nil if lat.blank? || lng.blank?
 
     y = lat < 0 ? "S" : "N"
     x = lng < 0 ? "W" : "E"

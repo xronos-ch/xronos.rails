@@ -38,13 +38,8 @@
     </div>
 
     <div class="row">
-      <dt class="col-sm-3">Latitude</dt>
-      <dd class="col-sm-9 font-monospace text-end"><%= "#{to_dms(site.lat, 'lat')} (#{site.lat.round(5)})" %></dd>
-    </div>
-
-    <div class="row">
-      <dt class="col-sm-3">Longitude</dt>
-      <dd class="col-sm-9 font-monospace text-end"><%= "#{to_dms(site.lng, 'lon')} (#{site.lng.round(5)})" %></dd>
+      <dt class="col-sm-3">Coordinates</dt>
+      <dd class="col-sm-9 font-monospace text-end"><%= site.coordinates.present? ? site.coordinates : na_value %></dd>
     </div>
 
   </div>
