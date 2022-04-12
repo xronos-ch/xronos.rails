@@ -10,7 +10,7 @@
     <% typos.each do |typo| %>
       <tr>
         <td><%= link_to typo.name, typo %></td>
-        <td class="font-monospace text-end"><%= typo.age %></td>
+        <td class="font-monospace text-end"><%= typo.age.present? ? type.age : na_value %></td>
       </tr>
     <% end %>
   </tbody>

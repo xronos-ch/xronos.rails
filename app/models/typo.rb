@@ -16,10 +16,8 @@ class Typo < ApplicationRecord
   end
 
   def age
-    unless approx_start_time.blank? && approx_end_time.blank?
-      "#{approx_start_time}–#{approx_end_time}"
-    else
-      na_value
-    end
+    return nil if approx_start_time.blank? && approx_end_time.blank?
+    
+    "#{approx_start_time}–#{approx_end_time}"
   end
 end
