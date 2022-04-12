@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded',function(){
 	// Create map
 	map = L.map('background_map',{
 		zoomControl: false,
+		minZoom: 3,
 		maxBounds: bounds,
 		maxBoundsViscosity: 0.75,
 		renderer: L.canvas(),
@@ -58,9 +59,6 @@ document.addEventListener('DOMContentLoaded',function(){
 
 	L.control.filter_button({ position: 'topleft' }).addTo(map);
 
-	if (!map.restoreView()) {
-		map.setView([45, 7], 3);
-	}
 
 	var cluster = L.markerClusterGroup();
 	
@@ -114,7 +112,8 @@ document.addEventListener('DOMContentLoaded',function(){
 /*		map.fitBounds(featureGroup.getBounds(), {maxZoom: 8});*/
 	}
 
-
+	// Set view to bounds of data
+	map.fitBounds(cluster.getBounds())
 
 	// #### lasso ####
 
@@ -217,60 +216,4 @@ document.addEventListener('DOMContentLoaded',function(){
 	});
 	
 });
-	
-// https://github.com/makinacorpus/Leaflet.RestoreView
-(function() {
-	var RestoreViewMixin = {
-		restoreView: function () {
-			if (!storageAvailable('localStorage')) {
-				return false;
-			}
-			var storage = window.localStorage;
-			if (!this.__initRestore) {
-				this.on('moveend', function (e) {
-					if (!this._loaded)
-						return;  // Never access map bounds if view is not set.
-
-					var view = {
-						lat: this.getCenter().lat,
-						lng: this.getCenter().lng,
-						zoom: this.getZoom()
-					};
-					storage['mapView'] = JSON.stringify(view);
-				}, this);
-				this.__initRestore = true;
-			}
-
-			var view = storage['mapView'];
-			try {
-				view = JSON.parse(view || '');
-				this.setView(L.latLng(view.lat, view.lng), view.zoom, true);
-				return true;
-			}
-			catch (err) {
-				return false;
-			}
-		}
-	};
-
-	function storageAvailable(type) {
-		try {
-			var storage = window[type],
-				x = '__storage_test__';
-			storage.setItem(x, x);
-			storage.removeItem(x);
-			return true;
-		}
-		catch(e) {
-			console.warn("Your browser blocks access to " + type);
-			return false;
-		}
-	}
-
-	L.Map.include(RestoreViewMixin);
-
-})();
-
-
-
 

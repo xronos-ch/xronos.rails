@@ -58,10 +58,10 @@
     },
     "map": {
       "js": [
-        "/packs/js/map-12872e757f6115b5a131.js"
+        "/packs/js/map-ecbced064cf358f7c0ee.js"
       ],
       "js.map": [
-        "/packs/js/map-12872e757f6115b5a131.js.map"
+        "/packs/js/map-ecbced064cf358f7c0ee.js.map"
       ]
     }
   },
@@ -69,8 +69,8 @@
   "frontend.js.map": "/packs/js/frontend-b345289755f51fbd45f0.js.map",
   "landing_page.js": "/packs/js/landing_page-ef82a55178bbbc30996e.js",
   "landing_page.js.map": "/packs/js/landing_page-ef82a55178bbbc30996e.js.map",
-  "map.js": "/packs/js/map-12872e757f6115b5a131.js",
-  "map.js.map": "/packs/js/map-12872e757f6115b5a131.js.map",
+  "map.js": "/packs/js/map-ecbced064cf358f7c0ee.js",
+  "map.js.map": "/packs/js/map-ecbced064cf358f7c0ee.js.map",
   "media/files/inter-all-400-normal.woff": "/packs/media/files/inter-all-400-normal-e71ac353.woff",
   "media/files/inter-cyrillic-400-normal.woff2": "/packs/media/files/inter-cyrillic-400-normal-514f4123.woff2",
   "media/files/inter-cyrillic-ext-400-normal.woff2": "/packs/media/files/inter-cyrillic-ext-400-normal-4543e27a.woff2",
