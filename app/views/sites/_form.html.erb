@@ -1,4 +1,4 @@
-<%= bs5_form_with(model: site, local: true) do |f| %>
+<%= bootstrap_form_with(model: @site, local: true) do |f| %>
   <%= render  'sites/site_fields', f: f %>
   <%= f.submit %>
 <% end %>

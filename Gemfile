@@ -104,7 +104,8 @@ end
 # pagination
 gem "pagy"
 
-# nested forms
+# forms
+gem "bootstrap_form", "~> 5.0"
 gem "cocoon"
 
 # autocomplete in forms
