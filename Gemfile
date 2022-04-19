@@ -108,6 +108,10 @@ gem "pagy"
 gem "bootstrap_form", "~> 5.0"
 gem "cocoon"
 
+# ISO-based countries
+gem "countries"
+gem "country_select"
+
 # autocomplete in forms
 gem 'jquery-ui-rails'
 gem 'rails-jquery-autocomplete'

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_31_082839) do
+ActiveRecord::Schema.define(version: 2022_04_19_134617) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -56,12 +56,6 @@ ActiveRecord::Schema.define(version: 2022_03_31_082839) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "site_id"
-  end
-
-  create_table "countries", force: :cascade do |t|
-    t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "materials", force: :cascade do |t|
@@ -181,6 +175,7 @@ ActiveRecord::Schema.define(version: 2022_03_31_082839) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "country_id"
+    t.string "country"
   end
 
   create_table "source_databases", force: :cascade do |t|

@@ -9,12 +9,14 @@ class Site < ApplicationRecord
 
   has_and_belongs_to_many :site_types, optional: true
 
-  belongs_to :country, optional: true
-  accepts_nested_attributes_for :country, reject_if: :all_blank, allow_destroy: true
-  validates_associated :country
-
   has_many :c14s, through: :contexts
   has_many :typos, through: :contexts
+
+  def country
+    c = read_attribute(:country)
+    return nil if c.blank?
+    ISO3166::Country[c] || ISO3166::Country.find_country_by_any_name(c)
+  end
 
   def coordinates(format = "dd")
     return nil if lat.blank? || lng.blank?
