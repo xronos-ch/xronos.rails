@@ -18,6 +18,12 @@ class Site < ApplicationRecord
       ISO3166::Country.find_country_by_any_name(country_code)
   end
 
+  def country_from_coordinates
+    return nil if lat.blank? || lng.blank?
+    result = Geocoder.search([lat, lng])
+    ISO3166::Country[result.first.country_code]
+  end
+
   def coordinates(format = "dd")
     return nil if lat.blank? || lng.blank?
 

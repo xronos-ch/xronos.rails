@@ -27,6 +27,7 @@ import "channels"
 require("jquery")
 require("@nathanvda/cocoon")
 
+import "@popperjs/core"
 import 'bootstrap'
 
 // hotwire framework (turbo+stimulus)

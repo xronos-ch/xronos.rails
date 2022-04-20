@@ -116,6 +116,9 @@ gem "cocoon"
 gem "countries"
 gem "country_select"
 
+# Geocoding
+gem "geocoder"
+
 # autocomplete in forms
 gem 'jquery-ui-rails'
 gem 'rails-jquery-autocomplete'

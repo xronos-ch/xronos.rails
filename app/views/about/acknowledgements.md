@@ -30,3 +30,7 @@ It also incorporates data from the following publications:
 * [006 Carbon C](https://thenounproject.com/icon/006-carbon-c-1022338/) by Joel Wisneski, from [NounProject.com](https://thenounproject.com)
 * [Wood Texture](https://thenounproject.com/icon/wood-texture-3674579/) by Laura from [NounProject.com](https://thenounproject.com)
 * [Pottery](https://thenounproject.com/icon/pottery-3969143/) by Adrien Coquet from [NounProject.com](https://thenounproject.com)
+
+## Additional data and services
+
+* Geocoding via [Nominatim](https://nominatim.org/). Data ⓒ [OpenStreetMap contributors](https://www.openstreetmap.org/copyright).

@@ -4,5 +4,11 @@
 <%= f.number_field :lng, floating: true, label: 'Longitude' %>
 
 <%= f.label :country_code, "Country" %>
-<%= f.country_select :country_code, { include_blank: na_value }, { data: { controller: 'tom-select' } } %>
+<%= f.country_select :country_code, 
+  { 
+    include_blank: na_value, 
+    priority_countries: [@site.country_from_coordinates.alpha2] 
+  }, 
+  { data: { controller: 'tom-select' } } 
+%>
 

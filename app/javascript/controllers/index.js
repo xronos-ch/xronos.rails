@@ -9,3 +9,6 @@ application.register("remote-modal", RemoteModalController)
 
 import TomSelectController from "./tom_select_controller.js"
 application.register("tom-select", TomSelectController)
+
+import TooltipsController from "./tooltips_controller.js"
+application.register("tooltips", TooltipsController)
