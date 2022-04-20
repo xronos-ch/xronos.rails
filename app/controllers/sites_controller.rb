@@ -62,6 +62,7 @@ class SitesController < ApplicationController
       else
         format.html { render :edit }
         format.json { render json: @site.errors, status: :unprocessable_entity }
+        format.turbo_stream { render :form_update, status: :unprocessable_entity }
       end
     end
   end

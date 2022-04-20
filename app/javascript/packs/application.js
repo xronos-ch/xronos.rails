@@ -29,16 +29,9 @@ require("@nathanvda/cocoon")
 
 import 'bootstrap'
 
+// hotwire framework (turbo+stimulus)
+import "@hotwired/turbo-rails"
 import "controllers"
-
-document.addEventListener("turbolinks:load", function() {
-    $(function () {
-//        $('[data-toggle="tooltip"]').tooltip()
-//        $('[data-toggle="popover"]').popover()
-    })
-})
-
-
 
 require('../src/calibrate.js');
 import "../src/ion.rangeSlider.js"

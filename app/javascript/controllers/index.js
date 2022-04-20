@@ -4,5 +4,8 @@
 
 import { application } from "./application"
 
-import TomSelectController from "./tom_select_controller"
+import RemoteModalController from "./remote_modal_controller.js"
+application.register("remote-modal", RemoteModalController)
+
+import TomSelectController from "./tom_select_controller.js"
 application.register("tom-select", TomSelectController)

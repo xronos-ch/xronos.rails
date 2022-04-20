@@ -3,5 +3,5 @@
 <%= f.number_field :lat, floating: true, label: 'Latitude' %>
 <%= f.number_field :lng, floating: true, label: 'Longitude' %>
 
-<%= f.country_select :country_code, { }, { data: { controller: 'tom-select' } } %>
+<%= f.country_select :country_code, { include_blank: na_value }, { data: { controller: 'tom-select' } } %>
 
