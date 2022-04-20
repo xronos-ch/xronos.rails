@@ -80,6 +80,9 @@ gem 'leaflet-rails'
 # jquery for ajax calls
 gem 'jquery-rails'
 
+# stimulus
+gem 'stimulus-rails'
+
 # user management
 gem 'devise', ">= 4.7.1"
 

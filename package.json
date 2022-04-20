@@ -5,6 +5,7 @@
 		"@fontsource/fira-mono": "^4.5.7",
 		"@fontsource/inter": "^4.5.7",
 		"@fontsource/raleway": "^4.5.5",
+		"@hotwired/stimulus": "^3.0.1",
 		"@nathanvda/cocoon": "^1.2.14",
 		"@popperjs/core": "^2.9.3",
 		"@rails/actioncable": "^6.1.4-1",
