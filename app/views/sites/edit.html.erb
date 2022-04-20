@@ -1,12 +1,6 @@
 <%= render "shared/remote_modal", title: "Edit site details" do %>
 
-  <%= bootstrap_form_with(model: @site, local: true, id: "editSiteForm") do |f| %>
-    <%= render  'sites/site_fields', f: f %>
-
-    <%= content_for :buttons do %>
-      <%= button_tag "Cancel", type: 'reset', class: 'btn btn-danger', form: "editSiteForm", data: { "bs-dismiss": "modal" } %>
-      <%= button_tag "Save", class: 'btn btn-success', form: "editSiteForm" %>
-    <% end %>
-  <% end %>
+  <%= render 'form' %>
 
 <% end %>
+
