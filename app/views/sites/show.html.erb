@@ -19,15 +19,10 @@
     <%= render "site_details", site: @site %>
     <% if can? :edit, Site %>
       <div class="text-end my-3">
-        <!--
-        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal">
-        </button>
-        -->
         <%= link_to(edit_site_path, class: "btn btn-sm btn-primary", data: { "turbo_frame": "remote_modal" }) do %>
           <%= fa_icon "pencil", text: "Edit site details" %>
         <% end %>
       </div>
-      <%# render "form_modal", site: @site %>
     <% end %>
   </div>
 </section>
