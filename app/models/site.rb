@@ -13,9 +13,9 @@ class Site < ApplicationRecord
   has_many :typos, through: :contexts
 
   def country
-    c = read_attribute(:country)
-    return nil if c.blank?
-    ISO3166::Country[c] || ISO3166::Country.find_country_by_any_name(c)
+    return nil if country_code.blank?
+    ISO3166::Country[country_code] || 
+      ISO3166::Country.find_country_by_any_name(country_code)
   end
 
   def coordinates(format = "dd")

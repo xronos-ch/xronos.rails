@@ -12,7 +12,6 @@
 		"@rails/activestorage": "^6.1.4-1",
 		"@rails/ujs": "^6.1.4-1",
 		"@rails/webpacker": "5.4.3",
-		"@tarekraafat/autocomplete.js": "^10.2.6",
 		"bootstrap": "^5.1",
 		"datatables.net": "^1.11.3",
 		"datatables.net-bs5": "^1.11.3",
@@ -31,6 +30,7 @@
 		"leaflet-providers": "^1.13.0",
 		"leaflet.markercluster": "^1.5.1",
 		"rails-erb-loader": "^5.5.2",
+		"tom-select": "^2.0.1",
 		"turbolinks": "^5.2.0"
 	},
 	"devDependencies": {

@@ -89,26 +89,8 @@ class SitesController < ApplicationController
         :name,
         :lat,
         :lng,
-        :_destroy,
-        :country_id,
-        :country_attributes => [
-          :id,
-          :name,
-          :_destroy
-        ],
-        :fell_phases_attributes => [
-          :id,
-          :name,
-          :start_time,
-          :end_time,
-          :_destroy,
-          :references_attributes => [
-            :id,
-            :short_ref,
-            :bibtex,
-            :_destroy
-          ]
-        ]
+        :country_code,
+        :_destroy
       )
     end
 end

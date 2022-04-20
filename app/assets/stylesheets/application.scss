@@ -45,6 +45,7 @@ $headings-font-family: "Raleway", $font-family-sans-serif;
 @import "buttons.bootstrap5.min.css";
 @import "select.bootstrap5.min.css";
 @import "rails_bootstrap_forms";
+@import "tom-select/dist/scss/tom-select.bootstrap5";
 
 // Other gems
 @import "dataTables.bootstrap5.min.css";

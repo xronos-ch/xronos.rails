@@ -974,6 +974,11 @@
     mkdirp "^1.0.4"
     rimraf "^3.0.2"
 
+"@orchidjs/sifter@^0.9.1":
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/@orchidjs/sifter/-/sifter-0.9.1.tgz#20580cb75bcc1de3c9b9c021e0e546eb59ff2813"
+  integrity sha512-bdW8vKTlWXfoAvUud0a4OeVPrtdvHH8gTshKqndzxAI6bXGPBejgry2wvIz0OZOqOuWuFAJWgNCjq/6S85U77A==
+
 "@popperjs/core@^2.9.3":
   version "2.11.2"
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.2.tgz#830beaec4b4091a9e9398ac50f865ddea52186b9"
@@ -1039,11 +1044,6 @@
     webpack-assets-manifest "^3.1.1"
     webpack-cli "^3.3.12"
     webpack-sources "^1.4.3"
-
-"@tarekraafat/autocomplete.js@^10.2.6":
-  version "10.2.6"
-  resolved "https://registry.yarnpkg.com/@tarekraafat/autocomplete.js/-/autocomplete.js-10.2.6.tgz#c25a35b09cd5af15ee2941950d5ae52a79b77abf"
-  integrity sha512-M3awL75YTQVHev4XlWGRKJalwVG3MGgtNnbRdtNipcyMcAV1sfkireBM8BKL/vhFhrus+6/5KZfj/DJDu8X0mg==
 
 "@terraformer/common@^2.0.7":
   version "2.0.7"
@@ -6853,6 +6853,13 @@ toidentifier@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/toidentifier/-/toidentifier-1.0.1.tgz#3be34321a88a820ed1bd80dfaa33e479fbb8dd35"
   integrity sha512-o5sSPKEkg/DIQNmH43V0/uerLrpzVedkUh8tGNvaeXpfpuwjKenlSox/2O/BTlZUtEe+JG7s5YhEz608PlAHRA==
+
+tom-select@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/tom-select/-/tom-select-2.0.1.tgz#e3a6e6de61070274f746543f177107970a36b878"
+  integrity sha512-HTFf0OTwA2k8YCUqIZOenvr+ZrV4LMOUjCn3n5XS8wIpigcxKVvs5XRhBSGedhRJ8s+VmemIqy6rnabgBYX+6w==
+  dependencies:
+    "@orchidjs/sifter" "^0.9.1"
 
 ts-pnp@^1.1.6:
   version "1.2.0"
