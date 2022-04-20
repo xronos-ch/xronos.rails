@@ -1,8 +1,6 @@
 {
   "application.js": "/packs/js/application-b8a12db0444365523bfc.js",
   "application.js.map": "/packs/js/application-b8a12db0444365523bfc.js.map",
-  "autocomplete.js": "/packs/js/autocomplete-8f172d90870f178d0e90.js",
-  "autocomplete.js.map": "/packs/js/autocomplete-8f172d90870f178d0e90.js.map",
   "calibration.js": "/packs/js/calibration-3b4cdcfbda1787907be9.js",
   "calibration.js.map": "/packs/js/calibration-3b4cdcfbda1787907be9.js.map",
   "data.js": "/packs/js/data-730a5a538dd543791874.js",
@@ -14,14 +12,6 @@
       ],
       "js.map": [
         "/packs/js/application-b8a12db0444365523bfc.js.map"
-      ]
-    },
-    "autocomplete": {
-      "js": [
-        "/packs/js/autocomplete-8f172d90870f178d0e90.js"
-      ],
-      "js.map": [
-        "/packs/js/autocomplete-8f172d90870f178d0e90.js.map"
       ]
     },
     "calibration": {

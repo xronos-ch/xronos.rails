@@ -1,0 +1,24 @@
+<div id="modal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="modal-title">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+      <%= bootstrap_form_with(model: @site, local: true) do |f| %>
+
+        <div class="modal-header">
+          <h1 id="modal-title" class="modal-title h5">Edit site details</h1>
+        </div>
+
+        <div class="modal-body">
+          <%= render 'site_fields', f: f %>
+        </div>
+
+        <div class="modal-footer">
+          <%= f.button "Discard", type: "reset", class: "btn btn-danger", data: { "bs-dismiss": "modal" } %>
+          <%= f.submit "Save", class: "btn btn-success" %>
+        </div>
+
+      <% end %>
+
+    </div>
+  </div>
+</div>

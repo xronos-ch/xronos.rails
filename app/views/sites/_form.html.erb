@@ -1,4 +1,5 @@
 <%= bootstrap_form_with(model: @site, local: true) do |f| %>
   <%= render  'sites/site_fields', f: f %>
-  <%= f.submit %>
+  <%= button_tag "Discard", type: 'reset', class: 'btn btn-danger' %>
+  <%= f.submit "Save", class: 'btn btn-success' %>
 <% end %>
