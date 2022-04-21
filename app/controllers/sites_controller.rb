@@ -57,7 +57,7 @@ class SitesController < ApplicationController
   def update
     respond_to do |format|
       if @site.update(site_params)
-        format.html { redirect_to @site, notice: 'Site was successfully updated.' }
+        format.html { redirect_back(fallback_location: @site, notice: "Saved changes to #{@site.name}.") }
         format.json { render :show, status: :ok, location: @site }
       else
         format.html { render :edit }

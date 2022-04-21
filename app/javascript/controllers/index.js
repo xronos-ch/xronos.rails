@@ -4,6 +4,9 @@
 
 import { application } from "./application"
 
+import FlashController from "./flash_controller.js"
+application.register("flash", FlashController)
+
 import RemoteModalController from "./remote_modal_controller.js"
 application.register("remote-modal", RemoteModalController)
 
