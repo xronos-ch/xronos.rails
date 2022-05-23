@@ -1,7 +1,3 @@
-<div class="container">
-  <%# render 'shared/action_breadcrumbs', i: @c14_measurement %>
-
-  <h1>Edit C14 measurement</h1>
-
-  <%= render 'form', c14_measurement: @c14_measurement %>
-</div>
+<%= render "shared/remote_modal", title: "Edit radiocarbon dates" do %>
+  <%= render 'form' %>
+<% end %>

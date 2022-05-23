@@ -1,0 +1,29 @@
+<%= f.text_field :lab_identifier, floating: true, label: "Lab identifier" %>
+<!-- TODO: sample -->
+
+<div class="mb-3 input-group">
+  <%= f.number_field :bp, label: "Age", label_as_placeholder: true, wrapper: false %>
+  <span class="input-group-text">±</span>
+  <%= f.number_field :std, label: "Error", label_as_placeholder: true, wrapper: false %>
+  <span class="input-group-text">uncal BP</span>
+</div>
+
+<div class="mb-3 input-group">
+  <%= f.number_field :cal_bp, label: "Calibrated age", label_as_placeholder: true, wrapper: false %>
+  <span class="input-group-text">±</span>
+  <%= f.number_field :cal_std, label: "Calibrated error", label_as_placeholder: true, wrapper: false %>
+  <span class="input-group-text">cal BP</span>
+</div>
+
+<div class="mb-3 input-group">
+  <%= f.number_field :delta_c13, label: "δ13C", label_as_placeholder: true, wrapper: false %>
+  <span class="input-group-text">±</span>
+  <%= f.number_field :delta_c13_std, label: "δ13C error", label_as_placeholder: true, wrapper: false %>
+  <span class="input-group-text">‰</span>
+</div>
+
+<%= f.text_field :method, floating: true, label: "Method" %>
+
+<!-- TODO: source database -->
+<!-- TODO: references? -->
+

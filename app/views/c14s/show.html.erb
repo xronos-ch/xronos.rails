@@ -20,6 +20,14 @@
 </section>
 
 <section id="c14-details" class="bg-body">
+  <% if can? :edit, C14 %>
+    <div class="container my-5">
+      <%= link_to(edit_c14_path, class: "btn btn-sm btn-primary", data: { "turbo_frame": "remote_modal" }) do %>
+        <%= fa_icon "pencil", text: "Edit radiocarbon date" %>
+      <% end %>
+    </div>
+  <% end %>
+
   <div class="container my-5">
     <h2>Measurement details</h2>
     <%= render "c14_measurement", c14: @c14 %>

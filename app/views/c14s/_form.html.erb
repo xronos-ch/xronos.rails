@@ -1,4 +1,10 @@
-<%= bs5_form_with(model: c14_measurement, local: true) do |f| %>
-  <%= render  'c14_measurements/c14_measurement_fields', f: f %>
-  <%= f.submit %>
+<%= bootstrap_form_with(model: @c14, local: true, id: "c14Form") do |f| %>
+  <%= render  'fields', f: f %>
+
+  <%= content_for :buttons do %>
+    <%= button_tag "Cancel", type: 'reset', class: 'btn btn-danger', form: "c14Form", data: { "bs-dismiss": "modal" } %>
+    <%= button_tag "Save", class: 'btn btn-success', form: "c14Form" %>
+  <% end %>
+
 <% end %>
+
