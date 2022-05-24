@@ -4,13 +4,13 @@
     <div class="accordion-item">
 
       <h3 class="accordion-header" id="v<%= version.id %>">
-        <button class="accordion-button text-monospace" type="button" data-bs-toggle="collapse" data-bs-target="#v<%= version.id %>-changes" aria-expanded="true" aria-controls="v<%= version.id %>-changes">
+        <button class="accordion-button collapsed text-monospace" type="button" data-bs-toggle="collapse" data-bs-target="#v<%= version.id %>-changes" aria-expanded="false" aria-controls="v<%= version.id %>-changes">
           <%= version.revision_comment.blank? ? "Updated." : version.revision_comment %> 
           <span class="text-muted ms-1">[<%= version.whodunnit_user_email %>, <%= version.created_at %>]</span>
         </button>
       </h3>
       
-      <div id="v<%= version.id %>-changes" class="accordion-collapse collapse" aria-labelledby="v<%= version.id %>" data-bs-parent="#versionHistory">
+      <div id="v<%= version.id %>-changes" class="accordion-collapse collapse" aria-labelledby="v<%= version.id %>">
         <div class="accordion-body text-monospace small">
           <% for change in version.changeset do %>
             <% unless change.first == "updated_at" %>
