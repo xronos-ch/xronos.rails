@@ -1,28 +1,55 @@
-<%= f.text_field :lab_identifier, floating: true, label: "Lab identifier" %>
-<!-- TODO: sample -->
-
-<div class="mb-3 input-group">
-  <%= f.number_field :bp, label: "Age", label_as_placeholder: true, wrapper: false %>
-  <span class="input-group-text">±</span>
-  <%= f.number_field :std, label: "Error", label_as_placeholder: true, wrapper: false %>
-  <span class="input-group-text">uncal BP</span>
+<div class="row">
+  <div class="col">
+    <%= f.text_field :lab_identifier, label: "Lab identifier" %>
+  </div>
+  <div class="col">
+    <%= f.collection_select :c14_lab_id, C14Lab.all, :id, :name,
+      { label: "Lab", include_blank: '<NA>' },
+      { data: { controller: 'tom-select' } }
+    %>
+  </div>
 </div>
 
-<div class="mb-3 input-group">
-  <%= f.number_field :cal_bp, label: "Calibrated age", label_as_placeholder: true, wrapper: false %>
-  <span class="input-group-text">±</span>
-  <%= f.number_field :cal_std, label: "Calibrated error", label_as_placeholder: true, wrapper: false %>
-  <span class="input-group-text">cal BP</span>
+<!-- TODO: Context -->
+<h2 class="h5">Context</h5>
+
+<%= f.fields_for :context, @c14.context do |f| %>
+  <%= render "contexts/fields", f: f %>
+<% end %>
+
+<h2 class="h5">Sample</h2>
+
+<%# f.collection_select :sample_id, 
+  Sample.joins(:context).where('contexts.site_id' => @c14.site.id), 
+  :id, :position_description,
+  {},
+  { data: { controller: 'tom-select' } }
+%>
+
+<%= f.fields_for :sample, @c14.sample do |f| %>
+  <%= render "samples/fields", f: f %>
+<% end %>
+
+<h2 class="h5">Measurement</h2>
+
+<%= f.text_field :method, label: "Method" %>
+
+<div class="row">
+  <div class="col"><%= f.number_field :bp, label: "Age", append: "uncal BP" %></div>
+  <div class="col"><%= f.number_field :std, label: "Error", prepend: "±" %></div>
 </div>
 
-<div class="mb-3 input-group">
-  <%= f.number_field :delta_c13, label: "δ13C", label_as_placeholder: true, wrapper: false %>
-  <span class="input-group-text">±</span>
-  <%= f.number_field :delta_c13_std, label: "δ13C error", label_as_placeholder: true, wrapper: false %>
-  <span class="input-group-text">‰</span>
+<div class="row">
+  <div class="col"><%= f.number_field :cal_bp, label: "Calibrated age", append: "cal BP" %></div>
+  <div class="col"><%= f.number_field :cal_std, label: "Calibrated error", prepend: "±" %></div>
 </div>
 
-<%= f.text_field :method, floating: true, label: "Method" %>
+<div class="row">
+  <div class="col"><%= f.number_field :delta_c13, label: "δ13C", append: "‰" %></div>
+  <div class="col"><%= f.number_field :delta_c13_std, label: "δ13C error", prepend: "±" %></div>
+</div>
+
+<h2 class="h5">References</h2>
 
 <!-- TODO: source database -->
 <!-- TODO: references? -->
