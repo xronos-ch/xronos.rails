@@ -49,9 +49,18 @@
   </div>
 </section>
 
-<section id="site-versions" class="bg-body">
+<section id="xronos-metadata" class="bg-body">
   <div class="container my-5">
-    <h2>Revision history</h2>
-    <%= render "shared/paper_trail", item: @site %>
+    <div class="row">
+      
+      <div class="col">
+        <h2>XRONOS metadata</h2>
+        <%= render "shared/record_metadata", record: @site, record_label: Site.label %>
+      </div>
+
+      <div class="col">
+        <h2>Changelog</h2>
+        <%= render "shared/paper_trail", item: @site %>
+      </div>
   </div>
 </section>

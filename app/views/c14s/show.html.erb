@@ -47,9 +47,18 @@
   </div>
 </section>
 
-<section id="c14-versions" class="bg-body">
+<section id="xronos-metadata" class="bg-body">
   <div class="container my-5">
-    <h2>Revision history</h2>
-    <%= render "shared/paper_trail", item: @c14 %>
+    <div class="row">
+
+      <div class="col">
+        <h2>XRONOS metadata</h2>
+        <%= render "shared/record_metadata", record: @c14, record_label: C14.label %>
+      </div>
+
+      <div class="col">
+        <h2>Revision history</h2>
+        <%= render "shared/paper_trail", item: @c14 %>
+      </div>
   </div>
 </section>

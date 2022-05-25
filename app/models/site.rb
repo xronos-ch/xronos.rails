@@ -12,6 +12,10 @@ class Site < ApplicationRecord
   has_many :c14s, through: :contexts
   has_many :typos, through: :contexts
 
+  def self.label
+    "Site"
+  end
+
   def country
     return nil if country_code.blank?
     ISO3166::Country[country_code] || 
