@@ -1,4 +1,16 @@
 <%= bootstrap_form_with(model: @c14, local: true, id: "c14Form") do |f| %>
+  <% if @c14.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@c14.errors.count, "error") %> prohibited this c14 from being saved:</h2>
+
+      <ul>
+        <% @c14.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
   <%= render  'fields', f: f %>
 
   <%= content_for :buttons do %>

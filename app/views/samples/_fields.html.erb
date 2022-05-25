@@ -1,3 +1,11 @@
+<h2 class="h5">Context</h5>
+
+<%= f.fields_for :context, @c14.context do |ff| %>
+  <%= render "contexts/fields", f: ff %>
+<% end %>
+
+<h2 class="h5">Sample</h5>
+
 <div class="row">
   <div class="col">
     <%= f.collection_select :material_id, Material.all, :id, :name, 

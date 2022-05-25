@@ -10,15 +10,6 @@
   </div>
 </div>
 
-<!-- TODO: Context -->
-<h2 class="h5">Context</h5>
-
-<%= f.fields_for :context, @c14.context do |f| %>
-  <%= render "contexts/fields", f: f %>
-<% end %>
-
-<h2 class="h5">Sample</h2>
-
 <%# f.collection_select :sample_id, 
   Sample.joins(:context).where('contexts.site_id' => @c14.site.id), 
   :id, :position_description,
@@ -26,8 +17,8 @@
   { data: { controller: 'tom-select' } }
 %>
 
-<%= f.fields_for :sample, @c14.sample do |f| %>
-  <%= render "samples/fields", f: f %>
+<%= f.fields_for :sample, @c14.sample do |ff| %>
+  <%= render "samples/fields", f: ff %>
 <% end %>
 
 <h2 class="h5">Measurement</h2>

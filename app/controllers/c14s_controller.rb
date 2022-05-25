@@ -52,8 +52,9 @@ class C14sController < ApplicationController
         format.html { redirect_to @c14, notice: 'C14 measurement was successfully updated.' }
         format.json { render :show, status: :ok, location: @c14 }
       else
-        format.html { render :edit }
+        format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @c14.errors, status: :unprocessable_entity }
+        format.turbo_stream { render :form_update, status: :unprocessable_entity }
       end
     end
   end
@@ -77,6 +78,8 @@ class C14sController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def c14_params
       params.require(:c14).permit(
+        :lab_identifier,
+        :c14_lab_id,
         :bp,
         :std,
         :cal_bp,
@@ -84,15 +87,32 @@ class C14sController < ApplicationController
         :delta_c13,
         :delta_c13_std,
         :method,
-        :source_database_id,
-        :source_database_attributes => [
+        {sample_attributes: [
+          :id,
+          :material_id,
+          :taxon_id,
+          {context_attributes: [
+            :id,
+            :name,
+            :approx_start_time,
+            :approx_end_time,
+            :_destroy
+          ]},
+          :position_description,
+          :position_x,
+          :position_y,
+          :position_z,
+          :position_crs,
+          :_destroy
+        ]},
+        {source_database_attributes: [
           :id,
           :name,
           :url,
           :citation,
           :licence,
           :_destroy
-        ]
+        ]}
       )
     end
 

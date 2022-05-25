@@ -6,11 +6,14 @@ class C14 < ApplicationRecord
   validates :bp, :std, presence: true
 
   belongs_to :sample
-  belongs_to :c14_lab
-  belongs_to :source_database
+  accepts_nested_attributes_for :sample, reject_if: :all_blank
+  validates_associated :sample
 
   has_one :context, :through => :sample
   has_one :site, :through => :context
+
+  belongs_to :c14_lab, optional: true
+  belongs_to :source_database, optional: true
 
   def self.label
     "radiocarbon date"
