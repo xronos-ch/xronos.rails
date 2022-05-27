@@ -1,8 +1,9 @@
 <%= f.text_field :name %>
 
 <div class="row">
-  <div class="col"><%= f.number_field :lat, label: 'Latitude' %></div>
-  <div class="col"><%= f.number_field :lng, label: 'Longitude' %></div>
+  <div class="col"><%= f.number_field :lat, label: 'Latitude', append: '°N',
+    help: '<a href="https://www.fcc.gov/media/radio/dms-decimal" target="_blank">Convert DMS to decimal degrees</a>.'.html_safe %></div>
+  <div class="col"><%= f.number_field :lng, label: 'Longitude', append: '°E' %></div>
 </div>
 
 <%# country_select is not supported by bootstrap_forms gem, so we need to 
