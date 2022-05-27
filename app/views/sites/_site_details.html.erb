@@ -19,6 +19,11 @@
         <% end %>
       </dd>
 
+      <dt class="col-sm-3"><%= "Reference".pluralize(site.references.count) %></dt>
+      <dd class="col-sm-9 text-end">
+        <%= render "references/citations", references: site.references %>
+      </dd>
+
     </div>
 
   </div>

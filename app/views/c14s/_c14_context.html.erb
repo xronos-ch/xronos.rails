@@ -27,8 +27,10 @@
       <dt class="col-sm-3">Source database</dt>
       <dd class="col-sm-9 text-end"><%= c14.source_database.name %></dd>
 
-      <dt class="col-sm-3">References</dt>
-      <dd class="col-sm-9 text-end"><!-- not implemented --><%= na_value %></dd>
+      <dt class="col-sm-3"><%= "Reference".pluralize(c14.references.count) %></dt>
+      <dd class="col-sm-9 text-end">
+        <%= render "references/citations", references: @c14.references %>
+      </dd>
 
     </div>
   </div>

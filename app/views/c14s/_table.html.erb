@@ -8,6 +8,7 @@
       <th scope=col>Method</th>
       <th scope=col class="text-end">Uncalibrated age</th>
       <th scope=col class="text-end">Calibrated age</th>
+      <th scope=col class="text-end">References</th>
     </tr>
   </thead>
 
@@ -21,6 +22,7 @@
         <td><%= c14.method.present? ? c14.method : na_value %></td>
         <td class="text-end font-monospace"><%= c14.uncal_age %></td>
         <td class="text-end font-monospace"><%= c14.cal_age %></td>
+        <td class="text-end small"><%= render "references/citations", references: c14.references %></td>
       </tr>
     <% end %>
   </tbody>

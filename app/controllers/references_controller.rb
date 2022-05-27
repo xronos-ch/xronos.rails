@@ -30,11 +30,12 @@ class ReferencesController < ApplicationController
 
     respond_to do |format|
       if @reference.save
-        format.html { redirect_to @reference, notice: 'Reference was successfully created.' }
+        format.html { redirect_back(fallback_location: @reference, notice: "Reference '#{@reference.short_ref}' was created.") }
         format.json { render :show, status: :created, location: @reference }
       else
         format.html { render :new }
         format.json { render json: @reference.errors, status: :unprocessable_entity }
+        format.turbo_stream { render :form_update, status: :unprocessable_entity }
       end
     end
   end
@@ -44,11 +45,12 @@ class ReferencesController < ApplicationController
   def update
     respond_to do |format|
       if @reference.update(reference_params)
-        format.html { redirect_to @reference, notice: 'Reference was successfully updated.' }
+        format.html { redirect_back(fallback_location: @reference, notice: "Reference '#{@reference.short_ref}' was updated.") }
         format.json { render :show, status: :ok, location: @reference }
       else
         format.html { render :edit }
         format.json { render json: @reference.errors, status: :unprocessable_entity }
+        format.turbo_stream { render :form_update, status: :unprocessable_entity }
       end
     end
   end
@@ -56,9 +58,10 @@ class ReferencesController < ApplicationController
   # DELETE /references/1
   # DELETE /references/1.json
   def destroy
+    deleted_name = @reference.short_ref
     @reference.destroy
     respond_to do |format|
-      format.html { redirect_to references_url, notice: 'Reference was successfully destroyed.' }
+      format.html { redirect_to references_url, notice: "Reference '#{deleted_name}' was deleted." }
       format.json { head :no_content }
     end
   end

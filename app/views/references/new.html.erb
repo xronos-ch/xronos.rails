@@ -1,6 +1,3 @@
-<div class="container">
-  <%# render 'shared/action_breadcrumbs', i: @reference %>
-  <h1>New reference</h1>
-
-  <%= render 'form', reference: @reference %>
-</div>
+<%= render "shared/remote_modal", title: "New reference" do %>
+  <%= render "form" %>
+<% end %>

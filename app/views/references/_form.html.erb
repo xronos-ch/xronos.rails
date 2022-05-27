@@ -1,4 +1,14 @@
-<%= bs5_form_with(model: reference, local: true) do |f| %>
-  <%= render  'references/reference_fields', f: f %>
-  <%= f.submit %>
+<%= bootstrap_form_with(model: @reference, local: true, id: "referenceForm") do |f| %>
+
+  <%= render 'fields', f: f %>
+
+  <h3 class="h5">Preview</h3>
+  <p class="ms-3"><%= @reference.render %></p>
+
+  <%= content_for :buttons do %>
+    <%= button_tag "Cancel", type: 'reset', class: 'btn btn-danger', form: "referenceForm", data: { "bs-dismiss": "modal" } %>
+    <%= button_tag "Save", class: 'btn btn-success', form: "referenceForm" %>
+  <% end %>
+
 <% end %>
+

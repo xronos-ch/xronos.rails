@@ -53,4 +53,8 @@ class Site < ApplicationRecord
     end
   end
 
+  def recursive_references
+    (references + c14s.map(&:references).reduce(:+)).uniq
+  end
+
 end

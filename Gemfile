@@ -112,6 +112,11 @@ gem "pagy"
 gem "bootstrap_form", "~> 5.0"
 gem "cocoon"
 
+# bibliography
+gem "bibtex-ruby"
+gem "citeproc-ruby"
+gem "csl-styles"
+
 # ISO-based countries
 gem "countries"
 gem "country_select"

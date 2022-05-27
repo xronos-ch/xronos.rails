@@ -82,6 +82,8 @@ GEM
     autoprefixer-rails (10.4.7.0)
       execjs (~> 2)
     bcrypt (3.1.18)
+    bibtex-ruby (6.0.0)
+      latex-decode (~> 0.0)
     bindex (0.8.1)
     bootsnap (1.11.1)
       msgpack (~> 1.2)
@@ -108,6 +110,11 @@ GEM
       capybara
       selenium-webdriver
     childprocess (4.1.0)
+    citeproc (1.0.10)
+      namae (~> 1.0)
+    citeproc-ruby (2.0.0)
+      citeproc (~> 1.0, >= 1.0.9)
+      csl (~> 2.0)
     cocoon (1.2.15)
     coffee-rails (4.2.2)
       coffee-script (>= 2.2.0)
@@ -124,6 +131,11 @@ GEM
       countries (~> 5.0)
       sort_alphabetical (~> 1.1)
     crass (1.0.6)
+    csl (2.0.0)
+      namae (~> 1.0)
+      rexml
+    csl-styles (2.0.1)
+      csl (~> 2.0)
     devise (4.8.1)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -183,6 +195,7 @@ GEM
     json (2.6.2)
     kramdown (2.4.0)
       rexml
+    latex-decode (0.3.2)
     leaflet-rails (1.7.0)
       rails (>= 4.2.0)
     listen (3.7.1)
@@ -204,6 +217,7 @@ GEM
     msgpack (1.5.1)
     multi_json (1.15.0)
     multi_xml (0.6.0)
+    namae (1.1.1)
     nio4r (2.5.8)
     nokogiri (1.13.6-x86_64-darwin)
       racc (~> 1.4)
@@ -400,16 +414,19 @@ DEPENDENCIES
   activerecord-session_store
   ajax-datatables-rails
   best_in_place!
+  bibtex-ruby
   bootsnap (>= 1.1.0)
   bootstrap (~> 5.1)
   bootstrap_form (~> 5.0)
   byebug
   cancancan
   capybara-selenium
+  citeproc-ruby
   cocoon
   coffee-rails (~> 4.2)
   countries
   country_select
+  csl-styles
   devise (>= 4.7.1)
   doorkeeper
   dotenv-rails

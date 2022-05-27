@@ -1,0 +1,12 @@
+<% if references.blank? %>
+  <p>There are no bibliographic references attached to this record.</p>
+<% else %>
+  <ul class="bibliography">
+    <% for ref in references %>
+      <li id="ref-<%= ref.short_ref %>">
+        <%= ref.render %>
+        <small><%= link_to "[#{ref.short_ref}]", ref %></small>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

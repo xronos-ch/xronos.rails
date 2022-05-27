@@ -47,6 +47,13 @@
   </div>
 </section>
 
+<section id="references" class="bg-body">
+  <div class="container my-5">
+    <h2>Bibliography</h2>
+    <%= render "references/bibliography", references: (@c14.references + @c14.site.references).uniq %>
+  </div>
+</section>
+
 <section id="xronos-metadata" class="bg-body">
   <div class="container my-5">
     <div class="row">
