@@ -1,14 +1,17 @@
-<%= f.text_field :name, floating: true %>
+<%= f.text_field :name %>
 
-<%= f.number_field :lat, floating: true, label: 'Latitude' %>
-<%= f.number_field :lng, floating: true, label: 'Longitude' %>
+<div class="row">
+  <div class="col"><%= f.number_field :lat, label: 'Latitude' %></div>
+  <div class="col"><%= f.number_field :lng, label: 'Longitude' %></div>
+</div>
 
-<%= f.label :country_code, "Country" %>
-<%= f.country_select :country_code, 
-  { 
-    include_blank: na_value, 
-    priority_countries: [@site.country_from_coordinates.alpha2] 
-  }, 
-  { data: { controller: 'tom-select' } } 
-%>
-
+<div class="mb-3">
+  <%= f.label :country_code, "Country", class: "form-label" %>
+  <%= f.country_select :country_code, 
+    { 
+      include_blank: na_value, 
+      priority_countries: [@site.country_from_coordinates.alpha2] 
+    }, 
+    { data: { controller: 'tom-select' } } 
+  %>
+</div>
