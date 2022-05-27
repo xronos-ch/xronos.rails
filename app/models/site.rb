@@ -12,6 +12,9 @@ class Site < ApplicationRecord
   has_many :c14s, through: :contexts
   has_many :typos, through: :contexts
 
+  has_many :citations, as: :citing
+  has_many :references, through: :citations
+
   def self.label
     "Site"
   end

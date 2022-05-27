@@ -15,6 +15,9 @@ class C14 < ApplicationRecord
   belongs_to :c14_lab, optional: true
   belongs_to :source_database, optional: true
 
+  has_many :citations, as: :citing
+  has_many :references, :through => :citations
+
   def self.label
     "radiocarbon date"
   end
