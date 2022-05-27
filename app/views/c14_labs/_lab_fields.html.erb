@@ -1,8 +1,0 @@
-<% disabled ||= false  
-#We do this so if disabled is not passed to the partial it doesn't crash. 
-# We default it to false 
-%>
-
-<%= f.text_control :name, placeholder: 'Bern', disabled: disabled %>
-<%= f.check_box :active, disabled: disabled %>
-

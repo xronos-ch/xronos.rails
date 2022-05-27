@@ -30,11 +30,12 @@ class C14LabsController < ApplicationController
 
     respond_to do |format|
       if @c14_lab.save
-        format.html { redirect_to @c14_lab, notice: 'C14Lab was successfully created.' }
+        format.html { redirect_back(fallback_location: @c14_lab, notice: "Created #{@c14_lab.name}.") }
         format.json { render :show, status: :created, location: @c14_lab }
       else
         format.html { render :new }
         format.json { render json: @c14_lab.errors, status: :unprocessable_entity }
+        format.turbo_stream { render :form_update, status: :unprocessable_entity }
       end
     end
   end
@@ -44,11 +45,12 @@ class C14LabsController < ApplicationController
   def update
     respond_to do |format|
       if @c14_lab.update(c14_lab_params)
-        format.html { redirect_to @c14_lab, notice: 'C14Lab was successfully updated.' }
+        format.html { redirect_back(fallback_location: @c14_lab, notice: "Saved changes to #{@c14_lab.name}.") }
         format.json { render :show, status: :ok, location: @c14_lab }
       else
         format.html { render :edit }
         format.json { render json: @c14_lab.errors, status: :unprocessable_entity }
+        format.turbo_stream { render :form_update, status: :unprocessable_entity }
       end
     end
   end
@@ -56,9 +58,10 @@ class C14LabsController < ApplicationController
   # DELETE /c14_labs/1
   # DELETE /c14_labs/1.json
   def destroy
+    deletedName = @c14_lab.name
     @c14_lab.destroy
     respond_to do |format|
-      format.html { redirect_to c14_labs_url, notice: 'C14Lab was successfully destroyed.' }
+      format.html { redirect_to c14_labs_url, notice: "#{deletedName} was deleted." }
       format.json { head :no_content }
     end
   end

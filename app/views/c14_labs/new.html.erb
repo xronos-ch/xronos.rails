@@ -1,6 +1,3 @@
-<div class="container">
-  <%= render 'shared/action_breadcrumbs', i: @lab %>
-  <h1>New lab</h1>
-
-  <%= render 'form', lab: @lab %>
-</div>
+<%= render "shared/remote_modal", title: "New radiocarbon lab" do %>
+  <%= render "form" %>
+<% end %>

@@ -1,4 +1,5 @@
 class C14Lab < ApplicationRecord
+  default_scope { order(active: :desc, name: :asc) }
 
   validates :name, presence: true
 
