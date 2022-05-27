@@ -90,6 +90,7 @@ class SitesController < ApplicationController
         :name,
         :lat,
         :lng,
+        {site_type_ids: []},
         :country_code,
         :_destroy
       )

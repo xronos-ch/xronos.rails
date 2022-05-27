@@ -5,6 +5,8 @@
   <div class="col"><%= f.number_field :lng, label: 'Longitude' %></div>
 </div>
 
+<%# country_select is not supported by bootstrap_forms gem, so we need to 
+    construct the label and wrapper HTML manually here %>
 <div class="mb-3">
   <%= f.label :country_code, "Country", class: "form-label" %>
   <%= f.country_select :country_code, 
@@ -15,3 +17,8 @@
     { data: { controller: 'tom-select' } } 
   %>
 </div>
+
+<%= f.collection_select :site_type_ids, SiteType.all, :id, :name,
+  { label: "Site type(s)", include_blank: na_value },
+  { multiple: true, data: { controller: "tom-select" } }
+%>
