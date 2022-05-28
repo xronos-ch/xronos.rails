@@ -95,61 +95,6 @@
         </div>
       </div>
       <div class="accordion-item">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFeature" aria-expanded="false" aria-controls="panelsStayOpen-collapseFeature">
-          Feature
-        </button>
-        <div id="panelsStayOpen-collapseFeature" class="accordion-collapse collapse <% if !(session[:query_feature].nil?) %>show<% end %>" aria-labelledby="panelsStayOpen-headingFeature">
-          <div class="accordion-body">
-            <label for="query_feature"><% if !(session[:query_feature].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Feature</label>
-            <%= text_field_tag(:query_feature, (session[:query_feature] or "")) %>
-          </div>
-        </div>
-      </div>
-      <div class="accordion-item">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFeatureType" aria-expanded="false" aria-controls="panelsStayOpen-collapseFeatureType">
-          Feature Type
-        </button>
-        <div id="panelsStayOpen-collapseFeatureType" class="accordion-collapse collapse <% unless (session[:query_feature_type].nil?) %>show<% end %>" aria-labelledby="panelsStayOpen-headingFeatureType">
-          <div class="accordion-body">
-            <label for="query_feature_type"><% if !(session[:query_feature_type].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Feature type</label>
-            <%= autocomplete_field_tag(:query_feature_type, session[:query_feature_type], data_autocomplete_feature_type_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
-          </div>
-        </div>
-      </div>
-      <div class="accordion-item">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapsePeriod" aria-expanded="false" aria-controls="panelsStayOpen-collapsePeriod">
-          Period
-        </button>
-        <div id="panelsStayOpen-collapsePeriod" class="accordion-collapse collapse <% unless (session[:query_period].nil?) %>show<% end %>" aria-labelledby="panelsStayOpen-headingPeriod">
-          <div class="accordion-body">
-            <label for="query_period"><% if !(session[:query_period].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Period</label>
-            <%= autocomplete_field_tag(:query_period, session[:query_period], data_autocomplete_period_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
-          </div>
-        </div>
-      </div>
-      <div class="accordion-item">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTypochronologicalUnit" aria-expanded="false" aria-controls="panelsStayOpen-collapseTypochronologicalUnit">
-          Typochronological Unit
-        </button>
-        <div id="panelsStayOpen-collapseTypochronologicalUnit" class="accordion-collapse collapse <% unless (session[:query_typochronological_unit].nil?) %>show<% end %>" aria-labelledby="panelsStayOpen-headingTypochronologicalUnit">
-          <div class="accordion-body">
-            <label for="query_typochronological_unit"><% if !(session[:query_typochronological_unit].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Typochronological unit</label>
-            <%= autocomplete_field_tag(:query_typochronological_unit, session[:query_typochronological_unit], data_autocomplete_typochronological_unit_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
-          </div>
-        </div>
-      </div>
-      <div class="accordion-item">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseEcochronologicalUnit" aria-expanded="false" aria-controls="panelsStayOpen-collapseEcochronologicalUnit">
-          Ecochronological Unit
-        </button>
-        <div id="panelsStayOpen-collapseEcochronologicalUnit" class="accordion-collapse collapse <% unless (session[:query_ecochronological_unit].nil?) %>show<% end %>" aria-labelledby="panelsStayOpen-headingEcochronologicalUnit">
-          <div class="accordion-body">
-            <label for="query_ecochronological_unit"><% if !(session[:query_ecochronological_unit].nil?) %> <%= fa_icon "check" %> <% else %> <%= fa_icon "times" %> <% end %> Ecochronological unit</label>
-            <%= autocomplete_field_tag(:query_ecochronological_unit, session[:query_ecochronological_unit], data_autocomplete_ecochronological_unit_name_path, 'data-delimiter' => '|', multiple: true, 'data-auto-focus' => true) %>
-          </div>
-        </div>
-      </div>
-      <div class="accordion-item">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseMaterial" aria-expanded="false" aria-controls="panelsStayOpen-collapseMaterial">
           Material
         </button>

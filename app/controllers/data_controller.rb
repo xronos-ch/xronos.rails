@@ -178,29 +178,29 @@ class DataController < ApplicationController
 
     # general dataset preparation
     @data ||= C14.includes(
-      :source_database,
       :c14_lab,
-      sample: [:material, :taxon]
+      :source_database,
+      sample: [:material, :taxon, {context: {site: [:site_types]}}]
     )
 
     # uncal age
     unless session[:query_uncal_age_start].nil?
       @data = @data.where(
-        c14s: {:bp => (session[:query_uncal_age_stop]..session[:query_uncal_age_start])}
+        :bp => (session[:query_uncal_age_stop]..session[:query_uncal_age_start])
       )
     end
 
     # cal age
     unless session[:query_cal_age_start].nil?
       @data = @data.where(
-        c14s: {:cal_bp => (session[:query_cal_age_stop]..session[:query_cal_age_start])}
+        :cal_bp => (session[:query_cal_age_stop]..session[:query_cal_age_start])
       )
     end
 
     # source_database name
     unless session[:query_source_database].nil?
       @data = @data.where(
-        c14s: {source_databases: {:name => session[:query_source_database].split('|')}}
+        source_databases: {name: session[:query_source_database].split('|')}
       )
     end
 
@@ -214,35 +214,35 @@ class DataController < ApplicationController
     # site name
     unless session[:query_site].nil?
       @data = @data.where(
-        sample: {context: {site: {:name => session[:query_site].split('|')}}}
+        sample: {context: {sites: {name: session[:query_site].split('|')}}}
       )
     end
 
     # site type
     unless session[:query_site_type].nil?
       @data = @data.where(
-        sample: {context: {site: {site_types: {name: session[:query_site_type].split('|')}}}}
+        sample: {context: {site: {:site_types => {name: session[:query_site_type].split('|')}}}}
       )
     end
 
     # material
     unless session[:query_material].nil?
       @data = @data.where(
-        sample: {material: {name: session[:query_material].split('|')}}
+        sample: {materials: {name: session[:query_material].split('|')}}
       )
     end
 
     # taxon
     unless session[:query_taxon].nil?
       @data = @data.where(
-        sample: {taxon: {name: session[:query_taxon].split('|')}}
+        sample: {taxons: {name: session[:query_taxon].split('|')}}
       )
     end
 
     # country
     unless session[:query_country].nil?
       @data = @data.where(
-        sample: {context: {site: {countries: {name: session[:query_country].split('|')}}}}
+        sample: {context: {sites: {country_code: session[:query_country].split('|')}}}
       )
     end
 
@@ -265,8 +265,13 @@ class DataController < ApplicationController
     respond_to do |format|
       format.html {
       		# json data (for map)
-		sample_ids = @data.distinct.pluck(:id)
-		gon.selected_sites = Site.distinct.joins(contexts: :samples).where(samples: {id: sample_ids}).where.not(lat: nil).where.not(lng: nil).select(:id, :name, :lat, :lng)
+		data_ids = @data.distinct.pluck(:id)
+		gon.selected_sites = Site.distinct.
+                  joins(contexts: {samples: :c14s}).
+                  where(c14s: {id: data_ids}).
+                  where.not(lat: nil).
+                  where.not(lng: nil).
+                  select(:id, :name, :lat, :lng)
 		gon.selected_sites = Oj.dump(gon.selected_sites)
       }
       # json data (for datatables)
