@@ -180,8 +180,7 @@ class DataController < ApplicationController
     @data ||= C14.includes(
       :source_database,
       :c14_lab,
-      #sample: {arch_object: [{site_phase: [{site: :country}, :periods, :typochronological_units, :ecochronological_units]}, {on_site_object_position: :feature_type}, :material, :species]}
-      sample: [{context: {site: :country}}, :material, :taxon]
+      sample: [:material, :taxon]
     )
 
     # uncal age
