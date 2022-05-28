@@ -1,4 +1,11 @@
-<%= bs5_form_with(model: period, local: true) do |f| %>
-  <%= render  'periods/period_fields', f: f %>
-  <%= f.submit %>
+<%= bootstrap_form_with(model: @typo, local: true, id: "typoForm") do |f| %>
+
+  <%= render 'fields', f: f %>
+
+  <%= content_for :buttons do %>
+    <%= button_tag "Cancel", type: 'reset', class: 'btn btn-danger', form: "typoForm", data: { "bs-dismiss": "modal" } %>
+    <%= button_tag "Save", class: 'btn btn-success', form: "typoForm" %>
+  <% end %>
+
 <% end %>
+

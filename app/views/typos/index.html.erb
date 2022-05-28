@@ -1,28 +1,11 @@
-<div class="container">
-  <h1>Periods</h1>
+<div class="container my-5">
 
-  <table class="responsive nowrap table table-hover align-middle" id="dttb-periods" data-sort="true" data-source="<%= url_for(format: :json)%>">
-    <thead>
-      <tr>
-        <th data-data="name">Name</th>
-        <th data-data="approx_start_time">Approx start time</th>
-        <th data-data="approx_end_time">Approx end time</th>
-        <th data-data="url" data-orderable="false" data-class-name="all" data-searchable="false" class="skip-export" width="100px">Actions</th>
-      </tr>
-    </thead>
+  <h1>Typological dates</h1>
 
-    <tbody>
-      <% @periods.each do |period| %>
-        <tr>
-          <td><%= link_to period.name, period %></td>
-          <td><%= period.approx_start_time %></td>
-          <td><%= period.approx_end_time %></td>
-          <td><%= render 'shared/action_buttons_compact', i: period %></td>
-        </tr>
-      <% end %>
-    </tbody>
+  <%= render "table", typos: @typos %>
 
-  </table>
+  <%== pagy_bootstrap_nav(@pagy) %>
 
-  <%= link_to 'New period', new_period_path, class: 'btn btn-secondary' %>
+  <%= link_to 'New typological date', new_typo_path, class: 'btn btn-secondary',
+    data: { "turbo_frame": "remote_modal" } %>
 </div>

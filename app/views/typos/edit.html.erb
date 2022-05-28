@@ -1,6 +1,3 @@
-<div class="container">
-  <%= render 'shared/action_breadcrumbs', i: @period %>
-  <b>Edit period</b>
-
-  <%= render 'form', period: @period %>
-</div>
+<%= render "shared/remote_modal", title: "Edit typological date" do %>
+  <%= render "form" %>
+<% end %>

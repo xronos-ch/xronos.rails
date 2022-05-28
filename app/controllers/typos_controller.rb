@@ -1,4 +1,6 @@
 class TyposController < ApplicationController
+  include Pagy::Backend
+
   load_and_authorize_resource
 
   before_action :set_typo, only: [:show, :edit, :update, :destroy]
@@ -6,7 +8,7 @@ class TyposController < ApplicationController
   # GET /typos
   # GET /typos.json
   def index
-    @typos = Typo.all
+    @pagy, @typos = pagy(Typo.all)
   end
 
   # GET /typos/1

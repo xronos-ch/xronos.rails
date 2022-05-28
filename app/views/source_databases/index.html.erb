@@ -1,15 +1,16 @@
-<div class="container">
+<div class="container my-5">
 
   <h1>Source databases</h1>
 
-  <table class="responsive nowrap table table-hover align-middle" id="dttb-source_databases" data-sort="true" data-source="<%= url_for(format: :json)%>">
+  <table class="responsive nowrap table table-hover align-middle">
     <thead>
       <tr>
-        <th data-data="name">Name</th>
-        <th data-data="url">Url</th>
-        <th data-data="citation">Citation</th>
-        <th data-data="licence">Licence</th>
-        <th data-data="url" data-orderable="false" data-class-name="all" data-searchable="false" class="skip-export" width="100px">Actions</th>
+        <th scope="col">Name</th>
+        <!--<th scope="col">URL</th>-->
+        <th scope="col">Citation</th>
+        <th scope="col">Licence</th>
+        <th scope="col" class="text-end">#&nbsp;records</th>
+        <% if can? :manage, SourceDatabase %><th><!--Actions--></th><% end %>
       </tr>
     </thead>
 
@@ -17,15 +18,19 @@
       <% @source_databases.each do |source_database| %>
         <tr>
           <td><%= link_to source_database.name, source_database %></td>
-          <td><%= source_database.url %></td>
+          <!--<td><%= link_to source_database.url, source_database.url, target: "_blank" %></td>-->
           <td><%= source_database.citation %></td>
           <td><%= source_database.licence %></td>
-          <td><%= render 'shared/action_buttons_compact', i: source_database %></td>
+          <td class="text-end"><%= source_database.c14s.count %></td>
+          <% if can? :manage, SourceDatabase %><td class="text-end"><%= render 'shared/action_buttons_compact', i: source_database %></td><% end %>
         </tr>
       <% end %>
     </tbody>
 
   </table>
 
-  <%= link_to 'New source database', new_source_database_path, class: 'btn btn-secondary' %>
+  <%#= pagy_bootstrap_nav(@pagy) %>
+
+  <%= link_to 'New source database', new_source_database_path, class: 'btn btn-secondary',
+    data: { "turbo_frame": "remote_modal" } %>
 </div>
