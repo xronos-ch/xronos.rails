@@ -35,7 +35,7 @@
     <div class="tab-pane fade p-3 border border-top-0" id="biblio-bibtex" role="tabpanel" aria-labelledby="biblio-bibtex-tab" tabindex="0">
       <code>
         <% for ref in references %>
-          <%= ref.format_bibtex %>
+          <%= simple_format ref.format_bibtex %>
         <% end %>
       </code>
     </div>
@@ -43,7 +43,7 @@
     <div class="tab-pane fade p-3 border border-top-0" id="biblio-json" role="tabpanel" aria-labelledby="biblio-json-tab" tabindex="0">
       <code>
         <% for ref in references %>
-          <%= ref.format_json %>
+          <%= simple_format ref.format_json %>
         <% end %>
       </code>
     </div>
@@ -51,7 +51,7 @@
     <div class="tab-pane fade p-3 border border-top-0" id="biblio-yaml" role="tabpanel" aria-labelledby="biblio-yaml-tab" tabindex="0">
       <code>
         <% for ref in references %>
-          <%= ref.format_yaml %>
+          <%= simple_format ref.format_yaml %>
         <% end %>
       </code>
     </div>
