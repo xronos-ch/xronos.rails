@@ -1,12 +1,61 @@
 <% if references.blank? %>
+
   <p>There are no bibliographic references attached to this record.</p>
+
 <% else %>
-  <ul class="bibliography">
-    <% for ref in references %>
-      <li id="ref-<%= ref.short_ref %>">
-        <%= ref.render %>
-        <small><%= link_to "[#{ref.short_ref}]", ref %></small>
-      </li>
-    <% end %>
+
+  <ul class="nav nav-tabs justify-content-end" id="bibliographyTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="biblio-text-tab" data-bs-toggle="tab" data-bs-target="#biblio-text" type="button" role="tab" aria-controls="biblio-text" aria-selected="true">Text</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="biblio-bibtex-tab" data-bs-toggle="tab" data-bs-target="#biblio-bibtex" type="button" role="tab" aria-controls="biblio-bibtex" aria-selected="false">BibTeX</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="biblio-json-tab" data-bs-toggle="tab" data-bs-target="#biblio-json" type="button" role="tab" aria-controls="biblio-json" aria-selected="false">JSON</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="biblio-yaml-tab" data-bs-toggle="tab" data-bs-target="#biblio-yaml" type="button" role="tab" aria-controls="biblio-yaml" aria-selected="false">YAML</button>
+    </li>
   </ul>
+
+  <div class="tab-content" id="bibliographyTabsContent">
+
+    <div class="tab-pane fade show active p-3 border border-top-0" id="biblio-text" role="tabpanel" aria-labelledby="biblio-text-tab" tabindex="-1">
+      <ul class="list-unstyled bibliography">
+        <% for ref in references %>
+          <li id="ref-<%= ref.short_ref %>">
+            <%= ref.render %>
+            <small><%= link_to "[#{ref.short_ref}]", ref %></small>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+
+    <div class="tab-pane fade p-3 border border-top-0" id="biblio-bibtex" role="tabpanel" aria-labelledby="biblio-bibtex-tab" tabindex="0">
+      <code>
+        <% for ref in references %>
+          <%= ref.format_bibtex %>
+        <% end %>
+      </code>
+    </div>
+
+    <div class="tab-pane fade p-3 border border-top-0" id="biblio-json" role="tabpanel" aria-labelledby="biblio-json-tab" tabindex="0">
+      <code>
+        <% for ref in references %>
+          <%= ref.format_json %>
+        <% end %>
+      </code>
+    </div>
+
+    <div class="tab-pane fade p-3 border border-top-0" id="biblio-yaml" role="tabpanel" aria-labelledby="biblio-yaml-tab" tabindex="0">
+      <code>
+        <% for ref in references %>
+          <%= ref.format_yaml %>
+        <% end %>
+      </code>
+    </div>
+
+  </div>
+
 <% end %>
