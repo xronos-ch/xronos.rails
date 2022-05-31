@@ -42,14 +42,14 @@ glue :sample do
         attributes :name => :feature_type
     end
     glue :site_phase do
-      child :period do
-        attributes :name => :periods
+      child :periods do
+        attributes :name => :period
       end
-      child :typochronological_unit do
-        attributes :name => :typochronological_units
+      child :typochronological_units do
+        attributes :name => :typochronological_unit
       end
-      child :ecochronological_unit do
-        attributes :name => :ecochronological_units
+      child :ecochronological_units do
+        attributes :name => :ecochronological_unit
       end
     end
     glue :material do
