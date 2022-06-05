@@ -8,7 +8,7 @@ import "leaflet-lasso"
 export default class extends Controller {
 	static targets = [ "container" ]
 	static values = {
-		markers: Array
+		markersUrl: String
 	}
 
 	connect() {
@@ -54,21 +54,13 @@ export default class extends Controller {
 
 	load() {
 
-		// Construct URL to data
-		// TODO: should be a parameter of the controller, or at least generalised
-		// in some way...
-		var data_url = location.origin + location.pathname
-		if (location.search) {
-			data_url += location.search + "&"
-		}
-		else {
-			data_url += "?"
-		}
-		data_url += "select[]=sites.id&select[]=sites.name&select[]=sites.lat&select[]=sites.lng"
-		console.debug("Fetching map data from " + data_url)
+		// Construct URL to markers data
+		var markers_url = new URL(this.markersUrlValue)
+		markers_url.search += "&select[]=sites.id&select[]=sites.name&select[]=sites.lat&select[]=sites.lng"
+		console.debug("Fetching map data from " + markers_url.toString())
 
 		// Load markers
-		var data = fetch(data_url, { headers: { 'Accept': 'application/json' } })
+		var data = fetch(markers_url, { headers: { 'Accept': 'application/json' } })
 			.then(response => response.json())
 			.then(data => {
 				data = data.xrons
