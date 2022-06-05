@@ -36,7 +36,7 @@
     <%= turbo_frame_tag "remote_modal", target: "_top" %>
 
     <%= yield :top %>
-	
+
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-0 main-nav <%= "shadow-sm" unless request.path == "/" %>">
       <div class="container">
         <a class="navbar-brand" href="/"><%= image_tag "xronos_logo_light.svg", style: 'max-height: 1.5rem' %></a>
@@ -46,13 +46,13 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link" href="/data">Browse data</a>
+              <a class="nav-link <%= active_class data_path %>" href="/data" <%= active_aria data_path %>>Browse data</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/database">Schema</a>
+              <a class="nav-link <%= active_class database_path %>" href="/database" <%= active_aria database_path %>>Schema</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/api">API</a>
+              <a class="nav-link <%= active_class api_path %>" href="/api" <%= active_aria api_path %>>API</a>
             </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">

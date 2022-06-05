@@ -1,5 +1,13 @@
 module ApplicationHelper
 
+  def active_class(path)
+    "active" if current_page?(path)
+  end
+
+  def active_aria(path)
+    'aria-current="page"'.html_safe if current_page?(path)
+  end
+
   def na_value
     '<abbr title="Unknown or missing value" class="initialism text-muted">NA</abbr>'.html_safe
   end
