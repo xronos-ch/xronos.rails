@@ -4212,10 +4212,10 @@ last-call-webpack-plugin@^3.0.0:
     lodash "^4.17.5"
     webpack-sources "^1.1.0"
 
-leaflet-lasso@^2.2.5:
-  version "2.2.6"
-  resolved "https://registry.yarnpkg.com/leaflet-lasso/-/leaflet-lasso-2.2.6.tgz#99da7b772a7a57666bb3c49140a879baed0d3af6"
-  integrity sha512-1SIpdyARz/d2Crl+ee2FmV9tUjWUBsRZCwQIlelnP6hLHjD/3PnZk9Yyv02VcLZ+anh2f0mMV2lp88N3iw6PdQ==
+leaflet-lasso@^2.2.8:
+  version "2.2.8"
+  resolved "https://registry.yarnpkg.com/leaflet-lasso/-/leaflet-lasso-2.2.8.tgz#93bc36f879cf73d9e8adab05796346668668e1ce"
+  integrity sha512-GEwmsYanCUWYUgOQlElRB1MBrLSfPsFlLBu2YL9DbMh9kkWDi1njU6HGfYQ82BMC1WBU589CXT9zReLXBDKNsA==
   dependencies:
     "@terraformer/spatial" "^2.1.0"
 
@@ -4224,15 +4224,15 @@ leaflet-providers@^1.13.0:
   resolved "https://registry.yarnpkg.com/leaflet-providers/-/leaflet-providers-1.13.0.tgz#10c843a23d5823a65096d40ad53f27029e13434b"
   integrity sha512-f/sN5wdgBbVA2jcCYzScIfYNxKdn2wBJP9bu+5cRX9Xj6g8Bt1G9Sr8WgJAt/ckIFIc3LVVxCBNFpSCfTuUElg==
 
-leaflet.markercluster@^1.5.1:
+leaflet.markercluster@^1.5.3:
   version "1.5.3"
   resolved "https://registry.yarnpkg.com/leaflet.markercluster/-/leaflet.markercluster-1.5.3.tgz#9cdb52a4eab92671832e1ef9899669e80efc4056"
   integrity sha512-vPTw/Bndq7eQHjLBVlWpnGeLa3t+3zGiuM7fJwCkiMFq+nmRuG3RI3f7f4N4TDX7T4NpbAXpR2+NTRSEGfCSeA==
 
-leaflet@^1.7.1:
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/leaflet/-/leaflet-1.7.1.tgz#10d684916edfe1bf41d688a3b97127c0322a2a19"
-  integrity sha512-/xwPEBidtg69Q3HlqPdU3DnrXQOvQU/CCHA1tcDQVzOwm91YMYaILjNp7L4Eaw5Z4sOYdbBz6koWyibppd8Zqw==
+leaflet@^1.8.0:
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/leaflet/-/leaflet-1.8.0.tgz#4615db4a22a304e8e692cae9270b983b38a2055e"
+  integrity sha512-gwhMjFCQiYs3x/Sf+d49f10ERXaEFCPr+nVTryhAW8DWbMGqJqt9G4XuIaHmFW08zYvhgdzqXGr8AlW8v8dQkA==
 
 lines-and-columns@^1.1.6:
   version "1.2.4"

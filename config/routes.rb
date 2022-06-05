@@ -41,8 +41,7 @@ Rails.application.routes.draw do
   # Data views
   get 'data/index'
   post 'data/index'
-  get "/table" => "data#index"
-  get "/map" => "data#map"
+  get "/data" => "data#index"
   get "/curate" => "curate#dashboard"
 
   # Data filter controls

@@ -1,0 +1,63 @@
+<a class="navbar-brand link-dark" href="#">Data browser</a>
+
+<ul class="nav nav-pills" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link disabled">View:</a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a id="dataMapTab" 
+       class="nav-link active" 
+       data-bs-toggle="pill" 
+       href="#dataMap"
+       role="tab" 
+       aria-controls="dataMap"
+       aria-selected="true">
+      <%= fa_icon "map-marker" %>
+      Map
+    </a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a id="dataMapTab" 
+       class="nav-link" 
+       data-bs-toggle="pill" 
+       href="#dataTable"
+       role="tab" 
+       aria-controls="dataTable"
+       aria-selected="false">
+      <%= fa_icon "table" %>
+      Table
+    </a>
+  </li>
+</ul>
+
+<ul class="nav flex-grow-1 justify-content-end">
+  <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" 
+       id="dataTools"  
+       role="button" 
+       data-bs-toggle="dropdown" 
+       aria-expanded="false" href="#">
+      <%= fa_icon "area-chart" %>
+      Analyse
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="dataTools">
+      <li><a class="dropdown-item" href="#">Calibrate</a></li>
+      <li><a class="dropdown-item" href="#">Sum calibrate</a></li>
+    </ul>
+  </li>
+  <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" 
+       id="dataDownload"  
+       role="button" 
+       data-bs-toggle="dropdown" 
+       aria-expanded="false" 
+       href="#">
+      <%= fa_icon "download" %>
+      Download
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="dataDownload">
+      <li><a class="dropdown-item" href="#">CSV</a></li>
+      <li><a class="dropdown-item" href="#">XLSX</a></li>
+    </ul>
+  </li>
+</ul>

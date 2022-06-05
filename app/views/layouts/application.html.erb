@@ -34,8 +34,10 @@
     </div>
 
     <%= turbo_frame_tag "remote_modal", target: "_top" %>
+
+    <%= yield :top %>
 	
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-0 main-nav">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-0 main-nav shadow-sm">
       <div class="container">
         <a class="navbar-brand" href="/"><%= image_tag "xronos_logo_light.svg", style: 'max-height: 1.5rem' %></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,24 +45,9 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <% if request.path == "/" %>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Get Data
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item nav-link text-dark" href="/map">Map</a></li>
-                <li><a class="dropdown-item nav-link text-dark" href="/table">Table</a></li>
-              </ul>
-            </li>
-            <%else%>
             <li class="nav-item">
-              <a class="nav-link" href="/table">Table</a>
+              <a class="nav-link" href="/data">Browse data</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/map">Map</a>
-            </li>            
-            <%end%>
             <li class="nav-item">
               <a class="nav-link" href="/database">Schema</a>
             </li>
@@ -134,7 +121,9 @@
 
     <%= content_for?(:content) ? yield(:content) : yield %>
 
-    <footer class="container-fluid page-footer pb-3 bg-dark text-muted">
+    <%= yield :before_footer %>
+
+    <footer class="container-fluid page-footer pb-3 bg-dark shadow-sm text-muted">
       <div class="container">
 
           <div class="row">
@@ -150,10 +139,9 @@
             </div>
 
             <div class="col-6 col-md-3 mt-md-5 text-md-end">
-              <h6 class="mt-3 fw-bold text-uppercase">Get data</h6>
+              <h6 class="mt-3 fw-bold text-uppercase">Data</h6>
               <ul class="nav flex-column mb-3">
-                <li class="nav-item"><a class="nav-link ps-0 pe-0 link-light" href="/table">Table</a></li>
-                <li class="nav-item"><a class="nav-link ps-0 pe-0 link-light" href="/map">Map</a></li>            
+                <li class="nav-item"><a class="nav-link ps-0 pe-0 link-light" href="/data">Browser</a></li>
                 <li class="nav-item"><a class="nav-link ps-0 pe-0 link-light" href="/database">Schema</a></li>
                 <li class="nav-item"><a class="nav-link ps-0 pe-0 link-light" href="/api">API</a></li>
               </ul>

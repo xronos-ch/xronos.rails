@@ -7,6 +7,9 @@ import { application } from "./application"
 import FlashController from "./flash_controller.js"
 application.register("flash", FlashController)
 
+import MapController from "./map_controller.js"
+application.register("map", MapController)
+
 import RemoteModalController from "./remote_modal_controller.js"
 application.register("remote-modal", RemoteModalController)
 

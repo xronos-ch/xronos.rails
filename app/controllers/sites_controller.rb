@@ -5,18 +5,22 @@ class SitesController < ApplicationController
 
   before_action :set_site, only: [:show, :edit, :update, :destroy]
 
-  def index
-    respond_to do |format|
-      format.html
-      format.json { render json: DataDatatable.new(params) }
-    end
-  end
-
   # GET /sites
   # GET /sites.json
   def index
-    @pagy, @sites = pagy(Site.all.order(:name))
-    #@sites = Site.all
+    unless site_params.blank?
+      @sites = Site.all.where(site_params)
+    end
+
+
+    respond_to do |format|
+      format.html { 
+        @pagy, @sites = pagy(Site.all.order(:name))
+        render :index
+      }
+    #  format.json { render json: DataDatatable.new(params) }
+      format.json
+    end
   end
 
   # GET /sites/1
@@ -85,7 +89,7 @@ class SitesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def site_params
-      params.require(:site).permit(
+      params.fetch(:site, {}).permit(
         :id,
         :name,
         :lat,

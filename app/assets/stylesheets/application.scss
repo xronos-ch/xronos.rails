@@ -20,6 +20,7 @@
  *= require ion.rangeSlider.css
 */
 
+// Bootstrap variables
 $primary:    #424242;
 $secondary:  #1768ac;
 $success:    #496f5d;
@@ -39,6 +40,9 @@ $font-family-sans-serif:
 	sans-serif;
 
 $headings-font-family: "Raleway", $font-family-sans-serif;
+$enable-shadows: true;
+
+// Optional Bootstrap features
 
 // Bootstrap
 @import "bootstrap";

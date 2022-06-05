@@ -1,0 +1,6 @@
+<% if @data.filters.any? %>
+  <div class="px-3 py-2 <%= @data.xrons.any? ? "bg-success" : "bg-danger" %> shadow small text-end text-light">
+    Showing <%= @data.xrons.length %> of <%= @data.everything.length %> records.
+    <%= link_to "Clear filters", :data, class: "link-light" %>.
+  </div>
+<% end %>
