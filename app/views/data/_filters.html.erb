@@ -1,9 +1,16 @@
 <%= bootstrap_form_for :filter, method: :get, url: data_path do |f| %>
 
+  <noscript>
+    <div class="form-text mb-3">
+      <%= fa_icon "question-circle" %>
+      Separate values with a comma (<code>,</code>) to apply multiple filters.
+    </div>
+  </noscript>
+
   <%= f.fields_for :sites do |f| %>
 
     <%= f.text_field :name, label: "Sites", 
-      value: @data.filters.dig(:sites, :name),
+      value: @data.filter_value_string(:sites, :name),
       multiple: true,
       data: { 
         controller: "tom-select",
@@ -17,8 +24,9 @@
     <div class="mb-3">
       <%= f.label :country_code, "Countries", class: "form-label" %>
       <%= f.country_select :country_code, 
-        { selected: @data.filters.dig(:sites, :country_code) },
+        { selected: @data.filter_value(:sites, :country_code) },
         { 
+          class: "form-select",
           multiple: true,
           data: { controller: "tom-select" }
         }
@@ -29,7 +37,7 @@
 
   <%= f.fields_for :site_types do |f| %>
     <%= f.text_field :name, label: "Site types", 
-      value: @data.filters.dig(:site_types, :name),
+      value: @data.filter_value_string(:site_types, :name),
       multiple: true,
       data: {
         controller: "tom-select",
@@ -43,7 +51,7 @@
 
   <%= f.fields_for :materials do |f| %>
     <%= f.text_field :name, label: "Sample materials", 
-      value: @data.filters.dig(:materials, :name),
+      value: @data.filter_value_string(:materials, :name),
       multiple: true,
       data: {
         controller: "tom-select",
@@ -57,7 +65,7 @@
 
   <%= f.fields_for :taxons do |f| %>
     <%= f.text_field :name, label: "Sample taxa", 
-      value: @data.filters.dig(:taxons, :name),
+      value: @data.filter_value_string(:taxons, :name),
       multiple: true,
       data: {
         controller: "tom-select",
@@ -73,7 +81,7 @@
     <%= f.collection_select :name, C14Lab.all, :name, :name,
       {
         label: "Labs",
-        selected: @data.filters.dig(:c14_labs, :name),
+        selected: @data.filter_value(:c14_labs, :name),
         include_blank: true,
       },
       { 
@@ -86,7 +94,7 @@
   <%= f.fields_for :c14s do |f| %>
 
     <%= f.text_field :lab_identifier, label: "Lab IDs", 
-      value: @data.filters.dig(:c14s, :lab_identifier),
+      value: @data.filter_value_string(:c14s, :lab_identifier),
       multiple: true,
       data: {
         controller: "tom-select",
@@ -98,10 +106,10 @@
     %>
 
     <%# f.number_field :bp, label: "Uncalibrated age", append: "uncal BP", 
-      value: @data.filters.dig(:sites, :contexts, :samples, :c14s, :bp) %>
+      value: @data.filter_value_string(:sites, :contexts, :samples, :c14s, :bp) %>
 
     <%# f.number_field :cal_bp, label: "Calibrated age", append: "cal BP", 
-      value: @data.filters.dig(:sites, :contexts, :samples, :c14s, :bp) %>
+      value: @data.filter_value_string(:sites, :contexts, :samples, :c14s, :bp) %>
 
   <% end %>
 

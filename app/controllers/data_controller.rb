@@ -13,6 +13,8 @@ class DataController < ApplicationController
 
   def index
     @data = Data.new(filter_params, select_params)
+    logger.debug { "Parsed filters: #{@data.filters.inspect}" }
+
     respond_to do |format|
       format.html { 
         @pagy, @xrons = pagy(@data.xrons)
