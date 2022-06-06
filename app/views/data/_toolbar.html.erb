@@ -1,7 +1,10 @@
-<div class="d-flex mx-3 my-2">
-  <a class="navbar-brand link-dark" href="#">Data browser</a>
+<div class="d-flex">
+  <a class="navbar-brand link-dark" href="#">
+    <%= fa_icon "hourglass-half" %>
+    Data browser
+  </a>
 
-  <ul class="nav nav-pills" role="tablist">
+  <ul class="nav nav-pills ms-3" role="tablist">
     <li class="nav-item">
       <a class="nav-link disabled">View:</a>
     </li>
@@ -31,7 +34,17 @@
     </li>
   </ul>
 
-  <span class="navbar-text">
+  <button class="btn btn-secondary ms-3"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#dataFilters"
+          aria-expanded="true"
+          aria-controls="dataFilters">
+    <%= fa_icon "filter" %>
+    Show/hide filters
+  </button>
+
+  <span class="navbar-text ms-3">
     <%= render "filter_status" %>
   </span>
 

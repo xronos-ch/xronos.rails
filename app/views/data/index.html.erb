@@ -1,11 +1,14 @@
 <%= content_for :title, "Browse data " %>
-<div class="container-fluid bg-light border-bottom shadow-sm">
+<div class="px-3 py-2 bg-light border-bottom shadow-sm">
   <%= render "toolbar" %>
 </div>
 
 <div class="flex-grow-1 d-flex">
 
-  <%= render "filter_pane" %>
+  <aside id="dataFilters" 
+         class="collapse collapse-horizontal show p-3 bg-light border-end shadow-sm">
+    <%= render "filters" %>
+  </aside>
 
   <div class="flex-grow-1 tab-content">
     <div class="tab-pane show active w-100 h-100" id="dataMap" role="tabpanel" aria-labelledby="dataMapTab" tabindex="0">
