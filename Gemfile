@@ -77,8 +77,9 @@ gem 'gon'
 # leaflet
 gem 'leaflet-rails'
 
-# jquery for ajax calls
+# jquery
 gem 'jquery-rails'
+gem 'jquery-ui-rails'
 
 # hotwire javascript
 gem 'turbo-rails'
@@ -96,10 +97,6 @@ gem 'simple-navigation'
 # fontawesome symbols
 gem 'font-awesome-rails'
 
-# datatables
-gem 'jquery-datatables'
-gem 'ajax-datatables-rails'
-
 # postgres adapter for the production mode
 group :production do
   gem 'pg'
@@ -110,7 +107,6 @@ gem "pagy"
 
 # forms
 gem "bootstrap_form", "~> 5.0"
-gem "cocoon"
 
 # bibliography
 gem "bibtex-ruby"
@@ -123,13 +119,6 @@ gem "country_select"
 
 # Geocoding
 gem "geocoder"
-
-# autocomplete in forms
-gem 'jquery-ui-rails'
-gem 'rails-jquery-autocomplete'
-
-# in place editing
-gem "best_in_place", git: "https://github.com/mmotherwell/best_in_place"
 
 # rabl for the api
 gem 'rabl'

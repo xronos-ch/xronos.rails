@@ -24,11 +24,11 @@ import Rails from "@rails/ujs"
 import * as ActiveStorage from "@rails/activestorage"
 import "channels"
 
-require("jquery")
-require("@nathanvda/cocoon")
-
 import "@popperjs/core"
 import 'bootstrap'
+
+// jquery
+import "jquery-ui"
 
 // hotwire framework (turbo+stimulus)
 import "@hotwired/turbo-rails"

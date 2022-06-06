@@ -1,17 +1,17 @@
 {
-  "application.js": "/packs/js/application-e67ff4f286e64a17490d.js",
-  "application.js.map": "/packs/js/application-e67ff4f286e64a17490d.js.map",
+  "application.js": "/packs/js/application-af6d631c053e2f433415.js",
+  "application.js.map": "/packs/js/application-af6d631c053e2f433415.js.map",
   "calibration.js": "/packs/js/calibration-3b4cdcfbda1787907be9.js",
   "calibration.js.map": "/packs/js/calibration-3b4cdcfbda1787907be9.js.map",
-  "data.js": "/packs/js/data-730a5a538dd543791874.js",
-  "data.js.map": "/packs/js/data-730a5a538dd543791874.js.map",
+  "data.js": "/packs/js/data-6a1763703b381251eefc.js",
+  "data.js.map": "/packs/js/data-6a1763703b381251eefc.js.map",
   "entrypoints": {
     "application": {
       "js": [
-        "/packs/js/application-e67ff4f286e64a17490d.js"
+        "/packs/js/application-af6d631c053e2f433415.js"
       ],
       "js.map": [
-        "/packs/js/application-e67ff4f286e64a17490d.js.map"
+        "/packs/js/application-af6d631c053e2f433415.js.map"
       ]
     },
     "calibration": {
@@ -24,10 +24,10 @@
     },
     "data": {
       "js": [
-        "/packs/js/data-730a5a538dd543791874.js"
+        "/packs/js/data-6a1763703b381251eefc.js"
       ],
       "js.map": [
-        "/packs/js/data-730a5a538dd543791874.js.map"
+        "/packs/js/data-6a1763703b381251eefc.js.map"
       ]
     },
     "frontend": {
@@ -45,22 +45,12 @@
       "js.map": [
         "/packs/js/landing_page-ef82a55178bbbc30996e.js.map"
       ]
-    },
-    "map": {
-      "js": [
-        "/packs/js/map-f3fbe6a4b9d009384efb.js"
-      ],
-      "js.map": [
-        "/packs/js/map-f3fbe6a4b9d009384efb.js.map"
-      ]
     }
   },
   "frontend.js": "/packs/js/frontend-b345289755f51fbd45f0.js",
   "frontend.js.map": "/packs/js/frontend-b345289755f51fbd45f0.js.map",
   "landing_page.js": "/packs/js/landing_page-ef82a55178bbbc30996e.js",
   "landing_page.js.map": "/packs/js/landing_page-ef82a55178bbbc30996e.js.map",
-  "map.js": "/packs/js/map-f3fbe6a4b9d009384efb.js",
-  "map.js.map": "/packs/js/map-f3fbe6a4b9d009384efb.js.map",
   "media/files/inter-all-400-normal.woff": "/packs/media/files/inter-all-400-normal-e71ac353.woff",
   "media/files/inter-cyrillic-400-normal.woff2": "/packs/media/files/inter-cyrillic-400-normal-514f4123.woff2",
   "media/files/inter-cyrillic-ext-400-normal.woff2": "/packs/media/files/inter-cyrillic-ext-400-normal-4543e27a.woff2",

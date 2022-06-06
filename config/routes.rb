@@ -48,24 +48,6 @@ Rails.application.routes.draw do
   get '/resetfilter', :to=>'data#reset_filter_session_variable'
   get '/turn_off_lasso', :to=>'data#turn_off_lasso'
   get '/reset_manual_table_selection', :to=>'data#reset_manual_table_selection'
-  post 'data/activate_right_window'
-  post 'data/deactivate_right_window'
-  post 'data/activate_left_window'
-  post 'data/deactivate_left_window'
-  post 'data/extend_left_window'
-  post 'data/reduce_left_window'
-
-  # Data autocomplete
-  get 'data/autocomplete_source_database_name'
-  get 'data/autocomplete_ecochronological_unit_name'
-  get 'data/autocomplete_typochronological_unit_name'
-  get 'data/autocomplete_period_name'
-  get 'data/autocomplete_reference_short_ref'
-  get 'data/autocomplete_material_name'
-  get 'data/autocomplete_feature_type_name'
-  get 'data/autocomplete_site_type_name'
-  get 'data/autocomplete_country_name'
-  get 'data/autocomplete_site_name'
 
   # API
   namespace :api, defaults: {format: 'json'} do
