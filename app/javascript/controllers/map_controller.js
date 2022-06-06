@@ -8,6 +8,8 @@ import "leaflet-lasso"
 export default class extends Controller {
 	static targets = [ "container" ]
 	static values = {
+		baseMap: String,
+		markersData: Array,
 		markersUrl: String
 	}
 
@@ -26,7 +28,11 @@ export default class extends Controller {
 			"Map with labels": labelledPhysical,
 			"Imagery": imagery
 		};
-		var defaultBaseMap = physical
+
+		var baseMap = physical
+		if (this.hasBaseMapValue) {
+			baseMap = baseMaps[this.baseMapValue]
+		}
 
 		// Create map
 		this.map = L.map(this.containerTarget, {
@@ -35,7 +41,7 @@ export default class extends Controller {
 			maxBoundsViscosity: 0.75,
 			renderer: L.canvas(),
 			preferCanvas: true,
-			layers: [defaultBaseMap]
+			layers: [baseMap]
 		})
 
 		// Additional controls
@@ -53,7 +59,39 @@ export default class extends Controller {
 	}
 
 	load() {
+		if (this.hasMarkersDataValue) {
+			this.loadMarkers()
+		}
 
+		if (this.hasMarkersUrlValue) {
+			this.loadRemoteMarkers()
+		}
+	}
+
+	disconnect() {
+		this.map.remove()
+	}
+
+	loadMarkers() {
+		var markers = this.markersDataValue
+			.map(data =>
+				L.circleMarker(
+					[data.lat, data.lng], {
+						color: 'black',
+						fillColor: '#A44A3F',
+						fillOpacity: 0.5,
+						weight: 2,
+						radius: 4,
+						id: data.id
+					}
+				)
+			)
+		markers = L.featureGroup(markers)
+		markers.addTo(this.map)
+		this.map.fitBounds(markers.getBounds())
+	}
+
+	loadRemoteMarkers() {
 		// Construct URL to markers data
 		var markers_url = new URL(this.markersUrlValue)
 		markers_url.search += "&select[]=sites.id&select[]=sites.name&select[]=sites.lat&select[]=sites.lng"
@@ -99,9 +137,5 @@ export default class extends Controller {
 					this.map.fitBounds(cluster.getBounds())
 				}
 			})
-	}
-
-	disconnect() {
-		this.map.remove()
 	}
 }

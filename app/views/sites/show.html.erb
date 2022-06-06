@@ -1,7 +1,4 @@
 <% content_for :title, @site.name %>
-<% content_for :head do %>
-  <%= javascript_pack_tag 'map' %>
-<% end %>
 
 <header id="site-header" class="bg-primary text-light">
   <div class="container my-5">
@@ -10,8 +7,13 @@
   </div>
 </header>
 
-<section id="site-map">
-  <div id="background_map" style="height: 30rem; position: relative;"></div>
+<section id="siteMap">
+  <div style="height: 30rem; position: relative;"
+       data-controller="map"
+       data-map-target="container"
+       data-map-base-map-value="Imagery"
+       data-map-markers-data-value='<%= [@site].to_json.html_safe %>'>
+  </div>
 </section>
 
 <section id="site-details" class="bg-body">
