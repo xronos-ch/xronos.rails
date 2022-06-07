@@ -37,7 +37,7 @@
 
     <%= yield :top %>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-0 main-nav <%= "shadow-sm" unless request.path == "/" %>">
+    <nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-primary mb-0 main-nav <%= "shadow" unless request.path == "/" %>">
       <div class="container">
         <a class="navbar-brand" href="/"><%= image_tag "xronos_logo_light.svg", style: 'max-height: 1.5rem' %></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
