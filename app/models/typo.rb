@@ -6,6 +6,8 @@ class Typo < ApplicationRecord
   validates :name, presence: true
   
   belongs_to :sample
+  delegate :context, to: :sample
+  delegate :site, to: :context
 
   # Internal heirarchy
   belongs_to :parent, class_name: "Typo", optional: true
