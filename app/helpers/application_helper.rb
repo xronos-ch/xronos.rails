@@ -1,5 +1,16 @@
 module ApplicationHelper
 
+  def xr_icon(model, options = {}, html_options = {})
+    icon = model.icon
+
+    if options.fetch(:light)
+      icon = icon.split(".")
+      icon = icon[0] + "-light." + icon[1]
+    end
+
+    image_tag icon, html_options
+  end
+
   def active_class(path)
     "active" if current_page?(path)
   end

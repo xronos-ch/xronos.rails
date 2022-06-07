@@ -15,6 +15,10 @@ class Typo < ApplicationRecord
     "typological date"
   end
 
+  def self.icon
+    "icons/typo.svg"
+  end
+
   def age
     return nil if approx_start_time.blank? && approx_end_time.blank?
     

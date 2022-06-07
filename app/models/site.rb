@@ -19,6 +19,10 @@ class Site < ApplicationRecord
     "Site"
   end
 
+  def self.icon
+    "icons/site.svg"
+  end
+
   def country
     return nil if country_code.blank?
     ISO3166::Country[country_code] || 
