@@ -37,6 +37,7 @@ export default class extends Controller {
 		// Create map
 		this.map = L.map(this.containerTarget, {
 			minZoom: 3,
+			maxZoom: 17,
 			maxBounds: bounds,
 			maxBoundsViscosity: 0.75,
 			renderer: L.canvas(),
