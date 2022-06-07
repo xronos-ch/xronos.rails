@@ -1,0 +1,17 @@
+<% if site.country.present? %>
+  <%= site.country.common_name %>
+<% else %>
+  <% country = site.country_from_coordinates %>
+  <% if country.present? %>
+    <span class="text-muted">
+      <%= country.common_name %>
+      <%= fa_icon "exclamation-circle",
+        class: "text-warning",
+        data: { "bs-toggle": "tooltip", controller: "tooltips" },
+        title: "Country inferred from coordinates."
+      %>
+    </span>
+  <% else %>
+    <%= na_value %>
+  <% end %>
+<% end %>

@@ -33,24 +33,7 @@
 
     <div class="row">
       <dt class="col-sm-3">Country</dt>
-      <dd class="col-sm-9 text-end">
-        <% if site.country.present? %>
-          <%= site.country %>
-        <% else %>
-          <% country = site.country_from_coordinates %>
-          <% if country.present? %>
-            <span class="text-muted">
-              <%= country %>
-              <%= fa_icon "exclamation-circle",
-                data: { "bs-toggle": "tooltip", controller: "tooltips" },
-                title: "Country inferred from coordinates."
-              %>
-            </span>
-          <% else %>
-            <%= na_value %>
-          <% end %>
-        <% end %>
-      </dd>
+      <dd class="col-sm-9 text-end"><%= render "country", site: site %></dd>
     </div>
 
     <div class="row">
