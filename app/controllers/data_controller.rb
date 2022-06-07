@@ -23,7 +23,7 @@ class DataController < ApplicationController
       format.json { render json: @data }
     end
   end
-  
+
   private
 
   def filter_params

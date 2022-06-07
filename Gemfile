@@ -108,6 +108,9 @@ gem "pagy"
 # forms
 gem "bootstrap_form", "~> 5.0"
 
+# file uploads
+gem 'carrierwave', '~> 2.0'
+
 # bibliography
 gem "bibtex-ruby"
 gem "citeproc-ruby"

@@ -1,0 +1,33 @@
+<% content_for :title, "Import tabular data" %>
+
+<h2>Import tabular data</h2>
+
+<section class="mb-5">
+  <h3>Import #<%= @import_table.id %> – <%= @import_table.file_name %></h3>
+  <%= render "file_metadata", import_table: @import_table %>
+</section>
+
+<section class="mb-5">
+  <h4>Read options</h4>
+
+  <%= bootstrap_form_for :read_options do |f| %>
+
+    <%= f.check_box :headers, label: "File has headers in the first row",
+      switch: true %>
+    <%= f.text_field :col_sep, label: "Column separator",
+      help: "Character used to separate columns, e.g. <code>,</code>. For tab-separated values, use <code>\\t</code>.".html_safe %>
+    <%= f.text_field :row_sep, label: "Row separator",
+      help: "Character used to separate rows. Typically a new line (<code>\\n</code>).".html_safe %>
+    <%= f.text_field :quote_char, label: "Quote character",
+      help: "Character used to quote fields, e.g. <code>\"</code>.".html_safe %>
+    <%= f.text_field :na_values, label: "NA values",
+      help: "Values used to missing data. Separate multiple NA values with a comma." %>
+
+    <%= f.button "Update" %>
+  <% end %>
+</section>
+
+<section class="mb-5">
+  <h4>Preview</h4>
+  <%= render "preview", parsed: @parsed, headers: @headers, rows: @preview %>
+</section>

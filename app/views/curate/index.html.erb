@@ -1,17 +1,15 @@
-<h1>Dashboard</h1>
-
-<div class="row">
-  <div class="col">
+<div class="d-flex align-items-stretch">
+  <div class="flex-fill m-2">
     <%= render partial: "stat_card", locals: { entity: 'site', count: @n_site, icon: 'site' } %>
   </div>
-  <div class="col">
+  <div class="flex-fill m-2">
     <%= render partial: "stat_card", locals: { entity: 'radiocarbon date', count: @n_c14, icon: 'c14' } %>
   </div>
-  <div class="col">
+  <div class="flex-fill m-2">
     <%= render partial: "stat_card", locals: { entity: 'dendro date', count: @n_dendro, icon: 'dendro' } %>
   </div>
-  <div class="col">
-    <%= render partial: "stat_card", locals: { entity: 'typological date', count: @n_type, icon: 'type' } %>
+  <div class="flex-fill m-2">
+    <%= render partial: "stat_card", locals: { entity: 'typological date', count: @n_typo, icon: 'typo' } %>
   </div>
 </div>
 

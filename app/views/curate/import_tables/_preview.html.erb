@@ -1,0 +1,29 @@
+Parsed <%= headers.count %> columns and <%= @parsed.count %> rows:
+
+<%= turbo_frame_tag "preview" do %>
+  <table class="table table-hover">
+
+    <thead>
+      <tr>
+        <th>#</th>
+        <% headers.each do |header| %>
+          <th><%= header %></th>
+        <% end %>
+      </tr>
+    </thead>
+
+    <tbody class="font-monospace small">
+      <% rows.each_with_index do |row, index| %>
+        <tr>
+          <td class="text-muted"><%= @pagy.from + index %></td>
+          <% row.each do |col| %>
+            <td><%= col.nil? ? na_value : col %></td>
+          <% end %>
+        <% end %>
+        </tr>
+    </tbody>
+
+  </table>
+
+  <%== pagy_bootstrap_nav(@pagy) %>
+<% end %>

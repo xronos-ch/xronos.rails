@@ -1,0 +1,25 @@
+  <dl class="row">
+
+    <div class="col-lg">
+      <dt>Original filename</dt>
+      <dd><%= import_table.file_name %></dd>
+
+      <dt>File type</dt>
+      <dd><%= import_table.file_type %></dd>
+
+      <dt>File size</dt>
+      <dd><%= number_to_human_size import_table.file_size %></dd>
+    </div>
+
+    <div class="col-lg">
+      <dt>Uploaded at</dt>
+      <dd><%= import_table.created_at %></dd>
+
+      <dt>Uploaded by</dt>
+      <dd><%= import_table.user.email %></dd>
+
+      <dt>Import status</dt>
+      <dd><%= render "import_status", import_table: import_table %></dd>
+    </div>
+
+  </dl>

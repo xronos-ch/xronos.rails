@@ -1,0 +1,15 @@
+<% content_for :title, "Import tabular data" %>
+
+<h2>Import tabular data</h2>
+
+<% content_for :help do %>
+  <p>Use this tool to import static datasets in tabular formats (e.g. CSV).</p>
+<% end %>
+
+<%= bootstrap_form_for @import_table do |f| %>
+  <%= f.file_field :file, label: "Import file",
+    accept: ".csv",
+    help: "Supported formats: .csv" %>
+
+  <%= f.button "Upload" %>
+<% end %>

@@ -1,0 +1,5 @@
+<% if import_table.imported_at.blank? %>
+  <span class="text-danger"><%= fa_icon "times" %> Not imported</span>
+<% else %>
+  <span class="text-success"><%= fa_icon "check" %> Imported at <%= import_table.imported_at %></span>
+<% end %>

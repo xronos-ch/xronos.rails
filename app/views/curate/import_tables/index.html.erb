@@ -1,0 +1,32 @@
+<% content_for :title, "Import tabular data" %>
+
+<h2>Import tabular data</h2>
+
+<%= link_to "Import new dataset", new_curate_import_table_path, class: "btn btn-lg btn-primary mb-3" %>
+
+<h3>Previous imports</h2>
+
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Filename</th>
+      <th scope="col">Uploaded by</th>
+      <th scope="col">Uploaded at</th>
+      <th scope="col" class="text-end">Status</th>
+    </tr>
+  </thead>
+      
+  <tbody>
+    <% @import_tables.each do |it| %>
+      <tr>
+        <td><%= it.id %></td>
+        <td><%= link_to it.file.identifier, it %></td>
+        <td><%= it.user.email %></td>
+        <td><%= it.created_at %></td>
+        <td class="text-end"><%= render "import_status", import_table: it %></td>
+      </tr>
+    <% end %>
+  </tbody>
+
+</table>

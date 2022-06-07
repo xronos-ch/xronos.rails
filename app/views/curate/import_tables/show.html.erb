@@ -1,0 +1,22 @@
+<% content_for :title, "Import tabular data" %>
+
+<h2>Import tabular data</h2>
+
+<section class="mb-5">
+  <h3>Import #<%= @import_table.id %> – <%= @import_table.file_name %></h3>
+  <%= render "file_metadata", import_table: @import_table %>
+</section>
+
+<section class="mb-5">
+  <h3>Read options</h3>
+</section>
+
+<section class="mb-5">
+  <h3>Mapping</h3>
+  <%= @headers %>
+</section>
+
+<section class="mb-5">
+  <h3>Preview</h3>
+  <%= render "preview", parsed: @parsed, headers: @headers, rows: @preview %>
+</section>

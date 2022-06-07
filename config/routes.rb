@@ -42,12 +42,17 @@ Rails.application.routes.draw do
   get 'data/index'
   post 'data/index'
   get "/data" => "data#index"
-  get "/curate" => "curate#dashboard"
 
   # Data filter controls
   get '/resetfilter', :to=>'data#reset_filter_session_variable'
   get '/turn_off_lasso', :to=>'data#turn_off_lasso'
   get '/reset_manual_table_selection', :to=>'data#reset_manual_table_selection'
+
+  # Curate
+  get "/curate" => "curate#index"
+  namespace :curate do
+    resources :import_tables
+  end
 
   # API
   namespace :api, defaults: {format: 'json'} do
