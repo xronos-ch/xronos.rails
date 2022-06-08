@@ -19,8 +19,6 @@
 
 import "stylesheets/application"
 
-import Rails from "@rails/ujs"
-//import Turbolinks from "turbolinks"
 import * as ActiveStorage from "@rails/activestorage"
 import "channels"
 
@@ -45,7 +43,4 @@ $('a[calibration-popup]').on('click', function(e) {
   e.preventDefault();
 });
 
-
-Rails.start()
-//Turbolinks.start()
 ActiveStorage.start()
