@@ -27,7 +27,7 @@
 
   <body>
 
-    <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 11">
+    <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 9999">
       <% flash.each do |flash_type, message| %>
         <%= render "layouts/flash", flash_type: flash_type, message: message %>
       <% end %>
