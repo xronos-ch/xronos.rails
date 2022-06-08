@@ -2,7 +2,7 @@
 
 <h2>Import tabular data</h2>
 
-<%= link_to "Import new dataset", new_curate_import_table_path, class: "btn btn-lg btn-primary mb-3" %>
+<%= link_to "Import new dataset", new_curate_import_table_path, class: "btn btn-lg btn-success mb-3" %>
 
 <h3>Previous imports</h2>
 
@@ -14,6 +14,7 @@
       <th scope="col">Uploaded by</th>
       <th scope="col">Uploaded at</th>
       <th scope="col" class="text-end">Status</th>
+      <th scope="col"><!-- Actions --></th>
     </tr>
   </thead>
       
@@ -25,6 +26,7 @@
         <td><%= it.user.email %></td>
         <td><%= it.created_at %></td>
         <td class="text-end"><%= render "import_status", import_table: it %></td>
+        <td class="text-end"><%= link_to fa_icon("trash"), it, method: :delete, class: "btn btn-sm btn-danger" %></td>
       </tr>
     <% end %>
   </tbody>

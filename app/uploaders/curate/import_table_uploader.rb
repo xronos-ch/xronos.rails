@@ -1,4 +1,4 @@
-class CurateImportTableUploader < CarrierWave::Uploader::Base
+class Curate::ImportTableUploader < CarrierWave::Uploader::Base
   # Include RMagick or MiniMagick support:
   # include CarrierWave::RMagick
   # include CarrierWave::MiniMagick

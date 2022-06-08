@@ -1,19 +1,26 @@
-Parsed <%= headers.count %> columns and <%= @parsed.count %> rows:
+<% if import_table.parsed.nil? %>
+  <p class="text-danger">Failed to parse file. Please check the read options.</p>
+  <% if import_table.parse_errors.present? %>
+    <ul class="text-danger">
+      <li><b>Error:</b> <%= import_table.parse_errors %></li>
+    </ul>
+  <% end %>
+<% else %>
+  Parsed <%= import_table.parsed.headers.count %> columns and <%= import_table.parsed.count %> rows:
 
-<%= turbo_frame_tag "preview" do %>
   <table class="table table-hover">
 
     <thead>
       <tr>
         <th>#</th>
-        <% headers.each do |header| %>
+        <% import_table.parsed.headers.each do |header| %>
           <th><%= header %></th>
         <% end %>
       </tr>
     </thead>
 
     <tbody class="font-monospace small">
-      <% rows.each_with_index do |row, index| %>
+      <% preview.each_with_index do |row, index| %>
         <tr>
           <td class="text-muted"><%= @pagy.from + index %></td>
           <% row.each do |col| %>

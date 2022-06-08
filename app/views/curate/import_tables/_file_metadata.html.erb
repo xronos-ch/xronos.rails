@@ -1,8 +1,13 @@
   <dl class="row">
 
     <div class="col-lg">
-      <dt>Original filename</dt>
-      <dd><%= import_table.file_name %></dd>
+      <dt>Original file</dt>
+      <dd>
+        <a href="<%= import_table.file.url %>">
+          <%= fa_icon "download" %>
+          <%= import_table.file_name %>
+        </a>
+      </dd>
 
       <dt>File type</dt>
       <dd><%= import_table.file_type %></dd>
