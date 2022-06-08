@@ -7,6 +7,9 @@ import { application } from "./application"
 import FlashController from "./flash_controller.js"
 application.register("flash", FlashController)
 
+import HomeHeroController from "./home_hero_controller.js"
+application.register("home-hero", HomeHeroController)
+
 import MapController from "./map_controller.js"
 application.register("map", MapController)
 
