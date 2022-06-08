@@ -1,34 +1,21 @@
 <% content_for :title, "Import tabular data" %>
 
-<h2>Import tabular data</h2>
+<div class="container p-3 ms-0">
+  <h2>Import tabular data</h2>
 
-<%= link_to "Import new dataset", new_curate_import_table_path, class: "btn btn-lg btn-success mb-3" %>
+  <section class="mb-5">
+    <h3>Import new dataset</h3>
+    <%= turbo_frame_tag "new_import_table", src: new_curate_import_table_path, target: "_top" %>
+  </section>
 
-<h3>Previous imports</h2>
+  <section class="mb-5">
+    <h3>Unfinished imports</h3>
+    <%= render "table", import_tables: @import_tables.where(imported_at: nil) %>
+  </section>
 
-<table class="table table-hover">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Filename</th>
-      <th scope="col">Uploaded by</th>
-      <th scope="col">Uploaded at</th>
-      <th scope="col" class="text-end">Status</th>
-      <th scope="col"><!-- Actions --></th>
-    </tr>
-  </thead>
-      
-  <tbody>
-    <% @import_tables.each do |it| %>
-      <tr>
-        <td><%= it.id %></td>
-        <td><%= link_to it.file.identifier, it %></td>
-        <td><%= it.user.email %></td>
-        <td><%= it.created_at %></td>
-        <td class="text-end"><%= render "import_status", import_table: it %></td>
-        <td class="text-end"><%= link_to fa_icon("trash"), it, method: :delete, class: "btn btn-sm btn-danger" %></td>
-      </tr>
-    <% end %>
-  </tbody>
+  <section class="mb-5">
+    <h3>Previous imports</h3>
+    <%= render "table", import_tables: @import_tables.where.not(imported_at: nil) %>
+  </section>
 
-</table>
+</div>

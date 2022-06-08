@@ -1,0 +1,26 @@
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Filename</th>
+      <th scope="col">Uploaded by</th>
+      <th scope="col">Uploaded at</th>
+      <th scope="col" class="text-end">Status</th>
+      <th scope="col"><!-- Actions --></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% import_tables.each do |it| %>
+      <tr>
+        <td><%= it.id %></td>
+        <td><%= link_to it.file.identifier, it %></td>
+        <td><%= it.user.email %></td>
+        <td><%= it.created_at %></td>
+        <td class="text-end"><%= render "import_status", import_table: it %></td>
+        <td class="text-end"><%= link_to fa_icon("trash"), it, method: :delete, class: "btn btn-sm btn-danger" %></td>
+      </tr>
+    <% end %>
+  </tbody>
+
+</table>

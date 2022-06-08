@@ -1,35 +1,42 @@
-<% content_for :title, "Import tabular data" %>
+<% content_for :title, "Import ##{@import_table.id}" %>
 
-<h2>Import tabular data</h2>
+<div class="d-flex">
 
-<section class="mb-5">
-  <h3>Import #<%= @import_table.id %> – <%= @import_table.file_name %></h3>
-  <%= render "file_metadata", import_table: @import_table %>
-</section>
+  <div class="p-3 bg-light border-end">
+    <div class="text-muted mb-3">
+      <%= link_to "<< Back to import index", curate_import_tables_path, class: "text-reset" %>
+    </div>
 
-<section class="mb-5">
-  <h4>Read options</h4>
-  <%= bootstrap_form_for @import_table do |f| %>
-    <%= f.fields :read_options, model: OpenStruct.new(@import_table.read_options) do |f| %>
+    <h2 class="mb-3">Import #<%= @import_table.id %></h2>
 
-      <%= f.check_box :headers, label: "First row contains column headers", checked_value: true %>
-      <%= f.text_field :col_sep, label: "Column separator",
-        help: "Character used to separate columns, e.g. <code>,</code>. For tab-separated values, use <code>\\t</code>.".html_safe %>
-      <%= f.text_field :row_sep, label: "Row separator",
-        help: "Character used to separate rows. Use <code>auto</code> for rows separated by new lines.".html_safe %>
-      <%= f.text_field :quote_char, label: "Quote character",
-      help: "Character used to quote fields, e.g. <code>\"</code>.".html_safe %>
-      <%= f.text_field :na_values, label: "NA values",
-        help: "Values used to missing data. Separate multiple NA values with a comma." %>
+    <div class="mb-3 text-muted small">
+      <%= render "file_metadata", import_table: @import_table %>
+    </div>
 
+    <div class="mb-3">
+      <h3 class="h4">Read options</h3>
+      <%= bootstrap_form_for @import_table do |f| %>
+        <%= f.fields :read_options, model: OpenStruct.new(@import_table.read_options) do |f| %>
+          <%= f.text_field :col_sep, label: "Column separator",
+            help: "Character used to separate columns, e.g. <code>,</code>. For tab-separated values, use <code>\\t</code>.".html_safe %>
+          <%= f.text_field :row_sep, label: "Row separator",
+            help: "Character used to separate rows. Use <code>auto</code> for rows separated by new lines.".html_safe %>
+          <%= f.text_field :quote_char, label: "Quote character",
+            help: "Character used to quote fields, e.g. <code>\"</code>.".html_safe %>
+          <%= f.text_field :na_values, label: "NA values",
+            help: "Values used to missing data. Separate multiple NA values with a comma." %>
+          <%= f.check_box :headers, label: "First row contains column headers", checked_value: true %>
+        <% end %>
+        <%= f.submit "Update" %>
+      <% end %>
+    </div>
+
+  </div>
+
+  <section class="flex-grow-1 p-3 overflow-scroll">
+    <%= turbo_frame_tag "preview" do  %>
+      <%= render "preview", import_table: @import_table, preview: @preview %>
     <% end %>
-    <%= f.submit "Update" %>
-  <% end %>
-</section>
+  </section>
 
-<section class="mb-5">
-  <h4>Preview</h4>
-  <%= turbo_frame_tag "preview" do  %>
-    <%= render "preview", import_table: @import_table, preview: @preview %>
-  <% end %>
-</section>
+</div>
