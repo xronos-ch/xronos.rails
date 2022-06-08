@@ -1,38 +1,25 @@
 <h2>Sign up</h2>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+<div class="mb-3">
+  <%= bootstrap_form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
 
-  <%= flash[:recaptcha_error] %>
-  <%= recaptcha_tags theme: :dark %>
+    <%= flash[:recaptcha_error] %>
+    <%= recaptcha_tags theme: :dark %>
 
-  <%= render "devise/shared/error_messages", resource: resource %>
+    <%= render "devise/shared/error_messages", resource: resource %>
 
-  <div class="field">
-    <%= f.label :passphrase %><br />
-    <%= f.text_field :passphrase, autofocus: true, autocomplete: "passphrase" %>
-  </div>
+    <%= f.text_field :passphrase, autofocus: true, autocomplete: "passphrase",
+      help: "XRONOS is not yet open for public registration. If someone has asked you to register an account, please enter the passphrase." %>
 
-  <div class="field">
-    <%= f.label :email %><br />
     <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
-  </div>
 
-  <div class="field">
-    <%= f.label :password %>
-    <% if @minimum_password_length %>
-    <em>(<%= @minimum_password_length %> characters minimum)</em>
-    <% end %><br />
-    <%= f.password_field :password, autocomplete: "new-password" %>
-  </div>
+    <%= f.password_field :password, autocomplete: "new-password",
+      help: "#{@minimum_password_length} characters minimum." %>
 
-  <div class="field">
-    <%= f.label :password_confirmation %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-  </div>
+    <%= f.password_field :password_confirmation, label: "Confirm password", autocomplete: "new-password" %>
 
-  <div class="actions">
     <%= f.submit "Sign up" %>
-  </div>
-<% end %>
+  <% end %>
+</div>
 
 <%= render "devise/shared/links" %>
