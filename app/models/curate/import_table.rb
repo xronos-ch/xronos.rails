@@ -8,6 +8,8 @@ class Curate::ImportTable < ApplicationRecord
   attr_reader :parse_errors
   attr_reader :parsed
 
+  default_scope { order(id: :desc) }
+
   def read_options=(value)
     if value[:headers].present?
       value[:headers] = ActiveRecord::Type::Boolean.new.deserialize(value[:headers])
@@ -72,6 +74,10 @@ class Curate::ImportTable < ApplicationRecord
     File.delete(file.current_path)
   end
 
+  def guess_mapping
+    return nil if @parsed.blank?
+    return nil if @parsed.headers.blank?
+  end
 
   private
 
@@ -101,6 +107,7 @@ class Curate::ImportTable < ApplicationRecord
   def default_values
     self.imported_at ||= DateTime.now
     self.read_options ||= default_read_options
+    self.mapping ||= guess_mapping
   end
 
   def default_read_options_csv

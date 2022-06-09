@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_08_153017) do
+ActiveRecord::Schema.define(version: 2022_06_09_091704) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -65,6 +65,7 @@ ActiveRecord::Schema.define(version: 2022_06_08_153017) do
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "user_id"
     t.jsonb "read_options"
+    t.jsonb "mapping"
     t.index ["user_id"], name: "index_import_tables_on_user_id"
   end
 

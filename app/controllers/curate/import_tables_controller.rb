@@ -7,11 +7,9 @@ class Curate::ImportTablesController < CurateController
   end
 
   def show
-    @parsed = @import_table.read
-    unless @parsed.nil?
-      @headers = @parsed.headers
-      @preview = @parsed.to_a.drop(1)
-      @pagy, @preview = pagy_array(@preview)
+    @import_table.read
+    unless @import_table.parsed.nil?
+      @pagy, @preview = pagy_array(@import_table.preview)
     end
   end
 

@@ -1,22 +1,46 @@
-<% content_for :title, "Import tabular data" %>
+<% content_for :title, "Import ##{@import_table.id}" %>
 
-<h2>Import tabular data</h2>
+<div class="d-flex">
 
-<section class="mb-5">
-  <h3>Import #<%= @import_table.id %> – <%= @import_table.file_name %></h3>
-  <%= render "file_metadata", import_table: @import_table %>
-</section>
+  <div id="importTablesOptions" class="p-3 bg-light border-end">
+    <div class="text-muted mb-3">
+      <%= link_to "<< Back to import index", curate_import_tables_path, class: "text-reset" %>
+    </div>
 
-<section class="mb-5">
-  <h3>Read options</h3>
-</section>
+    <h2 class="mb-3">Import #<%= @import_table.id %></h2>
 
-<section class="mb-5">
-  <h3>Mapping</h3>
-  <%= @headers %>
-</section>
+    <div class="mb-3 text-muted small">
+      <%= render "file_metadata", import_table: @import_table %>
+    </div>
 
-<section class="mb-5">
-  <h3>Preview</h3>
-  <%= render "preview", parsed: @parsed, headers: @headers, rows: @preview %>
-</section>
+    <div class="mb-3">
+      <%# if @import_table.imported_at.blank? %>
+        <%= link_to "Import", edit_curate_import_table_path(@import_table),
+          class: "btn btn-success" %>
+        <%= link_to "Edit import options", edit_curate_import_table_path(@import_table),
+          class: "btn btn-secondary" %>
+      <%# end %>
+    </div>
+
+    <div class="mb-3">
+      <h3 class="h5">Read options</h3>
+      <dl class="text-muted small">
+        <% @import_table.read_options.map { |k,v| %>
+          <dt><%= k %></dt>
+          <dd><%= v %></dd>
+        <% } %>
+      </dl>
+    </div>
+
+    <div class="mb-3">
+      <h3 class="h5">Mapping</h3>
+    </div>
+  </div>
+
+  <section id="importTablesPreview" class="flex-fill p-3 overflow-scroll">
+    <%= turbo_frame_tag "preview" do  %>
+      <%= render "preview", import_table: @import_table, preview: @preview %>
+    <% end %>
+  </section>
+
+</div>

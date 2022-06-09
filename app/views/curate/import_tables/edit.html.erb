@@ -2,7 +2,7 @@
 
 <div class="d-flex">
 
-  <div class="p-3 bg-light border-end">
+  <div id="importTablesOptions" class="p-3 bg-light border-end">
     <div class="text-muted mb-3">
       <%= link_to "<< Back to import index", curate_import_tables_path, class: "text-reset" %>
     </div>
@@ -14,7 +14,7 @@
     </div>
 
     <div class="mb-3">
-      <h3 class="h4">Read options</h3>
+      <h3 class="h5">Read options</h3>
       <%= bootstrap_form_for @import_table do |f| %>
         <%= f.fields :read_options, model: OpenStruct.new(@import_table.read_options) do |f| %>
           <%= f.text_field :col_sep, label: "Column separator",
@@ -31,9 +31,26 @@
       <% end %>
     </div>
 
+    <div class="mb-3">
+      <h3 class="h5">Mapping</h5>
+      <% unless @import_table.mapping.blank? %>
+        <%= bootstrap_form_for @import_table do |f| %>
+          <%= f.fields :mapping, model: OpenStruct.new(@import_table.mapping) do |f| %>
+
+          <% end %>
+        <% end %>
+      <% else %>
+        <p class="text-danger">Parsed table does not have any mappable columns. Please check the read options.</p>
+      <% end %>
+    </div>
+
+    <div class="mb-3 text-end">
+      <%= link_to "Next", "#", class: "btn btn-lg btn-success" %>
+    </div>
+
   </div>
 
-  <section class="flex-grow-1 p-3 overflow-scroll">
+  <section id="importTablesPreview" class="flex-grow-1 p-3 overflow-scroll">
     <%= turbo_frame_tag "preview" do  %>
       <%= render "preview", import_table: @import_table, preview: @preview %>
     <% end %>
