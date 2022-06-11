@@ -1,0 +1,80 @@
+  <%= f.fields_for :sites do |f| %>
+    <%= f.select :name, options, 
+      { label: "Site name", include_blank: true, selected: mapping.dig(:sites, :name) },
+      { data: { controller: "tom-select" } } %>
+    <%= f.select :lat, options, 
+      { label: "Latitude", include_blank: true, selected: mapping.dig(:sites, :lat) },
+      { data: { controller: "tom-select" } } %>
+    <%= f.select :lng, options, 
+      { label: "Longitude", include_blank: true, selected: mapping.dig(:sites, :lng) },
+      { data: { controller: "tom-select" } } %>
+    <%= f.select :country_code, options, 
+      { label: "Country", include_blank: true, selected: mapping.dig(:sites, :country_code) },
+      { data: { controller: "tom-select" } } %>
+  <% end %>
+
+  <%= f.fields_for :site_types do |f| %>
+    <%= f.select :name, options, 
+      { label: "Site type", include_blank: true, selected: mapping.dig(:site_types, :name) },
+      { data: { controller: "tom-select" } } %>
+    <%= f.select :description, options, 
+      { label: "Site type description", include_blank: true, selected: mapping.dig(:site_types, :description) },
+      { data: { controller: "tom-select" } } %>
+  <% end %>
+
+  <%= f.fields_for :contexts do |f| %>
+    <%= f.select :name, options, 
+      { label: "Context", include_blank: true, selected: mapping.dig(:contexts, :name) },
+      { data: { controller: "tom-select" } } %>
+  <% end %>
+
+  <%= f.fields_for :materials do |f| %>
+    <%= f.select :name, options, 
+      { label: "Sample material", include_blank: true, selected: mapping.dig(:materials, :name) },
+      { data: { controller: "tom-select" } } %>
+  <% end %>
+
+  <%= f.fields_for :taxons do |f| %>
+    <%= f.select :name, options, 
+      { label: "Sample taxon", include_blank: true, selected: mapping.dig(:taxons, :name) },
+      { data: { controller: "tom-select" } } %>
+  <% end %>
+
+  <%= f.fields_for :samples do |f| %>
+    <%= f.select :position_description, options, 
+      { label: "Sample position", include_blank: true, selected: mapping.dig(:samples, :position_description) },
+      { data: { controller: "tom-select" } } %>
+    <%= f.select :position_x, options, 
+      { label: "Sample X coordinate", include_blank: true, selected: mapping.dig(:samples, :position_x) },
+      { data: { controller: "tom-select" } } %>
+    <%= f.select :name, options, 
+      { label: "Sample Y coordinate", include_blank: true, selected: mapping.dig(:samples, :position_y) },
+      { data: { controller: "tom-select" } } %>
+    <%= f.select :name, options, 
+      { label: "Sample Z coordinate", include_blank: true, selected: mapping.dig(:samples, :position_z) },
+      { data: { controller: "tom-select" } } %>
+    <%= f.select :name, options, 
+      { label: "Sample CRS", include_blank: true, selected: mapping.dig(:samples, :position_crs) },
+      { data: { controller: "tom-select" } } %>
+  <% end %>
+
+  <%= f.fields_for :c14s do |f| %>
+    <%= f.select :lab_identifier, options, 
+      { label: "Lab ID", include_blank: true, selected: mapping.dig(:c14s, :lab_identifier) },
+      { data: { controller: "tom-select" } } %>
+    <%= f.select :bp, options, 
+      { label: "<sup>14</sup>C age (BP)".html_safe, include_blank: true, selected: mapping.dig(:c14s, :bp) },
+      { data: { controller: "tom-select" } } %>
+    <%= f.select :std, options, 
+      { label: "<sup>14</sup>C error".html_safe, include_blank: true, selected: mapping.dig(:c14s, :std) },
+      { data: { controller: "tom-select" } } %>
+    <%= f.select :delta_c13, options, 
+      { label: "δ13C", include_blank: true, selected: mapping.dig(:c14s, :delta_c13) },
+      { data: { controller: "tom-select" } } %>
+    <%= f.select :delta_c13_std, options, 
+      { label: "δ13 error", include_blank: true, selected: mapping.dig(:c14s, :delta_c13_std) },
+      { data: { controller: "tom-select" } } %>
+    <%# f.select :method, options, 
+      { label: "Method", include_blank: true, selected: mapping.dig(:c14s, :method) },
+      { data: { controller: "tom-select" } } %>
+  <% end %>

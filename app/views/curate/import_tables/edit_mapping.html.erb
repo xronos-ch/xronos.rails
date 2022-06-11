@@ -1,0 +1,42 @@
+
+<% content_for :title, "Import ##{@import_table.id}" %>
+
+<div class="d-flex">
+
+  <div id="importTablesOptions" class="p-3 bg-light border-end">
+    <div class="text-muted mb-3">
+      <%= link_to "<< Back to import index", curate_import_tables_path, class: "text-reset" %>
+    </div>
+
+    <h2 class="mb-3">Import #<%= @import_table.id %></h2>
+
+    <div class="mb-3 text-muted small">
+      <%= render "file_metadata", import_table: @import_table %>
+    </div>
+
+    <div class="mb-3">
+      <h3 class="h5">Mapping</h5>
+      <% unless @import_table.parsed.blank? %>
+        <%= bootstrap_form_for :mapping do |f| %>
+          <%= render "mapping_fields", f: f,
+            mapping: @import_table.mapping, 
+            options: @import_table.parsed.headers %>
+        <% end %>
+      <% else %>
+        <p class="text-danger">Parsed table does not have any mappable columns. Please check the read options.</p>
+      <% end %>
+    </div>
+
+    <div class="mb-3 text-end">
+      <%= link_to "Next", "#", class: "btn btn-lg btn-success" %>
+    </div>
+
+  </div>
+
+  <section id="importTablesPreview" class="flex-grow-1 p-3 overflow-scroll">
+    <%= turbo_frame_tag "preview" do  %>
+      <%= render "preview", import_table: @import_table, preview: @preview %>
+    <% end %>
+  </section>
+
+</div>

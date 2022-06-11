@@ -5,8 +5,9 @@ class Curate::ImportTable < ApplicationRecord
   mount_uploader :file, ImportTableUploader
   belongs_to :user
 
-  attr_reader :parse_errors
   attr_reader :parsed
+  attr_reader :parse_errors
+  attr_reader :mapping
 
   default_scope { order(id: :desc) }
 
@@ -74,9 +75,14 @@ class Curate::ImportTable < ApplicationRecord
     File.delete(file.current_path)
   end
 
-  def guess_mapping
+  def generate_mapping
     return nil if @parsed.blank?
     return nil if @parsed.headers.blank?
+    @mapping = mapping_aliases.transform_values { |mod|
+      mod.transform_values { |attr|
+        guess_mapping(@parsed.headers, attr)
+      }
+    }
   end
 
   private
@@ -107,7 +113,6 @@ class Curate::ImportTable < ApplicationRecord
   def default_values
     self.imported_at ||= DateTime.now
     self.read_options ||= default_read_options
-    self.mapping ||= guess_mapping
   end
 
   def default_read_options_csv
@@ -118,5 +123,61 @@ class Curate::ImportTable < ApplicationRecord
       quote_char: '"',
       na_values: ['""']
     }
+  end
+
+  def guess_mapping(headers, aliases)
+    headers.select { |header|
+      aliases.include? comparable(header)
+    }.first
+  end
+
+  def comparable(x)
+    x
+      .downcase
+      .delete(" ")
+      .delete("_")
+      .delete("-")
+      .delete(":")
+      .delete(";")
+  end
+
+  def mapping_aliases
+    aliases = {
+      sites: {
+        name: ["site name", "site", "name"],
+        lat: ["lat", "latitude", "y", "y coord", "y coordinate"],
+        lng: ["lng", "lon", "long", "longitude", "x", "x coord", "x coordinate"],
+        country_code: ["country code", "country", "alpha2"],
+      },
+      site_types: {
+        name: ["site type", "type"],
+        description: ["site type", "type"]
+      },
+      contexts: {
+        name: ["context", "site context", "locus", "phase", "site phase", "phase code", "layer", "level"],
+      },
+      materials: {
+        name: ["material", "sample material"]
+      },
+      taxons: {
+        name: ["taxon", "species", "taxa", "sample taxon", "sample species", "sample taxa"]
+      },
+      samples: {
+        position_description: ["sample", "sample location", "sample position", "position"],
+        position_x: ["position x", "sample x"],
+        position_y: ["position y", "sample y"],
+        position_z: ["position z", "sample z", "depth", "sample depth", "elevation", "sample elevation"],
+        position_crs: ["position crs"]
+      },
+      c14s: {
+        lab_identifier: ["lab identifier", "lab code", "lab id", "lab number", "lab num", "lab no", "lab nr"],
+        bp: ["bp", "cra", "age", "c14 age", "14c age", "c14 val", "c14", "14c", "uncal bp", "date", "r date"],
+        std: ["std", "c14 std", "error", "c14 error", "sigma", "±", "1σ", "σ", "stdev"],
+        delta_c13: ["d13c", "𝛿13c", "dc13", "𝛿c13", "delta c13", "c13", "c13 val", "13c", "13c val"],
+        delta_c13_std: ["d13c std", "d13c error", "𝛿13c std", "c13 std", "c13 error", "13c std", "13c error", "𝛿13c error"],
+        method: ["method", "dating method", "date method", "c14 method", "ams"]
+      }
+    }
+    aliases.deep_transform_values { |a| comparable(a) }
   end
 end

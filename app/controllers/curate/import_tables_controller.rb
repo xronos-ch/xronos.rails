@@ -17,7 +17,25 @@ class Curate::ImportTablesController < CurateController
   end
 
   def edit
+  # Alias for edit_read_options
+  end
+
+  def edit_read_options
+    @import_table = Curate::ImportTable.find(params[:import_table_id])
     @import_table.read
+    unless @import_table.parsed.nil?
+      @pagy, @preview = pagy_array(@import_table.preview)
+    end
+  end
+
+  def edit_mapping
+    @import_table = Curate::ImportTable.find(params[:import_table_id])
+    @import_table.read
+
+    unless @import_table.mapping.present?
+      @import_table.generate_mapping
+    end
+
     unless @import_table.parsed.nil?
       @pagy, @preview = pagy_array(@import_table.preview)
     end
@@ -43,7 +61,7 @@ class Curate::ImportTablesController < CurateController
   def update
     respond_to do |format|
       if @import_table.update(import_table_params)
-        format.html { redirect_to edit_curate_import_table_path(@import_table), notice: "Read options updated." }
+        format.html { redirect_back fallback_location: curate_import_table_path(@import_table), notice: "Read options updated." }
       else
         format.html { render :edit }
       end

@@ -31,21 +31,10 @@
       <% end %>
     </div>
 
-    <div class="mb-3">
-      <h3 class="h5">Mapping</h5>
-      <% unless @import_table.mapping.blank? %>
-        <%= bootstrap_form_for @import_table do |f| %>
-          <%= f.fields :mapping, model: OpenStruct.new(@import_table.mapping) do |f| %>
-
-          <% end %>
-        <% end %>
-      <% else %>
-        <p class="text-danger">Parsed table does not have any mappable columns. Please check the read options.</p>
-      <% end %>
-    </div>
-
     <div class="mb-3 text-end">
-      <%= link_to "Next", "#", class: "btn btn-lg btn-success" %>
+      <%= link_to "Next", 
+        edit_curate_import_table_path(@import_table) + "/mapping", 
+        class: "btn btn-lg btn-success" %>
     </div>
 
   </div>
