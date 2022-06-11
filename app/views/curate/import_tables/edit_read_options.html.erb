@@ -23,8 +23,8 @@
             help: "Character used to separate rows. Use <code>auto</code> for rows separated by new lines.".html_safe %>
           <%= f.text_field :quote_char, label: "Quote character",
             help: "Character used to quote fields, e.g. <code>\"</code>.".html_safe %>
-          <%= f.text_field :na_values, label: "NA values",
-            help: "Values used to missing data. Separate multiple NA values with a comma." %>
+          <%= f.text_field :na_values, label: "Missing values",
+            help: 'Values used to represent missing data, e.g. "NA" or "-". Separate multiple values with a comma.' %>
           <%= f.check_box :headers, label: "First row contains column headers", checked_value: true %>
         <% end %>
         <%= f.submit "Update" %>

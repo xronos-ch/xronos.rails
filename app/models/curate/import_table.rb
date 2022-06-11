@@ -15,14 +15,23 @@ class Curate::ImportTable < ApplicationRecord
     if value[:headers].present?
       value[:headers] = ActiveRecord::Type::Boolean.new.deserialize(value[:headers])
     end
+
+    if value[:na_values].present?
+      value[:na_values] = value[:na_values].split(",")
+    end
+
     value = value.compact_blank
     super(value)
   end
 
   def read_options
     return nil if self[:read_options].nil?
-    self[:read_options].symbolize_keys
-      #.transform_values { |v| v.is_a?(String) ? v.undump : v }
+    ropts = self[:read_options]
+    ropts = ropts.symbolize_keys
+    if ropts[:na_values].present?
+      ropts[:na_values] = ropts[:na_values].join(",")
+    end
+    return ropts
   end
 
   def file_name
@@ -88,7 +97,7 @@ class Curate::ImportTable < ApplicationRecord
   private
 
   def read_csv
-    ropts = read_options.slice(:headers, :col_sep, :row_sep, :quote_char)
+    ropts = read_options.slice(:headers, :col_sep, :row_sep, :quote_char, :na_values)
 
     if ropts.fetch(:headers, {}) != true
       ropts = ropts.except(:headers)
@@ -100,6 +109,12 @@ class Curate::ImportTable < ApplicationRecord
       ropts[:row_sep] = :auto
     end
 
+    if ropts.fetch(:na_values, {}).present?
+      init_missing_converter(ropts[:na_values])
+      ropts[:converters] = [:missing]
+      ropts = ropts.except(:na_values)
+    end
+
     begin
       csv = CSV.parse(File.read(file.current_path), **ropts)
     rescue CSV::MalformedCSVError => e
@@ -108,6 +123,18 @@ class Curate::ImportTable < ApplicationRecord
     end
 
     return csv
+  end
+
+  def init_missing_converter(na_values)
+    CSV::Converters[:missing] = lambda { |x|
+      if x.nil?
+        nil
+      elsif na_values.include?(x)
+        nil
+      else
+        x
+      end
+    }
   end
 
   def default_values
@@ -121,7 +148,7 @@ class Curate::ImportTable < ApplicationRecord
       col_sep: ",",
       row_sep: :auto,
       quote_char: '"',
-      na_values: ['""']
+      na_values: nil
     }
   end
 
