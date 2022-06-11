@@ -11,6 +11,12 @@
     <%= f.select :country_code, options, 
       { label: "Country", include_blank: true, selected: mapping.dig(:sites, :country_code) },
       { data: { controller: "tom-select" } } %>
+    <%= f.select :short_ref, options, 
+      { label: "Short references (site)".html_safe, include_blank: true, selected: mapping.dig(:sites, :short_ref) },
+      { data: { controller: "tom-select" } } %>
+    <%= f.select :short_ref, options, 
+      { label: "BibTeX (site)".html_safe, include_blank: true, selected: mapping.dig(:sites, :bibtex) },
+      { data: { controller: "tom-select" } } %>
   <% end %>
 
   <%= f.fields_for :site_types do |f| %>
@@ -76,5 +82,29 @@
       { data: { controller: "tom-select" } } %>
     <%# f.select :method, options, 
       { label: "Method", include_blank: true, selected: mapping.dig(:c14s, :method) },
+      { data: { controller: "tom-select" } } %>
+    <%= f.select :short_ref, options, 
+      { label: "Short references (C14)".html_safe, include_blank: true, selected: mapping.dig(:c14s, :short_ref) },
+      { data: { controller: "tom-select" } } %>
+    <%= f.select :short_ref, options, 
+      { label: "BibTeX (C14)".html_safe, include_blank: true, selected: mapping.dig(:c14s, :bibtex) },
+      { data: { controller: "tom-select" } } %>
+  <% end %>
+
+  <%= f.fields_for :typos do |f| %>
+    <%= f.select :name, options, 
+      { label: "Typological classification", include_blank: true, selected: mapping.dig(:types, :name) },
+      { data: { controller: "tom-select" } } %>
+    <%= f.select :approx_start_time, options, 
+      { label: "Approx. start time".html_safe, include_blank: true, selected: mapping.dig(:typos, :approx_start_time) },
+      { data: { controller: "tom-select" } } %>
+    <%= f.select :std, options, 
+      { label: "Approx. end time".html_safe, include_blank: true, selected: mapping.dig(:typos, :approx_end_time) },
+      { data: { controller: "tom-select" } } %>
+    <%= f.select :short_ref, options, 
+      { label: "Short references (typo)".html_safe, include_blank: true, selected: mapping.dig(:typos, :short_ref) },
+      { data: { controller: "tom-select" } } %>
+    <%= f.select :short_ref, options, 
+      { label: "BibTeX (typo)".html_safe, include_blank: true, selected: mapping.dig(:typos, :bibtex) },
       { data: { controller: "tom-select" } } %>
   <% end %>

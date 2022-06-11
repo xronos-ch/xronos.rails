@@ -175,6 +175,7 @@ class Curate::ImportTable < ApplicationRecord
         lat: ["lat", "latitude", "y", "y coord", "y coordinate"],
         lng: ["lng", "lon", "long", "longitude", "x", "x coord", "x coordinate"],
         country_code: ["country code", "country", "alpha2"],
+        short_ref: ["source", "reference", "sources", "references", "ref", "refs", "citation", "citations"]
       },
       site_types: {
         name: ["site type", "type"],
@@ -202,7 +203,12 @@ class Curate::ImportTable < ApplicationRecord
         std: ["std", "c14 std", "error", "c14 error", "sigma", "±", "1σ", "σ", "stdev"],
         delta_c13: ["d13c", "𝛿13c", "dc13", "𝛿c13", "delta c13", "c13", "c13 val", "13c", "13c val"],
         delta_c13_std: ["d13c std", "d13c error", "𝛿13c std", "c13 std", "c13 error", "13c std", "13c error", "𝛿13c error"],
-        method: ["method", "dating method", "date method", "c14 method", "ams"]
+        method: ["method", "dating method", "date method", "c14 method", "ams"],
+        short_ref: ["source", "reference", "sources", "references", "ref", "refs", "citation", "citations"]
+      },
+      typos: {
+        name: ["period", "periods", "typochronological unit", "typochronology"],
+        short_ref: ["source", "reference", "sources", "references", "ref", "refs", "citation", "citations"]
       }
     }
     aliases.deep_transform_values { |a| comparable(a) }
