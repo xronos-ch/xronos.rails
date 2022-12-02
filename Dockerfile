@@ -1,5 +1,5 @@
 # base image
-FROM ruby:3.0.3
+FROM ruby:3.0.4
 MAINTAINER Martin Hinz <martin.hinz@iaw.unibe.ch>
 
 # install javascript runtime
