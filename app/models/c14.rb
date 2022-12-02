@@ -30,7 +30,7 @@ class C14 < ApplicationRecord
     unless bp.blank? && std.blank?
       "#{bp}±#{std} BP"
     else
-      na_value
+      nil
     end
   end
 
@@ -38,7 +38,7 @@ class C14 < ApplicationRecord
     unless cal_bp.blank? && cal_std.blank?
       "#{cal_bp}±#{cal_std} cal BP"
     else
-      na_value
+      nil
     end
   end
   
