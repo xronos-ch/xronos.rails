@@ -1,0 +1,28 @@
+<div class="container my-5">
+
+  <h1>Radiocarbon labs</h1>
+
+  <table class="responsive nowrap table table-hover align-middle">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th class="text-end">Active?</th>
+        <% if can? :manage, C14Lab %><th><!--Actions--></th><% end %>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @c14_labs.each do |c14_lab| %>
+        <tr>
+          <td><%= link_to c14_lab.name, c14_lab %></td>
+          <td class="text-end"><%= c14_lab.active %></td>
+          <% if can? :manage, C14Lab %><td class="text-end"><%= render 'shared/action_buttons_compact', i: c14_lab %></td><% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <%#= pagy_bootstrap_nav(@pagy) %>
+
+  <%= link_to 'New radiocarbon lab', new_c14_lab_path, class: 'btn btn-secondary', data: { "turbo_frame": "remote_modal" } %>
+</div>

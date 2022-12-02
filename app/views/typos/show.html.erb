@@ -1,0 +1,42 @@
+<% content_for :title, "#{@typo.name} (#{@typo.sample.context.site.name})" %>
+
+<header id="typo-header" class="bg-primary text-light">
+  <div class="container my-5">
+    <h1 class="display-1"><%= @typo.name %></h1>
+    <h2 class="display-6">Typological date from <%= link_to @typo.sample.context.site.name, @typo.sample.context.site, class: "link-light" %></h2>
+  </div>
+</header>
+
+<section id="typo-details" class="bg-body">
+  <div class="container my-5">
+    <dl>
+
+      <div class="row mb-3">
+        <dt class="col-sm-3">Approximate start time</dt>
+        <dd class="col-sm-9"><%= @typo.approx_start_time %></dt>
+      </div>
+
+      <div class="row mb-3">
+        <dt class="col-sm-3">Approximate end time</dt>
+        <dd class="col-sm-9"><%= @typo.approx_end_time %></dd>
+      </div>
+
+    </dl>
+  </div>
+</section>
+
+<section id="xronos-metadata" class="bg-body">
+  <div class="container my-5">
+    <div class="row">
+
+      <div class="col">
+        <h2>XRONOS metadata</h2>
+        <%= render "shared/record_metadata", record: @typo, record_label: "reference" %>
+      </div>
+
+      <div class="col">
+        <h2>Revision history</h2>
+        <%= render "shared/paper_trail", item: @typo %>
+      </div>
+  </div>
+</section>

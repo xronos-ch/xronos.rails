@@ -1,0 +1,35 @@
+<dl class="row gx-5">
+
+  <div class="col-lg">
+    <!-- Labwork -->
+    <div class="row">
+      
+      <dt class="col-sm-3">Lab</dt>
+      <dd class="col-sm-9 text-end"><%= c14.c14_lab.present? ? c14.c14_lab.name : na_value %></dd>
+
+      <dt class="col-sm-3">Method</dt>
+      <dd class="col-sm-9 text-end"><%= c14.method.present? ? c14.method : na_value %></dd>
+
+      <dt class="col-sm-3">Sample material</dt>
+      <dd class="col-sm-9 text-end"><%= c14.sample.material.present? ? c14.sample.material.name : na_value %></dd>
+
+      <dt class="col-sm-3">Sample taxon</dt>
+      <dd class="col-sm-9 text-end"><%= c14.sample.taxon.present? ? c14.sample.taxon.name : na_value %></dd>
+
+    </div>
+  </div>
+
+  <div class="col-lg">
+    <!-- Results -->
+    <div class="row">
+
+      <dt class="col-sm-3">Age (uncal BP)</dt>
+      <dd class="col-sm-9 font-monospace text-end"><%= c14.bp %></dd>
+
+      <dt class="col-sm-3">Error</dt>
+      <dd class="col-sm-9 font-monospace text-end"><%= c14.std %></dd>
+
+    </div>
+  </div>
+</dl>
+

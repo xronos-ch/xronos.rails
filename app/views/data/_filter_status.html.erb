@@ -1,0 +1,8 @@
+<% if @data.filters.any? %>
+  <span class="<%= @data.xrons.any? ? "text-success" : "text-danger" %>">
+    Showing <%= @data.xrons.length %> of <%= @data.everything.length %> records
+    (<%= link_to "clear filters", :data %>)
+  </span>
+<% else %>
+  <span class="text-dark">Showing <%= @data.everything.length %> records</span>
+<% end %>

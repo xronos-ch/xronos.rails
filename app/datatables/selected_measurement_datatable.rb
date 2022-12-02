@@ -1,4 +1,5 @@
 class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
+  include DataHelper
   extend Forwardable
 
   def_delegators :@view, :link_to, :lab_path
@@ -17,15 +18,16 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
     # Declare strings in this format: ModelName.column_name
     # or in aliased_join_table.column_name format
     @view_columns ||= {
-      select: { source: "Measurement.id" },
-      labnr: { source: "Measurement.labnr", cond: :like },
-      bp: { source: "C14Measurement.bp", cond: :like },
-      std: { source: "C14Measurement.std", cond: :like },
-      cal_bp: { source: "C14Measurement.cal_bp", cond: :like },
-      cal_std: { source: "C14Measurement.cal_std", cond: :like },
+      select: { source: "C14.id" },
+      lab_identifier: { source: "C14.lab_identifier", cond: :like },
       site: { source: "Site.name", cond: :like },
-      period: { source: "Period.name", cond: :like },
       material: { source: "Material.name", cond: :like },
+      taxon: { source: "Taxon.name", cond: :like },
+      bp: { source: "C14.bp", cond: :like },
+      std: { source: "C14.std", cond: :like },
+      cal_bp: { source: "C14.cal_bp", cond: :like },
+      cal_std: { source: "C14.cal_std", cond: :like },
+      source_database: { source: "C14.source_database.name", cond: :like }
     }
   end
 
@@ -33,18 +35,18 @@ class SelectedMeasurementDatatable < AjaxDatatablesRails::ActiveRecord
     ## following still might cause trouble when relationships are NIL
     records.map do |record|
       {
-        "arch_object_id": record.sample.arch_object.id,
-        "measurement_id": record.id,
-        "c14_measurement_id": record.c14_measurement_id,
+        "sample_id": record.sample.id,
+        "c14_id": record.id,
         "select": "",
-        "labnr": link_to(record.labnr, record),
-        "bp": record.c14_measurement.bp,
-        "std": record.c14_measurement.std,
-        "cal_bp": record.c14_measurement.cal_bp,
-        "cal_std": record.c14_measurement.cal_std,
-	"site": record.sample.arch_object.site_phase.present? && record.sample.arch_object.site_phase.site.present? ? link_to(record.sample.arch_object.site_phase.site.name, site_path(record.sample.arch_object.site_phase.site.id)) : '',
-        "period": record.sample.arch_object.site_phase.present? && record.sample.arch_object.site_phase.periods.present? ? record.sample.arch_object.site_phase.periods.map(&:name).join(" | ") : '',
-        "material": record.sample.arch_object.material&.name
+        "lab_identifier": link_to(record.lab_identifier, record),
+        "site": link_to(record.sample.context.site.name, site_path(record.sample.context.site.id)),
+        "material": record.sample.material.present? ? record.sample.material.name : na_value,
+        "taxon": record.sample.taxon.present? ? record.sample.taxon.name : na_value,
+        "bp": record.bp.present? ? record.bp : na_value,
+        "std": record.std.present? ? record.std : na_value,
+        "cal_bp": record.cal_bp.present? ? record.cal_bp : na_value,
+        "cal_std": record.cal_std.present? ? record.cal_std : na_value,
+        "source_database": record.source_database.present? ? record.source_database.name : na_value
       }
     end
   end

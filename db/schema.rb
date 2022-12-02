@@ -10,21 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_13_132203) do
+ActiveRecord::Schema.define(version: 2022_12_02_010908) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "arch_objects", force: :cascade do |t|
+  create_table "c14_labs", force: :cascade do |t|
+    t.string "name"
+    t.boolean "active"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "material_id"
-    t.integer "species_id"
-    t.integer "on_site_object_position_id"
-    t.integer "site_phase_id"
   end
 
-  create_table "c14_measurements", force: :cascade do |t|
+  create_table "c14s", force: :cascade do |t|
     t.integer "bp"
     t.integer "std"
     t.integer "cal_bp"
@@ -35,58 +33,40 @@ ActiveRecord::Schema.define(version: 2021_08_13_132203) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "source_database_id"
-    t.index ["source_database_id"], name: "index_c14_measurements_on_source_database_id"
+    t.bigint "c14_lab_id"
+    t.bigint "sample_id"
+    t.string "lab_identifier"
+    t.index ["c14_lab_id"], name: "index_c14s_on_c14_lab_id"
+    t.index ["sample_id"], name: "index_c14s_on_sample_id"
+    t.index ["source_database_id"], name: "index_c14s_on_source_database_id"
   end
 
-  create_table "countries", force: :cascade do |t|
-    t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+  create_table "citations", force: :cascade do |t|
+    t.bigint "reference_id"
+    t.string "citing_type"
+    t.bigint "citing_id"
+    t.index ["citing_type", "citing_id"], name: "index_citations_on_citing"
+    t.index ["reference_id"], name: "index_citations_on_reference_id"
   end
 
-  create_table "ecochronological_units", force: :cascade do |t|
+  create_table "contexts", force: :cascade do |t|
     t.string "name"
     t.integer "approx_start_time"
     t.integer "approx_end_time"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "parent_id"
-  end
-
-  create_table "ecochronological_units_site_phases", id: false, force: :cascade do |t|
-    t.bigint "site_phase_id", null: false
-    t.bigint "ecochronological_unit_id", null: false
-    t.index ["site_phase_id", "ecochronological_unit_id"], name: "index_speu"
-  end
-
-  create_table "feature_types", force: :cascade do |t|
-    t.string "name"
-    t.text "description"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "fell_phases", force: :cascade do |t|
-    t.string "name"
-    t.integer "start_time"
-    t.integer "end_time"
     t.integer "site_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["site_id"], name: "index_fell_phases_on_site_id"
   end
 
-  create_table "fell_phases_references", id: false, force: :cascade do |t|
-    t.bigint "fell_phase_id", null: false
-    t.bigint "reference_id", null: false
-    t.index ["fell_phase_id", "reference_id"], name: "index_fpr"
-  end
-
-  create_table "labs", force: :cascade do |t|
-    t.string "name"
-    t.boolean "active"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+  create_table "import_tables", force: :cascade do |t|
+    t.string "file"
+    t.datetime "imported_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "user_id"
+    t.jsonb "read_options"
+    t.jsonb "mapping"
+    t.index ["user_id"], name: "index_import_tables_on_user_id"
   end
 
   create_table "materials", force: :cascade do |t|
@@ -100,28 +80,6 @@ ActiveRecord::Schema.define(version: 2021_08_13_132203) do
     t.text "description"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-  end
-
-  create_table "measurements", force: :cascade do |t|
-    t.string "labnr"
-    t.integer "sample_id"
-    t.integer "lab_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "c14_measurement_id"
-    t.integer "replaced_by"
-    t.text "replacement_comment"
-    t.bigint "measurement_state_id", null: false
-    t.index ["c14_measurement_id"], name: "index_measurements_on_c14_measurement_id"
-    t.index ["lab_id"], name: "index_measurements_on_lab_id"
-    t.index ["measurement_state_id"], name: "index_measurements_on_measurement_state_id"
-    t.index ["sample_id"], name: "index_measurements_on_sample_id"
-  end
-
-  create_table "measurements_references", id: false, force: :cascade do |t|
-    t.bigint "measurement_id", null: false
-    t.integer "reference_id", null: false
-    t.index ["measurement_id", "reference_id"], name: "index_mr"
   end
 
   create_table "oauth_access_grants", force: :cascade do |t|
@@ -166,40 +124,16 @@ ActiveRecord::Schema.define(version: 2021_08_13_132203) do
     t.index ["uid"], name: "index_oauth_applications_on_uid", unique: true
   end
 
-  create_table "on_site_object_positions", force: :cascade do |t|
-    t.string "feature"
-    t.string "site_grid_square"
-    t.string "coord_reference_system"
-    t.decimal "coord_X"
-    t.decimal "coord_Y"
-    t.decimal "coord_Z"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "feature_type_id"
-  end
-
-  create_table "periods", force: :cascade do |t|
-    t.string "name"
-    t.integer "approx_start_time"
-    t.integer "approx_end_time"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "parent_id"
-  end
-
   create_table "periods_site_phases", id: false, force: :cascade do |t|
-    t.bigint "site_phase_id", null: false
-    t.bigint "period_id", null: false
-    t.index ["site_phase_id", "period_id"], name: "index_spp"
+    t.bigint "site_phase_id"
+    t.bigint "period_id"
   end
 
-  create_table "physical_locations", force: :cascade do |t|
+  create_table "physical_locations", id: false, force: :cascade do |t|
     t.bigint "site_id"
     t.bigint "country_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["country_id"], name: "index_physical_locations_on_country_id"
-    t.index ["site_id"], name: "index_physical_locations_on_site_id"
+    t.text "created_at"
+    t.text "updated_at"
   end
 
   create_table "references", force: :cascade do |t|
@@ -212,7 +146,14 @@ ActiveRecord::Schema.define(version: 2021_08_13_132203) do
   create_table "samples", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "arch_object_id"
+    t.integer "material_id"
+    t.integer "taxon_id"
+    t.integer "context_id"
+    t.text "position_description"
+    t.decimal "position_x"
+    t.decimal "position_y"
+    t.decimal "position_z"
+    t.text "position_crs"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -224,27 +165,18 @@ ActiveRecord::Schema.define(version: 2021_08_13_132203) do
     t.index ["updated_at"], name: "index_sessions_on_updated_at"
   end
 
-  create_table "site_phases", force: :cascade do |t|
-    t.string "name"
-    t.integer "approx_start_time"
-    t.integer "approx_end_time"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "site_id"
-    t.integer "site_type_id"
-  end
-
-  create_table "site_phases_typochronological_units", id: false, force: :cascade do |t|
-    t.bigint "site_phase_id", null: false
-    t.bigint "typochronological_unit_id", null: false
-    t.index ["site_phase_id", "typochronological_unit_id"], name: "index_sptu"
-  end
-
   create_table "site_types", force: :cascade do |t|
     t.string "name"
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "site_types_sites", id: false, force: :cascade do |t|
+    t.bigint "site_id"
+    t.bigint "site_type_id"
+    t.index ["site_id"], name: "index_site_types_sites_on_site_id"
+    t.index ["site_type_id"], name: "index_site_types_sites_on_site_type_id"
   end
 
   create_table "sites", force: :cascade do |t|
@@ -253,7 +185,7 @@ ActiveRecord::Schema.define(version: 2021_08_13_132203) do
     t.decimal "lng"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "country_id"
+    t.string "country_code"
   end
 
   create_table "source_databases", force: :cascade do |t|
@@ -265,19 +197,21 @@ ActiveRecord::Schema.define(version: 2021_08_13_132203) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "species", force: :cascade do |t|
+  create_table "taxons", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "typochronological_units", force: :cascade do |t|
+  create_table "typos", force: :cascade do |t|
     t.string "name"
     t.integer "approx_start_time"
     t.integer "approx_end_time"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "parent_id"
+    t.bigint "sample_id"
+    t.index ["sample_id"], name: "index_typos_on_sample_id"
   end
 
   create_table "user_profiles", force: :cascade do |t|
@@ -303,8 +237,7 @@ ActiveRecord::Schema.define(version: 2021_08_13_132203) do
   end
 
   create_table "versions", force: :cascade do |t|
-    t.string "item_type"
-    t.string "{:null=>false}"
+    t.string "item_type", null: false
     t.bigint "item_id", null: false
     t.string "event", null: false
     t.string "whodunnit"
@@ -316,11 +249,8 @@ ActiveRecord::Schema.define(version: 2021_08_13_132203) do
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
-  add_foreign_key "c14_measurements", "source_databases"
-  add_foreign_key "measurements", "c14_measurements"
-  add_foreign_key "measurements", "labs"
-  add_foreign_key "measurements", "measurement_states"
-  add_foreign_key "measurements", "samples"
+  add_foreign_key "c14s", "source_databases"
+  add_foreign_key "import_tables", "users"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_grants", "users", column: "resource_owner_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"

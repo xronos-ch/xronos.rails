@@ -1,0 +1,11 @@
+<h2 class="visually-hidden">Filters</h2>
+
+<div style="width: 30rem">
+  <%= bootstrap_form_for :filter, method: :get, url: data_path do |f| %>
+
+    <%= render "filter_fields", f: f %>
+
+    <%= f.button "Filter", class: "btn btn-primary" %>
+    <%= link_to "Clear filters", data_path, class: "btn btn-danger" %>
+  <% end %>
+</div>

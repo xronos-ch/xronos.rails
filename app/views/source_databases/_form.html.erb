@@ -1,19 +1,11 @@
-<%= form_with(model: source_database, local: true) do |f| %>
-  <% if source_database.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(source_database.errors.count, "error") %> prohibited this source_database from being saved:</h2>
+<%= bootstrap_form_with(model: @source_database, local: true, id: "sourceDatabaseForm") do |f| %>
 
-      <ul>
-      <% source_database.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
-    </div>
+  <%= render 'fields', f: f %>
+
+  <%= content_for :buttons do %>
+    <%= button_tag "Cancel", type: 'reset', class: 'btn btn-danger', form: "sourceDatabaseForm", data: { "bs-dismiss": "modal" } %>
+    <%= button_tag "Save", class: 'btn btn-success', form: "sourceDatabaseForm" %>
   <% end %>
 
-  <%= render  'source_databases/source_database_fields', f: f %>
-
-  <div class="actions">
-    <%= f.submit %>
-  </div>
 <% end %>
+

@@ -1,0 +1,6 @@
+<%= f.text_field :name, label: "Context name" %>
+
+<div class="row">
+  <div class="col"><%= f.number_field :approx_start_time, label: "Dated from", prepend: "c.", append: "cal BP" %></div>
+  <div class="col"><%= f.number_field :approx_end_time, label: "Dated to", prepend: "c.", append: "cal BP" %></div>
+</div>

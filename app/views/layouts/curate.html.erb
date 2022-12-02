@@ -1,0 +1,32 @@
+<% content_for :top do %>
+  <div class="d-flex flex-column min-vh-100">
+<% end %>
+
+<% content_for :before_footer do %>
+  </div>
+<% end %>
+
+<% content_for :content do %>
+  <div class="flex-grow-1 d-flex flex-column overflow-auto">
+    <div class="d-flex flex-grow-1 align-items-stretch">
+
+      <nav class="nav flex-column p-3 bg-primary border-end text-muted small shadow" style="width: 15rem">
+        <%= render "curate_nav" %>
+      </nav>
+
+      <div class="flex-grow-1">
+        <%= yield %>
+      </div>
+
+      <!--
+      <aside class="p-3 bg-light text-muted small" style="width: 20rem">
+        <h2 class="h5 border-bottom">Help</h2>
+        <%= yield :help %>
+      </aside>
+      -->
+
+    </div>
+  </div>
+<% end %>
+
+<%= render template: "layouts/application" %>

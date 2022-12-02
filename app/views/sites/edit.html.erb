@@ -1,8 +1,6 @@
-<div class="field_master_top">
-  <b>Editing Site</b>
-</div>
+<%= render "shared/remote_modal", title: "Edit site details" do %>
 
-<%= render 'form', site: @site %>
+  <%= render 'form' %>
 
-<%= link_to 'Show', @site %> |
-<%= link_to 'Back', sites_path %>
+<% end %>
+

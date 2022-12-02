@@ -1,19 +1,14 @@
-<%= form_with(model: reference, local: true) do |f| %>
-  <% if reference.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(reference.errors.count, "error") %> prohibited this reference from being saved:</h2>
+<%= bootstrap_form_with(model: @reference, local: true, id: "referenceForm") do |f| %>
 
-      <ul>
-      <% reference.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
-    </div>
+  <%= render 'fields', f: f %>
+
+  <h3 class="h5">Preview</h3>
+  <p class="ms-3"><%= @reference.render %></p>
+
+  <%= content_for :buttons do %>
+    <%= button_tag "Cancel", type: 'reset', class: 'btn btn-danger', form: "referenceForm", data: { "bs-dismiss": "modal" } %>
+    <%= button_tag "Save", class: 'btn btn-success', form: "referenceForm" %>
   <% end %>
 
-  <%= render  'references/reference_fields', f: f %>
-
-  <div class="actions">
-    <%= f.submit %>
-  </div>
 <% end %>
+
