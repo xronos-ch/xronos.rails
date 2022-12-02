@@ -1,4 +1,6 @@
 class Material < ApplicationRecord
-  has_many :arch_objects, inverse_of: :material
+  default_scope { order(name: :asc) }
+
+  has_many :samples, inverse_of: :material
   validates :name, presence: true
 end

@@ -1,0 +1,43 @@
+<h2><%= @data.filters.any? ? "Filtered" : "All" %> records</h2>
+
+<%= turbo_frame_tag "data_table" do %>
+  <table class="table">
+
+    <thead>
+      <tr>
+        <th><!-- Select --></th>
+        <th>Lab ID</th>
+        <th>Site</th>
+        <th>Material</th>
+        <th>Taxon</th>
+        <th>Age (BP)</th>
+        <th>Age (cal BP)</th>
+        <th>Source database</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @xrons.each do |x| %>
+        <tr>
+          <td><!-- <%= x.id %> --></td>
+          <td><%= x.lab_identifier.present? ? (link_to x.lab_identifier, x, target: :_top) : na_value %></td>
+          <td><%= x.site.present? ? (link_to x.site.name, x.site, target: :_top) : na_value %></td>
+          <% if x.sample.present? %>
+            <td><%= x.sample.material.present? ? x.sample.material.name : na_value %></td>
+            <td><%= x.sample.taxon.present? ? x.sample.taxon.name : na_value %></td>
+          <% else %>
+            <td><%= na_value %></td>
+            <td><%= na_value %></td>
+          <% end %>
+          <td><%= x.bp %>±<%= x.std %></td>
+          <td><%= x.cal_bp %>±<%= x.cal_std %></td>
+          <td><%= x.source_database.present? ? (link_to x.source_database.name, x.source_database, target: :_top) : na_value %></td>
+        </tr>
+      <% end %>
+    </tbody>
+
+  </table>
+
+  <%== pagy_bootstrap_nav(@pagy) %>
+<% end %>
+

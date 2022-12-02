@@ -12,3 +12,5 @@
 //
 //= require layout_form_observed_select
 //= require layout_special_filter_tools
+require("@fontsource/inter")
+require("@fontsource/raleway")

@@ -1,7 +1,6 @@
-<div class="field_master_top">
-  <b>New Site</b>
+<div class="container">
+  <%= render 'shared/action_breadcrumbs', i: @site %>
+  <h1>New site</h1>
+
+  <%= render 'form', site: @site %>
 </div>
-
-<%= render 'form', site: @site %>
-
-<%= link_to 'Back', sites_path %>

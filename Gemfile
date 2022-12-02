@@ -1,10 +1,10 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '3.0.2'
+ruby '3.0.4'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 6.1.4.1'
+gem 'rails', '~> 6.1.6'
 # gem 'rails', '~> 5.2.6'
 
 # Use sqlite3 as the database for Active Record
@@ -23,7 +23,7 @@ gem 'coffee-rails', '~> 4.2'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.5'
 # Use Redis adapter to run Action Cable in production
-# gem 'redis', '~> 4.0'
+gem 'redis', '~> 4.0'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
@@ -77,8 +77,13 @@ gem 'gon'
 # leaflet
 gem 'leaflet-rails'
 
-# jquery for ajax calls
+# jquery
 gem 'jquery-rails'
+gem 'jquery-ui-rails'
+
+# hotwire javascript
+gem 'turbo-rails'
+gem 'stimulus-rails'
 
 # user management
 gem 'devise', ">= 4.7.1"
@@ -92,24 +97,31 @@ gem 'simple-navigation'
 # fontawesome symbols
 gem 'font-awesome-rails'
 
-# datatables
-gem 'jquery-datatables'
-gem 'ajax-datatables-rails'
-
 # postgres adapter for the production mode
 group :production do
   gem 'pg'
 end
 
-# nested forms
-gem "cocoon"
+# pagination
+gem "pagy"
 
-# autocomplete in forms
-gem 'jquery-ui-rails'
-gem 'rails-jquery-autocomplete'
+# forms
+gem "bootstrap_form", "~> 5.0"
 
-# in place editing
-gem "best_in_place", git: "https://github.com/mmotherwell/best_in_place"
+# file uploads
+gem 'carrierwave', '~> 2.0'
+
+# bibliography
+gem "bibtex-ruby"
+gem "citeproc-ruby"
+gem "csl-styles"
+
+# ISO-based countries
+gem "countries"
+gem "country_select"
+
+# Geocoding
+gem "geocoder"
 
 # rabl for the api
 gem 'rabl'
@@ -149,3 +161,5 @@ gem 'bootstrap', '~> 5.1'
 gem "feedjira"
 gem "httparty"
 
+# Markdown static pages
+gem "kramdown"

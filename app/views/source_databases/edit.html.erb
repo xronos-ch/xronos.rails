@@ -1,8 +1,3 @@
-<div class="field_master_top">
-  <b>Editing Source Database</b>
-</div>
-
-<%= render 'form', source_database: @source_database %>
-
-<%= link_to 'Show', @source_database %> |
-<%= link_to 'Back', source_databases_path %>
+<%= render "shared/remote_modal", title: "Edit source database" do %>
+  <%= render "form" %>
+<% end %>

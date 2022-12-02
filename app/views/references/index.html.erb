@@ -1,29 +1,33 @@
-<p id="notice"><%= notice %></p>
+<% content_for :title, "References" %>
 
-<h1>References</h1>
+<div class="container my-5">
 
-<table>
-  <thead>
-    <tr>
-      <th>Short Reference</th>
-      <th>Bibtex</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
+  <h1>References</h1>
 
-  <tbody>
-    <% @references.each do |reference| %>
+  <table class="responsive nowrap table table-hover align-middle">
+    <thead>
       <tr>
-        <td><%= reference.short_ref %></td>
-        <td><%= reference.bibtex %></td>
-        <td><%= link_to 'Show', reference %></td>
-        <td><%= link_to 'Edit', edit_reference_path(reference) %></td>
-        <td><%= link_to 'Destroy', reference, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <th>Label</th>
+        <th>Reference</th>
+        <th>Citations</th>
+        <% if can? :manage, Reference %><th><!--Actions--></th><% end %>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
 
-<br>
+    <tbody>
+      <% @references.each do |reference| %>
+        <tr>
+          <td><%= link_to reference.short_ref, reference %></td>
+          <td><%= reference.render %></td>
+          <td><%= reference.citations.count %></td>
+          <% if can? :manage, Reference %><td class="text-end"><%= render 'shared/action_buttons_compact', i: reference %></td><% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 
-<%= link_to 'New Reference', new_reference_path %>
+  <%#= pagy_bootstrap_nav(@pagy) %>
+
+  <%= link_to 'New reference', new_reference_path, class: 'btn btn-secondary',
+    data: { "turbo_frame": "remote_modal" } %>
+</div>

@@ -19,23 +19,18 @@
 
 import "stylesheets/application"
 
-import Rails from "@rails/ujs"
-//import Turbolinks from "turbolinks"
 import * as ActiveStorage from "@rails/activestorage"
 import "channels"
 
-require("jquery")
-
+import "@popperjs/core"
 import 'bootstrap'
 
-document.addEventListener("turbolinks:load", function() {
-    $(function () {
-//        $('[data-toggle="tooltip"]').tooltip()
-//        $('[data-toggle="popover"]').popover()
-    })
-})
+// jquery
+import "jquery-ui"
 
-
+// hotwire framework (turbo+stimulus)
+import "@hotwired/turbo-rails"
+import "controllers"
 
 require('../src/calibrate.js');
 import "../src/ion.rangeSlider.js"
@@ -48,7 +43,4 @@ $('a[calibration-popup]').on('click', function(e) {
   e.preventDefault();
 });
 
-
-Rails.start()
-//Turbolinks.start()
 ActiveStorage.start()

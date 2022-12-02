@@ -1,9 +1,3 @@
-<div class="field_master_top">
-  <b>New Reference</b>
-</div>
-
-<div class="field_master">
-  <%= render 'form', reference: @reference %>
-</div>
-
-<%= link_to 'Back', references_path %>
+<%= render "shared/remote_modal", title: "New reference" do %>
+  <%= render "form" %>
+<% end %>

@@ -2,7 +2,11 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xronos</title>
+    <title>
+      <%= yield :title %> 
+      <% if content_for?(:title) %> &ndash; <% end %>
+      XRONOS
+    </title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -22,43 +26,48 @@
   </head>
 
   <body>
-	
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-0 main-nav">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="/"><%= image_tag "logo.white.png", height: '20' %></a>
+
+    <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 9999">
+      <% flash.each do |flash_type, message| %>
+        <%= render "layouts/flash", flash_type: flash_type, message: message %>
+      <% end %>
+    </div>
+
+    <%= turbo_frame_tag "remote_modal", target: "_top" %>
+
+    <%= yield :top %>
+
+    <nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-primary mb-0 main-nav shadow"
+      <% if request.path == "/" %>
+           data-controller="home-hero"
+           data-action="scroll@window->home-hero#scroll"
+         <% end %>>
+      <div class="container">
+        <a class="navbar-brand" href="/"><%= image_tag "xronos_logo_light.svg", style: 'max-height: 1.5rem' %></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <% if request.path == "/" %>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Get Data
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item nav-link text-dark" href="/map">Map</a></li>
-                <li><a class="dropdown-item nav-link text-dark" href="/table">Table</a></li>
-              </ul>
-            </li>
-            <%else%>
             <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="/table">Table</a>
+              <a class="nav-link <%= active_class data_path %>" href="/data" <%= active_aria data_path %>>Browse data</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="/map">Map</a>
-            </li>            
-            <%end%>
+              <a class="nav-link <%= active_class database_path %>" href="/database" <%= active_aria database_path %>>Schema</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link <%= active_class api_path %>" href="/api" <%= active_aria api_path %>>API</a>
+            </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 About
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item nav-link text-dark" href="/about">About this Project</a></li>
-                <li><a class="dropdown-item nav-link text-dark" href="/database">About this Database</a></li>
-                <li><a class="dropdown-item nav-link text-dark" href="/api">API</a></li>
-                <li><a class="dropdown-item nav-link text-dark" href="https://blog.xronos.ch">Blog</a></li>
+                <%= render "about/nav", {itemclass: "", linkclass: "dropdown-item nav-link text-dark" } %>
               </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="https://blog.xronos.ch">Blog</a>
             </li>
           </ul>
 
@@ -114,64 +123,58 @@
       </div>
     </nav>
 
-    <%= yield %>
+    <%= content_for?(:content) ? yield(:content) : yield %>
 
-    <footer class="page-footer">
-      <div class="container-fluid pb-0 mb-0 justify-content-center text-light bg-primary">
-        <div class="row py-3">
-          <div class="d-flex justify-content-center link-light nav-link">
+    <%= yield :before_footer %>
 
-            <a href="/about" class="link-light nav-link">About this Project</a>|
-            <a href="/database" class="link-light nav-link">About this Database</a>|
-            <a href="/api" class="link-light nav-link">API</a>|
-            <a href="https://blog.xronos.ch" class="link-light nav-link">Blog</a>
-          </div>
-        </div>
-      </div>
-      </div>
-      <div class="container-fluid pb-0 mb-0 justify-content-center text-light bg-dark">
-        <div class="row justify-content-center py-3">
-          <div class="col-11">
-            <div class="row ">
-              <div class="col-xl-3 col-md-3 col-sm-3 col-12 my-auto mx-auto a">
-                <%= image_tag "logo.white.png", class: "img-fluid"  %>
-              </div>
-              <div class="col-xl-3 col-md-3 col-sm-3 col-12">
-                <h6 class="mb-3 mb-lg-4 bold-text text-muted"><b>Funded by</b></h6>
-                <%= image_tag "snf_logo.png", class: "img-fluid"  %>
-              </div>
-              <div class="col-xl-3 col-md-3 col-sm-3 col-12">
-                <h6 class="mb-3 mb-lg-4 bold-text text-muted"><b>Hosted by</b></h6>
-                <div style="max-width: 200px">
-                  <%= image_tag "Unibe_Logo_16pt_weiss.png", class: "img-fluid"  %>
-                </div>
-              </div>
-              <div class="col-xl-3 col-md-3 col-sm-3 col-12">
-                <h6 class="mb-3 mb-lg-4 text-muted bold-text mt-sm-0 mt-5"><b>Contact</b></h6><small>
-                  <p class="mb-1">SNFS Project XRONOS</p>
-                  <p class="mb-1">Department of Prehistoric Archaeology</p>
-                  <p class="mb-1">Institute of Archaeological Sciences</p>
-                  <p class="mb-1">Mittelstrasse 43</p>
-                  <p class="mb-1">University of Bern</p>
-                  <p class="mb-1">3012 Bern</p>
-                  <p class="mb-1">Switzerland</p>
-                </small>
+    <footer class="container-fluid page-footer pb-3 bg-dark shadow-sm text-muted">
+      <div class="container">
+
+          <div class="row">
+
+            <div class="col-md-6 mt-5 mb-5">
+              <%= image_tag "xronos_logo_light.svg", class: "mt-3 mb-3", style: "max-height: 3rem;" %>
+              <p class="mt-0 mb-3 text-light">XRONOS is an open repository and curation platform for chronometric data from archaeological contexts worldwide.</p>
+
+              <div class="row mt-5">
+                <div class="col"><a href="https://www.snf.ch"><%= image_tag "snf_logo.png", style: "max-height: 3rem;" %></a></div>
+                <div class="col"><a href="https://www.unibe.ch"><%= image_tag "ub_Logo_english_2019_neg.png", style: "max-height: 3rem;"  %></a></div>
               </div>
             </div>
-            <div class="row ">
-              <div class="col-xl-8 col-md-4 col-sm-4 col-auto my-md-0 mt-5 order-sm-1 order-3 align-self-end">
-                <small class="rights"><span>&#174;</span> 2021 XRONOS Project</small>
-              </div>
-              <div class="col-xl-2 col-md-4 col-sm-4 col-auto order-1 align-self-end ">
-                <h6 class="mt-55 mt-2 text-muted bold-text"><b>Martin Hinz</b></h6><small> <span><i class="fa fa-envelope" aria-hidden="true"></i></span> martin.hinz@iaw.unibe.ch</small>
-              </div>
-              <div class="col-xl-2 col-md-4 col-sm-4 col-auto order-2 align-self-end mt-3 ">
-                <h6 class="text-muted bold-text"><b>Joe Roe</b></h6><small><span><i class="fa fa-envelope" aria-hidden="true"></i></span> joseph.roe@iaw.unibe.ch</small>
-              </div>
+
+            <div class="col-6 col-md-3 mt-md-5 text-md-end">
+              <h6 class="mt-3 fw-bold text-uppercase">Data</h6>
+              <ul class="nav flex-column mb-3">
+                <li class="nav-item"><a class="nav-link ps-0 pe-0 link-light" href="/data">Browser</a></li>
+                <li class="nav-item"><a class="nav-link ps-0 pe-0 link-light" href="/database">Schema</a></li>
+                <li class="nav-item"><a class="nav-link ps-0 pe-0 link-light" href="/api">API</a></li>
+              </ul>
             </div>
+
+            <div class="col-6 col-md-3 mt-md-5 text-md-end">
+              <h6 class="mt-3 fw-bold text-uppercase">About</h6>
+              <ul class="nav flex-column mb-3">
+                <%= render "about/nav", { itemclass: "nav-item", linkclass: "nav-link ps-0 pe-0 link-light" } %>
+              </ul>
+            </div>
+
           </div>
+
+          <hr>
+          <div class="row">
+
+            <div class="col-md-9">
+              <small class="rights">This work is licensed under a <a class="link-light" rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</small>
+            </div>
+            <div class="col-md-3 text-md-end">
+              <small class="source-code">
+                <a class="link-light" href="https://github.com/xronos-ch/xronos.rails/"><span class="fa fa-github fa-lg me-1"></span>View source on GitHub</a>
+              </small>
+            </div>
         </div>
+
     </footer>
+
       </div>
   </body>
 </html>

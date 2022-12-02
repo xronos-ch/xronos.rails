@@ -1,0 +1,7 @@
+<% if references.blank? %>
+  <%= na_value %>
+<% else %>
+    <% for ref in references do %>
+      <a href="#ref-<%= ref.short_ref %>"><%= ref.render_citation %></a>
+    <% end %>
+<% end %>

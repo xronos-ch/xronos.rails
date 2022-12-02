@@ -1,0 +1,15 @@
+<div class="d-flex align-items-stretch">
+  <div class="flex-fill m-2">
+    <%= render partial: "stat_card", locals: { entity: 'site', count: @n_site, icon: 'site' } %>
+  </div>
+  <div class="flex-fill m-2">
+    <%= render partial: "stat_card", locals: { entity: 'radiocarbon date', count: @n_c14, icon: 'c14' } %>
+  </div>
+  <div class="flex-fill m-2">
+    <%= render partial: "stat_card", locals: { entity: 'dendro date', count: @n_dendro, icon: 'dendro' } %>
+  </div>
+  <div class="flex-fill m-2">
+    <%= render partial: "stat_card", locals: { entity: 'typological date', count: @n_typo, icon: 'typo' } %>
+  </div>
+</div>
+

@@ -2,11 +2,16 @@
 	"name": "xronos",
 	"private": true,
 	"dependencies": {
+		"@fontsource/fira-mono": "^4.5.7",
+		"@fontsource/inter": "^4.5.7",
+		"@fontsource/raleway": "^4.5.5",
+		"@hotwired/stimulus": "^3.0.1",
+		"@hotwired/turbo-rails": "^7.1.1",
+		"@nathanvda/cocoon": "^1.2.14",
 		"@popperjs/core": "^2.9.3",
 		"@rails/actioncable": "^6.1.4-1",
 		"@rails/activestorage": "^6.1.4-1",
-		"@rails/ujs": "^6.1.4-1",
-		"@rails/webpacker": "5.4.0",
+		"@rails/webpacker": "5.4.3",
 		"bootstrap": "^5.1",
 		"datatables.net": "^1.11.3",
 		"datatables.net-bs5": "^1.11.3",
@@ -20,15 +25,17 @@
 		"jquery": "^3.6.0",
 		"jquery-ui": "^1.12.1",
 		"jquery-ujs": "^1.2.3",
-		"leaflet": "^1.7.1",
-		"leaflet-lasso": "^2.2.5",
-		"leaflet.markercluster": "^1.5.1",
+		"leaflet": "^1.8.0",
+		"leaflet-lasso": "^2.2.8",
+		"leaflet-providers": "^1.13.0",
+		"leaflet.markercluster": "^1.5.3",
 		"rails-erb-loader": "^5.5.2",
-		"turbolinks": "^5.2.0",
-		"webpack": "^4.46.0",
-		"webpack-cli": "^3.3.12"
+		"tom-select": "^2.0.1"
 	},
 	"devDependencies": {
-		"webpack-dev-server": "^4.3.0"
+		"webpack-dev-server": "^4.7.3"
+	},
+	"resolutions": {
+		"glob-parent": "5.1.2"
 	}
 }

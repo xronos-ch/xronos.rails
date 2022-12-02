@@ -1,19 +1,26 @@
 class SitesController < ApplicationController
+  include Pagy::Backend
+
   load_and_authorize_resource
 
   before_action :set_site, only: [:show, :edit, :update, :destroy]
 
-  def index
-    respond_to do |format|
-      format.html
-      format.json { render json: DataDatatable.new(params) }
-    end
-  end
-
   # GET /sites
   # GET /sites.json
   def index
-    @sites = Site.all
+    unless site_params.blank?
+      @sites = Site.all.where(site_params)
+    end
+
+
+    respond_to do |format|
+      format.html { 
+        @pagy, @sites = pagy(Site.all.order(:name))
+        render :index
+      }
+    #  format.json { render json: DataDatatable.new(params) }
+      format.json
+    end
   end
 
   # GET /sites/1
@@ -25,7 +32,6 @@ class SitesController < ApplicationController
   # GET /sites/new
   def new
     @site = Site.new
-    @site.fell_phases.build
     @site.build_country
   end
 
@@ -55,11 +61,12 @@ class SitesController < ApplicationController
   def update
     respond_to do |format|
       if @site.update(site_params)
-        format.html { redirect_to @site, notice: 'Site was successfully updated.' }
+        format.html { redirect_back(fallback_location: @site, notice: "Saved changes to #{@site.name}.") }
         format.json { render :show, status: :ok, location: @site }
       else
         format.html { render :edit }
         format.json { render json: @site.errors, status: :unprocessable_entity }
+        format.turbo_stream { render :form_update, status: :unprocessable_entity }
       end
     end
   end
@@ -82,31 +89,14 @@ class SitesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def site_params
-      params.require(:site).permit(
+      params.fetch(:site, {}).permit(
         :id,
         :name,
         :lat,
         :lng,
-        :_destroy,
-        :country_id,
-        :country_attributes => [
-          :id,
-          :name,
-          :_destroy
-        ],
-        :fell_phases_attributes => [
-          :id,
-          :name,
-          :start_time,
-          :end_time,
-          :_destroy,
-          :references_attributes => [
-            :id,
-            :short_ref,
-            :bibtex,
-            :_destroy
-          ]
-        ]
+        {site_type_ids: []},
+        :country_code,
+        :_destroy
       )
     end
 end

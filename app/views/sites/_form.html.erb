@@ -1,19 +1,11 @@
-<%= form_with(model: site, local: true) do |f| %>
-  <% if site.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(site.errors.count, "error") %> prohibited this site from being saved:</h2>
+<%= bootstrap_form_with(model: @site, local: true, id: "siteForm") do |f| %>
 
-      <ul>
-      <% site.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
-    </div>
+  <%= render 'fields', f: f %>
+
+  <%= content_for :buttons do %>
+    <%= button_tag "Cancel", type: 'reset', class: 'btn btn-danger', form: "siteForm", data: { "bs-dismiss": "modal" } %>
+    <%= button_tag "Save", class: 'btn btn-success', form: "siteForm" %>
   <% end %>
 
-  <%= render  'sites/site_fields', f: f %>
-
-  <div class="actions">
-    <%= f.submit %>
-  </div>
 <% end %>
+

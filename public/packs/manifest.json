@@ -1,64 +1,50 @@
 {
-  "application.js": "/packs/js/application-030f719f215676a9525e.js",
-  "application.js.map": "/packs/js/application-030f719f215676a9525e.js.map",
-  "calibration.js": "/packs/js/calibration-75d2499fb44548178bd0.js",
-  "calibration.js.map": "/packs/js/calibration-75d2499fb44548178bd0.js.map",
-  "data.js": "/packs/js/data-66245855b10e238b5593.js",
-  "data.js.map": "/packs/js/data-66245855b10e238b5593.js.map",
+  "application.js": "/packs/js/application-9f92965763c9d69f8fd4.js",
+  "application.js.map": "/packs/js/application-9f92965763c9d69f8fd4.js.map",
+  "calibration.js": "/packs/js/calibration-da9d077c3bb5271eb460.js",
+  "calibration.js.map": "/packs/js/calibration-da9d077c3bb5271eb460.js.map",
   "entrypoints": {
     "application": {
       "js": [
-        "/packs/js/application-030f719f215676a9525e.js"
+        "/packs/js/application-9f92965763c9d69f8fd4.js"
       ],
       "js.map": [
-        "/packs/js/application-030f719f215676a9525e.js.map"
+        "/packs/js/application-9f92965763c9d69f8fd4.js.map"
       ]
     },
     "calibration": {
       "js": [
-        "/packs/js/calibration-75d2499fb44548178bd0.js"
+        "/packs/js/calibration-da9d077c3bb5271eb460.js"
       ],
       "js.map": [
-        "/packs/js/calibration-75d2499fb44548178bd0.js.map"
-      ]
-    },
-    "data": {
-      "js": [
-        "/packs/js/data-66245855b10e238b5593.js"
-      ],
-      "js.map": [
-        "/packs/js/data-66245855b10e238b5593.js.map"
+        "/packs/js/calibration-da9d077c3bb5271eb460.js.map"
       ]
     },
     "frontend": {
       "js": [
-        "/packs/js/frontend-de9f39e7461e34bde1b7.js"
+        "/packs/js/frontend-28852dd25fb23f7ded07.js"
       ],
       "js.map": [
-        "/packs/js/frontend-de9f39e7461e34bde1b7.js.map"
-      ]
-    },
-    "landing_page": {
-      "js": [
-        "/packs/js/landing_page-261467a253a20765e6cb.js"
-      ],
-      "js.map": [
-        "/packs/js/landing_page-261467a253a20765e6cb.js.map"
-      ]
-    },
-    "map": {
-      "js": [
-        "/packs/js/map-eae927199ffcbdbe5d21.js"
-      ],
-      "js.map": [
-        "/packs/js/map-eae927199ffcbdbe5d21.js.map"
+        "/packs/js/frontend-28852dd25fb23f7ded07.js.map"
       ]
     }
   },
-  "frontend.js": "/packs/js/frontend-de9f39e7461e34bde1b7.js",
-  "frontend.js.map": "/packs/js/frontend-de9f39e7461e34bde1b7.js.map",
-  "landing_page.js": "/packs/js/landing_page-261467a253a20765e6cb.js",
-  "landing_page.js.map": "/packs/js/landing_page-261467a253a20765e6cb.js.map",
-  "map.js": "/packs/js/map-eae927199ffcbdbe5d21.js",
-  "map.js.map": "/packs/js/map-eae927199ffcbdbe5d21.js.map"
+  "frontend.js": "/packs/js/frontend-28852dd25fb23f7ded07.js",
+  "frontend.js.map": "/packs/js/frontend-28852dd25fb23f7ded07.js.map",
+  "media/files/inter-all-400-normal.woff": "/packs/media/files/inter-all-400-normal-e71ac353.woff",
+  "media/files/inter-cyrillic-400-normal.woff2": "/packs/media/files/inter-cyrillic-400-normal-514f4123.woff2",
+  "media/files/inter-cyrillic-ext-400-normal.woff2": "/packs/media/files/inter-cyrillic-ext-400-normal-4543e27a.woff2",
+  "media/files/inter-greek-400-normal.woff2": "/packs/media/files/inter-greek-400-normal-94fd6d5b.woff2",
+  "media/files/inter-greek-ext-400-normal.woff2": "/packs/media/files/inter-greek-ext-400-normal-18e3b17c.woff2",
+  "media/files/inter-latin-400-normal.woff2": "/packs/media/files/inter-latin-400-normal-c96fe5ff.woff2",
+  "media/files/inter-latin-ext-400-normal.woff2": "/packs/media/files/inter-latin-ext-400-normal-325ea6d3.woff2",
+  "media/files/inter-vietnamese-400-normal.woff2": "/packs/media/files/inter-vietnamese-400-normal-a1bc9a8f.woff2",
+  "media/files/raleway-all-400-normal.woff": "/packs/media/files/raleway-all-400-normal-8745d609.woff",
+  "media/files/raleway-cyrillic-400-normal.woff2": "/packs/media/files/raleway-cyrillic-400-normal-cb4f2846.woff2",
+  "media/files/raleway-cyrillic-ext-400-normal.woff2": "/packs/media/files/raleway-cyrillic-ext-400-normal-fb4e0523.woff2",
+  "media/files/raleway-latin-400-normal.woff2": "/packs/media/files/raleway-latin-400-normal-d0033942.woff2",
+  "media/files/raleway-latin-ext-400-normal.woff2": "/packs/media/files/raleway-latin-ext-400-normal-0d87da54.woff2",
+  "media/files/raleway-vietnamese-400-normal.woff2": "/packs/media/files/raleway-vietnamese-400-normal-8efa7e0a.woff2",
+  "vendors~actioncable.js": "/packs/js/vendors~actioncable-29f064210a24da2af6f1.chunk.js",
+  "vendors~actioncable.js.map": "/packs/js/vendors~actioncable-29f064210a24da2af6f1.chunk.js.map"
 }

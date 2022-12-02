@@ -1,69 +1,92 @@
-<% content_for :head do %>
-  <%= javascript_pack_tag 'landing_page' %>
-<% end %>
-
-<div class="jumbotron jumbotron-fluid hero mt-0 position-relative hero   py-5">
-  <div class="container">
-    <div class="row mt-5">
-      <div class="col-6 bg-secondary text-white bg-opacity-50 align-items-center">  
-        <h2 class="display-5"><b>Open Access Database for absolute chronological archaeological information</b></h2>
-        <p><b>XRONOS</b></p>
-      </div>
-    </div>
+<div class="jumbotron jumbotron-fluid hero mt-0 position-relative hero py-5 shadow">
+  <div class="container h-100 d-flex flex-column" style="text-shadow: var(--bs-dark) 0 0 1rem;">
+    <h1 class="w-75 mt-auto h2 fw-bold">XRONOS</h1>
+    <h2 class="w-75 mb-auto display-5 fw-bold">Open chronometric data for archaeology</h2>
   </div>
-  <span class="hero_caption position-absolute bottom-0 end-0">Photo by <a href="https://unsplash.com/@sahinsezerdincer?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Şahin Sezer Dinçer</a> on <a href="https://unsplash.com/s/photos/hourglass?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></span>
+  <span class="hero_caption position-absolute bottom-0 end-0"><small>Photo: <a class="link-light" href="https://unsplash.com/@sahinsezerdincer?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Şahin Sezer Dinçer</a> on <a class="link-light" href="https://unsplash.com/s/photos/hourglass?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></small></span>
 </div>
 
-<div class="container py-5">
-  <div class="row text-muted">
-    <div class="col-4" style="transform: rotate(0);">
-      <h4> <sup>14</sup>C Data</h4>
-      <h3><a href="/map" class="card-link stretched-link text-secondary text-decoration-none"><%= number_with_delimiter(C14Measurement.count)%></a></h3>
+
+<section class="mb-5 py-5 bg-primary text-light shadow">
+  <div class="container my-5 d-flex text-center">
+
+    <div class="flex-fill">
+      <%= xr_icon Site, { light: true }, { class: "d-block mx-auto mb-2", style: "width: 5rem;" } %>
+      <a href="/sites" class="display-5 link-secondary text-decoration-none">
+        <%= number_with_delimiter(Site.count)%>
+      </a>
+      <p class="h4"><%= Site.label.humanize.pluralize %></p>
     </div>
-    <div class="col-4" style="transform: rotate(0);">
-      <h4> Sites </h4>
-      <h3><a href="/map" class="card-link stretched-link text-secondary text-decoration-none"><%= number_with_delimiter(Site.count)%></a></h3>
+
+    <div class="flex-fill">
+      <%= xr_icon C14, { light: true }, { class: "d-block mx-auto mb-2", style: "width: 5rem;" } %>
+      <a href="/c14s" class="display-5 link-secondary text-decoration-none">
+        <%= number_with_delimiter(C14.count)%>
+      </a>
+      <p class="h4"><%= C14.label.humanize.pluralize %></p>
     </div>
-    <div class="col-4" style="transform: rotate(0);">
-      <h4> Databases </h4>
-      <h3><a href="/map" class="card-link stretched-link text-secondary text-decoration-none"><%= number_with_delimiter(SourceDatabase.count) %></a></h3>
+
+    <div class="flex-fill">
+      <%= xr_icon Typo, { light: true }, { class: "d-block mx-auto mb-2", style: "width: 5rem;" } %>
+      <a href="/typos" class="display-5 link-secondary text-decoration-none">
+        <%= number_with_delimiter(Typo.count)%>
+      </a>
+      <p class="h4"><%= Typo.label.humanize.pluralize %></p>
     </div>
+
+    <div class="flex-fill text-dark position-relative">
+      <span class="position-absolute top-0 end-0 text-warning">
+        Coming soon!
+        <%= fa_icon "certificate" %>
+      </span>
+      <%= image_tag "icons/dendro.svg", { class: "d-block mx-auto mb-2", style: "width: 5rem;" } %>
+      <a href="#" class="display-5 link-dark text-decoration-none">
+        —
+      </a>
+      <p class="h4">Dendro dates</p>
+    </div>
+
   </div>
-  <div class="row pt-5 text-muted">
-    <div class="col">
-        <h3>Mission</h3>
+</section>
+
+<div class="container">
+
+  <section class="mb-5">
+      <h3>What is XRONOS?</h3>
       <p>
       In the spirit of the Open Science, the XRONOS project aims at developing a worldwide unique and novel database, to compile and manage the two most important forms of absolute chronological information – radiocarbon and dendrochronological data – to enable a multitude of transdisciplinary research projects on population dynamics, human-environmental dependencies and thus fundamental transformations in the past.
       </p>
+  </section>
 
-    </div>
-  </div>
-  <div class="row pt-5 text-muted">
+  <section class="mb-5">
     <h3>News</h3>
 
-    <%
-        xml = HTTParty.get("https://blog.xronos.ch/index.php/feed/").body
-    feed = Feedjira.parse(xml)
-  %>
-  </div>
-  <div class="row row-cols-1 row-cols-md-3 g-4">
-    <% feed.entries.each do |entry| %>
-      <% doc = Nokogiri::HTML(entry.content) %>
-      <div class="col">
-        <div class="card h-100" style="width: 18rem;">
-          <%if img = doc.xpath('//img').first %>
-            <img src="<%=img.attr('src')%>" class="card-img-top" alt="...">
-          <%	end%>
+    <% xml = HTTParty.get("https://blog.xronos.ch/index.php/feed/").body %>
+    <% feed = Feedjira.parse(xml) %>
+
+    <div class="d-flex flex-column">
+      <% feed.entries.each do |entry| %>
+        <% doc = Nokogiri::HTML(entry.content) %>
+        <article class="card flex-row mt-3">
+          <% if img = doc.xpath('//img').first %>
+            <img class="card-img-top" style="width: 10rem; height: auto;" src="<%=img.attr('src')%>" />
+          <% end %>
           <div class="card-body">
-            <p class="card-text"><%=entry.title%></p>
-            <a href="<%=entry.url%>" class="card-link stretched-link">Read More</a>
+            <h4 class="card-title"><%= entry.title %></h4>
+            <p class="card-subtitle text-muted"><%= entry.published.strftime('%Y-%m-%d') %></p>
+            <p class="card-text">
+              <%= doc.xpath('//p').first.children.to_s.html_safe %>
+              <% if doc.xpath('//p').length > 1 %>
+                <span class="text-muted">[...]</span>
+              <% end %>
+            </p>
+            <a class="card-link" href="<%= entry.url %>">Read more</a>
           </div>
-        </div>
-      </div>
+        </article>
+      <% end %>
+    </div>
 
-    <% end %>
-
-  </div>
+  </section>
 
 </div>
 

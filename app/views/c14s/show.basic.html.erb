@@ -1,0 +1,40 @@
+<div class="container">
+  <%# render 'shared/action_breadcrumbs', i: @c14 %>
+
+  <p>
+  <strong>Bp:</strong>
+  <%= @c14.bp %>
+  </p>
+
+  <p>
+  <strong>Std:</strong>
+  <%= @c14.std %>
+  </p>
+
+  <p>
+  <strong>Cal bp:</strong>
+  <%= @c14.cal_bp %>
+  </p>
+
+  <p>
+  <strong>Cal std:</strong>
+  <%= @c14.cal_std %>
+  </p>
+
+  <p>
+  <strong>Delta c13:</strong>
+  <%= @c14.delta_c13 %>
+  </p>
+
+  <p>
+  <strong>Delta c13 std:</strong>
+  <%= @c14.delta_c13_std %>
+  </p>
+
+  <p>
+  <strong>Method:</strong>
+  <%= @c14.method %>
+  </p>
+
+  <%= render 'shared/action_buttons', i: @c14 %>
+</div>

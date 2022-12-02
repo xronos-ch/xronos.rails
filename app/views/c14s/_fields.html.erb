@@ -1,0 +1,47 @@
+<div class="row">
+  <div class="col">
+    <%= f.text_field :lab_identifier, label: "Lab identifier" %>
+  </div>
+  <div class="col">
+    <%= f.collection_select :c14_lab_id, C14Lab.all, :id, :name,
+      { label: "Lab", include_blank: '<NA>' },
+      { data: { controller: 'tom-select' } }
+    %>
+  </div>
+</div>
+
+<%# f.collection_select :sample_id, 
+  Sample.joins(:context).where('contexts.site_id' => @c14.site.id), 
+  :id, :position_description,
+  {},
+  { data: { controller: 'tom-select' } }
+%>
+
+<%= f.fields_for :sample, @c14.sample do |ff| %>
+  <%= render "samples/fields", f: ff %>
+<% end %>
+
+<h2 class="h5">Measurement</h2>
+
+<%= f.text_field :method, label: "Method" %>
+
+<div class="row">
+  <div class="col"><%= f.number_field :bp, label: "Age", append: "uncal BP" %></div>
+  <div class="col"><%= f.number_field :std, label: "Error", prepend: "±" %></div>
+</div>
+
+<div class="row">
+  <div class="col"><%= f.number_field :cal_bp, label: "Calibrated age", append: "cal BP" %></div>
+  <div class="col"><%= f.number_field :cal_std, label: "Calibrated error", prepend: "±" %></div>
+</div>
+
+<div class="row">
+  <div class="col"><%= f.number_field :delta_c13, label: "δ13C", append: "‰" %></div>
+  <div class="col"><%= f.number_field :delta_c13_std, label: "δ13C error", prepend: "±" %></div>
+</div>
+
+<h2 class="h5">References</h2>
+
+<!-- TODO: source database -->
+<!-- TODO: references? -->
+

@@ -1,0 +1,46 @@
+<% if import_table.parsed.nil? %>
+  <p class="text-danger">Failed to parse file. Please check the read options.</p>
+  <% if import_table.parse_errors.present? %>
+    <ul class="text-danger">
+      <li><b>Error:</b> <%= import_table.parse_errors %></li>
+    </ul>
+  <% end %>
+<% else %>
+  <div class="d-flex flex-column">
+    <h3 class="text-muted">Preview</h3>
+
+    <p>
+      Parsed <%= import_table.parsed.headers.count %> columns 
+      and <%= import_table.parsed.count %> rows:
+    </p>
+
+    <div class="flex-grow-1">
+      <table class="table table-hover">
+
+        <thead>
+          <tr>
+            <th>#</th>
+            <% import_table.parsed.headers.each do |header| %>
+              <th><%= header %></th>
+            <% end %>
+          </tr>
+        </thead>
+
+        <tbody class="font-monospace small">
+          <% preview.each_with_index do |row, index| %>
+            <tr>
+              <td class="text-muted"><%= @pagy.from + index %></td>
+              <% row.each do |col| %>
+                <td><%= col.nil? ? na_value : col %></td>
+              <% end %>
+            <% end %>
+            </tr>
+        </tbody>
+
+      </table>
+    </div>
+
+    <div>
+      <%== pagy_bootstrap_nav(@pagy) %>
+    </div>
+<% end %>

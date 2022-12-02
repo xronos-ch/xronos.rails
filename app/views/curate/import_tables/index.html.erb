@@ -1,0 +1,21 @@
+<% content_for :title, "Import tabular data" %>
+
+<div class="container p-3 ms-0">
+  <h2>Import tabular data</h2>
+
+  <section class="mb-5">
+    <h3>Import new dataset</h3>
+    <%= turbo_frame_tag "new_import_table", src: new_curate_import_table_path, target: "_top" %>
+  </section>
+
+  <section class="mb-5">
+    <h3>Unfinished imports</h3>
+    <%= render "table", import_tables: @import_tables.where(imported_at: nil) %>
+  </section>
+
+  <section class="mb-5">
+    <h3>Previous imports</h3>
+    <%= render "table", import_tables: @import_tables.where.not(imported_at: nil) %>
+  </section>
+
+</div>

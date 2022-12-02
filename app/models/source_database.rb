@@ -1,7 +1,8 @@
 class SourceDatabase < ApplicationRecord
+  has_paper_trail
 
   validates :name, presence: true
 
-  has_many :c14_measurements, inverse_of: :source_database
+  has_many :c14s, inverse_of: :source_database
 
 end

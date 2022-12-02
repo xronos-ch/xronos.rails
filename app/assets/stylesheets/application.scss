@@ -10,23 +10,53 @@
  * files in this directory. Styles in this file should be added after the last require_* statement.
  * It is generally better to create a new file per style scope.
  *
- *= require_tree .
+ * require_tree is turned off, so @import application-wide stylesheets below.
+ * require_tree .
  *= require_self
  *= require leaflet
  *= require leaflet.markercluster
  *= require font-awesome
  *= require jquery-ui
  *= require ion.rangeSlider.css
- *= require dataTables.bootstrap5.min
- *= require buttons.bootstrap5.min.css
 */
 
-$primary:    #424242;
-$secondary:  #1768ac;
-$success:    #496f5d;
-$info:       #7CDEDC;
-$warning:    #FFEC51;
-$danger:     #A44A3F;
+// Bootstrap variables
+$primary:    #3C3B39;
+$secondary:  #B99555;
+$success:    #696B46;
+$info:       #B99555;
+$warning:    #FABD2F;
+$danger:     #A8462D;
+$light:      #F3F6F9;
+$dark:       #1D1D1D;
 
+$font-family-sans-serif:
+	Inter,
+	Helvetica Neue, 
+	Helvetica, 
+	Nimbus Sans,
+	FreeSans,
+	Arial, 
+	Arimo,
+	Liberation Sans,
+	sans-serif;
+
+$headings-font-family: "Raleway", $font-family-sans-serif;
+$enable-shadows: true;
+
+// Optional Bootstrap features
+
+// Bootstrap
 @import "bootstrap";
-@import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
+@import "buttons.bootstrap5.min.css";
+@import "select.bootstrap5.min.css";
+@import "rails_bootstrap_forms";
+@import "tom-select/dist/scss/tom-select.bootstrap5";
+
+// Other gems
+@import "dataTables.bootstrap5.min.css";
+@import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+
+// Application 
+@import "frontend";
+@import "layout";

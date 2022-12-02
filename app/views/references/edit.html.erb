@@ -1,10 +1,3 @@
-<div class="field_master_top">
-  <b>Editing Reference</b>
-</div>
-
-<div class="field_master">
-  <%= render 'form', reference: @reference %>
-</div>
-
-<%= link_to 'Show', @reference %> |
-<%= link_to 'Back', references_path %>
+<%= render "shared/remote_modal", title: "Edit reference" do %>
+  <%= render "form" %>
+<% end %>
