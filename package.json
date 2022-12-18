@@ -30,6 +30,7 @@
 		"leaflet-providers": "^1.13.0",
 		"leaflet.markercluster": "^1.5.3",
 		"rails-erb-loader": "^5.5.2",
+		"supercluster": "^7.1.5",
 		"tom-select": "^2.0.1"
 	},
 	"devDependencies": {
