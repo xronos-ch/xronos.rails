@@ -2,19 +2,10 @@ module Api
   module V1
     class DataController < ApplicationController
     
-      #before_action :doorkeeper_authorize! # Requires access token for all actions
-      
-      # Authorize only necessary for admin
       before_action only: [:create, :update, :destroy] do
         doorkeeper_authorize! :admin
       end
       
-      # Authorize only necessary for admin for all actions
-      # before_action do
-      #   doorkeeper_authorize! :admin
-      # end
-
-
       respond_to :json
       before_action :valid_query, only: [:index]
 
@@ -24,70 +15,72 @@ module Api
             
       def index
   
-        @data ||= Measurement.includes({c14_measurement: :source_database}, :lab, sample: {arch_object: [{site_phase: {site: :country}}, :on_site_object_position, :material, :species]})
+        @data ||= C14.includes(
+          :c14_lab,
+          {site: :site_types},
+          {sample: [:material, :taxon]},
+          :context,
+          :source_database
+        )
 
-        # labnr
+        # lab_identifier (v1: labnr)
         unless params[:query_labnr].nil?
           @data = @data.where(
-              labnr: params[:query_labnr].split('|')
+              lab_identifier: params[:query_labnr].split('|')
           ).all
         end
 
         # site name
         unless params[:query_site].nil?
           @data = @data.where(
-            sample: {arch_object: {site_phase: {sites: {:name => params[:query_site].split('|')}}}}
+            sites: { :name => params[:query_site].split('|') }
           ).all
         end
 
         # site type
         unless params[:query_site_type].nil?
           @data = @data.where(
-            sample: {arch_object: {site_phase: {site_types: {name: params[:query_site_type].split('|')}}}}
+            site_types: { :name => params[:query_site_type].split('|') }
           ).all
         end
 
         # country
         unless params[:query_country].nil?
           @data = @data.where(
-            sample: {arch_object: {site_phase: {site: {countries: {name: params[:query_country].split('|')}}}}}
+            sites: { :country_code => params[:query_country].split('|') }
           ).all
         end
 
         # feature
         unless params[:query_feature].nil?
           @data = @data.where(
-            sample: {arch_object: {on_site_object_positions: {feature: params[:query_feature].split('|')}}}
+            contexts: { :name => params[:query_feature].split('|') }
           ).all
         end
 
         # material
         unless params[:query_material].nil?
           @data = @data.where(
-            sample: {arch_object: {materials: {name: params[:query_material].split('|')}}}
+            materials: { :name => params[:query_material].split('|') }
           ).all
         end
 
         # species
         unless params[:query_species].nil?
           @data = @data.where(
-            sample: {arch_object: {species: {name: params[:query_species].split('|')}}}
+            taxons: { :name => params[:query_species].split('|') }
           ).all
         end
 
       end
 
       def show
-        @date = Measurement.find(params[:id])
+        @date = C14.find(params[:id])
       end
       
       private
       
       def valid_query
-#        return true if params.empty?
-#        allowed_queries = %w(query_labnr query_site query_site_type query_country query_feature query_material query_species)
-#        return true if params.except(allowed_queries).empty?
-#        return false
         params.permit(:format, :query_labnr, :query_site, :query_site_type, :query_country, :query_feature, :query_material, :query_species)
       end
     end
