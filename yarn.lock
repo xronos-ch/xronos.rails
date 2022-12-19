@@ -4224,6 +4224,13 @@ leaflet-providers@^1.13.0:
   resolved "https://registry.yarnpkg.com/leaflet-providers/-/leaflet-providers-1.13.0.tgz#10c843a23d5823a65096d40ad53f27029e13434b"
   integrity sha512-f/sN5wdgBbVA2jcCYzScIfYNxKdn2wBJP9bu+5cRX9Xj6g8Bt1G9Sr8WgJAt/ckIFIc3LVVxCBNFpSCfTuUElg==
 
+leaflet-spin@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/leaflet-spin/-/leaflet-spin-1.1.2.tgz#d77f93d9a6ce70a62f33bc367b1e16e8356d22b2"
+  integrity sha512-OLpeDrrAv1YY8NVSnOP0YfICFFm+IFauL77erXH87ZiTIXl3aPwUJXOd336DrQCe4aFsY+F3oG/1+aXyjqKV2w==
+  dependencies:
+    spin.js "^2.3.1"
+
 leaflet.markercluster@^1.5.3:
   version "1.5.3"
   resolved "https://registry.yarnpkg.com/leaflet.markercluster/-/leaflet.markercluster-1.5.3.tgz#9cdb52a4eab92671832e1ef9899669e80efc4056"
@@ -6533,6 +6540,11 @@ spdy@^4.0.2:
     http-deceiver "^1.2.7"
     select-hose "^2.0.0"
     spdy-transport "^3.0.0"
+
+spin.js@^2.3.1:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/spin.js/-/spin.js-2.3.2.tgz#6caa56d520673450fd5cfbc6971e6d0772c37a1a"
+  integrity sha512-ryhCvKCRa6J5Fxa7Y+fnhE2a+e05JwfW5dxO82zPd0uDM9o+qp8p74BJUurjiqCqmDsWNvGOAxfqdD317XIedg==
 
 split-string@^3.0.1, split-string@^3.0.2:
   version "3.1.0"

@@ -3,6 +3,7 @@ import L from "leaflet"
 import "leaflet-providers"
 import { MarkerClusterGroup } from "leaflet.markercluster"
 import "leaflet-lasso"
+import "leaflet-spin"
 import Supercluster from 'supercluster';
 
 // Connects to data-controller="map"
@@ -73,7 +74,9 @@ export default class extends Controller {
         this.markersLayer.addTo(this.map);
 
 		// Initial view
-		this.map.fitWorld()
+		this.map.fitWorld();
+        
+        const now = Date.now();
 
 		this.load()
         
@@ -160,6 +163,7 @@ export default class extends Controller {
 		var markers_url = new URL(this.markersUrlValue)
 		markers_url.search += "&select[]=sites.id&select[]=sites.name&select[]=sites.lat&select[]=sites.lng"
 		console.debug("Fetching map data from " + markers_url.toString())
+        this.map.spin(true)
         
 		// Load markers
 		var data = fetch(markers_url, { headers: { 'Accept': 'application/json' } })
@@ -184,6 +188,8 @@ export default class extends Controller {
                     const bounds = this.map.getBounds();
                     this.markersLayer.addData(this.index.getClusters([bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth()], this.map.getZoom()));                        //this.map.addLayer(index);    
 				}
+            this.map.spin(false)
+                
 			})
 	}
 }

@@ -28,6 +28,7 @@
 		"leaflet": "^1.8.0",
 		"leaflet-lasso": "^2.2.8",
 		"leaflet-providers": "^1.13.0",
+		"leaflet-spin": "^1.1.2",
 		"leaflet.markercluster": "^1.5.3",
 		"rails-erb-loader": "^5.5.2",
 		"supercluster": "^7.1.5",
