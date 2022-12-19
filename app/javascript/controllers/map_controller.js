@@ -76,8 +76,6 @@ export default class extends Controller {
 		// Initial view
 		this.map.fitWorld();
         
-        const now = Date.now();
-
 		this.load()
         
         function update() {
