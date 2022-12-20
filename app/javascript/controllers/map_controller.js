@@ -61,7 +61,7 @@ export default class extends Controller {
                 radius: 60,
                 extent: 256,
                 maxZoom: 8
-            })
+            });
             
         this.index = index;
         
