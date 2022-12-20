@@ -58,7 +58,12 @@ class Site < ApplicationRecord
   end
 
   def recursive_references
-    (references + c14s.map(&:references).reduce(:+)).uniq
+    c14_references = c14s.map(&:references).reduce(:+)
+    unless c14_references.nil?
+      (references + c14_references).uniq
+    else
+      references
+    end
   end
 
 end
