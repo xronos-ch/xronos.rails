@@ -138,9 +138,10 @@ export default class extends Controller {
 							'<a class="btn btn-primary btn-sm" style="color: #fff" href="/sites/' + feature.properties.id + '" target="_blank">' +
 							'Site details <i class="fa fa-external-link"></i>' +
 							'</a>' +
-							'<button class="btn btn-light btn-sm" type="submit" onclick="window.location=\'' + '/table?utf8=✓&query_site=' + feature.properties.name + '\';">' +
-							"<i class=\'fa fa-filter\'></i> Measurements" +
-							"</button>"
+							//'<button class="btn btn-light btn-sm" type="submit" onclick="window.location=\'' + '/table?utf8=✓&query_site=' + feature.properties.name + '\';">' +
+							//"<i class=\'fa fa-filter\'></i> Measurements" +
+							//"</button>"
+					    ''
 						);
 
         const count = feature.properties.point_count;
