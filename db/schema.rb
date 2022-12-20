@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_12_02_010908) do
+ActiveRecord::Schema.define(version: 2022_12_20_142603) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,6 +37,7 @@ ActiveRecord::Schema.define(version: 2022_12_02_010908) do
     t.bigint "sample_id"
     t.string "lab_identifier"
     t.index ["c14_lab_id"], name: "index_c14s_on_c14_lab_id"
+    t.index ["lab_identifier"], name: "index_c14s_on_lab_identifier"
     t.index ["sample_id"], name: "index_c14s_on_sample_id"
     t.index ["source_database_id"], name: "index_c14s_on_source_database_id"
   end
@@ -56,6 +57,8 @@ ActiveRecord::Schema.define(version: 2022_12_02_010908) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "site_id"
+    t.index ["name"], name: "index_contexts_on_name"
+    t.index ["site_id"], name: "index_contexts_on_site_id"
   end
 
   create_table "import_tables", force: :cascade do |t|
@@ -73,6 +76,7 @@ ActiveRecord::Schema.define(version: 2022_12_02_010908) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_materials_on_name"
   end
 
   create_table "measurement_states", force: :cascade do |t|
@@ -154,6 +158,9 @@ ActiveRecord::Schema.define(version: 2022_12_02_010908) do
     t.decimal "position_y"
     t.decimal "position_z"
     t.text "position_crs"
+    t.index ["context_id"], name: "index_samples_on_context_id"
+    t.index ["material_id"], name: "index_samples_on_material_id"
+    t.index ["taxon_id"], name: "index_samples_on_taxon_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -170,6 +177,7 @@ ActiveRecord::Schema.define(version: 2022_12_02_010908) do
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_site_types_on_name"
   end
 
   create_table "site_types_sites", id: false, force: :cascade do |t|
@@ -186,6 +194,8 @@ ActiveRecord::Schema.define(version: 2022_12_02_010908) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "country_code"
+    t.index ["country_code"], name: "index_sites_on_country_code"
+    t.index ["name"], name: "index_sites_on_name"
   end
 
   create_table "source_databases", force: :cascade do |t|
@@ -201,6 +211,7 @@ ActiveRecord::Schema.define(version: 2022_12_02_010908) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_taxons_on_name"
   end
 
   create_table "typos", force: :cascade do |t|
