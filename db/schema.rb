@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_12_20_142603) do
+ActiveRecord::Schema.define(version: 2022_12_20_143517) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,6 +20,8 @@ ActiveRecord::Schema.define(version: 2022_12_20_142603) do
     t.boolean "active"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_c14_labs_on_active"
+    t.index ["name"], name: "index_c14_labs_on_name"
   end
 
   create_table "c14s", force: :cascade do |t|
@@ -38,6 +40,7 @@ ActiveRecord::Schema.define(version: 2022_12_20_142603) do
     t.string "lab_identifier"
     t.index ["c14_lab_id"], name: "index_c14s_on_c14_lab_id"
     t.index ["lab_identifier"], name: "index_c14s_on_lab_identifier"
+    t.index ["method"], name: "index_c14s_on_method"
     t.index ["sample_id"], name: "index_c14s_on_sample_id"
     t.index ["source_database_id"], name: "index_c14s_on_source_database_id"
   end
@@ -84,6 +87,7 @@ ActiveRecord::Schema.define(version: 2022_12_20_142603) do
     t.text "description"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["name"], name: "index_measurement_states_on_name"
   end
 
   create_table "oauth_access_grants", force: :cascade do |t|
@@ -145,6 +149,7 @@ ActiveRecord::Schema.define(version: 2022_12_20_142603) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "short_ref"
+    t.index ["short_ref"], name: "index_references_on_short_ref"
   end
 
   create_table "samples", force: :cascade do |t|
@@ -160,6 +165,7 @@ ActiveRecord::Schema.define(version: 2022_12_20_142603) do
     t.text "position_crs"
     t.index ["context_id"], name: "index_samples_on_context_id"
     t.index ["material_id"], name: "index_samples_on_material_id"
+    t.index ["position_crs"], name: "index_samples_on_position_crs"
     t.index ["taxon_id"], name: "index_samples_on_taxon_id"
   end
 
@@ -205,6 +211,8 @@ ActiveRecord::Schema.define(version: 2022_12_20_142603) do
     t.string "licence"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["licence"], name: "index_source_databases_on_licence"
+    t.index ["name"], name: "index_source_databases_on_name"
   end
 
   create_table "taxons", force: :cascade do |t|
@@ -222,6 +230,7 @@ ActiveRecord::Schema.define(version: 2022_12_20_142603) do
     t.datetime "updated_at", null: false
     t.integer "parent_id"
     t.bigint "sample_id"
+    t.index ["name"], name: "index_typos_on_name"
     t.index ["sample_id"], name: "index_typos_on_sample_id"
   end
 
@@ -257,7 +266,9 @@ ActiveRecord::Schema.define(version: 2022_12_20_142603) do
     t.text "object_changes"
     t.string "whodunnit_user_email"
     t.text "revision_comment"
+    t.index ["event"], name: "index_versions_on_event"
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
+    t.index ["whodunnit"], name: "index_versions_on_whodunnit"
   end
 
   add_foreign_key "c14s", "source_databases"
