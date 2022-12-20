@@ -3,6 +3,8 @@ import L from "leaflet"
 import "leaflet-providers"
 import { MarkerClusterGroup } from "leaflet.markercluster"
 import "leaflet-lasso"
+import "leaflet-spin"
+import Supercluster from 'supercluster';
 
 // Connects to data-controller="map"
 export default class extends Controller {
@@ -12,7 +14,8 @@ export default class extends Controller {
 		markersData: Array,
 		markersUrl: String
 	}
-
+    
+    
 	connect() {
 		var bounds = new L.LatLngBounds(
 			new L.LatLng(-180, -180), 
@@ -28,14 +31,14 @@ export default class extends Controller {
 			"Map with labels": labelledPhysical,
 			"Imagery": imagery
 		};
-
+        
 		var baseMap = physical
 		if (this.hasBaseMapValue) {
 			baseMap = baseMaps[this.baseMapValue]
 		}
 
 		// Create map
-		this.map = L.map(this.containerTarget, {
+		var map = L.map(this.containerTarget, {
 			minZoom: 3,
 			maxZoom: 17,
 			maxBounds: bounds,
@@ -44,6 +47,8 @@ export default class extends Controller {
 			preferCanvas: true,
 			layers: [baseMap]
 		})
+        
+        this.map = map;
 
 		// Additional controls
 		L.control.layers(baseMaps, null, 
@@ -51,12 +56,39 @@ export default class extends Controller {
 		).addTo(this.map)
 
 		L.control.scale({ imperial: false }).addTo(this.map);
-
+        
+        const index = new Supercluster({
+                radius: 60,
+                extent: 256,
+                maxZoom: 8
+            });
+            
+        this.index = index;
+        
+        var markersLayer = L.geoJson(null, {
+            pointToLayer: this.createClusterIcon
+        });
+        
+        this.markersLayer = markersLayer;
+        
+        this.markersLayer.addTo(this.map);
 
 		// Initial view
-		this.map.fitWorld()
-
+		this.map.fitWorld();
+        
 		this.load()
+        
+        function update() {
+            const bounds = map.getBounds();
+            markersLayer.clearLayers();
+            markersLayer.addData(index.getClusters([bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth()], map.getZoom()));
+        }
+        
+        map.on('moveend', function() {update()});
+        
+        markersLayer.on('click', function (e) {
+            map.flyTo(e.latlng, index.getClusterExpansionZoom(e.layer.feature.properties.cluster_id));
+        })        
 	}
 
 	load() {
@@ -92,51 +124,71 @@ export default class extends Controller {
 		this.map.fitBounds(markers.getBounds())
 	}
 
+    createClusterIcon(feature, latlng) {
+        if (!feature.properties.cluster) return L.circleMarker(
+				latlng, {
+					color: 'black',
+					fillColor: '#A44A3F',
+					fillOpacity: 0.5,
+					weight: 2,
+					radius: 4,
+					id: feature.properties.id
+				}).bindPopup(
+							'<h5>' + feature.properties.name + '</h5>' + 
+							'<a class="btn btn-primary btn-sm" style="color: #fff" href="/sites/' + feature.properties.id + '" target="_blank">' +
+							'Site details <i class="fa fa-external-link"></i>' +
+							'</a>' +
+							//'<button class="btn btn-light btn-sm" type="submit" onclick="window.location=\'' + '/table?utf8=✓&query_site=' + feature.properties.name + '\';">' +
+							//"<i class=\'fa fa-filter\'></i> Measurements" +
+							//"</button>"
+					    ''
+						);
+
+        const count = feature.properties.point_count;
+        const size =
+            count < 100 ? 'small' :
+            count < 1000 ? 'medium' : 'large';
+        const icon = L.divIcon({
+            html: `<div><span>${  feature.properties.point_count_abbreviated  }</span></div>`,
+            className: `marker-cluster marker-cluster-${  size}`,
+            iconSize: L.point(40, 40)
+        });
+
+        return L.marker(latlng, {icon});
+    }
+    
 	loadRemoteMarkers() {
 		// Construct URL to markers data
 		var markers_url = new URL(this.markersUrlValue)
 		markers_url.search += "&select[]=sites.id&select[]=sites.name&select[]=sites.lat&select[]=sites.lng"
 		console.debug("Fetching map data from " + markers_url.toString())
-
+        this.map.spin(true)
+        
 		// Load markers
 		var data = fetch(markers_url, { headers: { 'Accept': 'application/json' } })
 			.then(response => response.json())
 			.then(data => {
 				data = data.xrons
 				var markers = data.filter(data => data.lat && data.lng)
-					.map(data => 
-						L.circleMarker(
+					.map(data => {
+						var obj = L.marker(
 							[data.lat, data.lng], {
-								color: 'black',
-								fillColor: '#A44A3F',
-								fillOpacity: 0.5,
-								weight: 2,
-								radius: 4,
-								id: data.id
+								id: data.id,
+                                name: data.name
 							}
-						).bindPopup(
-							'<h5>' + data.name + '</h5>' + 
-							'<a class="btn btn-primary btn-sm" style="color: #fff" href="/sites/' + data.id + '" target="_blank">' +
-							'Site details <i class="fa fa-external-link"></i>' +
-							'</a>' +
-							'<button class="btn btn-light btn-sm" type="submit" onclick="window.location=\'' + '/table?utf8=✓&query_site=' + data.name + '\';">' +
-							"<i class=\'fa fa-filter\'></i> Measurements" +
-							"</button>"
-						)
+						).toGeoJSON();
+                        obj.properties = {name: data.name, id:data.id};
+                        return obj;
+                        }
 					)
 
 				if (markers.length > 0) {
-					var cluster = L.markerClusterGroup()
-					cluster.addLayers(markers, {
-						chunkedLoading: true
-					})
-					const layers = [
-						...markers
-					];
-
-					this.map.addLayer(cluster);
-					this.map.fitBounds(cluster.getBounds())
+                    this.index.load(markers);
+                    const bounds = this.map.getBounds();
+                    this.markersLayer.addData(this.index.getClusters([bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth()], this.map.getZoom()));                        //this.map.addLayer(index);    
 				}
+            this.map.spin(false)
+                
 			})
 	}
 }
