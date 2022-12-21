@@ -17,61 +17,66 @@ module Api
   
         @data ||= C14.includes(
           :c14_lab,
-          {site: :site_types},
-          {sample: [:material, :taxon]},
-          :context,
-          :source_database
+          {sample: [:material,
+            :taxon,
+            {context:
+              [{site:
+                :site_types},
+                :typos]}]},
+          :source_database,
+          :references
         )
 
         # lab_identifier (v1: labnr)
         unless params[:query_labnr].nil?
           @data = @data.where(
               lab_identifier: params[:query_labnr].split('|')
-          ).all
+          )
         end
 
         # site name
         unless params[:query_site].nil?
           @data = @data.where(
             sites: { :name => params[:query_site].split('|') }
-          ).all
+          )
         end
 
         # site type
         unless params[:query_site_type].nil?
           @data = @data.where(
             site_types: { :name => params[:query_site_type].split('|') }
-          ).all
+          )
         end
 
         # country
         unless params[:query_country].nil?
           @data = @data.where(
             sites: { :country_code => params[:query_country].split('|') }
-          ).all
+          )
         end
 
         # feature
         unless params[:query_feature].nil?
           @data = @data.where(
             contexts: { :name => params[:query_feature].split('|') }
-          ).all
+          )
         end
 
         # material
         unless params[:query_material].nil?
           @data = @data.where(
             materials: { :name => params[:query_material].split('|') }
-          ).all
+          )
         end
 
         # species
         unless params[:query_species].nil?
           @data = @data.where(
             taxons: { :name => params[:query_species].split('|') }
-          ).all
+          )
         end
-
+        
+        @data = @data.to_a
       end
 
       def show
