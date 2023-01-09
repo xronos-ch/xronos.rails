@@ -12,6 +12,22 @@ class C14sController < ApplicationController
     @pagy, @c14s = pagy(C14.all.order(:lab_identifier))
   end
 
+  # GET /c14s/search
+  # GET /c14s/search.json
+  def search
+    @c14s = C14.search(params[:q])
+
+    respond_to do |format|
+      format.html { 
+        @pagy, @c14s = pagy(@c14s)
+        render :index
+      }
+      format.json  {
+        render :index
+      }
+    end
+  end
+
   # GET /c14s/1
   # GET /c14s/1.json
   def show

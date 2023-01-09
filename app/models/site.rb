@@ -1,6 +1,11 @@
 class Site < ApplicationRecord
   include DataHelper
 
+  include PgSearch::Model
+  pg_search_scope :search, 
+    against: :name, 
+    using: { tsearch: { prefix: true } } # match partial words
+
   has_paper_trail
   
   validates :name, presence: true
