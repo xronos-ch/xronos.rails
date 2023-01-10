@@ -9,7 +9,15 @@ class C14sController < ApplicationController
   # GET /c14s
   # GET /c14s.json
   def index
-    @pagy, @c14s = pagy(C14.all.order(:lab_identifier))
+    @c14s = C14.includes(
+      {sample: [
+        :material,
+        :taxon,
+        :context
+      ]},
+      :references
+    )
+    @pagy, @c14s = pagy(@c14s)
   end
 
   # GET /c14s/search
