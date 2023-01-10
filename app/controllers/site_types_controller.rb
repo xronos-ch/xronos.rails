@@ -9,6 +9,17 @@ class SiteTypesController < ApplicationController
     @site_types = SiteType.all
   end
 
+  # GET /site_types/search.json
+  def search
+    @site_types = SiteType.search(params[:q])
+
+    respond_to do |format|
+      format.json  {
+        render :index
+      }
+    end
+  end
+
   # GET /site_types/1
   # GET /site_types/1.json
   def show

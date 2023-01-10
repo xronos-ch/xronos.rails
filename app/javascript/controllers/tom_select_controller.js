@@ -23,28 +23,55 @@ export default class extends Controller {
 		// Remote data
 		if (this.hasRouteValue) {
 			var remoteUrl = '/' + this.routeValue + '.json'
+
 			settings.valueField = this.valueValue
 			settings.labelField = this.labelValue
 			settings.searchField = this.searchValue
 
-			settings.load = function(query, callback) {
-				var self = this;
-				if(self.loading > 1) {
-					callback()
-					return
+			// with search
+			if (remoteUrl.endsWith('search.json')) {
+				settings.shouldLoad = function(query) {
+					return query.length > 2
 				}
 
-				fetch(remoteUrl)
-					.then(response => response.json())
-					.then(json => {
-						callback(json)
-						self.settings.load = null
-					}).catch(()=>{
+				settings.load = function(query, callback) {
+					var self = this;
+					if(self.loading > 1) {
 						callback()
-					})
-			}
-		}
+						return
+					}
 
+					fetch(remoteUrl + '?q=' + encodeURIComponent(query))
+						.then(response => response.json())
+						.then(json => {
+							callback(json)
+						}).catch(()=>{
+							callback()
+						})
+				}
+			}
+
+			// without search (fetch once)
+			else {
+				settings.load = function(query, callback) {
+					var self = this;
+					if(self.loading > 1) {
+						callback()
+						return
+					}
+
+					fetch(remoteUrl)
+						.then(response => response.json())
+						.then(json => {
+							callback(json)
+							self.settings.load = null
+						}).catch(()=>{
+							callback()
+						})
+				}
+			}
+
+		}
 
 		new TomSelect(this.element, settings)
 	}

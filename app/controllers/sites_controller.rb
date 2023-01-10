@@ -18,8 +18,23 @@ class SitesController < ApplicationController
         @pagy, @sites = pagy(Site.all.order(:name))
         render :index
       }
-    #  format.json { render json: DataDatatable.new(params) }
       format.json
+    end
+  end
+
+  # GET /sites/search
+  # GET /sites/search.json
+  def search
+    @sites = Site.search(params[:q])
+
+    respond_to do |format|
+      format.html { 
+        @pagy, @sites = pagy(@sites.order(:name))
+        render :index
+      }
+      format.json  {
+        render :index
+      }
     end
   end
 
@@ -90,6 +105,7 @@ class SitesController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def site_params
       params.fetch(:site, {}).permit(
+        :q,
         :id,
         :name,
         :lat,

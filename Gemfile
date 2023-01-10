@@ -106,6 +106,9 @@ end
 # pagination
 gem "pagy"
 
+# search
+gem "pg_search"
+
 # forms
 gem "bootstrap_form", "~> 5.0"
 

@@ -9,6 +9,17 @@ class MaterialsController < ApplicationController
     @materials = Material.all
   end
 
+  # GET /materials/search.json
+  def search
+    @materials = Material.search(params[:q])
+
+    respond_to do |format|
+      format.json  {
+        render :index
+      }
+    end
+  end
+
   # GET /materials/1
   # GET /materials/1.json
   def show

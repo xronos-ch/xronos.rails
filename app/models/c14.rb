@@ -1,6 +1,11 @@
 class C14 < ApplicationRecord
   include DataHelper
 
+  include PgSearch::Model
+  pg_search_scope :search, 
+    against: :lab_identifier, 
+    using: { tsearch: { prefix: true } } # match partial words
+
   has_paper_trail
 
   validates :bp, :std, presence: true
