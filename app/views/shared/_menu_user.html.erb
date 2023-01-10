@@ -43,11 +43,11 @@
           <%= f.check_box :remember_me, class: "form-check-input form-check-input-sm"  %>
           <%= f.label :remember_me, "Remember me", class: "form-check-label col-form-label-sm" %>
         </div>
-        <%= f.submit 'Sign in', class: "btn btn-primary btn-sm pull-right" %>
+        <%= f.submit "Sign in", class: "btn btn-primary btn-sm pull-right" %>
       <% end %>
-      <!-- <div class="dropdown-divider"></div>
-        <%= link_to "Forgot your password?", new_password_path(:user), class: "dropdown-item" %>
-        <%= link_to('New around here? Sign up', new_user_registration_path, class: "dropdown-item") %> -->
+      <div class="dropdown-divider"></div>
+      <%= link_to "Register", new_user_registration_path, class: "small dropdown-item" %>
+      <%= link_to "Reset password", new_password_path(:user), class: "small dropdown-item" %>
     </div>
   </div>
 <% end %>
