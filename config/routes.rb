@@ -44,7 +44,8 @@ Rails.application.routes.draw do
   # User management
   resources :user_profiles
   devise_for :users, controllers: {
-      registrations: "registrations"
+      registrations: 'registrations',
+      sessions: 'users/sessions'
     }
 
   # Data views
