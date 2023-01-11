@@ -1,6 +1,31 @@
-<%= f.text_field :title %>
-<%= f.select :section, options_for_select(Article.sections.keys) %>
-<%= f.text_field :slug %>
+<%= f.text_field :title, 
+  label_as_placeholder: true, 
+  class: "form-control-lg",
+  data: {
+    "article-editor-target": "title",
+    action: "article-editor#updateSlug"
+  }
+%>
+
+<%= f.text_area :body, label_as_placeholder: true, 
+  label: "Body text. Styling with **Markdown** is supported.",
+  data: { controller: "markdown-editor", markdown_editor_target: "field" } %>
+
+<div>
+  <label for="basic-url" class="form-label">Location</label>
+  <div class="input-group">
+    <%= f.select :section, options_for_select(Article.sections.keys), hide_label: true %>
+    <%= f.text_field :slug, 
+      label: "lowercase-slug-without-spaces", 
+      label_as_placeholder: true, 
+      prepend: "/",
+      data: { 
+        "article-editor-target": "slug",
+        action: "article-editor#touchSlug"
+      }
+    %>
+  </div>
+</div>
+
 <%= f.collection_select :user_id, User.all, :id, :email %>
 <%= f.datetime_field :published_at %>
-<%= f.text_area :body %>

@@ -4,6 +4,9 @@
 
 import { application } from "./application"
 
+import ArticleEditorController from "./article_editor_controller.js"
+application.register("article-editor", ArticleEditorController)
+
 import FlashController from "./flash_controller.js"
 application.register("flash", FlashController)
 
@@ -12,6 +15,9 @@ application.register("home-hero", HomeHeroController)
 
 import MapController from "./map_controller.js"
 application.register("map", MapController)
+
+import MarkdownEditorController from "./markdown_editor_controller.js"
+application.register("markdown-editor", MarkdownEditorController)
 
 import RemoteModalController from "./remote_modal_controller.js"
 application.register("remote-modal", RemoteModalController)
