@@ -6,7 +6,10 @@ class SourceDatabasesController < ApplicationController
   # GET /source_databases
   # GET /source_databases.json
   def index
-    @source_databases = SourceDatabase.all
+    @source_databases = SourceDatabase
+      .left_joins(:c14s)
+      .select("source_databases.*, COUNT(c14s.id) AS c14s_count")
+      .group(:id)
   end
 
   # GET /source_databases/1

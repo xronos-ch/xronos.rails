@@ -19,7 +19,7 @@
         <tr>
           <td><%= link_to reference.short_ref, reference %></td>
           <td><%= reference.render %></td>
-          <td><%= reference.citations.count %></td>
+          <td><%= reference.citations_count %></td>
           <% if can? :manage, Reference %><td class="text-end"><%= render 'shared/action_buttons_compact', i: reference %></td><% end %>
         </tr>
       <% end %>

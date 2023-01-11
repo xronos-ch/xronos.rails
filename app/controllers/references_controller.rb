@@ -8,7 +8,10 @@ class ReferencesController < ApplicationController
   # GET /references
   # GET /references.json
   def index
-    @references = Reference.all
+    @references = Reference
+      .left_joins(:citations)
+      .select('"references".*, COUNT(citations.id) AS citations_count')
+      .group(:id)
     @pagy, @references = pagy(@references)
   end
 
