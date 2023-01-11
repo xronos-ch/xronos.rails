@@ -14,13 +14,15 @@ class DataController < ApplicationController
   def index
     @data = Data.new(filter_params, select_params)
     logger.debug { "Parsed filters: #{@data.filters.inspect}" }
-
+    @sites = @data.xrons.select("sites.id", "sites.lng", "sites.lat", "sites.name").distinct
+    
     respond_to do |format|
       format.html { 
         @pagy, @xrons = pagy(@data.xrons)
         render layout: "full_page" 
       }
       format.json { render json: @data }
+      format.geojson { render template: "api/v1/data/index.geojson", content_type: "application/geo+json" }
     end
   end
 
