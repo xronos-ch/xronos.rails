@@ -1,0 +1,4 @@
+<%= bootstrap_form_with(model: @article, local: true) do |f| %>
+  <%= render 'fields', f: f %>
+  <%= f.submit "Save", class: "btn btn-primary" %>
+<% end %>

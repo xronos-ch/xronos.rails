@@ -1,0 +1,25 @@
+<table class="responsive nowrap table table-hover align-middle">
+  <thead>
+    <tr>
+      <th>Article</th>
+      <th>Author</th>
+      <th class="text-end">Published</th>
+      <% if can? :manage, Article %><th><!-- Actions --></th><% end %>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% articles.each do |article| %>
+      <tr>
+        <td>
+          <%= link_to article.title, article %><br />
+          <code><%= article.section %>/<%= article.slug %></code>
+        </td>
+        <td><%= article.user.email %></td>
+        <td class="text-end"><%= article.published_at %></td>
+        <% if can? :manage, Article %><td class="text-end"><%= render 'shared/action_buttons', i: article %></td><% end %>
+      </tr>
+    <% end %>
+  </tbody>
+
+</table>

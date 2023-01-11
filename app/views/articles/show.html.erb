@@ -1,0 +1,19 @@
+<article class="container my-5">
+  <header>
+    <h1><%= @article.title %></h1>
+    <% if @article.news_section? %>
+      <p class="text-muted">
+        <%= @article.user.email %>, 
+        <%= @article.published_at.present? ? @article.published_at.to_fs : "draft" %>
+      </p>
+    <% end %>
+  </header>
+
+  <%= @article.body_html.html_safe %>
+
+  <% unless @article.news_section? %>
+    <footer>
+      <p class="text-muted">Last updated <%= @article.updated_at.to_formatted_s %>.</p>
+    </footer>
+  <% end %>
+</article>

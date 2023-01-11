@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   # Static about pages
   get '/about', to: 'about#show', defaults: { page: 'about' }
   get '/about/about', to: redirect('/about')
-  get '/about/:page' => 'about#show'
+  #get '/about/:page' => 'about#show'
 
   # Ordinary resources
   resources :c14s do
@@ -40,6 +40,12 @@ Rails.application.routes.draw do
     get 'search', on: :collection
   end
   resources :typos
+
+  # Articles (news posts and static pages)
+  resources :articles
+  get 'news/:slug', to: 'articles#show'
+  get 'about/:slug', to: 'articles#show'
+  get 'docs/:slug', to: 'articles#show'
 
   # User management
   resources :user_profiles
