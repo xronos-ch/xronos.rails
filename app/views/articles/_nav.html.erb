@@ -1,0 +1,9 @@
+<%# Expects section, itemclass, linkclass %>
+<% articles = Article.where(section: section) %>
+<% articles.each do |article| %>
+  <li class="<%= itemclass %>">
+    <a class="<%= linkclass %>" href="/<%= article.section %>/<%= article.slug %>">
+      <%= article.title %>
+    </a>
+  </li>
+<% end %>
