@@ -5,7 +5,10 @@ class Article < ApplicationRecord
 
   validates :title, presence: true
   validates :section, presence: true
-  validates :slug, presence: true, uniqueness: true
+  validates :slug, presence: true, uniqueness: true, format: {
+    with: /\A[a-z0-9]+(?:-[a-z0-9]+)*\z/,
+    message: "may only contain lowercase letters, numbers, and hyphens (-)"
+  }
 
   def path
     section + '/' + slug
