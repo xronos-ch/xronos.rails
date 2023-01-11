@@ -43,7 +43,7 @@ class SitesController < ApplicationController
   def show
     @site = Site.find(params[:id])
     @c14s = @site.c14s.includes([:references, sample: [ :material, :taxon, :context ]])
-    @typos = @site.typos
+    @typos = @site.typos.includes([:references])
   end
 
   # GET /sites/new

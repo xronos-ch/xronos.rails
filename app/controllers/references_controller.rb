@@ -21,7 +21,7 @@ class ReferencesController < ApplicationController
     @reference = Reference.find(params[:id])
     @sites = @reference.sites.distinct
     @c14s = @reference.c14s.includes([:references, sample: [:material, :taxon, :context]])
-    @typos = @reference.typos.includes([sample: [ context: [:site] ]])
+    @typos = @reference.typos.includes([:references, sample: [ context: [:site] ]])
   end
 
   # GET /references/new
