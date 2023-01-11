@@ -12,7 +12,8 @@ export default class extends Controller {
 	static values = {
 		baseMap: String,
 		markersData: Array,
-		markersUrl: String
+		markersUrl: String,
+        style: String
 	}
     
     
@@ -36,7 +37,7 @@ export default class extends Controller {
 		if (this.hasBaseMapValue) {
 			baseMap = baseMaps[this.baseMapValue]
 		}
-
+        
 		// Create map
 		var map = L.map(this.containerTarget, {
 			minZoom: 3,
@@ -79,16 +80,23 @@ export default class extends Controller {
 		this.load()
         
         function update() {
-            const bounds = map.getBounds();
-            markersLayer.clearLayers();
-            markersLayer.addData(index.getClusters([bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth()], map.getZoom()));
+                const bounds = map.getBounds();
+                markersLayer.clearLayers();
+                markersLayer.addData(index.getClusters([bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth()], map.getZoom()));
         }
         
-        map.on('moveend', function() {update()});
+        map.on('moveend', function() {
+    		if (typeof index.points !== "undefined") {
+            update()
+            }
+        });
         
         markersLayer.on('click', function (e) {
-            map.flyTo(e.latlng, index.getClusterExpansionZoom(e.layer.feature.properties.cluster_id));
-        })        
+            var extend = index.getClusterExpansionZoom(e.layer.feature.properties.cluster_id);
+            if (!isNaN(extend)) {
+                map.flyTo(e.latlng, extend);
+              }
+        })      
 	}
 
 	load() {
@@ -106,6 +114,7 @@ export default class extends Controller {
 	}
 
 	loadMarkers() {
+        
 		var markers = this.markersDataValue
 			.map(data =>
 				L.circleMarker(
@@ -119,6 +128,26 @@ export default class extends Controller {
 					}
 				)
 			)
+            
+    		if (this.hasStyleValue) {
+                if (this.styleValue == "show_site") {
+        		markers = this.markersDataValue
+        			.map(data =>
+        				L.circle(
+        					[data.lat, data.lng], {
+        						color: '#b99555',
+        						fillColor: '#b99555',
+        						fillOpacity: 0.5,
+        						weight: 2,
+        						radius: 300,
+                                weight: 10,
+        						id: data.id
+        					}
+        				)
+        			)
+                }
+    		}
+            
 		markers = L.featureGroup(markers)
 		markers.addTo(this.map)
 		this.map.fitBounds(markers.getBounds())
