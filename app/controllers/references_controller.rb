@@ -18,6 +18,10 @@ class ReferencesController < ApplicationController
   # GET /references/1
   # GET /references/1.json
   def show
+    @reference = Reference.find(params[:id])
+    @sites = @reference.sites.distinct
+    @c14s = @reference.c14s.includes([:references, sample: [:material, :taxon, :context]])
+    @typos = @reference.typos.includes([sample: [ context: [:site] ]])
   end
 
   # GET /references/new
