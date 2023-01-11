@@ -10,6 +10,13 @@ class ArticlesController < ApplicationController
     @docs = Article.docs_section
   end
 
+  # GET /news
+  def feed
+    @articles = Article.where(section: params[:section]).order(published_at: :desc)
+  end
+
+  # GET /articles/1
+  # GET /:section/:slug
   def show
     if params[:slug].present?
       @article = Article.where(slug: params[:slug]).first

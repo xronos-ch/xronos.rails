@@ -9,6 +9,7 @@ Rails.application.routes.draw do
 
   # Articles (news posts and pseudo-static pages)
   resources :articles
+  get '/news', to: 'articles#feed', section: 'news'
   get 'news/:slug', to: 'articles#show'
   get 'about/:slug', to: 'articles#show'
   get 'docs/:slug', to: 'articles#show'

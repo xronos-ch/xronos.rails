@@ -1,0 +1,22 @@
+<article class="card flex-row mt-3">
+  <% if false %>
+    <img class="card-img-top" style="width: 10rem; height: auto;" src="" />
+  <% end %>
+  <div class="card-body">
+    <h4 class="card-title"><%= article.title %></h4>
+    <p class="card-subtitle text-muted">
+    <%= article.user.email %>,
+    <%= article.published_at.present? ? article.published_at.to_formatted_s : "draft" %>
+    </p>
+    <p class="card-text">
+    <% unless article.body_html.blank? %>
+      <% doc = Nokogiri::HTML(article.body_html) %>
+      <%= doc.xpath('//p').first.children.to_s.html_safe %>
+      <% if doc.xpath('//p').length > 1 %>
+        <span class="text-muted">[...]</span>
+      <% end %>
+    <% end %>
+    </p>
+    <a class="card-link" href="<%= "/" + article.path %>">Read more</a>
+  </div>
+</article>

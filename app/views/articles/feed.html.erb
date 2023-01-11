@@ -1,0 +1,9 @@
+<div class="container my-5">
+  <h1>News</h1>
+
+  <% if can? :create, Article %><%= link_to 'New article', new_article_path, class: 'btn btn-secondary' %><% end %>
+
+  <% @articles.each do |article| %>
+    <%= render "card", article: article %>
+  <% end %>
+</div>

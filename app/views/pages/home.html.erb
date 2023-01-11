@@ -61,29 +61,12 @@
   <section class="mb-5">
     <h3>News</h3>
 
-    <% xml = HTTParty.get("https://blog.xronos.ch/index.php/feed/").body %>
-    <% feed = Feedjira.parse(xml) %>
-
-    <div class="d-flex flex-column">
-      <% feed.entries.each do |entry| %>
-        <% doc = Nokogiri::HTML(entry.content) %>
-        <article class="card flex-row mt-3">
-          <% if img = doc.xpath('//img').first %>
-            <img class="card-img-top" style="width: 10rem; height: auto;" src="<%=img.attr('src')%>" />
-          <% end %>
-          <div class="card-body">
-            <h4 class="card-title"><%= entry.title %></h4>
-            <p class="card-subtitle text-muted"><%= entry.published.strftime('%Y-%m-%d') %></p>
-            <p class="card-text">
-              <%= doc.xpath('//p').first.children.to_s.html_safe %>
-              <% if doc.xpath('//p').length > 1 %>
-                <span class="text-muted">[...]</span>
-              <% end %>
-            </p>
-            <a class="card-link" href="<%= entry.url %>">Read more</a>
-          </div>
-        </article>
+    <% news = Article.news_section.order(published_at: :desc) %>
+    <% unless news.blank? %>
+      <% news.each do |article| %>
+        <%= render "articles/card", article: article %>
       <% end %>
+    <% end %>
     </div>
 
   </section>
