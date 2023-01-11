@@ -6,6 +6,14 @@ class Reference < ApplicationRecord
   validates :short_ref, presence: true
   has_many :citations, dependent: :destroy
 
+  def anchor
+    if short_ref.blank?
+      return ""
+    end
+
+    "ref-" + CGI.escape(short_ref)
+  end
+
   def format_bibtex
     parse.to_s
   end
