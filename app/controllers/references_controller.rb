@@ -1,4 +1,6 @@
 class ReferencesController < ApplicationController
+  include Pagy::Backend
+
   load_and_authorize_resource
 
   before_action :set_reference, only: [:show, :edit, :update, :destroy]
@@ -7,6 +9,7 @@ class ReferencesController < ApplicationController
   # GET /references.json
   def index
     @references = Reference.all
+    @pagy, @references = pagy(@references)
   end
 
   # GET /references/1
