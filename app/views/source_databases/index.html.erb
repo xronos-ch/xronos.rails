@@ -31,6 +31,8 @@
 
   <%#= pagy_bootstrap_nav(@pagy) %>
 
-  <%= link_to 'New source database', new_source_database_path, class: 'btn btn-secondary',
-    data: { "turbo_frame": "remote_modal" } %>
+  <% if can? :create, SourceDatabase %>
+    <%= link_to 'New source database', new_source_database_path, class: 'btn btn-secondary',
+      data: { "turbo_frame": "remote_modal" } %>
+  <% end %>
 </div>

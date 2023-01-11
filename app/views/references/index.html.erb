@@ -28,6 +28,8 @@
 
   <%#= pagy_bootstrap_nav(@pagy) %>
 
-  <%= link_to 'New reference', new_reference_path, class: 'btn btn-secondary',
-    data: { "turbo_frame": "remote_modal" } %>
+  <% if can? :create, Reference %>
+    <%= link_to 'New reference', new_reference_path, class: 'btn btn-secondary',
+      data: { "turbo_frame": "remote_modal" } %>
+  <% end %>
 </div>
