@@ -16,6 +16,10 @@ class ArticlesController < ApplicationController
     else
       @article = Article.find(params[:id])
     end
+
+    if @article.blank?
+      render file: "public/404.html", status: :not_found
+    end
   end
 
   # GET /articles/new
