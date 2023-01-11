@@ -1,19 +1,25 @@
-<article class="container my-5">
-  <header>
-    <h1><%= @article.title %></h1>
+<header class="bg-light text-primary">
+  <div class="container my-5">
+    <h1 class="display-3"><%= @article.title %></h1>
     <% if @article.news_section? %>
       <p class="text-muted">
-        <%= @article.user.email %>, 
-        <%= @article.published_at.present? ? @article.published_at.to_fs : "draft" %>
+      By
+      <%= @article.user.email %>, 
+      <%= @article.published_at.present? ? @article.published_at.to_fs : "draft" %>
       </p>
     <% end %>
-  </header>
+  </div>
+</header>
 
+<div class="container my-5">
   <%= @article.body_html.html_safe %>
+</div>
 
-  <% unless @article.news_section? %>
-    <footer>
-      <p class="text-muted">Last updated <%= @article.updated_at.to_formatted_s %>.</p>
-    </footer>
-  <% end %>
-</article>
+<% unless @article.news_section? %>
+  <footer>
+    <div class="container my-5 text-muted">
+      <hr>
+      <p>Last updated <%= @article.updated_at.to_formatted_s %>.</p>
+    </div>
+  </footer>
+<% end %>
