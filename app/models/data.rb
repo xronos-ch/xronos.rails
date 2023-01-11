@@ -17,8 +17,8 @@ class Data
 
   def everything
     # TODO: typos, dendros, etc.
-    C14.all
-      .left_outer_joins(:c14_lab)
+    C14
+    .left_outer_joins(:c14_lab)
       .left_outer_joins(sample: [
         :material,
         :taxon,
@@ -27,7 +27,8 @@ class Data
             :site_types
           ]
         ]
-      ])
+    ])
+    .all.distinct
   end
 
   def filters=(value)
