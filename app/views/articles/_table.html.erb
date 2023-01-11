@@ -16,7 +16,7 @@
           <code><%= article.section %>/<%= article.slug %></code>
         </td>
         <td><%= article.user.email %></td>
-        <td class="text-end"><%= article.published_at %></td>
+        <td class="text-end"><%= render "status", article: article %></td>
         <% if can? :manage, Article %><td class="text-end"><%= render 'shared/action_buttons', i: article %></td><% end %>
       </tr>
     <% end %>

@@ -5,14 +5,17 @@ class ArticlesController < ApplicationController
 
   # GET /articles
   def index
-    @news = Article.news_section
-    @about = Article.about_section
-    @docs = Article.docs_section
+    @news = Article.news_section.order(published_at: :desc).includes(:user)
+    @about = Article.about_section.order(published_at: :desc).includes(:user)
+    @docs = Article.docs_section.order(published_at: :desc).includes(:user)
   end
 
   # GET /news
   def feed
-    @articles = Article.where(section: params[:section]).order(published_at: :desc)
+    @articles = Article
+      .published
+      .where(section: params[:section])
+      .order(published_at: :desc)
   end
 
   # GET /articles/1

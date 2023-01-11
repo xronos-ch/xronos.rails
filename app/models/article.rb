@@ -10,6 +10,22 @@ class Article < ApplicationRecord
     message: "may only contain lowercase letters, numbers, and hyphens (-)"
   }
 
+  scope :published, -> { 
+    where("published_at <= ?", DateTime.now)
+  }
+
+  def published?
+    published_at.present? and published_at <= DateTime.now
+  end
+
+  def scheduled?
+    published_at.present? and published_at > DateTime.now
+  end
+
+  def draft?
+    !(published? or scheduled?)
+  end
+
   def path
     section + '/' + slug
   end
