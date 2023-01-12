@@ -2,6 +2,6 @@
   <%= na_value %>
 <% else %>
     <% for ref in references do %>
-      <a href="#ref-<%= ref.short_ref %>"><%= ref.render_citation %></a>
+      <a href="#<%= ref.anchor %>"><%= ref.render_citation %></a>
     <% end %>
 <% end %>

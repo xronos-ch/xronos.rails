@@ -1,18 +1,24 @@
 <table class="table table-hover">
   <thead>
     <tr>
-      <th scope=col>Site</th>
+      <% unless controller_name == "sites" %>
+        <th scope=col>Site</th>
+      <% end %>
       <th scope=col>Classification</th>
-      <th scope=col class="text-end">Estimated age</th>
+      <th scope=col>Estimated age</th>
+      <th scope=col class="text-end">References</th>
     </tr>
   </thead>
 
   <tbody>
     <% typos.each do |typo| %>
       <tr>
-        <td><%= link_to typo.site.name, typo.site %></td>
+        <% unless controller_name == "sites" %>
+          <td><%= link_to typo.site.name, typo.site %></td>
+        <% end %>
         <td><%= link_to typo.name, typo %></td>
-        <td class="font-monospace text-end"><%= typo.age.present? ? type.age : na_value %></td>
+        <td class="font-monospace"><%= typo.age.present? ? typo.age : na_value %></td>
+        <td class="small text-end"><%= render "references/citations", references: typo.references %></td>
       </tr>
     <% end %>
   </tbody>
