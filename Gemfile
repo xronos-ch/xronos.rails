@@ -157,7 +157,6 @@ gem 'doorkeeper'
 
 # WebPacker for up-to-date asset serving
 gem 'webpacker'
-gem 'webpack', '>= 5.0'
 
 # Eye Candy
 gem 'bootstrap', '~> 5.1'
