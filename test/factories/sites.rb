@@ -4,7 +4,7 @@ FactoryBot.define do
     name { Faker::Verb.unique.base }
     lat { Faker::Address.latitude }
     lng { Faker::Address.longitude }
-    country
+    country_code { Faker::Address.country_code }
   end
   
 end
