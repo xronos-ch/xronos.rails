@@ -11,7 +11,7 @@
 		"@popperjs/core": "^2.9.3",
 		"@rails/actioncable": "^6.1.4-1",
 		"@rails/activestorage": "^6.1.4-1",
-		"@rails/webpacker": "5.4.3",
+		"@rails/webpacker": "^5.4.3",
 		"bootstrap": "^5.1",
 		"datatables.net": "^1.11.3",
 		"datatables.net-bs5": "^1.11.3",
@@ -32,14 +32,12 @@
 		"leaflet.markercluster": "^1.5.3",
 		"rails-erb-loader": "^5.5.2",
 		"supercluster": "^7.1.5",
-		"tom-select": "^2.0.1",
-		"webpack": "^5.0.0"
+		"tom-select": "^2.0.1"
 	},
 	"devDependencies": {
-		"webpack-cli": "^5.0.1",
 		"webpack-dev-server": "^4.7.3"
 	},
 	"resolutions": {
-		"glob-parent": "5.1.2"
+		"glob-parent": "^5.1.2"
 	}
 }
