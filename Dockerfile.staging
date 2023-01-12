@@ -3,7 +3,7 @@ FROM ruby:3.0.4
 MAINTAINER Martin Hinz <martin.hinz@iaw.unibe.ch>
 
 # install node and yarn
-RUN curl -fsSL https://deb.nodesource.com/setup_19.x | bash - &&\
+RUN curl -fsSL https://deb.nodesource.com/setup_19.x | bash -
 RUN apt-get install -y --no-install-recommends build-essential nodejs
 RUN corepack enable
 
