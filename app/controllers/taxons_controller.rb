@@ -9,6 +9,17 @@ class TaxonsController < ApplicationController
     @taxon = Taxon.all
   end
 
+  # GET /taxons/search.json
+  def search
+    @taxons = Taxon.search(params[:q])
+
+    respond_to do |format|
+      format.json  {
+        render :index
+      }
+    end
+  end
+
   # GET /taxon/1
   # GET /taxon/1.json
   def show

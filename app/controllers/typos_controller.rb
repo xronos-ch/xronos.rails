@@ -8,7 +8,8 @@ class TyposController < ApplicationController
   # GET /typos
   # GET /typos.json
   def index
-    @pagy, @typos = pagy(Typo.all)
+    @typos = Typo.all.includes([:references, sample: [ context: [ :site ] ] ])
+    @pagy, @typos = pagy(@typos)
   end
 
   # GET /typos/1

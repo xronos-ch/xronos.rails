@@ -9,6 +9,7 @@ class Ability
     # permissions for every user, even if not logged in
     can :read, :all
     cannot :read, [UserProfile]
+    can :search, :all
     can :calibrate, :all
     can :calibrate_multi, :all
     can :calibrate_sum, :all

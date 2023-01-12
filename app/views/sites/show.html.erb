@@ -7,14 +7,17 @@
   </div>
 </header>
 
-<section id="siteMap">
-  <div style="height: 30rem; position: relative;"
-       data-controller="map"
-       data-map-target="container"
-       data-map-base-map-value="Imagery"
-       data-map-markers-data-value='<%= [@site].to_json.html_safe %>'>
-  </div>
-</section>
+<% unless @site.lat.blank? or @site.lng.blank? %>
+  <section id="siteMap">
+    <div style="height: 30rem; position: relative;"
+         data-controller="map"
+         data-map-style-value="show_site"
+         data-map-target="container"
+         data-map-base-map-value="Imagery"
+         data-map-markers-data-value='<%= [@site].to_json.html_safe %>'>
+    </div>
+  </section>
+<% end %>
 
 <section id="site-details" class="bg-body">
   <div class="container my-5">
@@ -32,19 +35,19 @@
 <section id="site-xrons" class="bg-light">
   <div class="container my-5">
 
-    <% unless @site.c14s.nil? %>
+    <% unless @c14s.nil? %>
       <section id="site-c14s" class="py-3">
         <h2><%= C14.label.humanize.pluralize %></h2>
-        <p><%= @site.name %> has <%= pluralize(@site.c14s.count, C14.label) %>.</p>
-        <%= render "c14s/table", c14s: @site.c14s %>
+        <p><%= @site.name %> has <%= pluralize(@c14s.count, C14.label) %>.</p>
+        <%= render "c14s/table", c14s: @c14s %>
       </section>
     <%end%>
 
-    <% unless @site.typos.nil? %>
+    <% unless @typos.nil? %>
       <section id="site-typos" class="py-3">
         <h2><%= Typo.label.humanize.pluralize %></h2>
-        <p><%= @site.name %> has <%= pluralize(@site.typos.count, Typo.label) %>.</p>
-        <%= render "typos/table", typos: @site.typos %>
+        <p><%= @site.name %> has <%= pluralize(@typos.count, Typo.label) %>.</p>
+        <%= render "typos/table", typos: @typos %>
       </section>
     <%end%>
 
@@ -55,7 +58,7 @@
   <div class="container my-5">
     <h2>Bibliography</h2>
     <%= render "references/bibliography", 
-      references: (@site.references + @site.c14s.map(&:references).reduce(:+)).uniq %>
+      references: @site.recursive_references %>
 </section>
 
 <section id="xronos-metadata" class="bg-body">

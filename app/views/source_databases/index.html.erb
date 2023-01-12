@@ -21,7 +21,7 @@
           <!--<td><%= link_to source_database.url, source_database.url, target: "_blank" %></td>-->
           <td><%= source_database.citation %></td>
           <td><%= source_database.licence %></td>
-          <td class="text-end"><%= source_database.c14s.count %></td>
+          <td class="text-end"><%= source_database.c14s_count %></td>
           <% if can? :manage, SourceDatabase %><td class="text-end"><%= render 'shared/action_buttons_compact', i: source_database %></td><% end %>
         </tr>
       <% end %>
@@ -31,6 +31,8 @@
 
   <%#= pagy_bootstrap_nav(@pagy) %>
 
-  <%= link_to 'New source database', new_source_database_path, class: 'btn btn-secondary',
-    data: { "turbo_frame": "remote_modal" } %>
+  <% if can? :create, SourceDatabase %>
+    <%= link_to 'New source database', new_source_database_path, class: 'btn btn-secondary',
+      data: { "turbo_frame": "remote_modal" } %>
+  <% end %>
 </div>

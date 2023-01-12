@@ -14,6 +14,7 @@ Rails.application.routes.draw do
 
   # Ordinary resources
   resources :c14s do
+    get 'search', on: :collection
     member do
       get 'calibrate'
       get 'calibrate_multi'
@@ -22,14 +23,22 @@ Rails.application.routes.draw do
   end
   resources :c14_labs
   resources :contexts
-  resources :materials
+  resources :materials do
+    get 'search', on: :collection
+  end
   resources :measurement_states
   resources :references
   resources :samples
-  resources :sites
-  resources :site_types
+  resources :sites do
+    get 'search', on: :collection
+  end
+  resources :site_types do
+    get 'search', on: :collection
+  end
   resources :source_databases
-  resources :taxons
+  resources :taxons do
+    get 'search', on: :collection
+  end
   resources :typos
 
   # User management

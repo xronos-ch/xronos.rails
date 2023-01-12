@@ -24,7 +24,7 @@
     <div class="tab-pane fade show active p-3 border border-top-0" id="biblio-text" role="tabpanel" aria-labelledby="biblio-text-tab" tabindex="-1">
       <ul class="list-unstyled mb-0">
         <% for ref in references %>
-          <li id="ref-<%= ref.short_ref %>">
+          <li id="<%= ref.anchor %>">
             <%= ref.render %>
             <small><%= link_to "[#{ref.short_ref}]", ref %></small>
           </li>

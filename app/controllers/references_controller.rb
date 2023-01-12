@@ -1,4 +1,6 @@
 class ReferencesController < ApplicationController
+  include Pagy::Backend
+
   load_and_authorize_resource
 
   before_action :set_reference, only: [:show, :edit, :update, :destroy]
@@ -6,12 +8,20 @@ class ReferencesController < ApplicationController
   # GET /references
   # GET /references.json
   def index
-    @references = Reference.all
+    @references = Reference
+      .left_joins(:citations)
+      .select('"references".*, COUNT(citations.id) AS citations_count')
+      .group(:id)
+    @pagy, @references = pagy(@references)
   end
 
   # GET /references/1
   # GET /references/1.json
   def show
+    @reference = Reference.find(params[:id])
+    @sites = @reference.sites.distinct
+    @c14s = @reference.c14s.includes([:references, sample: [:material, :taxon, context: [:site] ]])
+    @typos = @reference.typos.includes([:references, sample: [ context: [:site] ]])
   end
 
   # GET /references/new

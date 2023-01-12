@@ -1,6 +1,11 @@
 class Site < ApplicationRecord
   include DataHelper
 
+  include PgSearch::Model
+  pg_search_scope :search, 
+    against: :name, 
+    using: { tsearch: { prefix: true } } # match partial words
+
   has_paper_trail
   
   validates :name, presence: true
@@ -58,7 +63,12 @@ class Site < ApplicationRecord
   end
 
   def recursive_references
-    (references + c14s.map(&:references).reduce(:+)).uniq
+    c14_references = c14s.map(&:references).reduce(:+)
+    unless c14_references.nil?
+      (references + c14_references).uniq
+    else
+      references
+    end
   end
 
 end
