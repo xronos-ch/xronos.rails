@@ -27,8 +27,8 @@ test:
   host: localhost
   adapter: postgresql
   encoding: unicode
-  username: myapp
-  password: ""
+  username: postgres
+  password: "postgres"
   database: myapp_test
 
 production:

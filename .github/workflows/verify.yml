@@ -56,10 +56,10 @@ jobs:
         env:
           RAILS_ENV: test
           PGHOST: localhost
-          PGUSER: myapp
-          POSTGRES_USER: myapp
+          PGUSER: postgres
+          POSTGRES_USER: postgres
           POSTGRES_DB: myapp_test
-          POSTGRES_PASSWORD: ""
+          POSTGRES_PASSWORD: "postgres"
           REGISTRATION_PASSPHRASE: ""
         run: |
           bin/rails db:setup
@@ -68,8 +68,8 @@ jobs:
         env:
           RAILS_ENV: test
           PGHOST: localhost
-          PGUSER: myapp
-          POSTGRES_USER: myapp
+          PGUSER: postgres
+          POSTGRES_USER: postgres
           POSTGRES_DB: myapp_test
-          POSTGRES_PASSWORD: ""
+          POSTGRES_PASSWORD: "postgres"
           REGISTRATION_PASSPHRASE: ""
