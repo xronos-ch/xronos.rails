@@ -12,13 +12,15 @@ class SitesController < ApplicationController
       @sites = Site.all.where(site_params)
     end
 
-
     respond_to do |format|
       format.html { 
         @pagy, @sites = pagy(Site.all.order(:name))
         render :index
       }
       format.json
+      format.csv {
+        render plain: @sites.copy_to_string, content_type: "text/csv"
+      }
     end
   end
 

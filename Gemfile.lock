@@ -247,6 +247,8 @@ GEM
     nio4r (2.5.8)
     nokogiri (1.14.0-x86_64-darwin)
       racc (~> 1.4)
+    nokogiri (1.14.0-x86_64-linux)
+      racc (~> 1.4)
     notiffany (0.1.3)
       nenv (~> 0.1)
       shellany (~> 0.0)
@@ -264,6 +266,9 @@ GEM
       activerecord (>= 5.2)
       activesupport (>= 5.2)
     popper_js (2.11.6)
+    postgres-copy (1.7.1)
+      activerecord (>= 5.1)
+      pg (>= 0.17)
     pry (0.14.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
@@ -402,6 +407,7 @@ GEM
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
     sqlite3 (1.5.4-x86_64-darwin)
+    sqlite3 (1.5.4-x86_64-linux)
     ssrf_filter (1.1.1)
     stimulus-rails (1.2.1)
       railties (>= 6.0.0)
@@ -446,6 +452,7 @@ GEM
 
 PLATFORMS
   x86_64-darwin-21
+  x86_64-linux
 
 DEPENDENCIES
   activerecord-session_store
@@ -487,6 +494,7 @@ DEPENDENCIES
   paper_trail
   pg
   pg_search
+  postgres-copy
   puma (< 6)
   rabl
   rails (~> 6.1.6)

@@ -17,7 +17,16 @@ class C14sController < ApplicationController
       ]},
       :references
     )
-    @pagy, @c14s = pagy(@c14s)
+
+    respond_to do |format|
+      format.html {
+        @pagy, @c14s = pagy(@c14s)
+      }
+      format.json
+      format.csv {
+        render plain: @c14s.copy_to_string, content_type: "text/csv"
+      }
+    end
   end
 
   # GET /c14s/search

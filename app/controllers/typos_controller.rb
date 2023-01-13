@@ -8,8 +8,24 @@ class TyposController < ApplicationController
   # GET /typos
   # GET /typos.json
   def index
-    @typos = Typo.all.includes([:references, sample: [ context: [ :site ] ] ])
-    @pagy, @typos = pagy(@typos)
+    @typos = Typo.includes([
+      :references, 
+      sample: [ 
+        context: [ 
+          :site 
+        ] 
+      ] 
+    ])
+
+    respond_to do |format|
+      format.html {
+        @pagy, @typos = pagy(@typos)
+      }
+      format.json
+      format.csv {
+        render plain: @typos.copy_to_string, content_type: "text/csv"
+      }
+    end
   end
 
   # GET /typos/1

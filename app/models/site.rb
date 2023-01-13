@@ -7,6 +7,7 @@ class Site < ApplicationRecord
     using: { tsearch: { prefix: true } } # match partial words
 
   has_paper_trail
+  acts_as_copy_target # enable CSV exports
   
   validates :name, presence: true
 

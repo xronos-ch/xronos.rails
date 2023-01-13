@@ -168,3 +168,6 @@ gem "httparty"
 
 # Markdown static pages
 gem "kramdown"
+
+# Use Postgres COPY for efficient CSV exports
+gem "postgres-copy"

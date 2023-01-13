@@ -2,6 +2,7 @@ class Typo < ApplicationRecord
   include DataHelper
   
   has_paper_trail
+  acts_as_copy_target # enable CSV exports
 
   validates :name, presence: true
   
