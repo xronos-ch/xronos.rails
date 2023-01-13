@@ -1,7 +1,5 @@
-[![Travis-CI Build
-Status](https://travis-ci.org/xronos-ch/xronos.rails.svg?branch=master)](https://travis-ci.org/xronos-ch/xronos.rails)
-[![Docker Pulls](https://img.shields.io/docker/pulls/xronos/xronos.rails)](https://hub.docker.com/r/xronos/xronos.rails/)
-![Tests](https://github.com/xronos-ch/xronos.rails/workflows/Tests/badge.svg)
+[![docker pulls](https://img.shields.io/docker/pulls/xronos/xronos.rails)](https://hub.docker.com/r/xronos/xronos.rails/)
+![tests](https://github.com/xronos-ch/xronos.rails/actions/workflows/verify.yml/badge.svg)
 
 ## Server setup
 
