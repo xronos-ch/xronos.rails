@@ -1,5 +1,9 @@
-[![docker pulls](https://img.shields.io/docker/pulls/xronos/xronos.rails)](https://hub.docker.com/r/xronos/xronos.rails/)
-![tests](https://github.com/xronos-ch/xronos.rails/actions/workflows/verify.yml/badge.svg)
+![Website](https://img.shields.io/website?url=https%3A%2F%2Fxronos.ch)
+![Tests](https://github.com/xronos-ch/xronos.rails/actions/workflows/verify.yml/badge.svg)
+[![Docker pulls](https://img.shields.io/docker/pulls/xronos/xronos.rails)](https://hub.docker.com/r/xronos/xronos.rails/)
+![GitHub issues](https://img.shields.io/github/issues/xronos-ch/xronos.rails)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/xronos-ch/xronos.rails)
+![GitHub last commit](https://img.shields.io/github/last-commit/xronos-ch/xronos.rails)
 
 ## Server setup
 
