@@ -23,7 +23,7 @@ class TyposController < ApplicationController
       }
       format.json
       format.csv {
-        render plain: @typos.copy_to_string, content_type: "text/csv"
+        render csv: @typos
       }
     end
   end

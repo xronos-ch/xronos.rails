@@ -19,7 +19,7 @@ class SitesController < ApplicationController
       }
       format.json
       format.csv {
-        render plain: @sites.copy_to_string, content_type: "text/csv"
+        render csv: @sites
       }
     end
   end

@@ -26,7 +26,7 @@ class C14sController < ApplicationController
       format.csv {
         template = File.open("app/views/c14s/index.csv").read
         @c14s = @c14s.select(template)
-        render plain: @c14s.copy_to_string, content_type: "text/csv"
+        render csv: @c14s
       }
     end
   end
