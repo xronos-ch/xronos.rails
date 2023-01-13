@@ -1,5 +1,40 @@
+class CalibratedDate
+  attr_accessor :bpc, :probability
+  
+  def initialize(attributes = {})
+    attributes.each do |name, value|
+      send("#{name}=", value)
+    end
+  end
+  
+  def persisted?
+    false
+  end
+end
+
 module C14sHelper
   include Pagy::Frontend
+  def calibrator(c14)
+    if RUBY_PLATFORM =~ /darwin/
+      calib = JSON.parse(`cd vendor/calibrator/bin/; ./calibrator_mac -b #{c14.bp} -s #{c14.std} -r`)
+    elsif RUBY_PLATFORM =~ /linux/
+      calib = JSON.parse(`cd vendor/calibrator/bin/; ./calibrator_linux -b #{c14.bp} -s #{c14.std} -r`)
+    end
+    chart_data = calib["date"]["bp"].zip(calib["date"]["probabilities"]).map{|k, v| {bp: k, probability: v}}
+
+    Vega.lite
+      .title({"text": c14.lab_identifier,
+        "font": '"Raleway", Inter, Helvetica Neue, Helvetica, Nimbus Sans, FreeSans, Arial, Arimo, Liberation Sans, sans-serif',
+        "subtitle": "Atmospheric data from Reimer et al. (2013)",
+        "align": "right", "anchor": "end", "color": "#7A90A1", "subtitleColor": "#7A90A1"})
+      .data(chart_data)
+      .mark(type: "area", tooltip: true, "line": {strokeWidth: 4}, interpolate: "monotone")
+      .encoding(
+        x: {field: "bp", type: "quantitative", title: "Calibrated dates",
+          axis: {grid: true, tickMinStep: 50}},
+        y: {field: "probability", type: "quantitative"},
+      )
+  end
 
   ################################
   #### calibration with oxcal ####

@@ -37,6 +37,9 @@ import "../src/ion.rangeSlider.js"
 
 import "../src/layout_special_filter_tools.js"
 
+//charts
+window.vegaEmbed = require("vega-embed").default
+
 // special popup window for calibration results
 $('a[calibration-popup]').on('click', function(e) {
   window.open( $(this).attr('href'), "Calibration", "height=600,width=900,titlebar=0,resizable=yes,scrollbars=yes,status=yes");

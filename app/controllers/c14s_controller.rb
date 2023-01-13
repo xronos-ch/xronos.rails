@@ -39,7 +39,7 @@ class C14sController < ApplicationController
   # GET /c14s/1
   # GET /c14s/1.json
   def show
-    calibrate_from_external(@c14.id)
+    #calibrate_from_external(@c14.id)
   end
 
   # GET /c14s/new
