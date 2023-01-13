@@ -45,6 +45,7 @@ group :development, :test do
   # Generating test data for models
   gem 'factory_bot_rails'
   gem 'faker'
+  gem 'guard-rspec'
 end
 
 group :development do

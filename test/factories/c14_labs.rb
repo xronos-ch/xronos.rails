@@ -1,7 +1,7 @@
 FactoryBot.define do
   
-  factory :lab do
-    name { Faker::Address.unique.city }
+  factory :c14_lab do
+    name { Faker::Address.city }
     active { [true, false].sample }
   end
   
