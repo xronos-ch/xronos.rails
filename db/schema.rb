@@ -10,10 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_12_20_143517) do
+ActiveRecord::Schema.define(version: 2023_01_17_064210) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "articles", force: :cascade do |t|
+    t.integer "section", null: false
+    t.string "slug"
+    t.string "title"
+    t.bigint "user_id"
+    t.datetime "published_at"
+    t.text "body"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["section"], name: "index_articles_on_section"
+    t.index ["slug"], name: "index_articles_on_slug", unique: true
+    t.index ["user_id"], name: "index_articles_on_user_id"
+  end
 
   create_table "c14_labs", force: :cascade do |t|
     t.string "name"
@@ -34,7 +48,6 @@ ActiveRecord::Schema.define(version: 2022_12_20_143517) do
     t.string "method"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "source_database_id"
     t.bigint "c14_lab_id"
     t.bigint "sample_id"
     t.string "lab_identifier"
@@ -42,7 +55,6 @@ ActiveRecord::Schema.define(version: 2022_12_20_143517) do
     t.index ["lab_identifier"], name: "index_c14s_on_lab_identifier"
     t.index ["method"], name: "index_c14s_on_method"
     t.index ["sample_id"], name: "index_c14s_on_sample_id"
-    t.index ["source_database_id"], name: "index_c14s_on_source_database_id"
   end
 
   create_table "citations", force: :cascade do |t|
@@ -204,17 +216,6 @@ ActiveRecord::Schema.define(version: 2022_12_20_143517) do
     t.index ["name"], name: "index_sites_on_name"
   end
 
-  create_table "source_databases", force: :cascade do |t|
-    t.string "name"
-    t.string "url"
-    t.text "citation"
-    t.string "licence"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["licence"], name: "index_source_databases_on_licence"
-    t.index ["name"], name: "index_source_databases_on_name"
-  end
-
   create_table "taxons", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -271,7 +272,6 @@ ActiveRecord::Schema.define(version: 2022_12_20_143517) do
     t.index ["whodunnit"], name: "index_versions_on_whodunnit"
   end
 
-  add_foreign_key "c14s", "source_databases"
   add_foreign_key "import_tables", "users"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_grants", "users", column: "resource_owner_id"
