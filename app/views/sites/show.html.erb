@@ -63,16 +63,15 @@
 
 <section id="xronos-metadata" class="bg-body">
   <div class="container my-5">
-    <div class="row">
-      
-      <div class="col">
-        <h2>XRONOS metadata</h2>
-        <%= render "shared/record_metadata", record: @site, record_label: Site.label %>
-      </div>
 
-      <div class="col">
-        <h2>Changelog</h2>
-        <%= render "shared/paper_trail", item: @site %>
-      </div>
-  </div>
+    <div class="my-3">
+      <h2>XRONOS metadata</h2>
+      <%= render "shared/record_metadata", record: @site, record_label: Site.label %>
+    </div>
+
+    <div class="my-3">
+      <h2>Version history</h2>
+      <%= render "application/paper_trail/versions", item: @site %>
+    </div>
+
 </section>

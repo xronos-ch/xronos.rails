@@ -47,5 +47,17 @@ module ApplicationHelper
     File.exists?(script) || File.exists?("#{script}.coffee") || File.exists?("#{script}.erb") 
   end
 
+  def markdown(str)
+    Kramdown::Document.new(str).to_html.html_safe
+  end
+
+  def md(str)
+    sanitize Kramdown::Document.new(str)
+      .to_html
+      .remove('<p>')
+      .remove('</p>')
+      .html_safe
+  end
+
 end
 
