@@ -10,7 +10,6 @@ FactoryBot.define do
     lab_identifier { "#{ Faker::Address.country_code_long }-#{ Faker::Address.building_number }" }
     add_attribute(:method) {Faker::Hacker.noun}
     
-    source_database
     c14_lab
     sample
   end
