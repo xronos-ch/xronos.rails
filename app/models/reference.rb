@@ -1,14 +1,14 @@
 class Reference < ApplicationRecord
   default_scope { order(:short_ref) }
 
-  has_paper_trail
-  
   validates :short_ref, presence: true
   has_many :citations, dependent: :destroy
 
   has_many :sites, :through => :citations, :source => :citing, :source_type => 'Site'
   has_many :c14s, :through => :citations, :source => :citing, :source_type => 'C14'
   has_many :typos, :through => :citations, :source => :citing, :source_type => 'Typo'
+
+  has_paper_trail
 
   def anchor
     if short_ref.blank?

@@ -16,6 +16,8 @@ class Typo < ApplicationRecord
   belongs_to :parent, class_name: "Typo", optional: true
   has_many :children, class_name: "Typo", foreign_key: "typo_id"
 
+  has_paper_trail
+
   def self.label
     "typological date"
   end

@@ -6,8 +6,6 @@ class Site < ApplicationRecord
     against: :name, 
     using: { tsearch: { prefix: true } } # match partial words
 
-  has_paper_trail
-  
   validates :name, presence: true
 
   has_many :contexts, inverse_of: :site
@@ -19,6 +17,8 @@ class Site < ApplicationRecord
 
   has_many :citations, as: :citing
   has_many :references, through: :citations
+
+  has_paper_trail
 
   def self.label
     "Site"

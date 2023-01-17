@@ -9,5 +9,6 @@ class Context < ApplicationRecord
   has_many :samples
   has_many :c14s, through: :samples
   has_many :typos, through: :samples
+  has_paper_trail
 
 end

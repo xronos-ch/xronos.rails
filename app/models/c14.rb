@@ -6,7 +6,6 @@ class C14 < ApplicationRecord
     against: :lab_identifier, 
     using: { tsearch: { prefix: true } } # match partial words
 
-  has_paper_trail
 
   validates :bp, :std, presence: true
 
@@ -22,6 +21,8 @@ class C14 < ApplicationRecord
 
   has_many :citations, as: :citing
   has_many :references, :through => :citations
+
+  has_paper_trail
 
   def self.label
     "radiocarbon date"

@@ -6,6 +6,9 @@ class SiteType < ApplicationRecord
     against: :name,
     using: { tsearch: { prefix: true } } # match partial words
 
-  validates :name, presence: true
   has_many :sites, inverse_of: :site_type
+  has_paper_trail
+
+  validates :name, presence: true
+
 end
