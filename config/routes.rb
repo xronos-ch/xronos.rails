@@ -35,7 +35,6 @@ Rails.application.routes.draw do
   resources :site_types do
     get 'search', on: :collection
   end
-  resources :source_databases
   resources :taxons do
     get 'search', on: :collection
   end
