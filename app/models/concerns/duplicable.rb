@@ -20,8 +20,8 @@ module Duplicable
 
   class_methods do
 
-    def duplicable(attr)
-      @@duplicable_attrs << attr
+    def duplicable(*attrs)
+      @@duplicable_attrs << attrs
     end
   
     def all_duplicated

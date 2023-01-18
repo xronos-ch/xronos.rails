@@ -2,11 +2,7 @@ class Site < ApplicationRecord
   include DataHelper
 
   include Duplicable
-  #duplicable_attributes = [:name, :lat, :lng, :country_code]
-  duplicable :name
-  duplicable :lat
-  duplicable :lng
-  duplicable :country_code
+  duplicable :name, :lat, :lng, :country_code
 
   include PgSearch::Model
   pg_search_scope :search, 
