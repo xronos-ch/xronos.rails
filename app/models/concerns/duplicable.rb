@@ -7,7 +7,6 @@ module Duplicable
   included do # instance methods
 
     def duplicates
-      # TODO: can we make rails use a subquery for this, instead of two queries?
       attrs = attributes.with_indifferent_access
       self.class.where(attrs.slice(*@@duplicable_attrs))
     end
@@ -21,7 +20,7 @@ module Duplicable
   class_methods do
 
     def duplicable(*attrs)
-      @@duplicable_attrs << attrs
+      @@duplicable_attrs.push(*attrs)
     end
   
     def all_duplicated
