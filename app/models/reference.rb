@@ -1,3 +1,17 @@
+# == Schema Information
+#
+# Table name: references
+#
+#  id         :bigint           not null, primary key
+#  bibtex     :text
+#  short_ref  :string
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+# Indexes
+#
+#  index_references_on_short_ref  (short_ref)
+#
 class Reference < ApplicationRecord
   default_scope { order(:short_ref) }
 

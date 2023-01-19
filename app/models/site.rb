@@ -1,3 +1,20 @@
+# == Schema Information
+#
+# Table name: sites
+#
+#  id           :bigint           not null, primary key
+#  country_code :string
+#  lat          :decimal(, )
+#  lng          :decimal(, )
+#  name         :string
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#
+# Indexes
+#
+#  index_sites_on_country_code  (country_code)
+#  index_sites_on_name          (name)
+#
 class Site < ApplicationRecord
   include DataHelper
 

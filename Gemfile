@@ -40,8 +40,12 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
 
+  # Annotate models etc. with current schema
+  gem 'annotate'
+
   # RSpec for testing
   gem 'rspec-rails', '~> 4.0.1'
+
   # Generating test data for models
   gem 'factory_bot_rails'
   gem 'faker'
