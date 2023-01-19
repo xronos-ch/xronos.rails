@@ -2,13 +2,14 @@
 #
 # Table name: sites
 #
-#  id           :bigint           not null, primary key
-#  country_code :string
-#  lat          :decimal(, )
-#  lng          :decimal(, )
-#  name         :string
-#  created_at   :datetime         not null
-#  updated_at   :datetime         not null
+#  id            :bigint           not null, primary key
+#  country_code  :string
+#  lat           :decimal(, )
+#  lng           :decimal(, )
+#  name          :string
+#  superseded_by :integer
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
 #
 # Indexes
 #
@@ -18,6 +19,8 @@
 class Site < ApplicationRecord
   include DataHelper
 
+  include Versioned
+  include Supersedable
   include Duplicable
   duplicable :name, :lat, :lng, :country_code
 
@@ -38,8 +41,6 @@ class Site < ApplicationRecord
 
   has_many :citations, as: :citing
   has_many :references, through: :citations
-
-  has_paper_trail
 
   def self.label
     "Site"

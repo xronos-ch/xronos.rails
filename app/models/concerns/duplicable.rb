@@ -33,6 +33,18 @@ module Duplicable
       self.where(id: duplicated_ids)
     end
 
+    def merge_duplicates(duplicates)
+      original = duplicates.first
+      dupes = duplicates.drop(1)
+      dupes.each do |dupe| 
+        dupe.superseded_by = original.id # TODO: why .id here??
+        dupe.revision_comment = "Merged with #{original.model_name.singular}:#{original.id}"
+        dupe.save!
+      end
+      return original
+      # todo: paper_trail
+    end
+
   end
 
 end
