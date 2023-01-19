@@ -23,6 +23,7 @@ Rails.application.routes.draw do
   end
   resources :c14_labs
   resources :contexts
+  resources :duplicates
   resources :materials do
     get 'search', on: :collection
   end
