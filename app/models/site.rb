@@ -5,6 +5,7 @@ class Site < ApplicationRecord
   pg_search_scope :search, 
     against: :name, 
     using: { tsearch: { prefix: true } } # match partial words
+  multisearchable against: :name
 
   has_paper_trail
   

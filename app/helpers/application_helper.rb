@@ -3,7 +3,7 @@ module ApplicationHelper
   def xr_icon(model, options = {}, html_options = {})
     icon = model.icon
 
-    if options.fetch(:light)
+    if options.has_key?(:light)
       icon = icon.split(".")
       icon = icon[0] + "-light." + icon[1]
     end

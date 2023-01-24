@@ -52,6 +52,9 @@ Rails.application.routes.draw do
   post 'data/index'
   get "/data" => "data#index"
 
+  # Search
+  get "search" => "searches#index"
+
   # Data filter controls
   get '/resetfilter', :to=>'data#reset_filter_session_variable'
   get '/turn_off_lasso', :to=>'data#turn_off_lasso'

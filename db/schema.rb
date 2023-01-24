@@ -10,10 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_12_20_143517) do
+ActiveRecord::Schema.define(version: 2023_01_24_093811) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_trgm"
   enable_extension "plpgsql"
+  enable_extension "unaccent"
+
+  create_table "articles", force: :cascade do |t|
+    t.integer "section", null: false
+    t.string "slug"
+    t.string "title"
+    t.bigint "user_id"
+    t.datetime "published_at"
+    t.text "body"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["section"], name: "index_articles_on_section"
+    t.index ["slug"], name: "index_articles_on_slug", unique: true
+    t.index ["user_id"], name: "index_articles_on_user_id"
+  end
 
   create_table "c14_labs", force: :cascade do |t|
     t.string "name"
@@ -34,7 +50,6 @@ ActiveRecord::Schema.define(version: 2022_12_20_143517) do
     t.string "method"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "source_database_id"
     t.bigint "c14_lab_id"
     t.bigint "sample_id"
     t.string "lab_identifier"
@@ -42,7 +57,6 @@ ActiveRecord::Schema.define(version: 2022_12_20_143517) do
     t.index ["lab_identifier"], name: "index_c14s_on_lab_identifier"
     t.index ["method"], name: "index_c14s_on_method"
     t.index ["sample_id"], name: "index_c14s_on_sample_id"
-    t.index ["source_database_id"], name: "index_c14s_on_source_database_id"
   end
 
   create_table "citations", force: :cascade do |t|
@@ -137,6 +151,15 @@ ActiveRecord::Schema.define(version: 2022_12_20_143517) do
     t.bigint "period_id"
   end
 
+  create_table "pg_search_documents", force: :cascade do |t|
+    t.text "content"
+    t.string "searchable_type"
+    t.bigint "searchable_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["searchable_type", "searchable_id"], name: "index_pg_search_documents_on_searchable"
+  end
+
   create_table "physical_locations", id: false, force: :cascade do |t|
     t.bigint "site_id"
     t.bigint "country_id"
@@ -200,19 +223,9 @@ ActiveRecord::Schema.define(version: 2022_12_20_143517) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "country_code"
+    t.integer "superseded_by"
     t.index ["country_code"], name: "index_sites_on_country_code"
     t.index ["name"], name: "index_sites_on_name"
-  end
-
-  create_table "source_databases", force: :cascade do |t|
-    t.string "name"
-    t.string "url"
-    t.text "citation"
-    t.string "licence"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["licence"], name: "index_source_databases_on_licence"
-    t.index ["name"], name: "index_source_databases_on_name"
   end
 
   create_table "taxons", force: :cascade do |t|
@@ -263,15 +276,15 @@ ActiveRecord::Schema.define(version: 2022_12_20_143517) do
     t.string "whodunnit"
     t.text "object"
     t.datetime "created_at"
-    t.text "object_changes"
     t.string "whodunnit_user_email"
     t.text "revision_comment"
+    t.jsonb "new_object"
+    t.jsonb "object_changes"
     t.index ["event"], name: "index_versions_on_event"
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
     t.index ["whodunnit"], name: "index_versions_on_whodunnit"
   end
 
-  add_foreign_key "c14s", "source_databases"
   add_foreign_key "import_tables", "users"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_grants", "users", column: "resource_owner_id"
