@@ -19,6 +19,25 @@
     <% c = @reference.citations.count %>
     <p>There <%= c > 1 ? 'are' : 'is' %> <%= c %> <%= 'record'.pluralize(c) %>
         in XRONOS that <%= c > 1 ? 'cite' : 'cites' %> this reference.</p>
+
+    <% unless @sites.blank? %>
+      <h3><%= Site.label.humanize.pluralize %> (<%= @sites.count %>)</h3>
+      <ul>
+      <% @sites.each do |site| %>
+        <li><%= link_to site.name, site %>, <%= render "sites/country", site: site %></li>
+      <% end %>
+      </ul>
+    <% end %>
+
+    <% unless @c14s.blank? %>
+      <h3><%= C14.label.humanize.pluralize %> (<%= @c14s.count %>)</h3>
+      <%= render "c14s/table", c14s: @c14s %>
+    <% end %>
+
+    <% unless @typos.blank? %>
+      <h3><%= Typo.label.humanize.pluralize %> (<%= @typos.count %>)</h3>
+      <%= render "typos/table", typos: @typos %>
+    <% end %>
   </div>
 </section>
 

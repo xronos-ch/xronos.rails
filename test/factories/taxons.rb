@@ -1,6 +1,6 @@
 FactoryBot.define do
   
-  factory :species do
+  factory :taxon do
     name { Faker::Creature::Animal.unique.name }
   end
   

@@ -41,7 +41,9 @@ class SitesController < ApplicationController
   # GET /sites/1
   # GET /sites/1.json
   def show
-    gon.selected_sites = [{id: @site.id, name: @site.name, lat: @site.lat, lng: @site.lng}].to_json
+    @site = Site.find(params[:id])
+    @c14s = @site.c14s.includes([:references, sample: [ :material, :taxon, :context ]])
+    @typos = @site.typos.includes([:references])
   end
 
   # GET /sites/new

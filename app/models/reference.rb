@@ -9,12 +9,24 @@ class Reference < ApplicationRecord
   validates :short_ref, presence: true
   has_many :citations, dependent: :destroy
 
+  has_many :sites, :through => :citations, :source => :citing, :source_type => 'Site'
+  has_many :c14s, :through => :citations, :source => :citing, :source_type => 'C14'
+  has_many :typos, :through => :citations, :source => :citing, :source_type => 'Typo'
+
   def self.label
     "Bibliographic reference"
   end
 
   def self.icon
     "icons/reference.svg"
+  end
+
+  def anchor
+    if short_ref.blank?
+      return ""
+    end
+
+    "ref-" + CGI.escape(short_ref)
   end
 
   def format_bibtex

@@ -1,6 +1,9 @@
 <table class="table table-hover">
   <thead>
     <tr>
+      <% unless controller_name == "sites" %>
+        <th scope=col>Site</th>
+      <% end %>
       <th scope=col>Lab ID</th>
       <th scope=col>Context</th>
       <th scope=col>Material</th>
@@ -15,6 +18,9 @@
   <tbody>
     <% c14s.each do |c14| %>
       <tr>
+        <% unless controller_name == "sites" %>
+          <td><%= link_to c14.site.name, c14.site %></td>
+        <% end %>
         <td><%= link_to c14.lab_identifier, c14 %></td>
         <td><%= c14.sample.context.name %></td>
         <td><%= c14.sample.material.present? ? c14.sample.material.name : na_value %></td>

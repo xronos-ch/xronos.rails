@@ -9,6 +9,9 @@ class Typo < ApplicationRecord
   delegate :context, to: :sample
   delegate :site, to: :context
 
+  has_many :citations, as: :citing
+  has_many :references, through: :citations
+
   # Internal heirarchy
   belongs_to :parent, class_name: "Typo", optional: true
   has_many :children, class_name: "Typo", foreign_key: "typo_id"

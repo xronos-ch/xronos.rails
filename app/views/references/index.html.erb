@@ -19,15 +19,17 @@
         <tr>
           <td><%= link_to reference.short_ref, reference %></td>
           <td><%= reference.render %></td>
-          <td><%= reference.citations.count %></td>
+          <td><%= reference.citations_count %></td>
           <% if can? :manage, Reference %><td class="text-end"><%= render 'shared/action_buttons_compact', i: reference %></td><% end %>
         </tr>
       <% end %>
     </tbody>
   </table>
 
-  <%#= pagy_bootstrap_nav(@pagy) %>
+  <%== pagy_bootstrap_nav(@pagy) %>
 
-  <%= link_to 'New reference', new_reference_path, class: 'btn btn-secondary',
-    data: { "turbo_frame": "remote_modal" } %>
+  <% if can? :create, Reference %>
+    <%= link_to 'New reference', new_reference_path, class: 'btn btn-secondary',
+      data: { "turbo_frame": "remote_modal" } %>
+  <% end %>
 </div>

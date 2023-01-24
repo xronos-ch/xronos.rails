@@ -1,25 +1,27 @@
-# Put this in the file: .github/workflows/verify.yml
+name: Continuous integration
 
-name: Tests
-on: [push]
+on:
+  [push, workflow_dispatch]
+    
 
 jobs:
-  tests:
-    name: Tests
+  test:
     runs-on: ubuntu-latest
+    
     services:
       postgres:
         image: postgres:11
         env:
-          POSTGRES_USER: myapp
-          POSTGRES_DB: myapp_test
-          POSTGRES_PASSWORD: ""
-        ports: ["5432:5432"]
-
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports: ['5432:5432']
+        options:
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
+      - uses: actions/checkout@v2
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
       - name: Ruby gem cache
@@ -33,11 +35,10 @@ jobs:
         run: |
           bundle config path vendor/bundle
           bundle install --jobs 4 --retry 3
-
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
-          node-version: 12.13.0
+          node-version: 16.19.0
       - name: Find yarn cache location
         id: yarn-cache
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -51,26 +52,24 @@ jobs:
       - name: Install packages
         run: |
           yarn install --pure-lockfile
-
       - name: Setup test database
         env:
           RAILS_ENV: test
           PGHOST: localhost
-          PGUSER: myapp
-          POSTGRES_USER: myapp
+          PGUSER: postgres
+          POSTGRES_USER: postgres
           POSTGRES_DB: myapp_test
-          POSTGRES_PASSWORD: ""
+          POSTGRES_PASSWORD: "postgres"
           REGISTRATION_PASSPHRASE: ""
         run: |
           bin/rails db:setup
-
       - name: Run tests
         run: COVERAGE=true bundle exec rspec
         env:
           RAILS_ENV: test
           PGHOST: localhost
-          PGUSER: myapp
-          POSTGRES_USER: myapp
+          PGUSER: postgres
+          POSTGRES_USER: postgres
           POSTGRES_DB: myapp_test
-          POSTGRES_PASSWORD: ""
+          POSTGRES_PASSWORD: "postgres"
           REGISTRATION_PASSPHRASE: ""
