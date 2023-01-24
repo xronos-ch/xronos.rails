@@ -1,10 +1,21 @@
 class Reference < ApplicationRecord
   default_scope { order(:short_ref) }
 
+  include PgSearch::Model
+  multisearchable against: [ :short_ref, :bibtex ]
+
   has_paper_trail
   
   validates :short_ref, presence: true
   has_many :citations, dependent: :destroy
+
+  def self.label
+    "Bibliographic reference"
+  end
+
+  def self.icon
+    "icons/reference.svg"
+  end
 
   def format_bibtex
     parse.to_s
