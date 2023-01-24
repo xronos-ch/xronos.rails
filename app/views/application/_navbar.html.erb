@@ -1,4 +1,5 @@
 <nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-primary mb-0 main-nav shadow"
+     data-bs-theme="dark"
   <% if request.path == "/" %>
        data-controller="home-hero"
        data-action="scroll@window->home-hero#scroll"
@@ -37,6 +38,14 @@
              <a class="nav-link" href="https://blog.xronos.ch">Blog</a>
            </li>
          </ul>
+
+         <form class="d-flex me-3" 
+               role="search"
+               action="/sites/search"
+               method="get">
+           <input class="form-control me-2" type="search" name="q" placeholder="Search" aria-label="Search">
+           <button class="btn btn-outline-secondary" type="submit">Search</button>
+         </form>
 
          <div class="d-flex">
            <% if user_signed_in? %>
