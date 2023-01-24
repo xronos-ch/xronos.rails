@@ -2,6 +2,7 @@
      data-bs-theme="dark"
   <% if request.path == "/" %>
        data-controller="home-hero"
+       data-home-hero-target="navbar"
        data-action="scroll@window->home-hero#scroll"
      <% end %>>
 
@@ -39,13 +40,15 @@
            </li>
          </ul>
 
-         <form class="me-3" 
+         <form id="navbarSearch"
+               data-home-hero-target="search"
+               class="me-3" 
                role="search"
                action="/search"
                method="get">
            <div class="input-group">
              <input class="form-control form-control-sm" type="search" name="q" placeholder="e.g. '<%= random_search %>'" aria-label="Search">
-             <button class="btn btn-sm btn-outline-secondary" type="submit">
+             <button class="btn btn-sm btn-info" type="submit">
                <%= fa_icon "search", text: "Search" %>
              </button>
            </div>
