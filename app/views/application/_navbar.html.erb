@@ -39,12 +39,16 @@
            </li>
          </ul>
 
-         <form class="d-flex me-3" 
+         <form class="me-3" 
                role="search"
-               action="/sites/search"
+               action="/search"
                method="get">
-           <input class="form-control me-2" type="search" name="q" placeholder="Site name..." aria-label="Search">
-           <button class="btn btn-outline-secondary" type="submit">Search</button>
+           <div class="input-group">
+             <input class="form-control form-control-sm" type="search" name="q" placeholder="Sites, radiocarbon dates, ..." aria-label="Search">
+             <button class="btn btn-sm btn-outline-secondary" type="submit">
+               <%= fa_icon "search", text: "Search" %>
+             </button>
+           </div>
          </form>
 
          <div class="d-flex">
