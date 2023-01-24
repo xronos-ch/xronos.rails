@@ -7,30 +7,36 @@ module Duplicable
   included do # instance methods
 
     def duplicates
-      attrs = attributes.with_indifferent_access
-      self.class.where(attrs.slice(*@@duplicable_attrs))
+      self.class.where(duplicated)
     end
 
     def is_duplicated?
       duplicates.count > 1
     end
 
-    protected
-
-    def where_duplicated
-      attributes
-        .with_indifferent_access
-        .slice(attrs_only(@@duplicable_attrs))
-    end
-
     private
 
-    def attrs_only(attrs_with_options)
-      attrs_with_options.map { 
-        |x| x.is_a?(Hash) ? x.keys : x 
-      }.flatten
+    def duplicated
+      filter = attributes
+        .with_indifferent_access
+        .slice(*duplicable_attrs)
+
+      filter.map { |attr,val|
+        if duplicable_opts.has_key?(attr.to_sym)
+          [attr, [val, nil]]
+        else
+          [attr, val]
+        end
+      }.to_h
     end
-  
+
+    def duplicable_attrs
+      self.class.duplicable_attrs
+    end
+
+    def duplicable_opts
+      self.class.duplicable_opts
+    end
 
   end
 
@@ -41,17 +47,25 @@ module Duplicable
     end
 
     def duplicable_attrs
+      @@duplicable_attrs.map { 
+        |x| x.is_a?(Hash) ? x.keys : x 
+      }.flatten
+    end
+
+    def duplicable_opts
       @@duplicable_attrs
+        .filter { |x| x.is_a?(Hash) }
+        .reduce({}, :merge)
     end
 
     def all_duplicated
       # Ugly and postgres-specific, but can't find a better way :(
       duplicated_ids = self
-        .group(@@duplicable_attrs)
+        .group(duplicable_attrs)
         .having("COUNT(*) > 1")
         .select('UNNEST(ARRAY_AGG("id"))')
 
-      self.where(id: duplicated_ids)
+      self.where(id: duplicated_ids).order(duplicable_attrs)
     end
 
     def merge_duplicates(duplicates)
