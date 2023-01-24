@@ -15,6 +15,23 @@ module Duplicable
       duplicates.count > 1
     end
 
+    protected
+
+    def where_duplicated
+      attributes
+        .with_indifferent_access
+        .slice(attrs_only(@@duplicable_attrs))
+    end
+
+    private
+
+    def attrs_only(attrs_with_options)
+      attrs_with_options.map { 
+        |x| x.is_a?(Hash) ? x.keys : x 
+      }.flatten
+    end
+  
+
   end
 
   class_methods do
@@ -22,7 +39,11 @@ module Duplicable
     def duplicable(*attrs)
       @@duplicable_attrs.push(*attrs)
     end
-  
+
+    def duplicable_attrs
+      @@duplicable_attrs
+    end
+
     def all_duplicated
       # Ugly and postgres-specific, but can't find a better way :(
       duplicated_ids = self
@@ -42,7 +63,6 @@ module Duplicable
         dupe.save!
       end
       return original
-      # todo: paper_trail
     end
 
   end
