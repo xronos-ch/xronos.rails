@@ -8,8 +8,8 @@ attributes :cal_bp => :cal_bp
 attributes :cal_std => :cal_std
 attributes :delta_c13 => :delta_c13
 
-glue :source_database do
-  attributes :name => :source_database
+node :source_database do
+  ""
 end
 
 glue :c14_lab do 

@@ -1,5 +1,28 @@
+# == Schema Information
+#
+# Table name: sites
+#
+#  id            :bigint           not null, primary key
+#  country_code  :string
+#  lat           :decimal(, )
+#  lng           :decimal(, )
+#  name          :string
+#  superseded_by :integer
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#
+# Indexes
+#
+#  index_sites_on_country_code  (country_code)
+#  index_sites_on_name          (name)
+#
 class Site < ApplicationRecord
   include DataHelper
+
+  include Versioned
+  include Supersedable
+  include Duplicable
+  duplicable :name, :lat, :lng, :country_code
 
   include PgSearch::Model
   pg_search_scope :search, 
@@ -7,8 +30,7 @@ class Site < ApplicationRecord
     using: { tsearch: { prefix: true } } # match partial words
   multisearchable against: :name
 
-  has_paper_trail
-  
+
   validates :name, presence: true
 
   has_many :contexts, inverse_of: :site

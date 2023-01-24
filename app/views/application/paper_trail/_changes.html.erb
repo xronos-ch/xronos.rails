@@ -1,0 +1,14 @@
+<div class="collapse" id="changeset<%= version.id %>">
+  <% version.changeset.each do |change| %>
+    <% unless change.first == "updated_at" %>
+      <div class="d-flex">
+        <dt><%= change.first.humanize %>:</dt>
+        <dd class="flex-grow-1 ms-3">
+          <%= change.second.first.present? ? change.second.first : na_value %>
+          &rarr;
+          <%= change.second.second.present? ? change.second.second : na_value %>
+        </dd>
+      </div>
+    <% end %>
+  <% end %>
+</div>

@@ -12,7 +12,6 @@
         <th>Taxon</th>
         <th>Age (BP)</th>
         <th>Age (cal BP)</th>
-        <th>Source database</th>
       </tr>
     </thead>
 
@@ -31,7 +30,6 @@
           <% end %>
           <td><%= x.bp %>±<%= x.std %></td>
           <td><%= x.cal_bp %>±<%= x.cal_std %></td>
-          <td><%= x.source_database.present? ? (link_to x.source_database.name, x.source_database, target: :_top) : na_value %></td>
         </tr>
       <% end %>
     </tbody>
