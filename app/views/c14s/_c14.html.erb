@@ -1,0 +1,7 @@
+<article class="p-3 mb-3 bg-light">
+  <h3 class="h4"><%= link_to c14.lab_identifier, c14 %></h3>
+  <p class="mb-0 d-flex align-items-center">
+    <%= xr_icon C14, {}, { class: "me-1", style: "height: 1.5rem;" } %>
+    <span><%= C14.label.humanize %> from <%= link_to c14.site.name, c14.site %></span>
+  </p>
+</article>

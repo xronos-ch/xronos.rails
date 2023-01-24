@@ -3,7 +3,7 @@ module ApplicationHelper
   def xr_icon(model, options = {}, html_options = {})
     icon = model.icon
 
-    if options.fetch(:light)
+    if options.has_key?(:light)
       icon = icon.split(".")
       icon = icon[0] + "-light." + icon[1]
     end
@@ -45,6 +45,18 @@ module ApplicationHelper
   def javascript_exists?(script)
     script = "#{Rails.root}/app/javascript/packs/#{params[:controller]}.js"
     File.exists?(script) || File.exists?("#{script}.coffee") || File.exists?("#{script}.erb") 
+  end
+
+  def markdown(str)
+    Kramdown::Document.new(str).to_html.html_safe
+  end
+
+  def md(str)
+    sanitize Kramdown::Document.new(str)
+      .to_html
+      .remove('<p>')
+      .remove('</p>')
+      .html_safe
   end
 
 end
