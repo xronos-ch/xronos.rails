@@ -22,7 +22,10 @@ class Site < ApplicationRecord
   include Versioned
   include Supersedable
   include Duplicable
-  duplicable :name, :lat, :lng, country_code: :can_be_blank
+  duplicable name: [:ci, :whitespace, :mojibake]
+  duplicable lat: :null
+  duplicable lng: :null
+  duplicable country_code: :null
 
   include PgSearch::Model
   pg_search_scope :search, 
