@@ -75,3 +75,20 @@
     </div>
 
 </section>
+
+<% if can? :manage, Site %>
+  <section id="show-curation" class="bg-light">
+    <div class="container my-5">
+
+      <h2>Curation</h2>
+
+      <% if @site.is_duplicated? %>
+        <div class="my-3">
+          <h3>Potential duplicates</h3>
+          <%= render "table", sites: @site.duplicates %>
+        </div>
+      <% end %>
+
+    </div>
+  </section>
+<% end %>

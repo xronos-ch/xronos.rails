@@ -1,0 +1,26 @@
+<table class="table table-hover">
+
+  <thead>
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Country</th>
+      <th scope="col">Coordinates</th>
+      <th scope="col" class="text-end">Radiocarbon dates</th>
+      <th scope="col" class="text-end">Typological dates</th>
+      <% if can? :manage, Site %><th><!-- Actions --></th><% end %>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% sites.each do |site| %>
+      <tr>
+        <td><%= link_to site.name, site %></td>
+        <td><%= render "country", site: site %></td>
+        <td class="font-monospace"><%= site.coordinates.present? ? site.coordinates : na_value %></td>
+        <td class="text-end"><%= site.c14s.count %></td>
+        <td class="text-end"><%= site.typos.count %></td>
+        <% if can? :manage, Site %><td class="text-end"><%= render 'shared/action_buttons_compact', i: site %></td><% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
