@@ -115,9 +115,10 @@ module Duplicable
         .reduce({}, :merge)
     end
 
-    def all_duplicated
-      # Ugly and postgres-specific, but can't find a better way :(
-      # TODO: document or make clear that this is only *exact* duplicates
+    def all_duplicates
+    end
+
+    def all_exact_duplicates
       duplicated_ids = self
         .group(duplicable_attrs_without_options)
         .having("COUNT(*) > 1")
