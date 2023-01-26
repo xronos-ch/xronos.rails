@@ -16,21 +16,36 @@ module Supersedable
         raise "Attempt to reassign associations of record that is not superseded."
       end
 
-      revision_comment ||= default_revision_comment
-
       assocs = self.class.supersedable_associations
       assocs.each do |assoc,reflection|
-        foreign_key = self.class.foreign_key_for_reflection(reflection)
-        children = self.send(reflection.name)
-        
-        children.each do |child|
-          child.write_attribute(foreign_key, self.superseded_by)
-          child.revision_comment = revision_comment
-          child.save!
+        unless reflection.is_a?(ActiveRecord::Reflection::HasAndBelongsToManyReflection)
+          reassign_association(reflection, revision_comment)
+        else
+          reassign_many_to_many_association(reflection, revision_comment)
         end
       end
 
       return true
+    end
+
+    protected
+
+    def reassign_association(reflection, revision_comment = nil)
+      revision_comment ||= default_revision_comment
+
+      foreign_key = self.class.foreign_key_for_reflection(reflection)
+      children = self.send(reflection.name)
+
+      children.each do |child|
+        child.write_attribute(foreign_key, self.superseded_by)
+        child.revision_comment = revision_comment
+        child.save!
+      end
+    end
+
+    def reassign_many_to_many_association(reflection, revision_comment = nil)
+      revision_comment ||= default_revision_comment
+      # TODO
     end
 
     private
@@ -55,8 +70,7 @@ module Supersedable
         .filter { |k,v| 
           v.is_a?(ActiveRecord::Reflection::HasOneReflection) ||
           v.is_a?(ActiveRecord::Reflection::HasManyReflection) ||
-          # v.is_a?(ActiveRecord::Reflection::HasAndBelongsToManyReflection) ||
-          false
+          v.is_a?(ActiveRecord::Reflection::HasAndBelongsToManyReflection)
         }
     end
 
