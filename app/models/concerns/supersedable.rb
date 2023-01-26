@@ -3,12 +3,18 @@ module Supersedable
   extend ActiveSupport::Concern
 
   included do # instance methods
+    default_scope { where(superseded_by: nil) }
+
     def supersedable?
       true
     end
 
     def superseded?
       superseded_by.present?
+    end
+
+    def not_superseded?
+      superseded_by.blank?
     end
 
     def reassign_associations(revision_comment = nil)

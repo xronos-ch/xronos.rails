@@ -13,8 +13,9 @@
 #
 # Indexes
 #
-#  index_sites_on_country_code  (country_code)
-#  index_sites_on_name          (name)
+#  index_sites_on_country_code   (country_code)
+#  index_sites_on_name           (name)
+#  index_sites_on_superseded_by  (superseded_by)
 #
 class Site < ApplicationRecord
   include DataHelper
@@ -31,7 +32,8 @@ class Site < ApplicationRecord
   pg_search_scope :search, 
     against: :name, 
     using: { tsearch: { prefix: true } } # match partial words
-  multisearchable against: :name
+  multisearchable against: :name,
+    if: :not_superseded?
 
 
   validates :name, presence: true

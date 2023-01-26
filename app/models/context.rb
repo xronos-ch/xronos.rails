@@ -6,14 +6,16 @@
 #  approx_end_time   :integer
 #  approx_start_time :integer
 #  name              :string
+#  superseded_by     :integer
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #  site_id           :integer
 #
 # Indexes
 #
-#  index_contexts_on_name     (name)
-#  index_contexts_on_site_id  (site_id)
+#  index_contexts_on_name           (name)
+#  index_contexts_on_site_id        (site_id)
+#  index_contexts_on_superseded_by  (superseded_by)
 #
 class Context < ApplicationRecord
 
