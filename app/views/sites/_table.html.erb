@@ -15,7 +15,7 @@
     <% sites.each do |site| %>
       <tr>
         <td><%= link_to site.name, site %></td>
-        <td><%= render "country", site: site %></td>
+        <td><%= render "sites/country", site: site %></td>
         <td class="font-monospace"><%= site.coordinates.present? ? site.coordinates : na_value %></td>
         <td class="text-end"><%= site.c14s.count %></td>
         <td class="text-end"><%= site.typos.count %></td>

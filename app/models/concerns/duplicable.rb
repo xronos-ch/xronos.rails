@@ -133,12 +133,12 @@ module Duplicable
     end
 
     def all_exact_duplicates
-      duplicated_ids = self
-        .group(duplicable_attrs_without_options)
+      group(duplicable_attrs_without_options)
         .having("COUNT(*) > 1")
-        .select('UNNEST(ARRAY_AGG("id"))')
-
-      self.where(id: duplicated_ids).order(duplicable_attrs_without_options)
+        .pluck('ARRAY_AGG("id")')
+        .map do |ids|
+          self.where(id: ids)
+        end
     end
 
     def merge_exact_duplicates(dupes)
