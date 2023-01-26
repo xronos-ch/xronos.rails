@@ -12,8 +12,13 @@ module Duplicable
       }.reduce(:merge)
     end
 
+    def exact_duplicates
+      attrs = attributes.with_indifferent_access
+      self.class.where(attrs.slice(*duplicable_attrs_without_options))
+    end
+
     def is_duplicated?
-      duplicates.count > 1
+      exact_duplicates.count > 1 || duplicates.count > 1
     end
 
     protected
@@ -28,7 +33,7 @@ module Duplicable
 
     def where_exactly_duplicated(attr)
         val = attributes.with_indifferent_access[attr]
-        self.class.where(["#{attr} = ?", val])
+        self.class.where({attr => val})
     end
 
     # TODO: document these options
@@ -56,7 +61,12 @@ module Duplicable
     end
 
     def where_null(attr)
-        self.class.where("#{attr} IS NULL")
+        val = attributes.with_indifferent_access[attr]
+        unless val.nil?
+          self.class.where(attr => nil)
+        else
+          self.class.where("#{attr} IS NOT NULL")
+        end
     end
 
     def where_ilike(attr)
@@ -75,7 +85,7 @@ module Duplicable
 
     def where_mojibake(attr)
       val = attributes.with_indifferent_access[attr]
-      val_sans_nonascii = val.gsub(/[\u0080-\u00ff]/, '%')
+      val_sans_nonascii = val.gsub(/[[:^ascii:]]/, '%')
 
       arel_attr = self.class.arel_table[attr.to_sym]
       self.class.where(arel_attr.matches(val_sans_nonascii))
@@ -87,8 +97,12 @@ module Duplicable
       self.class.duplicable_attrs
     end
 
-    def duplicable_opts
-      self.class.duplicable_opts
+    def duplicable_attrs_without_options
+      self.class.duplicable_attrs_without_options
+    end
+
+    def duplicable_attrs_with_options
+      self.class.duplicable_attrs_with_options
     end
 
   end
