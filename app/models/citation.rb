@@ -14,6 +14,8 @@
 #
 class Citation < ApplicationRecord
 
+  include Versioned
+
   belongs_to :citing, polymorphic: true
   belongs_to :reference
 

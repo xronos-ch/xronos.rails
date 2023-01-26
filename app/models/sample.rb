@@ -23,6 +23,8 @@
 #
 class Sample < ApplicationRecord
 
+  include Versioned
+  include Supersedable
   
   belongs_to :context, optional: true
   accepts_nested_attributes_for :context, :reject_if => proc { |attributes| attributes.all? { |key, value| key == "_destroy" || value.blank? || (value.is_a?(Hash) && value.values.all?(&:blank?)) } }
@@ -39,5 +41,4 @@ class Sample < ApplicationRecord
   has_many :c14s
   has_many :typos
 
-  has_paper_trail
 end

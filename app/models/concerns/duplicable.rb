@@ -141,19 +141,30 @@ module Duplicable
       self.where(id: duplicated_ids).order(duplicable_attrs_without_options)
     end
 
-    def merge_duplicates(duplicates)
-      # TODO: resolve records when attributes present and nil
-      original = duplicates.first
-      dupes = duplicates.drop(1)
-      dupes.each do |dupe| 
-        dupe.superseded_by = original.id # TODO: why .id here??
-        dupe.revision_comment = "Merged with #{original.model_name.singular}:#{original.id}"
-        dupe.save!
-      end
-      return original
-    end
+    def merge_exact_duplicates(dupes)
+      model = dupes.first.model_name
+      merge_comment = "Merged #{model.plural} #{dupes.ids.to_sentence}"
 
-    #TODO automerge (exact?) duplicates
+      merged = dupes.first.dup
+      merged.superseded_by = nil # in case it has been merged before
+      merged.paper_trail_event = "merge"
+      merged.revision_comment = merge_comment
+      merged.save!
+
+      dupes = dupes.where.not(id: merged.id) # otherwise dupes includes the new record...
+
+      merge_comment = merge_comment + " to #{model.singular}:#{merged.id}"
+      dupes.each do |dupe|
+        dupe.superseded_by = merged.id # TODO: why .id here??
+        dupe.paper_trail_event = "merge"
+        dupe.revision_comment = merge_comment
+        dupe.save!
+
+        dupe.reassign_associations(merge_comment)
+      end
+
+      return merged
+    end
 
   end
 

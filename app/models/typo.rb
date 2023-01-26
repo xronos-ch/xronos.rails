@@ -19,7 +19,8 @@
 class Typo < ApplicationRecord
   include DataHelper
   
-  has_paper_trail
+  include Versioned
+  include Supersedable
 
   validates :name, presence: true
   

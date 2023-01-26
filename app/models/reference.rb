@@ -15,11 +15,12 @@
 class Reference < ApplicationRecord
   default_scope { order(:short_ref) }
 
+  include Versioned
+  include Supersedable
+
   include PgSearch::Model
   multisearchable against: [ :short_ref, :bibtex ]
 
-  has_paper_trail
-  
   validates :short_ref, presence: true
   has_many :citations, dependent: :destroy
 

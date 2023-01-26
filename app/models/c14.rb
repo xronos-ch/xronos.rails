@@ -26,6 +26,9 @@
 class C14 < ApplicationRecord
   include DataHelper
 
+  include Versioned
+  include Supersedable
+
   include PgSearch::Model
   pg_search_scope :search, 
     against: :lab_identifier, 
@@ -47,8 +50,6 @@ class C14 < ApplicationRecord
 
   has_many :citations, as: :citing
   has_many :references, :through => :citations
-
-  has_paper_trail
 
   def self.label
     "radiocarbon date"
