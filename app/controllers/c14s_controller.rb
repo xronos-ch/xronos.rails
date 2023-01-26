@@ -1,5 +1,6 @@
 class C14sController < ApplicationController
   include C14sHelper
+  include SupersedableController
   include Pagy::Backend
 
   load_and_authorize_resource

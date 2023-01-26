@@ -1,4 +1,6 @@
 class SiteTypesController < ApplicationController
+  include SupersedableController
+
   load_and_authorize_resource
 
   before_action :set_site_type, only: [:show, :edit, :update, :destroy]

@@ -1,4 +1,5 @@
 class ReferencesController < ApplicationController
+  include SupersedableController
   include Pagy::Backend
 
   load_and_authorize_resource

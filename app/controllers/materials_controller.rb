@@ -1,4 +1,6 @@
 class MaterialsController < ApplicationController
+  include SupersedableController
+
   load_and_authorize_resource
 
   before_action :set_material, only: [:show, :edit, :update, :destroy]

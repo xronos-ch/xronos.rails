@@ -1,4 +1,6 @@
 class C14LabsController < ApplicationController
+  include SupersedableController
+
   load_and_authorize_resource
 
   before_action :set_c14_lab, only: [:show, :edit, :update, :destroy]

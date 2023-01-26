@@ -17,6 +17,14 @@ module Supersedable
       superseded_by.blank?
     end
 
+    def ultimately_superseded_by
+      unless superseded_by.blank?
+        self.class.unscoped.find(superseded_by).ultimately_superseded_by
+      else
+        return self.class.find(id)
+      end
+    end
+
     def reassign_associations(revision_comment = nil)
       unless superseded?
         raise "Attempt to reassign associations of record that is not superseded."

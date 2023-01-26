@@ -1,4 +1,6 @@
 class TaxonsController < ApplicationController
+  include SupersedableController
+
   load_and_authorize_resource
 
   before_action :set_taxon, only: [:show, :edit, :update, :destroy]
