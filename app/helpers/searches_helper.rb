@@ -1,6 +1,6 @@
 module SearchesHelper
   def random_search
     random = rand(PgSearch::Document.count)
-    PgSearch::Document.offset(random).first.content
+    random >= 1 ? PgSearch::Document.offset(random).first.content : "Site name or Lab Code"
   end
 end
