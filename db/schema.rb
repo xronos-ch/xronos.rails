@@ -17,20 +17,6 @@ ActiveRecord::Schema.define(version: 2023_01_26_143118) do
   enable_extension "plpgsql"
   enable_extension "unaccent"
 
-  create_table "articles", force: :cascade do |t|
-    t.integer "section", null: false
-    t.string "slug"
-    t.string "title"
-    t.bigint "user_id"
-    t.datetime "published_at"
-    t.text "body"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["section"], name: "index_articles_on_section"
-    t.index ["slug"], name: "index_articles_on_slug", unique: true
-    t.index ["user_id"], name: "index_articles_on_user_id"
-  end
-
   create_table "c14_labs", force: :cascade do |t|
     t.string "name"
     t.boolean "active"
