@@ -129,16 +129,29 @@ module Duplicable
         .reduce({}, :merge)
     end
 
-    def all_duplicates
+    def duplicated
+      # TODO
     end
 
-    def all_exact_duplicates
-      group(duplicable_attrs_without_options)
-        .having("COUNT(*) > 1")
+    def exactly_duplicated
+      duplicated_ids = where_exactly_duplicated
+        .select('UNNEST(ARRAY_AGG("id"))')
+      self.where(id: duplicated_ids)
+    end
+
+    def exactly_duplicated_grouped
+      where_exactly_duplicated
         .pluck('ARRAY_AGG("id")')
         .map do |ids|
           self.where(id: ids)
         end
+    end
+
+    def merge_all_exact_duplicates
+      exactly_duplicated_grouped.each do |dupes|
+        merge_exact_duplicates(dupes)
+      end
+      return exactly_duplicated.count
     end
 
     def merge_exact_duplicates(dupes)
@@ -164,6 +177,13 @@ module Duplicable
       end
 
       return merged
+    end
+
+    private
+
+    def where_exactly_duplicated
+      group(duplicable_attrs_without_options)
+        .having("COUNT(*) > 1")
     end
 
   end
