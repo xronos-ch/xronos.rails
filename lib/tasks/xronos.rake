@@ -5,7 +5,7 @@ namespace :xronos do
       Rails.application.eager_load!
     end
     ApplicationRecord.descendants.each do |model_class|
-      if model_class.respond_to?(:multisearchable)
+      if model_class.respond_to?(:pg_search_multisearchable_options)
         puts "Rebuilding pg_search documents for #{model_class.model_name.plural}..."
         PgSearch::Multisearch.rebuild(model_class)
       end
