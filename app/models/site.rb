@@ -32,9 +32,7 @@ class Site < ApplicationRecord
   pg_search_scope :search, 
     against: :name, 
     using: { tsearch: { prefix: true } } # match partial words
-  multisearchable against: :name,
-    if: :not_superseded?
-
+  multisearchable against: :name
 
   validates :name, presence: true
 

@@ -21,8 +21,7 @@ class Reference < ApplicationRecord
   include Supersedable
 
   include PgSearch::Model
-  multisearchable against: [ :short_ref, :bibtex ],
-    if: :not_superseded?
+  multisearchable against: [ :short_ref, :bibtex ]
 
   validates :short_ref, presence: true
   has_many :citations, dependent: :destroy

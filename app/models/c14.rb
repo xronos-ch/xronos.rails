@@ -35,9 +35,7 @@ class C14 < ApplicationRecord
   pg_search_scope :search, 
     against: :lab_identifier, 
     using: { tsearch: { prefix: true } } # match partial words
-  multisearchable against: :lab_identifier,
-    if: :not_superseded?
-
+  multisearchable against: :lab_identifier
 
   validates :bp, :std, presence: true
 
