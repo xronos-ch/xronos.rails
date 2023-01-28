@@ -4,6 +4,7 @@
 ![GitHub issues](https://img.shields.io/github/issues/xronos-ch/xronos.rails)
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/xronos-ch/xronos.rails)
 ![GitHub last commit](https://img.shields.io/github/last-commit/xronos-ch/xronos.rails)
+[![codecov](https://codecov.io/gh/xronos-ch/xronos.rails/branch/master/graph/badge.svg?token=0E7SVSFTVI)](https://codecov.io/gh/xronos-ch/xronos.rails)
 
 ## Server setup
 
