@@ -71,6 +71,7 @@ group :test do
   gem 'capybara-selenium'
   gem 'simplecov', require: false
   gem "simplecov-cobertura"
+  gem 'rails-controller-testing'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
