@@ -69,6 +69,8 @@ group :test do
   gem 'selenium-webdriver'
   gem 'webdrivers'
   gem 'capybara-selenium'
+  gem 'simplecov', require: false
+  gem "simplecov-cobertura"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
