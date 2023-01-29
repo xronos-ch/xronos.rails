@@ -18,7 +18,7 @@ RSpec.describe 'Data', type: :request do
     end
     
     specify do
-      expect(json.count).to eq 10
+      expect(json.count).to eq C14.count
       expect(json).to match_response_schema('apiv1')
     end
   end
