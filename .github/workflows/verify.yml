@@ -1,4 +1,4 @@
-name: Continuous integration
+name: CI
 
 on:
   [push, workflow_dispatch]
@@ -73,3 +73,5 @@ jobs:
           POSTGRES_DB: myapp_test
           POSTGRES_PASSWORD: "postgres"
           REGISTRATION_PASSPHRASE: ""
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
