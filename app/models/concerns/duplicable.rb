@@ -158,7 +158,7 @@ module Duplicable
       model = dupes.first.model_name
       merge_comment = "Merged #{model.plural} #{dupes.ids.to_sentence}"
 
-      merged = dupes.first.dup
+      merged = dupes.order(:created_at).first.dup
       merged.superseded_by = nil # in case it has been merged before
       merged.paper_trail_event = "merge"
       merged.revision_comment = merge_comment

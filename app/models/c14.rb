@@ -30,6 +30,12 @@ class C14 < ApplicationRecord
 
   include Versioned
   include Supersedable
+  include Duplicable
+  duplicable :lab_identifier, :bp, :std # must match exactly
+  duplicable c14_lab_id: :null
+  duplicable delta_c13: :null, delta_c14_std: :null
+  duplicable method: :null
+  duplicable :sample_id # hmm...
 
   include PgSearch::Model
   pg_search_scope :search, 
