@@ -1,5 +1,4 @@
 require 'rails_helper'
-require 'pp'
 
 RSpec.describe 'Data', type: :request do
   describe 'GET /api/v1/data' do
