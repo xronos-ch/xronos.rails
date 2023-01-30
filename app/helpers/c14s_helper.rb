@@ -27,7 +27,6 @@ module C14sHelper
       calib["date"]["sigma_ranges"].each do |sigma_range|
         return_string << sigma_range["begin"].to_s + " - " + sigma_range["end"].to_s + "<br/>"
       end
-      #return_string = calib["date"].to_yaml
       return_string.html_safe
     end
 
