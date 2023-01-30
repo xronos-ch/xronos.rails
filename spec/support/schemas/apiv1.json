@@ -1,0 +1,155 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "array",
+  "items": [
+    {
+      "type": "object",
+      "properties": {
+        "measurement": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "lab_name": {
+              "type": "string"
+            },
+            "labnr": {
+              "type": "string"
+            },
+            "bp": {
+              "type": "integer"
+            },
+            "std": {
+              "type": "integer"
+            },
+            "cal_bp": {
+              "type": "integer"
+            },
+            "cal_std": {
+              "type": "integer"
+            },
+            "delta_c13": {
+              "type": "number"
+            },
+            "reference": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "reference": {
+                      "type": "object",
+                      "properties": {
+                        "references": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "references"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "reference"
+                  ]
+                }
+              ]
+            },
+            "material": {
+              "type": "string"
+            },
+            "species": {
+              "type": "string"
+            },
+            "feature": {
+              "type": "string"
+            },
+            "periods": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "period": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "period"
+                  ]
+                }
+              ]
+            },
+            "typochronological_units": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "typochronological_unit": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "typochronological_unit"
+                  ]
+                }
+              ]
+            },
+            "ecochronological_units": {
+              "type": "object"
+            },
+            "site": {
+              "type": "string"
+            },
+            "country": {
+              "type": "string"
+            },
+            "lat": {
+              "type": "string"
+            },
+            "lng": {
+              "type": "string"
+            },
+            "site_type": {
+              "type": "string"
+            },
+            "feature_type": {
+              "type": "string"
+            },
+            "source_database": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "labnr",
+            "bp",
+            "std",
+            "cal_bp",
+            "cal_std",
+            "delta_c13",
+            "reference",
+            "material",
+            "species",
+            "feature",
+            "periods",
+            "typochronological_units",
+            "ecochronological_units",
+            "site",
+            "country",
+            "lat",
+            "lng",
+            "site_type",
+            "feature_type",
+            "source_database"
+          ]
+        }
+      },
+      "required": [
+        "measurement"
+      ]
+    }
+  ]
+}
