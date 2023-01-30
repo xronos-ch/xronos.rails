@@ -1,6 +1,6 @@
 <% content_for :title, "#{@c14.lab_identifier}, #{C14.label} from #{@c14.site.name}" %>
 
-<header id="c14-header" class="bg-primary text-light">
+<header id="c14-header" class="bg-light text-primary">
   <div class="container my-5">
     <h1 class="display-1"><%= @c14.lab_identifier %></h1>
     <h2 class="display-6">
@@ -10,8 +10,8 @@
   </div>
 </header>
 
-<section id="c14-calibration" class="bg-secondary">
-  <div class="container d-flex justify-content-center">
+<section id="c14-calibration" class="bg-primary">
+  <div class="container d-flex justify-content-center p-0" style="margin-bottom: -36px">
     <%= calibrator(@c14) %>
   </div>
 </section>

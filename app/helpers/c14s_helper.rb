@@ -23,16 +23,17 @@ module C14sHelper
     chart_data = calib["date"]["bp"].zip(calib["date"]["probabilities"]).map{|k, v| {bp: k, probability: v}}
 
     Vega.lite
-      .title({"text": c14.lab_identifier,
+      .background(nil)
+      .title({"text": "Atmospheric data from Reimer et al. (2013)",
         "font": '"Raleway", Inter, Helvetica Neue, Helvetica, Nimbus Sans, FreeSans, Arial, Arimo, Liberation Sans, sans-serif',
-        "subtitle": "Atmospheric data from Reimer et al. (2013)",
-        "align": "right", "anchor": "end", "color": "#7A90A1", "subtitleColor": "#7A90A1"})
+        "align": "right", "anchor": "end", "color": "#6c757d" })
       .data(chart_data)
-      .mark(type: "area", tooltip: true, "line": {strokeWidth: 4}, interpolate: "monotone")
+      .mark(type: "area", color: "#B99555", opacity: 0.9, tooltip: true, "line": {strokeWidth: 4, color: "#B99555"}, interpolate: "monotone")
       .encoding(
-        x: {field: "bp", type: "quantitative", title: "Calibrated dates",
-          axis: {grid: true, tickMinStep: 50}},
-        y: {field: "probability", type: "quantitative"},
+        x: {field: "bp", type: "quantitative", title: "cal BP",
+          axis: {grid: true, gridColor: "#6C757D", tickMinStep: 50, labelColor: "#212F1F", titleColor: "#212F1F" }},
+        y: {field: "probability", type: "quantitative",
+            axis: nil },
       )
   end
 
