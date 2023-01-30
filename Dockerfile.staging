@@ -4,7 +4,7 @@ MAINTAINER Martin Hinz <martin.hinz@iaw.unibe.ch>
 
 # install node and yarn
 RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
-RUN apt-get install -y --no-install-recommends build-essential nodejs
+RUN apt-get install -y --no-install-recommends build-essential nodejs libboost-all-dev
 RUN corepack enable
 
 # throw errors if Gemfile has been modified since Gemfile.lock
@@ -12,6 +12,12 @@ RUN bundle config --global frozen 1
 
 # change workdir
 WORKDIR /application
+
+# make calibrator
+cd vendor/calibrator/
+make clean
+make
+cd ../..
 
 # gemfile into container
 RUN mkdir -p .
