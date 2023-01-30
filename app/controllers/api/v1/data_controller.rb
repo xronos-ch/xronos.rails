@@ -23,7 +23,6 @@ module Api
               [{site:
                 :site_types},
                 :typos]}]},
-          :source_database,
           :references
         )
 

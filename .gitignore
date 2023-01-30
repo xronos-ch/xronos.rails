@@ -88,3 +88,4 @@ yarn-debug.log*
 .Rhistory
 .RData
 
+coverage

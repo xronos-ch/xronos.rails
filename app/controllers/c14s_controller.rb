@@ -45,7 +45,6 @@ class C14sController < ApplicationController
   # GET /c14s/new
   def new
     @c14 = C14.new
-    @c14.build_source_database
   end
 
   # GET /c14s/1/edit
@@ -127,14 +126,6 @@ class C14sController < ApplicationController
           :position_y,
           :position_z,
           :position_crs,
-          :_destroy
-        ]},
-        {source_database_attributes: [
-          :id,
-          :name,
-          :url,
-          :citation,
-          :licence,
           :_destroy
         ]}
       )
