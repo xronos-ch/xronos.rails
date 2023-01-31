@@ -13,12 +13,6 @@ RUN bundle config --global frozen 1
 # change workdir
 WORKDIR /application
 
-# make calibrator
-cd vendor/calibrator/
-make clean
-make
-cd ../..
-
 # gemfile into container
 RUN mkdir -p .
 ADD Gemfile .

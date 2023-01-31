@@ -1,3 +1,9 @@
+# make calibrator
+cd vendor/calibrator
+make clean
+make
+cd ../..
+
 # migrate the database
 # bundle exec rake db:create db:migrate
 
