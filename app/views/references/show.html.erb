@@ -1,9 +1,12 @@
 <% content_for :title, @reference.render_citation %>
 
-<header id="reference-header" class="bg-primary text-light">
+<header id="reference-header" class="bg-light text-primary">
   <div class="container my-5">
     <h1 class="display-1"><%= @reference.render_citation %></h1>
-    <h2 class="display-6">Bibliographic reference</h2>
+    <h2 class="display-6">
+      <%= xr_icon Reference, {}, style: "height: 2.5rem;" %>
+      <%= Reference.label.humanize %>
+    </h2>
   </div>
 </header>
 
@@ -13,7 +16,7 @@
   </div>
 </section>
 
-<section id="reference-citations" class="bg-light">
+<section id="reference-citations" class="bg-body">
   <div class="container my-5">
     <h2>Citing records</h2>
     <% c = @reference.citations.count %>
@@ -21,38 +24,52 @@
         in XRONOS that <%= c > 1 ? 'cite' : 'cites' %> this reference.</p>
 
     <% unless @sites.blank? %>
-      <h3><%= Site.label.humanize.pluralize %> (<%= @sites.count %>)</h3>
-      <ul>
-      <% @sites.each do |site| %>
-        <li><%= link_to site.name, site %>, <%= render "sites/country", site: site %></li>
-      <% end %>
-      </ul>
+      <div class="my-5">
+        <h3>
+          <%= xr_icon Site, {}, style: "height: 1.75rem; vertical-align: top;" %>
+          <%= Site.label.humanize.pluralize %>
+          <small class="text-muted">(<%= @sites.count %>)</small>
+        </h3>
+        <ul>
+          <% @sites.each do |site| %>
+            <li><%= link_to site.name, site %>, <%= render "sites/country", site: site %></li>
+          <% end %>
+        </ul>
+      </div>
     <% end %>
 
     <% unless @c14s.blank? %>
-      <h3><%= C14.label.humanize.pluralize %> (<%= @c14s.count %>)</h3>
-      <%= render "c14s/table", c14s: @c14s %>
+      <div class="my-5">
+        <h3>
+          <%= xr_icon C14, {}, style: "height: 1.75rem; vertical-align: top;" %>
+          <%= C14.label.humanize.pluralize %>
+          <small class="text-muted">(<%= @c14s.count %>)</small>
+        </h3>
+        <%= render "c14s/table", c14s: @c14s %>
+      </div>
     <% end %>
 
     <% unless @typos.blank? %>
-      <h3><%= Typo.label.humanize.pluralize %> (<%= @typos.count %>)</h3>
-      <%= render "typos/table", typos: @typos %>
+      <div class="my-5">
+          <h3>
+            <%= xr_icon Typo, {}, style: "height: 1.75rem; vertical-align: top;" %>
+            <%= Typo.label.humanize.pluralize %>
+            <small class="text-muted">(<%= @typos.count %>)</small>
+          </h3>
+        <%= render "typos/table", typos: @typos %>
+      </div>
     <% end %>
   </div>
 </section>
 
-<section id="xronos-metadata" class="bg-body">
+<section id="xronos-metadata" class="bg-light">
   <div class="container my-5">
-    <div class="row">
+    <h2>Metadata</h2>
+    <%= render "shared/record_metadata", record: @reference, record_label: "reference" %>
+  </div>
 
-      <div class="col">
-        <h2>XRONOS metadata</h2>
-        <%= render "shared/record_metadata", record: @reference, record_label: "reference" %>
-      </div>
-
-      <div class="col">
-        <h2>Revision history</h2>
-        <%= render "shared/paper_trail", item: @reference %>
-      </div>
+  <div class="container my-5">
+    <h2>Changelog</h2>
+    <%= render "application/paper_trail/versions", item: @reference %>
   </div>
 </section>
