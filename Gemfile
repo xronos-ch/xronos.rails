@@ -175,3 +175,6 @@ gem "httparty"
 
 # Markdown static pages
 gem "kramdown"
+
+# Charts
+gem "vega"
