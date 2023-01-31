@@ -2,6 +2,8 @@
 cd vendor/calibrator
 make clean
 make
+rm calibrator_linux
+mv calibrator calibrator_linux
 cd ../..
 
 # migrate the database
