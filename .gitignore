@@ -92,4 +92,4 @@ yarn-debug.log*
 coverage
 
 # build calibrator yourself
-vendor/calibrator/bin
+vendor/calibrator/bin/calibrator*
