@@ -53,7 +53,7 @@
         <h2>
           <%= xr_icon Typo, {}, style: "height: 2rem" %>
           <%= Typo.label.humanize.pluralize %>
-          <small class="text-muted">(<%= @c14s.count %>)</small>
+          <small class="text-muted">(<%= @typos.count %>)</small>
         </h2>
         <%= render "typos/table", typos: @typos %>
       </div>
