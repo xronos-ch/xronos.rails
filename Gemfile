@@ -68,6 +68,7 @@ group :test do
   gem 'minitest'
   gem 'selenium-webdriver'
   gem 'webdrivers'
+  gem 'capybara'
   gem 'capybara-selenium'
   gem "json-schema"
   gem 'simplecov', require: false
