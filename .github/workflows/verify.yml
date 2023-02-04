@@ -54,13 +54,9 @@ jobs:
           yarn install --pure-lockfile
       - name: Make Clean
         working-directory: ${{runner.workspace}}/vendor/calibrator
-        shell: bash
-        # Execute the build.  You can specify a specific target with "--target <NAME>"
         run: make clean
       - name: Make Calibrator
         working-directory: ${{runner.workspace}}/vendor/calibrator
-        shell: bash
-        # Execute the build.  You can specify a specific target with "--target <NAME>"
         run: make
       - name: Setup test database
         env:
