@@ -64,7 +64,21 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+  config.filter_run focus: true
+  config.run_all_when_everything_filtered = true
+  
   
   config.include ApiHelpers
   
+  config.include Capybara::DSL
+  
+  Capybara.register_driver :firefox_headless do |app|
+    options = ::Selenium::WebDriver::Firefox::Options.new
+    options.args << '--headless'
+
+    Capybara::Selenium::Driver.new(app, browser: :firefox, capabilities: options)
+  end
+  
+  Capybara.default_driver = :firefox_headless
+    
 end
