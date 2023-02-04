@@ -73,10 +73,15 @@ RSpec.configure do |config|
   config.include Capybara::DSL
   
   Capybara.register_driver :firefox_headless do |app|
+  
+    profile = Selenium::WebDriver::Firefox::Profile.new
+    client = Selenium::WebDriver::Remote::Http::Default.new
+    client.timeout = 90 # instead of the default 60
+    
     options = ::Selenium::WebDriver::Firefox::Options.new
     options.args << '--headless'
 
-    Capybara::Selenium::Driver.new(app, browser: :firefox, capabilities: options)
+    Capybara::Selenium::Driver.new(app, browser: :firefox, capabilities: options, profile: profile, http_client: client)
   end
   
   Capybara.default_driver = :firefox_headless
