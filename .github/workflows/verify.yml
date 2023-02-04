@@ -22,6 +22,12 @@ jobs:
           --health-retries 5
     steps:
       - uses: actions/checkout@v2
+      - name: Make Clean
+        working-directory: ${{runner.workspace}}/vendor/calibrator
+        run: make clean
+      - name: Make Calibrator
+        working-directory: ${{runner.workspace}}/vendor/calibrator
+        run: make
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
       - name: Ruby gem cache
@@ -52,12 +58,6 @@ jobs:
       - name: Install packages
         run: |
           yarn install --pure-lockfile
-      - name: Make Clean
-        working-directory: ${{runner.workspace}}/vendor/calibrator
-        run: make clean
-      - name: Make Calibrator
-        working-directory: ${{runner.workspace}}/vendor/calibrator
-        run: make
       - name: Setup test database
         env:
           RAILS_ENV: test
