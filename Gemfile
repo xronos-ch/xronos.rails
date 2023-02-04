@@ -70,6 +70,7 @@ group :test do
   gem 'webdrivers'
   gem 'capybara'
   gem 'capybara-selenium'
+  gem 'launchy'
   gem "json-schema"
   gem 'simplecov', require: false
   gem "simplecov-cobertura"
