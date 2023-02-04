@@ -22,7 +22,7 @@ jobs:
           --health-retries 5
     steps:
       - name: Install boost
-        run: sudo apt-get install -y --no-install-recommends build-essential libboost-all-dev
+        run: sudo apt-get install -y --no-install-recommends build-essential libboost-all-dev firefox
       - uses: actions/checkout@v2
       - name: Make Calibrator
         run: |
