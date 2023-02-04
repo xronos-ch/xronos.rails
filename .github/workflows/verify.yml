@@ -60,6 +60,8 @@ jobs:
       - name: Install packages
         run: |
           yarn install --pure-lockfile
+      - name: precompile asstes
+        run: bundle exec rake assets:precompile
       - name: Setup test database
         env:
           RAILS_ENV: test
