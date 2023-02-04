@@ -76,7 +76,7 @@ RSpec.configure do |config|
   
     profile = Selenium::WebDriver::Firefox::Profile.new
     client = Selenium::WebDriver::Remote::Http::Default.new
-    client.timeout = 90 # instead of the default 60
+    client.read_timeout = 120 # instead of the default 60
     
     options = ::Selenium::WebDriver::Firefox::Options.new
     options.args << '--headless'
