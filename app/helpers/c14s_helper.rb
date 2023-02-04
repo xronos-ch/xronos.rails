@@ -15,17 +15,23 @@ end
 module C14sHelper
   include Pagy::Frontend
   def calibrator(c14)
+    unless c14.bp.blank? | c14.std.blank?
+
     if RUBY_PLATFORM =~ /darwin/
       calib = JSON.parse(`cd vendor/calibrator/bin/; ./calibrator_mac -b #{c14.bp} -s #{c14.std} -r`)
     elsif RUBY_PLATFORM =~ /linux/
       calib = JSON.parse(`cd vendor/calibrator/bin/; ./calibrator_linux -b #{c14.bp} -s #{c14.std} -r`)
     end
+    
     chart_data = calib["date"]["bp"].zip(calib["date"]["probabilities"]).map{|k, v| {bp: k, probability: v}}
     
     @bp_cal = capture do
-      return_string = ""
-      calib["date"]["sigma_ranges"].each do |sigma_range|
-        return_string << sigma_range["begin"].to_s + "&ndash;" + sigma_range["end"].to_s + "<br/>"
+      return_string = "can not be calculated"
+      unless calib["date"]["sigma_ranges"].blank?
+        return_string = ""
+        calib["date"]["sigma_ranges"].each do |sigma_range|
+          return_string << sigma_range["begin"].to_s + " - " + sigma_range["end"].to_s + "<br/>"
+        end
       end
       return_string.html_safe
     end
@@ -43,5 +49,6 @@ module C14sHelper
         y: {field: "probability", type: "quantitative",
             axis: nil },
       )
+    end
   end
 end
