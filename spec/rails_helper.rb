@@ -74,6 +74,6 @@ RSpec.configure do |config|
   
   Capybara.server = :puma, { Silent: true } # To clean up your test output
   
-  Capybara.default_driver = :selenium_chrome_headless
+  Capybara.default_driver = :selenium_chrome
     
 end
