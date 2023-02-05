@@ -72,13 +72,8 @@ RSpec.configure do |config|
   
   config.include Capybara::DSL
   
-  Capybara.register_driver :firefox_headless do |app|
-    options = ::Selenium::WebDriver::Firefox::Options.new
-    options.args << '--headless'
-
-    Capybara::Selenium::Driver.new(app, browser: :firefox, capabilities: options)
-  end
+  Capybara.server = :puma, { Silent: true } # To clean up your test output
   
-  Capybara.default_driver = :firefox_headless
+  Capybara.default_driver = :selenium_chrome_headless
     
 end
