@@ -10,6 +10,14 @@ services:
       - ./db:/var/lib/postgresql/data
     env_file:
       - env_variables.env
+    labels:
+      - "autoheal=true"
+    healthcheck:
+      test: curl --fail http://localhost:4000/ || exit 1
+        interval: 2m
+        timeout: 30s
+        retries: 3
+        start_period: 5m
   web:
     container_name: xronos_rails_app
     restart: always
@@ -20,4 +28,13 @@ services:
       - db
     env_file:
       - env_variables.env
-
+    autoheal:
+      image: willfarrell/autoheal:latest
+      tty: true
+      restart: always
+      environment:
+        - AUTOHEAL_INTERVAL=60
+        - AUTOHEAL_START_PERIOD=300
+        - AUTOHEAL_DEFAULT_STOP_TIMEOUT=10
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
