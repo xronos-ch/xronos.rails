@@ -17,7 +17,7 @@ services:
         interval: 2m
         timeout: 30s
         retries: 3
-        start_period: 5m
+        start_period: 10m
   web:
     container_name: xronos_rails_staging_app
     restart: always
