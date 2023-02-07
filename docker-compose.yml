@@ -28,13 +28,13 @@ services:
       - db
     env_file:
       - env_variables.env
-    autoheal:
-      image: willfarrell/autoheal:latest
-      tty: true
-      restart: always
-      environment:
-        - AUTOHEAL_INTERVAL=60
-        - AUTOHEAL_START_PERIOD=300
-        - AUTOHEAL_DEFAULT_STOP_TIMEOUT=10
-      volumes:
-        - /var/run/docker.sock:/var/run/docker.sock
+  autoheal:
+    image: willfarrell/autoheal:latest
+    tty: true
+    restart: always
+    environment:
+      - AUTOHEAL_INTERVAL=60
+      - AUTOHEAL_START_PERIOD=300
+      - AUTOHEAL_DEFAULT_STOP_TIMEOUT=10
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
