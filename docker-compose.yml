@@ -17,11 +17,11 @@ services:
     labels:
       - "autoheal=true"
     healthcheck:
-      test: curl --fail http://localhost:4000/ || exit 1
+      test: curl --fail http://localhost:3000 || exit 1
       interval: 2m
       timeout: 30s
       retries: 3
-      start_period: 10m
+      start_period: 5m
     ports:
       - "4000:3000"
     depends_on:

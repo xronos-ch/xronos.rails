@@ -1,11 +1,11 @@
 version: "3.7"
 services:
   db:
-    container_name: xronos_postgres_db
+    container_name: xronos_postgres_staging_db
     restart: always
     image: postgres
     ports:
-      - "5433:5432"
+      - "5434:5432"
     volumes:
       - ./db:/var/lib/postgresql/data
     env_file:
@@ -17,11 +17,11 @@ services:
     labels:
       - "autoheal=true"
     healthcheck:
-      test: curl --fail http://localhost:4001/ || exit 1
+      test: curl --fail http://localhost:3000 || exit 1
       interval: 2m
       timeout: 30s
       retries: 3
-      start_period: 10m
+      start_period: 5m
     ports:
       - "4001:3000"
     depends_on:
