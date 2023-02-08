@@ -20,5 +20,20 @@ RSpec.describe 'Data', type: :request do
       expect(json.count).to eq C14.count
       expect(json).to match_response_schema('apiv1')
     end
+    
+    it 'processes a site without site' do
+      this_date = FactoryBot.create(:c14)
+      this_date.context.site = nil
+      get '/api/v1/data'
+      expect(response).to have_http_status(:success)
+    end
+    
+    it 'processes a site without site_types' do
+      this_date = FactoryBot.build(:c14)
+      this_date.sample.context.site.site_types = []
+      this_date.save
+      get '/api/v1/data'
+      expect(response).to have_http_status(:success)
+    end
   end
 end
