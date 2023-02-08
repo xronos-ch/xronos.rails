@@ -14,10 +14,10 @@ services:
       - "autoheal=true"
     healthcheck:
       test: curl --fail http://localhost:4001/ || exit 1
-        interval: 2m
-        timeout: 30s
-        retries: 3
-        start_period: 10m
+      interval: 2m
+      timeout: 30s
+      retries: 3
+      start_period: 10m
   web:
     container_name: xronos_rails_staging_app
     restart: always
