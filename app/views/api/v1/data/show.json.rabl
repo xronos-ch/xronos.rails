@@ -34,7 +34,7 @@ glue :sample do
       attributes :lat
       attributes :lng
       node :site_type do |site|
-        site.site_types.first.name
+        site.site_types.empty? ? "" : site.site_types.first.name
       end
     end
     child :typos => :periods do
