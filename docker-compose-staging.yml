@@ -10,6 +10,10 @@ services:
       - ./db:/var/lib/postgresql/data
     env_file:
       - env_variables.env
+  web:
+    container_name: xronos_rails_staging_app
+    restart: always
+    image: xronos/xronos.rails.staging
     labels:
       - "autoheal=true"
     healthcheck:
@@ -18,10 +22,6 @@ services:
       timeout: 30s
       retries: 3
       start_period: 10m
-  web:
-    container_name: xronos_rails_staging_app
-    restart: always
-    image: xronos/xronos.rails.staging
     ports:
       - "4001:3000"
     depends_on:
