@@ -26,9 +26,6 @@ import 'bootstrap'
 import "@hotwired/turbo-rails"
 import "controllers"
 
-// vega
-window.vegaEmbed = require("vega-embed").default
-
 //fonts
 require("@fontsource/inter")
 require("@fontsource/raleway")
