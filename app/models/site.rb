@@ -59,8 +59,13 @@ class Site < ApplicationRecord
 
   def country_from_coordinates
     return nil if lat.blank? || lng.blank?
-    result = Geocoder.search([lat, lng])
-    ISO3166::Country[result.first.country_code]
+
+    result = Geocoder.search([lat, lng]).first
+    if result.country_code.present?
+      return ISO3166::Country[result.country_code]
+    else
+      return nil
+    end
   end
 
   def coordinates(format = "dd")
