@@ -15,10 +15,6 @@
 // const images = require.context('../images', true)
 // const imagePath = (name) => images(name, true)
 
-// require("bootstrap")
-
-import "stylesheets/application"
-
 import * as ActiveStorage from "@rails/activestorage"
 import "channels"
 
@@ -26,11 +22,11 @@ import "channels"
 import "@popperjs/core"
 import 'bootstrap'
 
-// hotwire framework (turbo+stimulus)
+// hotwire (turbo+stimulus)
 import "@hotwired/turbo-rails"
 import "controllers"
 
-//vega
+// vega
 window.vegaEmbed = require("vega-embed").default
 
 //fonts
