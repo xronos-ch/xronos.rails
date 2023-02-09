@@ -26,7 +26,7 @@ It also incorporates data from the following publications:
 
 ## Graphics and photos
 
-From [Noun Project](htt[s://thenounproject.com):
+From [Noun Project](https://thenounproject.com):
 
 * [Book](https://thenounproject.com/icon/book-5433144/) by HDM
 * [006 Carbon C](https://thenounproject.com/icon/006-carbon-c-1022338/) by Joel Wisneski
