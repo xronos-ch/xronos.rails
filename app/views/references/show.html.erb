@@ -28,13 +28,18 @@
         <h3>
           <%= xr_icon Site, {}, style: "height: 1.75rem; vertical-align: top;" %>
           <%= Site.label.humanize.pluralize %>
-          <small class="text-muted">(<%= @sites.count %>)</small>
+          <small class="text-muted">(<%= @pagy_sites.count %>)</small>
         </h3>
-        <ul>
-          <% @sites.each do |site| %>
-            <li><%= link_to site.name, site %>, <%= render "sites/country", site: site %></li>
+        <turbo-frame id="reference-sites-table">
+          <ul>
+            <% @sites.each do |site| %>
+              <li><%= link_to site.name, site %>, <%= render "sites/country", site: site %></li>
+            <% end %>
+          </ul>
+          <% unless @pagy_sites.pages <= 1 %>
+            <%== pagy_bootstrap_nav(@pagy_sites) %>
           <% end %>
-        </ul>
+        </turbo-frame>
       </div>
     <% end %>
 
@@ -43,20 +48,30 @@
         <h3>
           <%= xr_icon C14, {}, style: "height: 1.75rem; vertical-align: top;" %>
           <%= C14.label.humanize.pluralize %>
-          <small class="text-muted">(<%= @c14s.count %>)</small>
+          <small class="text-muted">(<%= @pagy_c14s.count %>)</small>
         </h3>
-        <%= render "c14s/table", c14s: @c14s %>
+        <turbo-frame id="reference-c14s-table">
+          <%= render "c14s/table", c14s: @c14s %>
+          <% unless @pagy_c14s.pages <= 1 %>
+            <%== pagy_bootstrap_nav(@pagy_c14s) %>
+          <% end %>
+        </turbo-frame>
       </div>
     <% end %>
 
     <% unless @typos.blank? %>
       <div class="my-5">
-          <h3>
-            <%= xr_icon Typo, {}, style: "height: 1.75rem; vertical-align: top;" %>
-            <%= Typo.label.humanize.pluralize %>
-            <small class="text-muted">(<%= @typos.count %>)</small>
-          </h3>
-        <%= render "typos/table", typos: @typos %>
+        <h3>
+          <%= xr_icon Typo, {}, style: "height: 1.75rem; vertical-align: top;" %>
+          <%= Typo.label.humanize.pluralize %>
+          <small class="text-muted">(<%= @pagy_typos.count %>)</small>
+        </h3>
+        <turbo-frame id="reference-typos-table">
+          <%= render "typos/table", typos: @typos %>
+          <% unless @pagy_c14s.pages <= 1 %>
+            <%== pagy_bootstrap_nav(@pagy_typos) %>
+          <% end %>
+        </turbo-frame>
       </div>
     <% end %>
   </div>

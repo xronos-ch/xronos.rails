@@ -12,7 +12,6 @@ class SitesController < ApplicationController
       @sites = Site.all.where(site_params)
     end
 
-
     respond_to do |format|
       format.html { 
         @pagy, @sites = pagy(Site.all.order(:name))
@@ -42,8 +41,12 @@ class SitesController < ApplicationController
   # GET /sites/1.json
   def show
     @site = Site.find(params[:id])
+
     @c14s = @site.c14s.includes([:references, sample: [ :material, :taxon, :context ]])
+    @pagy_c14s, @c14s = pagy(@c14s, page_param: :c14s_page)
+
     @typos = @site.typos.includes([:references])
+    @pagy_typos, @typos = pagy(@typos, page_param: :typos_page)
   end
 
   # GET /sites/new

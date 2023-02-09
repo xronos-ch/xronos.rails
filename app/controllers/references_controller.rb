@@ -19,9 +19,15 @@ class ReferencesController < ApplicationController
   # GET /references/1.json
   def show
     @reference = Reference.find(params[:id])
+
     @sites = @reference.sites.distinct
+    @pagy_sites, @sites = pagy(@sites, page_param: :sites_page)
+
     @c14s = @reference.c14s.includes([:references, sample: [:material, :taxon, context: [:site] ]])
+    @pagy_c14s, @c14s = pagy(@c14s, page_param: :c14s_page)
+
     @typos = @reference.typos.includes([:references, sample: [ context: [:site] ]])
+    @pagy_typos, @typos = pagy(@typos, page_param: :typos_page)
   end
 
   # GET /references/new
