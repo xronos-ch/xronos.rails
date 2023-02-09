@@ -12,10 +12,8 @@
     <%= csp_meta_tag %>
 
     <%= stylesheet_link_tag 'application', media: 'all' %>
-    <%= javascript_pack_tag 'application' %>
-    <%#= javascript_include_tag 'application' %>
-    <%= javascript_pack_tag 'frontend' %>
 
+    <%= javascript_pack_tag 'application' %>
     <%= javascript_pack_tag params[:controller], :media => "all"  if javascript_exists?(params[:controller])
     %>
 

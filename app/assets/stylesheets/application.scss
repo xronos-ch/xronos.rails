@@ -14,10 +14,7 @@
  * require_tree .
  *= require_self
  *= require leaflet
- *= require leaflet.markercluster
  *= require font-awesome
- *= require jquery-ui
- *= require ion.rangeSlider.css
 */
 
 // Bootstrap variables
@@ -44,17 +41,10 @@ $font-family-sans-serif:
 $headings-font-family: "Raleway", $font-family-sans-serif;
 $enable-shadows: true;
 
-// Optional Bootstrap features
-
 // Bootstrap
 @import "bootstrap";
-@import "buttons.bootstrap5.min.css";
-@import "select.bootstrap5.min.css";
 @import "rails_bootstrap_forms";
 @import "tom-select/dist/scss/tom-select.bootstrap5";
-
-// Other gems
-@import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 
 // Application 
 @import "frontend";

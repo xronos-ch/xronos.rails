@@ -22,28 +22,19 @@ import "stylesheets/application"
 import * as ActiveStorage from "@rails/activestorage"
 import "channels"
 
+// bootstrap
 import "@popperjs/core"
 import 'bootstrap'
-
-// jquery
-import "jquery-ui"
 
 // hotwire framework (turbo+stimulus)
 import "@hotwired/turbo-rails"
 import "controllers"
 
-require('../src/calibrate.js');
-import "../src/ion.rangeSlider.js"
-
-import "../src/layout_special_filter_tools.js"
-
-//charts
+//vega
 window.vegaEmbed = require("vega-embed").default
 
-// special popup window for calibration results
-$('a[calibration-popup]').on('click', function(e) {
-  window.open( $(this).attr('href'), "Calibration", "height=600,width=900,titlebar=0,resizable=yes,scrollbars=yes,status=yes");
-  e.preventDefault();
-});
+//fonts
+require("@fontsource/inter")
+require("@fontsource/raleway")
 
 ActiveStorage.start()
