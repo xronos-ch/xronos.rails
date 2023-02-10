@@ -79,7 +79,7 @@
       <%= Reference.label.humanize.pluralize %>
       <small class="text-muted">(<%# @site.recursive_references.count %>)</small>
     </h2>
-    <%# render "references/bibliography", 
+    <%= render "references/bibliography", 
       references: @site.recursive_references %>
   </div>
 </section>
