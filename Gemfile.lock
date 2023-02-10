@@ -220,6 +220,8 @@ GEM
     kramdown (2.4.0)
       rexml
     latex-decode (0.3.2)
+    launchy (2.5.2)
+      addressable (~> 2.8)
     leaflet-rails (1.7.0)
       rails (>= 4.2.0)
     listen (3.7.1)
@@ -477,6 +479,7 @@ DEPENDENCIES
   bullet
   byebug
   cancancan
+  capybara
   capybara-selenium
   carrierwave (~> 2.0)
   citeproc-ruby
@@ -501,6 +504,7 @@ DEPENDENCIES
   jquery-ui-rails
   json-schema
   kramdown
+  launchy
   leaflet-rails
   listen
   minitest

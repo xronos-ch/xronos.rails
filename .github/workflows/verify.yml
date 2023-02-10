@@ -21,9 +21,21 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     steps:
+      - name: Install boost
+        run: sudo apt-get install -y --no-install-recommends build-essential libboost-all-dev firefox
       - uses: actions/checkout@v2
+      - name: Make Calibrator
+        run: |
+          cd vendor/calibrator
+          make clean
+          make
+          mv bin/calibrator bin/calibrator_linux
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
+      - name: Set up Chrome
+        uses: browser-actions/setup-chrome@latest
+        with:
+          chrome-version: stable
       - name: Ruby gem cache
         uses: actions/cache@v1
         with:
