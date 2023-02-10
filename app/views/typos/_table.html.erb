@@ -2,11 +2,21 @@
   <thead>
     <tr>
       <% unless controller_name == "sites" %>
-        <th scope=col>Site</th>
+        <th scope="col">Site</th>
       <% end %>
-      <th scope=col>Classification</th>
-      <th scope=col>Estimated age</th>
-      <th scope=col class="text-end">References</th>
+      <th scope="col">
+        <%= link_to_order_by "Classification", :name, :typos %>
+        <% if ordered_by?(:name, :typos) %>
+          <span class="text-muted"><%= order_indicator :typos %></span>
+        <% end %>
+      </th>
+      <th scope="col">
+        <%= link_to_order_by "Estimated age", :approx_start_time, :typos %>
+        <% if ordered_by?(:approx_start_time, :typos) %>
+          <span class="text-muted"><%= order_indicator :typos %></span>
+        <% end %>
+      </th>
+      <th scope="col" class="text-end">References</th>
     </tr>
   </thead>
 
@@ -14,9 +24,9 @@
     <% typos.each do |typo| %>
       <tr>
         <% unless controller_name == "sites" %>
-          <td><%= link_to typo.site.name, typo.site %></td>
+          <td><%= link_to typo.site.name, typo.site, target: :_top %></td>
         <% end %>
-        <td><%= link_to typo.name, typo %></td>
+        <td><%= link_to typo.name, typo, target: :_top %></td>
         <td class="font-monospace"><%= typo.age.present? ? typo.age : na_value %></td>
         <td class="small text-end"><%= render "references/citations", references: typo.references %></td>
       </tr>

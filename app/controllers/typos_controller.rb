@@ -8,8 +8,32 @@ class TyposController < ApplicationController
   # GET /typos
   # GET /typos.json
   def index
-    @typos = Typo.all.includes([:references, sample: [ context: [ :site ] ] ])
-    @pagy, @typos = pagy(@typos)
+    @typos = Typo.includes([
+      :references, 
+      sample: [ 
+        context: [ 
+          :site 
+        ] 
+      ] 
+    ])
+
+    # filter
+    unless typo_params.blank?
+      @typos = @typos.where(typos_params)
+    end
+
+    # order
+    if params.has_key?(:typos_order_by)
+      order = { params[:typos_order_by] => params.fetch(:typos_order, "asc") }
+      @typos = @typos.reorder(order)
+    end
+
+    respond_to do |format|
+      format.html { 
+        @pagy, @typos = pagy(@typos)
+      }
+      format.json
+    end
   end
 
   # GET /typos/1
@@ -74,6 +98,6 @@ class TyposController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def typo_params
-      params.require(:typo).permit(:name, :approx_start_time, :approx_end_time, :parent_id)
+      params.fetch(:typo, {}).permit(:name, :approx_start_time, :approx_end_time, :parent_id)
     end
 end
