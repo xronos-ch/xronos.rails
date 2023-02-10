@@ -32,10 +32,10 @@ class Site < ApplicationRecord
 
   validates :name, presence: true
 
-  has_many :contexts, inverse_of: :site
-
   has_and_belongs_to_many :site_types, optional: true
 
+  has_many :contexts
+  has_many :samples, through: :contexts
   has_many :c14s, through: :contexts
   has_many :typos, through: :contexts
 

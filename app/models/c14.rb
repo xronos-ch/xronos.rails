@@ -39,7 +39,7 @@ class C14 < ApplicationRecord
   validates_associated :sample
 
   delegate :context, to: :sample
-  delegate :site, to: :context
+  delegate :site, to: :sample
 
   belongs_to :c14_lab, optional: true
   belongs_to :source_database, optional: true
