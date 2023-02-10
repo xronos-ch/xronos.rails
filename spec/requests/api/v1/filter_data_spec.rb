@@ -58,7 +58,7 @@ RSpec.describe 'Data', type: :request do
     end
   
     it 'returns all C14s with that site name' do
-      expect(json.size).to eq(C14.includes(sample { context: { site: :site_types } }).where(site: {site_types: {name: @site_type}}).count)
+      expect(json.size).to eq(C14.includes(sample: { context: { site: :site_types } }).where(site: {site_types: {name: @site_type}}).count)
     end
     
     it 'returns only C14s with that site type' do
