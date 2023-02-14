@@ -1,8 +1,10 @@
-<% content_for :title, "References" %>
+<% content_for :title, Reference.label.humanize.pluralize %>
+<% content_for :meta_description do %>List of bibliographic references associated with archaeological sites, radiocarbon dates, and other chronometric information in the XRONOS repository.<% end %>
 
 <div class="container my-5">
 
   <h1>References</h1>
+  <p>Showing <%= @pagy.count %> <%= Reference.label.pluralize(@pagy.count) %>.</p>
 
   <turbo-frame id="references-table">
     <table class="responsive nowrap table table-hover align-middle">

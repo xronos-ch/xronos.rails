@@ -1,6 +1,10 @@
-<div class="container my-5">
+<% content_for :title, Typo.label.humanize.pluralize %>
+<% content_for :meta_description do %>List of <%= @pagy.count %> typological age determinations from archaeological sites around the world, including bibliographic references.<% end %>
+  
+  <div class="container my-5">
 
   <h1>Typological dates</h1>
+  <p>Showing <%= @pagy.count %> <%= Typo.label.pluralize(@pagy.count) %>.</p>
 
   <turbo-frame id="typos-table">
     <%= render "table", typos: @typos %>

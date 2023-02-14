@@ -1,4 +1,5 @@
-<% content_for :title, @reference.render_citation %>
+<% content_for :title, "#{@reference.render_citation}, #{Reference.label.downcase}" %>
+<% content_for :meta_description, "#{@reference.render_citation} is cited by #{@reference.citations.count} records of archaeological sites, radiocarbon dates, and/or other chronometric determinations in the XRONOS repository." %>
 
 <header id="reference-header" class="bg-light text-primary">
   <div class="container my-5">
