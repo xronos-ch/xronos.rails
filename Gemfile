@@ -59,10 +59,6 @@ gem 'bootstrap_form', '~> 5.0'
 # FontAwesome 4.7 icons
 gem 'font-awesome-rails'
 
-# jquery JS framework
-gem 'jquery-rails'
-gem 'jquery-ui-rails'
-
 # Hotwire JS framework
 gem 'turbo-rails'
 gem 'stimulus-rails'
