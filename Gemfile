@@ -108,9 +108,6 @@ gem 'activerecord-session_store'
 
 # VIEW HELPERS ----------------------------------------------------------------
 
-# To use controller variables as javascript variables
-gem 'gon'
-
 # Pagination
 gem 'pagy'
 
