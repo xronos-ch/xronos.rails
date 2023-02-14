@@ -27,3 +27,6 @@ application.register("tom-select", TomSelectController)
 
 import TooltipsController from "./tooltips_controller.js"
 application.register("tooltips", TooltipsController)
+
+import VegaController from "./vega_controller.js"
+application.register("vega", VegaController)

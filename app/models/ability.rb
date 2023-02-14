@@ -22,6 +22,7 @@ class Ability
       can [:read, :update], [UserProfile], :user_id => user.id
       if user.admin?  # additional permissions for administrators
         can :manage, :all
+        can :duplicates, :all
       end
     end
 

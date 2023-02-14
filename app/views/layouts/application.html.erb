@@ -7,14 +7,13 @@
       <% if content_for?(:title) %> &ndash; <% end %>
       XRONOS
     </title>
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <%= stylesheet_link_tag 'application', media: 'all' %>
-    <%= javascript_pack_tag 'application' %>
-    <%#= javascript_include_tag 'application' %>
-    <%= javascript_pack_tag 'frontend' %>
 
+    <%= javascript_pack_tag 'application' %>
     <%= javascript_pack_tag params[:controller], :media => "all"  if javascript_exists?(params[:controller])
     %>
 
@@ -37,46 +36,7 @@
 
     <%= yield :top %>
 
-    <nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-primary mb-0 main-nav shadow"
-      <% if request.path == "/" %>
-           data-controller="home-hero"
-           data-action="scroll@window->home-hero#scroll"
-         <% end %>>
-      <div class="container">
-        <a class="navbar-brand" href="/"><%= image_tag "xronos_logo_light.svg", style: 'max-height: 1.5rem' %></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link <%= active_class data_path %>" href="/data" <%= active_aria data_path %>>Browse data</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link <%= active_class database_path %>" href="/database" <%= active_aria database_path %>>Schema</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link <%= active_class api_path %>" href="/api" <%= active_aria api_path %>>API</a>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                About
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <%= render "articles/nav", {section: "about", itemclass: "", linkclass: "dropdown-item nav-link text-dark" } %>
-              </ul>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/news">News</a>
-            </li>
-          </ul>
-
-          <div class="d-flex">
-            <%= render "shared/menu_user" %>
-          </div>
-        </div>
-      </div>
-    </nav>
+    <%= render "navbar" %>
 
     <%= content_for?(:content) ? yield(:content) : yield %>
 

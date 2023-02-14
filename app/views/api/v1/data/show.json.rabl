@@ -8,8 +8,8 @@ attributes :cal_bp => :cal_bp
 attributes :cal_std => :cal_std
 attributes :delta_c13 => :delta_c13
 
-glue :source_database do
-  attributes :name => :source_database
+node :source_database do
+  ""
 end
 
 glue :c14_lab do 
@@ -34,7 +34,7 @@ glue :sample do
       attributes :lat
       attributes :lng
       node :site_type do |site|
-        site.site_types.first.name
+        site.site_types.empty? ? "" : site.site_types.first.name
       end
     end
     child :typos => :periods do

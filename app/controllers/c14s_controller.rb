@@ -17,7 +17,24 @@ class C14sController < ApplicationController
       ]},
       :references
     )
-    @pagy, @c14s = pagy(@c14s)
+
+    # filter
+    unless c14_params.blank?
+      @c14s = @c14s.where(c14_params)
+    end
+
+    # order
+    if params.has_key?(:c14s_order_by)
+      order = { params[:c14s_order_by] => params.fetch(:c14s_order, "asc") }
+      @c14s = @c14s.reorder(order)
+    end
+
+    respond_to do |format|
+      format.html {
+        @pagy, @c14s = pagy(@c14s)
+      }
+      format.json
+    end
   end
 
   # GET /c14s/search
@@ -39,13 +56,12 @@ class C14sController < ApplicationController
   # GET /c14s/1
   # GET /c14s/1.json
   def show
-    calibrate_from_external(@c14.id)
+    #calibrate_from_external(@c14.id)
   end
 
   # GET /c14s/new
   def new
     @c14 = C14.new
-    @c14.build_source_database
   end
 
   # GET /c14s/1/edit
@@ -101,7 +117,7 @@ class C14sController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def c14_params
-      params.require(:c14).permit(
+      params.fetch(:c14, {}).permit(
         :lab_identifier,
         :c14_lab_id,
         :bp,
@@ -127,14 +143,6 @@ class C14sController < ApplicationController
           :position_y,
           :position_z,
           :position_crs,
-          :_destroy
-        ]},
-        {source_database_attributes: [
-          :id,
-          :name,
-          :url,
-          :citation,
-          :licence,
           :_destroy
         ]}
       )

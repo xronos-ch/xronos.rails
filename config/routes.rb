@@ -28,6 +28,7 @@ Rails.application.routes.draw do
   end
   resources :c14_labs
   resources :contexts
+  resources :duplicates
   resources :materials do
     get 'search', on: :collection
   end
@@ -40,7 +41,6 @@ Rails.application.routes.draw do
   resources :site_types do
     get 'search', on: :collection
   end
-  resources :source_databases
   resources :taxons do
     get 'search', on: :collection
   end
@@ -57,6 +57,9 @@ Rails.application.routes.draw do
   get 'data/index'
   post 'data/index'
   get "/data" => "data#index"
+
+  # Search
+  get "search" => "searches#index"
 
   # Data filter controls
   get '/resetfilter', :to=>'data#reset_filter_session_variable'

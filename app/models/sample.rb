@@ -1,6 +1,31 @@
+# == Schema Information
+#
+# Table name: samples
+#
+#  id                   :bigint           not null, primary key
+#  position_crs         :text
+#  position_description :text
+#  position_x           :decimal(, )
+#  position_y           :decimal(, )
+#  position_z           :decimal(, )
+#  superseded_by        :integer
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
+#  context_id           :integer
+#  material_id          :integer
+#  taxon_id             :integer
+#
+# Indexes
+#
+#  index_samples_on_context_id     (context_id)
+#  index_samples_on_material_id    (material_id)
+#  index_samples_on_position_crs   (position_crs)
+#  index_samples_on_superseded_by  (superseded_by)
+#  index_samples_on_taxon_id       (taxon_id)
+#
 class Sample < ApplicationRecord
 
-  has_paper_trail
+  delegate :site, to: :context
   
   belongs_to :context, optional: true
   accepts_nested_attributes_for :context, :reject_if => proc { |attributes| attributes.all? { |key, value| key == "_destroy" || value.blank? || (value.is_a?(Hash) && value.values.all?(&:blank?)) } }
@@ -16,4 +41,6 @@ class Sample < ApplicationRecord
 
   has_many :c14s
   has_many :typos
+
+  has_paper_trail
 end

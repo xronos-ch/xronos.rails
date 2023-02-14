@@ -4,30 +4,44 @@
 
   <h1>References</h1>
 
-  <table class="responsive nowrap table table-hover align-middle">
-    <thead>
-      <tr>
-        <th>Label</th>
-        <th>Reference</th>
-        <th>Citations</th>
-        <% if can? :manage, Reference %><th><!--Actions--></th><% end %>
-      </tr>
-    </thead>
-
-    <tbody>
-      <% @references.each do |reference| %>
+  <turbo-frame id="references-table">
+    <table class="responsive nowrap table table-hover align-middle">
+      <thead>
         <tr>
-          <td><%= link_to reference.short_ref, reference %></td>
-          <td><%= reference.render %></td>
-          <td><%= reference.citations.count %></td>
-          <% if can? :manage, Reference %><td class="text-end"><%= render 'shared/action_buttons_compact', i: reference %></td><% end %>
+          <th scope="col">
+            <%= link_to_order_by "Label", :short_ref %>
+            <% if ordered_by?(:short_ref) %>
+              <span class="text-muted"><%= order_indicator %></span>
+            <% end %>
+          </th>
+          <th scope="col">Reference</th>
+          <th scope="col">
+            <%= link_to_order_by "Citations", :citations_count %>
+            <% if ordered_by?(:citations_count) %>
+              <span class="text-muted"><%= order_indicator %></span>
+            <% end %>
+          </th>
+          <% if can? :manage, Reference %><th><!--Actions--></th><% end %>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
 
-  <%#= pagy_bootstrap_nav(@pagy) %>
+      <tbody>
+        <% @references.each do |reference| %>
+          <tr>
+            <td><%= link_to reference.short_ref, reference, target: :_top %></td>
+            <td><%= reference.render %></td>
+            <td><%= reference.citations_count %></td>
+            <% if can? :manage, Reference %><td class="text-end"><%= render 'shared/action_buttons_compact', i: reference %></td><% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
 
-  <%= link_to 'New reference', new_reference_path, class: 'btn btn-secondary',
-    data: { "turbo_frame": "remote_modal" } %>
+    <%== pagy_bootstrap_nav(@pagy) %>
+  </turbo-frame>
+
+  <% if can? :create, Reference %>
+    <%= link_to 'New reference', new_reference_path, class: 'btn btn-secondary',
+      data: { "turbo_frame": "remote_modal" } %>
+  <% end %>
 </div>

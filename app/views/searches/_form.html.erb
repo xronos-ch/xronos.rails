@@ -1,0 +1,15 @@
+<form class="input-group mb-3" 
+      role="search"
+      action="/search"
+      method="get">
+
+  <input class="form-control form-control-lg"
+         type="search" 
+         name="q" 
+         placeholder="<%= random_search %>"
+         aria-label="Search">
+  <button class="btn btn-lg btn-primary" type="submit">
+    <%= fa_icon "search", text: "Search" %>
+  </button>
+
+</form>

@@ -1,3 +1,23 @@
+# == Schema Information
+#
+# Table name: typos
+#
+#  id                :bigint           not null, primary key
+#  approx_end_time   :integer
+#  approx_start_time :integer
+#  name              :string
+#  superseded_by     :integer
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
+#  parent_id         :integer
+#  sample_id         :bigint
+#
+# Indexes
+#
+#  index_typos_on_name           (name)
+#  index_typos_on_sample_id      (sample_id)
+#  index_typos_on_superseded_by  (superseded_by)
+#
 class Typo < ApplicationRecord
   include DataHelper
   
@@ -9,9 +29,14 @@ class Typo < ApplicationRecord
   delegate :context, to: :sample
   delegate :site, to: :context
 
+  has_many :citations, as: :citing
+  has_many :references, through: :citations
+
   # Internal heirarchy
   belongs_to :parent, class_name: "Typo", optional: true
   has_many :children, class_name: "Typo", foreign_key: "typo_id"
+
+  has_paper_trail
 
   def self.label
     "typological date"

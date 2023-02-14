@@ -20,7 +20,7 @@ Geocoder.configure(
   # distances: :linear          # :spherical or :linear
 
   # Cache configuration
-  cache: Redis.new,             # cache object (must respond to #[], #[]=, and #del)
+  cache: Geocoder::CacheStore::Generic.new(Rails.cache, {}),
   cache_options: {
      expiration: 30.days,
      prefix: 'geocoder:'

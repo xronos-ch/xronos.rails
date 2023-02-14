@@ -1,0 +1,107 @@
+<nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-primary mb-0 main-nav shadow"
+     data-bs-theme="dark"
+  <% if request.path == "/" %>
+       data-controller="home-hero"
+       data-home-hero-target="navbar"
+       data-action="scroll@window->home-hero#scroll"
+     <% end %>>
+
+     <div class="container">
+
+       <a class="navbar-brand" href="/">
+         <%= image_tag "xronos_logo_light.svg", style: 'max-height: 1.5rem' %>
+       </a>
+
+       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+         <span class="navbar-toggler-icon"></span>
+       </button>
+
+       <div class="collapse navbar-collapse" id="navbarSupportedContent">
+         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+           <li class="nav-item">
+             <a class="nav-link <%= active_class data_path %>" href="/data" <%= active_aria data_path %>>Browse data</a>
+           </li>
+           <li class="nav-item">
+             <a class="nav-link <%= active_class database_path %>" href="/database" <%= active_aria database_path %>>Schema</a>
+           </li>
+           <li class="nav-item">
+             <a class="nav-link <%= active_class api_path %>" href="/api" <%= active_aria api_path %>>API</a>
+           </li>
+           <li class="nav-item dropdown">
+             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+               About
+             </a>
+             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+               <%= render "about/nav", {itemclass: "", linkclass: "dropdown-item nav-link text-dark" } %>
+             </ul>
+           </li>
+           <li class="nav-item">
+             <a class="nav-link" href="https://blog.xronos.ch">Blog</a>
+           </li>
+         </ul>
+
+         <form id="navbarSearch"
+               data-home-hero-target="search"
+               class="me-3" 
+               role="search"
+               action="/search"
+               method="get">
+           <div class="input-group">
+             <input class="form-control form-control-sm" type="search" name="q" placeholder="<%= random_search %>" aria-label="Search">
+             <button class="btn btn-sm btn-info" type="submit">
+               <%= fa_icon "search", text: "Search" %>
+             </button>
+           </div>
+         </form>
+
+         <div class="d-flex">
+           <% if user_signed_in? %>
+             <div class="dropdown">
+               <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                 <%= current_user.email %>
+               </button>
+               <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                 <li> <%= link_to(edit_user_registration_path, class: "dropdown-item") do%><%= fa_icon "edit" %> Edit registration<% end %></li>
+                 <li> <%= link_to(destroy_user_session_path, method: :delete, class: "dropdown-item") do %><%= fa_icon "sign-out" %> Logout<% end %></li>
+               </ul>
+             </div>
+
+
+           <% else %>
+             <div class="dropdown">
+               <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                 Sign in
+               </button>
+
+               <div class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="dropdownMenuLink" style="width: 300px">
+                 <%= form_for :user, :url => session_path(:user), :html => {:class => "px-4"}  do |f| %>
+                   <div class="form-group">
+                     <%= f.label :email, class: "sr-only col-form-label col-form-label-sm" %>
+                     <div class="input-group">
+                       <div class="input-group-text" style="width: 35px;"><%= fa_icon "user" %></div>
+                       <%= f.text_field :email, class: "form-control form-control-sm", placeholder: "email@example.com"  %>
+                     </div>
+                   </div>
+                   <div class="form-group">
+                     <%= f.label :password, class: "sr-only col-form-label col-form-label-sm" %>
+                     <div class="input-group">
+                       <div class="input-group-text" style="width: 35px;"><%= fa_icon "unlock" %></div>
+                       <%= f.password_field :password, class: "form-control form-control-sm", placeholder: "password"  %>
+                     </div>
+                   </div>
+                   <div class="form-check" style="display: inline-block;">
+                     <%= f.check_box :remember_me, class: "form-check-input form-check-input-sm"  %>
+                     <%= f.label :remember_me, "Remember me", class: "form-check-label col-form-label-sm" %>
+                   </div>
+                   <%= f.submit 'Sign in', class: "btn btn-primary btn-sm pull-right" %>
+                 <% end %>
+                 <!-- <div class="dropdown-divider"></div>
+                   <%= link_to "Forgot your password?", new_password_path(:user), class: "dropdown-item" %>
+                   <%= link_to('New around here? Sign up', new_user_registration_path, class: "dropdown-item") %> -->
+               </div>
+             </div>
+           <% end %>
+         </div>
+       </div>
+     </div>
+</nav>

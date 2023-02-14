@@ -1,21 +1,42 @@
 <table class="table table-hover">
   <thead>
     <tr>
-      <th scope=col>Lab ID</th>
-      <th scope=col>Context</th>
-      <th scope=col>Material</th>
-      <th scope=col>Taxon</th>
-      <th scope=col>Method</th>
-      <th scope=col class="text-end">Uncalibrated age</th>
-      <th scope=col class="text-end">Calibrated age</th>
-      <th scope=col class="text-end">References</th>
+      <% unless controller_name == "sites" %>
+        <th scope="col">Site</th>
+      <% end %>
+      <th scope="col">
+        <%= link_to_order_by "Lab ID", :lab_identifier, :c14s %>
+        <% if ordered_by?(:lab_identifier, :c14s) %>
+          <span class="text-muted"><%= order_indicator :c14s %></span>
+        <% end %>
+      </th>
+      <th scope="col">Context</th>
+      <th scope="col">Material</th>
+      <th scope="col">Taxon</th>
+      <th scope="col">
+        <%= link_to_order_by "Method", :method, :c14s %>
+        <% if ordered_by?(:method, :c14s) %>
+          <span class="text-muted"><%= order_indicator :c14s %></span>
+        <% end %>
+      </th>
+      <th scope="col" class="text-end">
+        <%= link_to_order_by "Uncalibrated age", :bp, :c14s %>
+        <% if ordered_by?(:bp, :c14s) %>
+          <span class="text-muted"><%= order_indicator :c14s %></span>
+        <% end %>
+      </th>
+      <th scope="col" class="text-end">Calibrated age</th>
+      <th scope="col" class="text-end">References</th>
     </tr>
   </thead>
 
   <tbody>
     <% c14s.each do |c14| %>
       <tr>
-        <td><%= link_to c14.lab_identifier, c14 %></td>
+        <% unless controller_name == "sites" %>
+          <td><%= link_to c14.site.name, c14.site, target: :_top %></td>
+        <% end %>
+        <td><%= link_to c14.lab_identifier, c14, target: :_top %></td>
         <td><%= c14.sample.context.name %></td>
         <td><%= c14.sample.material.present? ? c14.sample.material.name : na_value %></td>
         <td><%= c14.sample.taxon.present? ? c14.sample.taxon.name : na_value %></td>

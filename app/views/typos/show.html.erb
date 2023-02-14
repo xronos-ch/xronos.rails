@@ -1,9 +1,14 @@
 <% content_for :title, "#{@typo.name} (#{@typo.sample.context.site.name})" %>
 
-<header id="typo-header" class="bg-primary text-light">
+<header id="typo-header" class="bg-light text-primary">
   <div class="container my-5">
     <h1 class="display-1"><%= @typo.name %></h1>
-    <h2 class="display-6">Typological date from <%= link_to @typo.sample.context.site.name, @typo.sample.context.site, class: "link-light" %></h2>
+    <h2 class="display-6">
+      <%= xr_icon Typo, {}, { style: "height: 2.5rem" } %>
+      <%= Typo.label.humanize %>
+      from 
+      <%= link_to @typo.sample.context.site.name, @typo.sample.context.site %>
+    </h2>
   </div>
 </header>
 
@@ -29,14 +34,14 @@
   <div class="container my-5">
     <div class="row">
 
-      <div class="col">
+      <div>
         <h2>XRONOS metadata</h2>
         <%= render "shared/record_metadata", record: @typo, record_label: "reference" %>
       </div>
 
-      <div class="col">
+      <div>
         <h2>Revision history</h2>
-        <%= render "shared/paper_trail", item: @typo %>
+        <%= render "application/paper_trail/versions", item: @typo %>
       </div>
   </div>
 </section>

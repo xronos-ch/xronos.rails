@@ -1,7 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 import L from "leaflet"
 import "leaflet-providers"
-import { MarkerClusterGroup } from "leaflet.markercluster"
 import "leaflet-lasso"
 import "leaflet-spin"
 import Supercluster from 'supercluster';

@@ -2,10 +2,10 @@
 FROM ruby:3.0.4
 MAINTAINER Martin Hinz <martin.hinz@iaw.unibe.ch>
 
-# install javascript runtime
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-RUN apt-get update -qq && apt-get install -y build-essential nodejs yarn --no-install-recommends && rm -rf /var/lib/apt/lists/*
+# install node and yarn
+RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
+RUN apt-get install -y --no-install-recommends build-essential nodejs libboost-all-dev
+RUN corepack enable
 
 # throw errors if Gemfile has been modified since Gemfile.lock
 RUN bundle config --global frozen 1
