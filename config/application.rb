@@ -20,5 +20,9 @@ module Xronos
     # the framework and any gems in your application.
     
     config.action_controller.action_on_unpermitted_parameters = :raise
+
+    # Compress text responses
+    config.middleware.use Rack::Deflater
+    config.middleware.use Rack::Brotli
   end
 end

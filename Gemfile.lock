@@ -87,6 +87,7 @@ GEM
     bootstrap_form (5.0.0)
       actionpack (>= 5.2)
       activemodel (>= 5.2)
+    brotli (0.4.0)
     builder (3.2.4)
     bullet (7.0.4)
       activesupport (>= 3.0.0)
@@ -268,6 +269,9 @@ GEM
       activesupport (>= 2.3.14)
     racc (1.6.2)
     rack (2.2.6.2)
+    rack-brotli (1.2.0)
+      brotli (>= 0.1.7)
+      rack (>= 1.4)
     rack-proxy (0.7.2)
       rack
     rack-test (2.0.2)
@@ -491,6 +495,7 @@ DEPENDENCIES
   pg_search
   puma
   rabl
+  rack-brotli
   rails (~> 6.1.6)
   recaptcha
   redis (~> 4.0)
