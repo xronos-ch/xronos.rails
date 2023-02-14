@@ -115,9 +115,6 @@ gem 'activerecord-session_store'
 # To use controller variables as javascript variables
 gem 'gon'
 
-# Menu
-gem 'simple-navigation'
-
 # Pagination
 gem 'pagy'
 
