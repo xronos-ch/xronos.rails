@@ -9,24 +9,16 @@ ruby '3.0.4'
 gem 'rails', '~> 6.1.6'
 
 # Database for Active Record
-gem 'sqlite3'
-
-# Production database for Active Record
-group :production do
-  gem 'pg'
-end
+gem 'pg'
 
 # App server
-gem 'puma', '< 6'
+gem 'puma'
 
 # Data cache (required to run Action Cable in production)
 gem 'redis', '~> 4.0'
 
 # Reduce boot times through caching (required in config/boot.rb)
 gem 'bootsnap', '>= 1.1.0', require: false
-
-# irb for bootsnap: rails console
-gem 'irb', require: false
 
 
 # ASSET PIPELINE --------------------------------------------------------------
