@@ -2,9 +2,10 @@
 
   <h1>Typological dates</h1>
 
-  <%= render "table", typos: @typos %>
-
-  <%== pagy_bootstrap_nav(@pagy) %>
+  <turbo-frame id="typos-table">
+    <%= render "table", typos: @typos %>
+    <%== pagy_bootstrap_nav(@pagy) %>
+  </turbo-frame>
 
   <% if can? :create, Typo %>
     <%= link_to 'New typological date', new_typo_path, class: 'btn btn-secondary',

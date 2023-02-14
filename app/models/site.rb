@@ -30,18 +30,37 @@ class Site < ApplicationRecord
     using: { tsearch: { prefix: true } } # match partial words
   multisearchable against: :name
 
-
   validates :name, presence: true
-
-  has_many :contexts, inverse_of: :site
 
   has_and_belongs_to_many :site_types, optional: true
 
+  has_many :contexts
+  has_many :samples, through: :contexts
   has_many :c14s, through: :contexts
   has_many :typos, through: :contexts
 
   has_many :citations, as: :citing
   has_many :references, through: :citations
+
+  scope :with_counts, -> {
+    select <<~SQL
+      sites.*,
+      (
+        SELECT COUNT(c14s.id) 
+        FROM c14s
+        JOIN samples ON samples.id = c14s.sample_id
+        JOIN contexts ON contexts.id = samples.context_id
+        WHERE contexts.site_id = sites.id
+      ) AS c14s_count,
+      (
+        SELECT COUNT(typos.id) 
+        FROM typos
+        JOIN samples ON samples.id = typos.sample_id
+        JOIN contexts ON contexts.id = samples.context_id
+        WHERE contexts.site_id = sites.id
+      ) AS typos_count
+    SQL
+  }
 
   def self.label
     "Site"
@@ -88,6 +107,14 @@ class Site < ApplicationRecord
         ", " +
         "#{'%03d' % xdeg}° #{'%02d' % xmin}\' #{'%02d' % xsec}\" #{x}"
     end
+  end
+
+  def n_c14s
+    c14s.count
+  end
+
+  def n_typos
+    typos.count
   end
 
   def recursive_references

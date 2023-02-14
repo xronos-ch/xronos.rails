@@ -32,15 +32,14 @@ class C14 < ApplicationRecord
     using: { tsearch: { prefix: true } } # match partial words
   multisearchable against: :lab_identifier
 
-
   validates :bp, :std, presence: true
 
   belongs_to :sample
   accepts_nested_attributes_for :sample, reject_if: :all_blank
   validates_associated :sample
 
-  has_one :context, :through => :sample
-  has_one :site, :through => :context
+  delegate :context, to: :sample
+  delegate :site, to: :sample
 
   belongs_to :c14_lab, optional: true
   belongs_to :source_database, optional: true

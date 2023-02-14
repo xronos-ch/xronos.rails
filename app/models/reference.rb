@@ -27,6 +27,17 @@ class Reference < ApplicationRecord
   has_many :c14s, :through => :citations, :source => :citing, :source_type => 'C14'
   has_many :typos, :through => :citations, :source => :citing, :source_type => 'Typo'
 
+  scope :with_citations_count, -> {
+    select <<~SQL
+      "references".*,
+      (
+        SELECT COUNT(citations.id) 
+        FROM citations
+        WHERE reference_id = "references".id
+      ) AS citations_count
+    SQL
+  }
+
   def self.label
     "Bibliographic reference"
   end

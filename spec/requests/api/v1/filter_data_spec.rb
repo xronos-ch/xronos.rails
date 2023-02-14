@@ -36,7 +36,7 @@ RSpec.describe 'Data', type: :request do
     end
   
     it 'returns all C14s with that site name' do
-      expect(json.size).to eq(C14.includes(:site).where(site: {name: @site}).count)
+      expect(json.size).to eq(C14.includes(sample: { context: :site }).where(site: {name: @site}).count)
     end
     
     it 'returns only C14s with that site name' do
@@ -58,7 +58,7 @@ RSpec.describe 'Data', type: :request do
     end
   
     it 'returns all C14s with that site name' do
-      expect(json.size).to eq(C14.includes(site: :site_types).where(site: {site_types: {name: @site_type}}).count)
+      expect(json.size).to eq(C14.includes(sample: { context: { site: :site_types } }).where(site_types: { name: @site_type }).count)
     end
     
     it 'returns only C14s with that site type' do
@@ -80,7 +80,7 @@ RSpec.describe 'Data', type: :request do
     end
   
     it 'returns all C14s with that country' do
-      expect(json.size).to eq(C14.includes(:site).where(site: {country_code: @country}).count)
+      expect(json.size).to eq(C14.includes(sample: { context: :site }).where(site: {country_code: @country}).count)
     end
     
     it 'returns only C14s with that country' do
@@ -102,7 +102,7 @@ RSpec.describe 'Data', type: :request do
     end
   
     it 'returns all C14s with that feature' do
-      expect(json.size).to eq(C14.includes(:context).where(context: {name: @feature}).count)
+      expect(json.size).to eq(C14.includes(sample: :context).where(context: {name: @feature}).count)
     end
     
     it 'returns only C14s with that feature' do

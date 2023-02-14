@@ -42,9 +42,14 @@
         <h2>
           <%= xr_icon C14, {}, style: "height: 2rem" %>
           <%= C14.label.humanize.pluralize %>
-          <small class="text-muted">(<%= @c14s.count %>)</small>
+          <small class="text-muted">(<%= @pagy_c14s.count %>)</small>
         </h2>
-        <%= render "c14s/table", c14s: @c14s %>
+        <turbo-frame id="site-c14s-table">
+          <%= render "c14s/table", c14s: @c14s %>
+          <% unless @pagy_c14s.pages <= 1 %>
+            <%== pagy_bootstrap_nav(@pagy_c14s) %>
+          <% end %>
+        </turbo-frame>
       </div>
     <%end%>
 
@@ -53,9 +58,14 @@
         <h2>
           <%= xr_icon Typo, {}, style: "height: 2rem" %>
           <%= Typo.label.humanize.pluralize %>
-          <small class="text-muted">(<%= @typos.count %>)</small>
+          <small class="text-muted">(<%= @pagy_typos.count %>)</small>
         </h2>
-        <%= render "typos/table", typos: @typos %>
+        <turbo-frame id="site-typos-table">
+          <%= render "typos/table", typos: @typos %>
+          <% unless @pagy_typos.pages <= 1 %>
+            <%== pagy_bootstrap_nav(@pagy_typos) %>
+          <% end %>
+        </turbo-frame>
       </div>
     <%end%>
 
@@ -67,7 +77,7 @@
     <h2>
       <%= xr_icon Reference, {}, style: "height: 2rem" %>
       <%= Reference.label.humanize.pluralize %>
-      <small class="text-muted">(<%= @site.recursive_references.count %>)</small>
+      <small class="text-muted">(<%# @site.recursive_references.count %>)</small>
     </h2>
     <%= render "references/bibliography", 
       references: @site.recursive_references %>

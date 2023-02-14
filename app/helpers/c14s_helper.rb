@@ -14,6 +14,8 @@ end
 
 module C14sHelper
   include Pagy::Frontend
+  include DataTableHelper
+
   def calibrator(c14)
     unless c14.bp.blank? | c14.std.blank?
 
