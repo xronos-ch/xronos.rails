@@ -17,8 +17,6 @@
     <%= javascript_pack_tag params[:controller], :media => "all"  if javascript_exists?(params[:controller])
     %>
 
-    <%= include_gon %>
-
     <%= yield :head %>
 
     <%= favicon_link_tag asset_path('favicon.ico') %>
