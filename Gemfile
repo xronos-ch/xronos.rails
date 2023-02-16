@@ -137,9 +137,6 @@ gem "country_select"
 # Geocoding
 gem "geocoder"
 
-# rabl for the api
-gem 'rabl'
-
 # a session store backed by an Active Record class to avoid cookie overflow with lasso
 gem 'activerecord-session_store'
 
