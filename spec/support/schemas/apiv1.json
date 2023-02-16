@@ -97,8 +97,21 @@
                 }
               ]
             },
-            "ecochronological_units": {
-              "type": "object"
+            "ecochronological_units":  {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "ecochronological_unit": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ecochronological_unit"
+                  ]
+                }
+              ]
             },
             "site": {
               "type": "string"
