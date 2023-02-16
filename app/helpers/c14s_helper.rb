@@ -42,15 +42,27 @@ module C14sHelper
     Vega.lite
     .config(padding: 0)
     .background(nil)
-      .view(strokeWidth: 0, fill: "")
-      .data(chart_data)
-      .mark(type: "area", color: "#B99555", opacity: 0.9, tooltip: true, "line": {strokeWidth: 4, color: "#B99555"}, interpolate: "monotone")
-      .encoding(
-        x: {field: "bp", type: "quantitative", title: "cal BP",
-          axis: {grid: true, gridColor: "#6C757D", tickMinStep: 50, labelColor: "#212F1F", titleColor: "#212F1F" }},
-        y: {field: "probability", type: "quantitative",
-            axis: nil },
-      )
+    .view(strokeWidth: 0, fill: "")
+    .data(chart_data)
+    .mark(type: "area", color: "#B99555", opacity: 0.9, tooltip: true, "line": {strokeWidth: 4, color: "#B99555"}, interpolate: "monotone")
+    .encoding(
+      x: {field: "bp", type: "quantitative", title: "cal BP",
+        axis: {grid: true, gridColor: "#6C757D", tickMinStep: 50, labelColor: "#212F1F", titleColor: "#212F1F" }},
+      y: {field: "probability", type: "quantitative",
+          axis: nil },
+    )
+    .embed_options(
+      actions: {
+        source: false,
+        compiled: false,
+        editor: false
+      },
+      config: {
+        "title": "supertitle",
+        background: "rgb(253, 12, 134)"
+      }#this is not working!
+    )
+    
     end
   end
 end
