@@ -19,7 +19,7 @@
 
 # Learn more: http://github.com/javan/whenever
 
-if environment == 'production'
+if @environment == 'production'
   every :day do
     rake "-s sitemap:refresh"
   end
