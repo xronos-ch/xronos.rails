@@ -511,7 +511,6 @@ DEPENDENCIES
   pg
   pg_search
   puma
-  rabl
   rack-brotli
   rails (~> 6.1.7)
   recaptcha

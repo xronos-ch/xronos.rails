@@ -46,9 +46,6 @@ gem 'uglifier', '>= 1.3.0'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.5'
 
-# JSON templating
-gem 'rabl'
-
 # Fast JSON serialisation
 gem 'oj'
 
