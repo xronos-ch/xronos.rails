@@ -20,6 +20,11 @@ gem 'redis', '~> 4.0'
 # Reduce boot times through caching (required in config/boot.rb)
 gem 'bootsnap', '>= 1.1.0', require: false
 
+# Compress responses to speed up page loads
+gem "rack-brotli"
+
+# Write cron jobs
+gem "whenever", require: false
 
 # ASSET PIPELINE --------------------------------------------------------------
 
@@ -36,7 +41,7 @@ gem 'coffee-rails', '~> 4.2'
 gem 'uglifier', '>= 1.3.0'
 
 
-# JSON API --------------------------------------------------------------------
+# APIs ------------------------------------------------------------------------
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.5'
@@ -47,6 +52,8 @@ gem 'rabl'
 # Fast JSON serialisation
 gem 'oj'
 
+# XML sitemap
+gem 'sitemap_generator'
 
 # FRONTEND FRAMEWORKS ---------------------------------------------------------
 

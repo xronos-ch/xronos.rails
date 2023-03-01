@@ -1,4 +1,5 @@
 <% content_for :title, "#{@c14.lab_identifier}, #{C14.label} from #{@c14.site.name}" %>
+<% content_for :meta_description, "#{@c14.site.name} (#{@c14.site.country}) has been radiocarbon dated to #{@c14.uncal_age} uncal BP. This determination was made on a sample of #{@c14.sample.material.name} (#{@c14.sample.taxon.name}) and is designated by the laboratory identifier #{@c14.lab_identifier}. XRONOS' record for this radiocarbon date may include further information on the laboratory measurement, archaeological context, and bibliographic references." %>
 
 <header id="c14-header" class="bg-light text-primary">
   <div class="container my-5">

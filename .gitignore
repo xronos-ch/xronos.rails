@@ -93,3 +93,7 @@ coverage
 
 # build calibrator yourself
 vendor/calibrator/bin/calibrator*
+
+# sitemaps
+public/sitemap.xml.gz
+public/sitemaps/*
