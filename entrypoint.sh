@@ -9,9 +9,6 @@ cd ../..
 # update cron jobs
 bundle exec whenever --update-crontab
 
-# rebuild sitemap
-bundle exec rake sitemap:refresh
-
 # migrate the database
 # bundle exec rake db:create db:migrate
 

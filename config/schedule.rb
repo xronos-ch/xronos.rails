@@ -19,6 +19,8 @@
 
 # Learn more: http://github.com/javan/whenever
 
-every 1.day, at: '3:00 am' do
-  rake "-s sitemap:refresh"
+if environment == 'production'
+  every :day do
+    rake "-s sitemap:refresh"
+  end
 end
