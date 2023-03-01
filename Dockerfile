@@ -8,7 +8,7 @@ RUN apt-get install -y --no-install-recommends build-essential nodejs libboost-a
 RUN corepack enable
 
 # install additional system utilities
-RUN apt-get install cron nano
+RUN apt-get install -y cron nano
 
 # throw errors if Gemfile has been modified since Gemfile.lock
 RUN bundle config --global frozen 1
