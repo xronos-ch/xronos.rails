@@ -1,0 +1,22 @@
+<%= form_with(model: issues_unknown_taxon) do |form| %>
+  <% if issues_unknown_taxon.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(issues_unknown_taxon.errors.count, "error") %> prohibited this issues_unknown_taxon from being saved:</h2>
+
+      <ul>
+        <% issues_unknown_taxon.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :taxon_id %>
+    <%= form.text_field :taxon_id %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

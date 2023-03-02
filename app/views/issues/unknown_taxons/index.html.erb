@@ -1,0 +1,15 @@
+<h1>Issues Unknown Taxons</h1>
+
+<table class="responsive nowrap table table-hover" id="dttb-issues_unknown_taxons" data-sort="true" data-source="<%= url_for(format: :json)%>">
+  <thead>
+    <tr>
+      <th data-data="taxon">Taxon</th>
+      <th data-data="url" data-orderable="false" data-class-name="all" data-searchable="false" class="skip-export" width="100px"></th>
+    </tr>
+  </thead>
+
+</table>
+
+<br>
+
+<%= link_to 'New Issues Unknown Taxon', new_issues_unknown_taxon_path %>

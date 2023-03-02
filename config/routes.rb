@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  namespace :issues do
+    resources :unknown_taxons
+  end
   use_doorkeeper
 
   # Static pages

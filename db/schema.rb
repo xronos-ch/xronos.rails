@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_02_093545) do
+ActiveRecord::Schema.define(version: 2023_03_02_121706) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -93,6 +93,13 @@ ActiveRecord::Schema.define(version: 2023_03_02_093545) do
     t.jsonb "read_options"
     t.jsonb "mapping"
     t.index ["user_id"], name: "index_import_tables_on_user_id"
+  end
+
+  create_table "issues_unknown_taxons", force: :cascade do |t|
+    t.bigint "taxon_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["taxon_id"], name: "index_issues_unknown_taxons_on_taxon_id"
   end
 
   create_table "materials", force: :cascade do |t|
@@ -307,6 +314,7 @@ ActiveRecord::Schema.define(version: 2023_03_02_093545) do
   end
 
   add_foreign_key "import_tables", "users"
+  add_foreign_key "issues_unknown_taxons", "taxons"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_grants", "users", column: "resource_owner_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
