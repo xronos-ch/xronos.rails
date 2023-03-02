@@ -17,5 +17,4 @@
 #
 class Issues::UnknownTaxon < ApplicationRecord
   belongs_to :taxon
-
 end

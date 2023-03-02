@@ -1,9 +1,18 @@
 class Issues::UnknownTaxonsController < ApplicationController
-  before_action :set_issues_unknown_taxon, only: %i[ show edit update destroy ]
+  include Pagy::Backend
+
+  before_action :set_unknown_taxon, only: %i[ show edit update destroy ]
 
   # GET /issues/unknown_taxons or /issues/unknown_taxons.json
   def index
-    @issues_unknown_taxons = Issues::UnknownTaxon.all
+    #@unknown_taxons = Issues::UnknownTaxon.all
+    @unknown_taxons = Taxon.joins(:unknown_taxon).with_samples_count
+
+    respond_to do |format|
+      format.html {
+        @pagy, @unknown_taxons = pagy(@unknown_taxons)
+      }
+    end
   end
 
   # GET /issues/unknown_taxons/1 or /issues/unknown_taxons/1.json
@@ -12,7 +21,7 @@ class Issues::UnknownTaxonsController < ApplicationController
 
   # GET /issues/unknown_taxons/new
   def new
-    @issues_unknown_taxon = Issues::UnknownTaxon.new
+    @unknown_taxon = Issues::UnknownTaxon.new
   end
 
   # GET /issues/unknown_taxons/1/edit
@@ -21,15 +30,15 @@ class Issues::UnknownTaxonsController < ApplicationController
 
   # POST /issues/unknown_taxons or /issues/unknown_taxons.json
   def create
-    @issues_unknown_taxon = Issues::UnknownTaxon.new(issues_unknown_taxon_params)
+    @unknown_taxon = Issues::UnknownTaxon.new(issues_unknown_taxon_params)
 
     respond_to do |format|
-      if @issues_unknown_taxon.save
-        format.html { redirect_to issues_unknown_taxon_url(@issues_unknown_taxon), notice: "Unknown taxon issue was successfully created." }
-        format.json { render :show, status: :created, location: @issues_unknown_taxon }
+      if @unknown_taxon.save
+        format.html { redirect_to issues_unknown_taxon_url(@unknown_taxon), notice: "Unknown taxon issue was successfully created." }
+        format.json { render :show, status: :created, location: @unknown_taxon }
       else
         format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @issues_unknown_taxon.errors, status: :unprocessable_entity }
+        format.json { render json: @unknown_taxon.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -37,12 +46,12 @@ class Issues::UnknownTaxonsController < ApplicationController
   # PATCH/PUT /issues/unknown_taxons/1 or /issues/unknown_taxons/1.json
   def update
     respond_to do |format|
-      if @issues_unknown_taxon.update(issues_unknown_taxon_params)
-        format.html { redirect_to issues_unknown_taxon_url(@issues_unknown_taxon), notice: "Unknown taxon issue was successfully updated." }
-        format.json { render :show, status: :ok, location: @issues_unknown_taxon }
+      if @unknown_taxon.update(issues_unknown_taxon_params)
+        format.html { redirect_to issues_unknown_taxon_url(@unknown_taxon), notice: "Unknown taxon issue was successfully updated." }
+        format.json { render :show, status: :ok, location: @unknown_taxon }
       else
         format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @issues_unknown_taxon.errors, status: :unprocessable_entity }
+        format.json { render json: @unknown_taxon.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -59,12 +68,12 @@ class Issues::UnknownTaxonsController < ApplicationController
 
   private
     # Use callbacks to share common setup or constraints between actions.
-    def set_issues_unknown_taxon
-      @issues_unknown_taxon = Issues::UnknownTaxon.find(params[:id])
+    def set_unknown_taxon
+      @unknown_taxon = Issues::UnknownTaxon.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
-    def issues_unknown_taxon_params
-      params.require(:issues_unknown_taxon).permit(:taxon_id)
+    def unknown_taxon_params
+      params.require(:unknown_taxon).permit(:taxon_id)
     end
 end

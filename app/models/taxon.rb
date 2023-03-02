@@ -28,6 +28,8 @@ class Taxon < ApplicationRecord
     gbif_id.present?
   end
 
+  has_one :unknown_taxon, class_name: 'Issues::UnknownTaxon'
+
   before_save :set_attributes_from_gbif_match
   after_save :issue_if_unknown
 
@@ -35,6 +37,17 @@ class Taxon < ApplicationRecord
   pg_search_scope :search, 
     against: :name, 
     using: { tsearch: { prefix: true } } # match partial words
+
+  scope :with_samples_count, -> {
+    select <<~SQL
+      "taxons".*,
+      (
+        SELECT COUNT(samples.id) 
+        FROM samples
+        WHERE taxon_id = taxons.id
+      ) AS samples_count
+    SQL
+  }
 
   def gbif_usage
     if gbif_id.blank?
