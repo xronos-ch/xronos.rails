@@ -16,7 +16,7 @@
 #  index_taxons_on_superseded_by  (superseded_by)
 #
 class Taxon < ApplicationRecord
-  default_scope { order(name: :asc) }
+  include Versioned
 
   include PgSearch::Model
   pg_search_scope :search, 
@@ -27,5 +27,26 @@ class Taxon < ApplicationRecord
 
   has_many :samples
 
-  has_paper_trail
+  def gbif_usage
+    if gbif_id.blank?
+      return nil
+    end
+    resp = Gbif::Request.new("species/#{gbif_id}", nil, nil, nil).perform
+    # TODO: recover from server errors?
+    OpenStruct.new(resp)
+  end
+
+  def gbif_match(strict = false)
+    OpenStruct.new(Gbif::Species.name_backbone(name: name, strict: strict))
+  end
+
+  def update_from_gbif_match(strict = true)
+    gbif = gbif_match(strict = strict)
+    if gbif.matchType == "EXACT" or !strict and gbif.matchType == "FUZZY"
+      self.name = gbif.canonicalName
+      self.gbif_id = gbif.usageKey
+      self.revision_comment = "Matched to GBIF Backbone Taxonomy"
+      self.save!
+    end
+  end
 end
