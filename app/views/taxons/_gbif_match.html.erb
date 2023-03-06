@@ -1,7 +1,5 @@
 <% unless gbif_match.matchType == "NONE" %>
-  <span class="badge text-bg-info"><%= gbif_match.rank %></span>
-  <i><%= gbif_match.canonicalName %></i>
-  (<a href="https://gbif.org/species/<%= gbif_match.usageKey %>" title="'<%= gbif_match.canonicalName %>' in the GBIF Backbone Taxonomy"><%= gbif_match.scientificName %></a>)
+  <%= render "taxons/gbif", gbif: gbif_match %>
 <% else %>
   <% if gbif_match.note.present? %>
     <%= gbif_match.note %>

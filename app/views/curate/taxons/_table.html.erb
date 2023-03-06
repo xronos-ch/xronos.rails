@@ -1,0 +1,27 @@
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Taxon</th>
+      <th scope="col">GBIF</th>
+      <th scope="col" class="text-end">Samples</th>
+      <% if can? :manage, Taxon %><th scope="col"><span class="visually-hidden">Actions</span></th><% end %>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% taxons.each do |taxon| %>
+      <tr>
+        <td><%= taxon.id %></td>
+        <td><%= taxon.name %></td>
+        <td><%= render "taxons/gbif", gbif: taxon.gbif_usage %></td>
+        <td class="text-end"><%= taxon.samples_count %></td>
+        <% if can? :manage, Taxon %><td class="text-end">
+            <%= link_to taxon, method: :edit, class: "btn btn-sm btn-secondary" do %>
+              <%= fa_icon "pencil", title: "Edit" %>
+            <% end %>
+        </td><% end %>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
