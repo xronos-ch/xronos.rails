@@ -55,15 +55,20 @@ class Taxon < ApplicationRecord
     if gbif_id.blank?
       return nil
     end
-    logger.debug "GBIF API request: https://api.gbif.org/v1/species/#{gbif_id}"
-    resp = Gbif::Request.new("species/#{gbif_id}", nil, nil, nil).perform
-    # TODO: recover from server errors?
-    OpenStruct.new(resp)
+
+    Rails.cache.fetch("#{cache_key_with_version}/gbif_usage", expires_in: 24.hours) do
+      logger.debug "GBIF API request: https://api.gbif.org/v1/species/#{gbif_id}"
+      resp = Gbif::Request.new("species/#{gbif_id}", nil, nil, nil).perform
+      # TODO: recover from server errors?
+      OpenStruct.new(resp)
+    end
   end
 
   def gbif_match(strict = false)
-    logger.debug "GBIF API request: https://api.gbif.org/v1/species/match?name=#{name}"
-    OpenStruct.new(Gbif::Species.name_backbone(name: name, strict: strict))
+    Rails.cache.fetch("#{cache_key_with_version}/gbif_match", expires_in: 24.hours) do
+      logger.debug "GBIF API request: https://api.gbif.org/v1/species/match?name=#{name}"
+      OpenStruct.new(Gbif::Species.name_backbone(name: name, strict: strict))
+    end
   end
 
   def set_attributes_from_gbif_match(strict = true)
