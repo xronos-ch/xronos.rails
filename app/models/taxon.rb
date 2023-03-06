@@ -23,15 +23,17 @@ class Taxon < ApplicationRecord
 
   include Versioned
 
-  include Knowable
-  def known?
+  include Controlled
+
+  def controlled?
     gbif_id.present?
   end
 
+  scope :uncontrolled, -> { where(gbif_id: nil) }
+
   has_one :unknown_taxon, class_name: 'Issues::UnknownTaxon'
 
-  before_save :set_attributes_from_gbif_match
-  after_save :issue_if_unknown
+  before_save :control, unless: :controlled?
 
   include PgSearch::Model
   pg_search_scope :search, 
@@ -53,12 +55,14 @@ class Taxon < ApplicationRecord
     if gbif_id.blank?
       return nil
     end
+    logger.debug "GBIF API request: https://api.gbif.org/v1/species/#{gbif_id}"
     resp = Gbif::Request.new("species/#{gbif_id}", nil, nil, nil).perform
     # TODO: recover from server errors?
     OpenStruct.new(resp)
   end
 
   def gbif_match(strict = false)
+    logger.debug "GBIF API request: https://api.gbif.org/v1/species/match?name=#{name}"
     OpenStruct.new(Gbif::Species.name_backbone(name: name, strict: strict))
   end
 
@@ -71,5 +75,12 @@ class Taxon < ApplicationRecord
       self.revision_comment = "Matched to GBIF Backbone Taxonomy"
       return gbif
     end
+  end
+
+  private
+
+  def control
+    return if skip_control
+    set_attributes_from_gbif_match
   end
 end

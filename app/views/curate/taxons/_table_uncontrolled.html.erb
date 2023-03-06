@@ -1,0 +1,36 @@
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Taxon</th>
+      <th scope="col">Suggested match</th>
+      <th scope="col">Match type</th>
+      <th scope="col" class="text-end">Samples</th>
+      <% if can? :manage, Taxon %><th scope="col"><span class="visually-hidden">Actions</span></th><% end %>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% taxons.each do |taxon| %>
+      <tr class="table-<%= colour_from_gbif_match_type(taxon.gbif_match.matchType) %>">
+        <td><%= taxon.id %></td>
+        <td><%= taxon.name %></td>
+        <td><%= render "taxons/gbif_match", gbif_match: taxon.gbif_match %></td>
+        <td><%= taxon.gbif_match.matchType %></td>
+        <td class="text-end"><%= taxon.samples_count %></td>
+        <% if can? :manage, Taxon %><td class="text-end">
+            <%= bootstrap_form_for taxon do |f| %>
+              <%= f.hidden_field :gbif_id, value: taxon.gbif_match.usageKey %>
+              <%= f.hidden_field :revision_comment, value: "Matched to GBIF Backbone Taxonomy" %>
+              <%= f.primary class: "btn btn-sm btn-success" do %>
+                <%= fa_icon "check", title: "Accept suggestion" %>
+              <% end %>
+              <%= link_to taxon, method: :edit, class: "btn btn-sm btn-secondary" do %>
+                <%= fa_icon "pencil", title: "Edit" %>
+              <% end %>
+            <% end %>
+        </td><% end %>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

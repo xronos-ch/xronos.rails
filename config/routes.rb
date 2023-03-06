@@ -41,15 +41,6 @@ Rails.application.routes.draw do
   end
   resources :typos
 
-  # Issues
-  namespace :issues do
-    resources :unknown_taxons do
-      collection do
-        patch :bulk_update
-      end
-    end
-  end
-
   # User management
   resources :user_profiles
   devise_for :users, controllers: {
@@ -69,9 +60,18 @@ Rails.application.routes.draw do
   get '/turn_off_lasso', :to=>'data#turn_off_lasso'
   get '/reset_manual_table_selection', :to=>'data#reset_manual_table_selection'
 
-  # Curate
+  # Curation backend
   get "/curate" => "curate#index"
+
+  concern :has_issues do
+    collection do
+      get ":issue", action: :index
+    end
+  end
+
   namespace :curate do
+    resources :taxons, only: [ :index ], concerns: [ :has_issues ]
+
     resources :import_tables do
       get 'edit' => 'import_tables#edit_read_options'
       get 'edit/read_options' => 'import_tables#edit_read_options'

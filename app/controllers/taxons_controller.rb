@@ -55,7 +55,7 @@ class TaxonsController < ApplicationController
   def update
     respond_to do |format|
       if @taxon.update(taxon_params)
-        format.html { redirect_to @taxon, notice: 'Taxon was successfully updated.' }
+        format.html { redirect_back fallback_location: @taxon, notice: 'Taxon was successfully updated.' }
         format.json { render :show, status: :ok, location: @taxon }
       else
         format.html { render :edit }
@@ -82,6 +82,6 @@ class TaxonsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def taxon_params
-      params.require(:taxon).permit(:name)
+      params.require(:taxon).permit([ :name, :gbif_id, :revision_comment ])
     end
 end
