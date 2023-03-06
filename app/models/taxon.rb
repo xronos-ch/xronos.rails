@@ -34,6 +34,7 @@ class Taxon < ApplicationRecord
   has_one :unknown_taxon, class_name: 'Issues::UnknownTaxon'
 
   before_save :control, unless: :controlled?
+  before_save :set_name_from_gbif
 
   include PgSearch::Model
   pg_search_scope :search, 
@@ -71,14 +72,18 @@ class Taxon < ApplicationRecord
     end
   end
 
-  def set_attributes_from_gbif_match(strict = true)
+  def set_gbif_id_from_match(strict = true)
     gbif = gbif_match(strict = strict)
     fuzzy_matches = ["AGGREGATE", "FUZZY", "HIGHERRANK"]
     if gbif.matchType == "EXACT" or (!strict and gbif.matchType.in?(fuzzy_matches))
-      self.name = gbif.canonicalName
       self.gbif_id = gbif.usageKey
-      self.revision_comment = "Matched to GBIF Backbone Taxonomy"
-      return gbif
+    end
+  end
+
+  def set_name_from_gbif
+    gbif = gbif_usage
+    unless gbif.blank?
+      self.name = gbif.canonicalName
     end
   end
 
@@ -86,6 +91,12 @@ class Taxon < ApplicationRecord
 
   def control
     return if skip_control
-    set_attributes_from_gbif_match
+    set_gbif_id_from_match
+    if revision_comment.blank?
+      self.revision_comment = "Matched to GBIF Backbone Taxonomy"
+    else
+      self.revision_comment += " (matched to GBIF Backbone Taxonomy)"
+    end
   end
+
 end
