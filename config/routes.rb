@@ -1,7 +1,4 @@
 Rails.application.routes.draw do
-  namespace :issues do
-    resources :unknown_taxons
-  end
   use_doorkeeper
 
   # Static pages
@@ -43,6 +40,15 @@ Rails.application.routes.draw do
     get 'search', on: :collection
   end
   resources :typos
+
+  # Issues
+  namespace :issues do
+    resources :unknown_taxons do
+      collection do
+        patch :bulk_update
+      end
+    end
+  end
 
   # User management
   resources :user_profiles

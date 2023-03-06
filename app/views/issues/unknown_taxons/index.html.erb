@@ -7,6 +7,11 @@
 
   <p>This page lists biological taxa in XRONOS that are not currently matched to the <a href="https://www.gbif.org/dataset/d7dddbf4-2cf0-4f39-9b2a-bb099caae36c">GBIF Backbone Taxonomy</a>. Matching scientific names are suggested using the <a href="https://www.gbif.org/developer/species">GBIF Species API</a>.</p>
 
+  <%= bootstrap_form_with url: bulk_update_issues_unknown_taxons_path, 
+    method: :patch, id: :bulk_actions_form do |f| %>
+    <%= f.primary "match" %>
+  <% end %>
+
   <turbo-frame id="unknown_taxons-table">
     <%= render "table", unknown_taxons: @unknown_taxons %>
     <%== pagy_bootstrap_nav(@pagy) %>

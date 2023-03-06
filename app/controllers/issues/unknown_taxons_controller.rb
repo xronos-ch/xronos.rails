@@ -56,6 +56,16 @@ class Issues::UnknownTaxonsController < ApplicationController
     end
   end
 
+  def bulk_update
+    @selected_taxons = Taxon.where(id: params.fetch(:taxon_ids, []).compact)
+    if params[:commit] == "match"
+      @selected_taxons.find_each do |taxon|
+        taxon.set_attributes_from_gbif_match(strict = false)
+        taxon.save!
+      end
+    end
+  end
+
   # DELETE /issues/unknown_taxons/1 or /issues/unknown_taxons/1.json
   def destroy
     @issues_unknown_taxon.destroy

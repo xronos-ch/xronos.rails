@@ -64,10 +64,12 @@ class Taxon < ApplicationRecord
 
   def set_attributes_from_gbif_match(strict = true)
     gbif = gbif_match(strict = strict)
-    if gbif.matchType == "EXACT" or (!strict and gbif.matchType == "FUZZY")
+    fuzzy_matches = ["AGGREGATE", "FUZZY", "HIGHERRANK"]
+    if gbif.matchType == "EXACT" or (!strict and gbif.matchType.in?(fuzzy_matches))
       self.name = gbif.canonicalName
       self.gbif_id = gbif.usageKey
       self.revision_comment = "Matched to GBIF Backbone Taxonomy"
+      return gbif
     end
   end
 end
