@@ -16,8 +16,10 @@ class Issues::TaxonsController < ApplicationController
 
     if params.has_key?(:taxons_order_by)
       order = { params[:taxons_order_by] => params.fetch(:taxons_order, "asc") }
-      @taxons = @taxons.reorder(order)
+    else
+      order = :id
     end
+    @taxons = @taxons.reorder(order)
 
     respond_to do |format|
       format.html { @pagy, @taxons = pagy(@taxons) }
