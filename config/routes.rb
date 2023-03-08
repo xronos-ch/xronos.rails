@@ -12,7 +12,7 @@ Rails.application.routes.draw do
   get '/about/about', to: redirect('/about')
   get '/about/:page' => 'about#show'
 
-  # Ordinary resources
+  # Primary resources
   resources :c14s do
     get 'search', on: :collection
     member do
@@ -36,10 +36,12 @@ Rails.application.routes.draw do
   resources :site_types do
     get 'search', on: :collection
   end
-  resources :taxons do
+  resources :typos
+
+  # Secondary resources (no independent show/index views)
+  resources :taxons, except: [:index, :show] do
     get 'search', on: :collection
   end
-  resources :typos
 
   # User management
   resources :user_profiles

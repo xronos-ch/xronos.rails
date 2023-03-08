@@ -1,2 +1,14 @@
-<%= f.text_control :name %>
-<%= f.text_control :gbif_id %>
+<%= f.text_field :name, floating: true %>
+<%= f.hidden_field :gbif_id %>
+<% if @taxon.gbif_id.present? %>
+  <div class="mb-3 small text-success">
+    <%= fa_icon "check" %>
+    Matched to GBIF Backbone Taxonomy:
+    <%= render "taxons/gbif_usage", gbif_usage: @taxon.gbif_usage %>
+  </div>
+<% else %>
+  <div class="mb-3 small text-warning">
+    <%= fa_icon "exclamation-circle", title: "Warning" %>
+    Name not matched to GBIF Backbone Taxonomy.
+  </div>
+<% end %>

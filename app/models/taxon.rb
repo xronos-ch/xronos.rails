@@ -57,7 +57,7 @@ class Taxon < ApplicationRecord
       return nil
     end
 
-    Rails.cache.fetch("gbif_usage/#{id}", expires_in: 30.days) do
+    Rails.cache.fetch("taxons/gbif_usage/#{id}", expires_in: 30.days) do
       logger.debug "GBIF API request: https://api.gbif.org/v1/species/#{id}"
       resp = Gbif::Request.new("species/#{id}", nil, nil, nil).perform
       # TODO: recover from server errors?
@@ -66,7 +66,7 @@ class Taxon < ApplicationRecord
   end
 
   def gbif_match(strict = false)
-    Rails.cache.fetch("#{cache_key_with_version}/gbif_match", expires_in: 24.hours) do
+    Rails.cache.fetch("gbif_match/#{name}", expires_in: 24.hours) do
       logger.debug "GBIF API request: https://api.gbif.org/v1/species/match?name=#{name}"
       OpenStruct.new(Gbif::Species.name_backbone(name: name, strict: strict))
     end
@@ -89,6 +89,8 @@ class Taxon < ApplicationRecord
     fuzzy_matches = ["AGGREGATE", "FUZZY", "HIGHERRANK"]
     if match.matchType == "EXACT" or (!strict and match.matchType.in?(fuzzy_matches))
       self.gbif_id = gbif_id_from_match(match)
+    else
+      self.gbif_id = nil
     end
   end
 
@@ -102,11 +104,6 @@ class Taxon < ApplicationRecord
   def control
     return if skip_control
     set_gbif_id_from_match
-    if revision_comment.blank?
-      self.revision_comment = "Matched to GBIF Backbone Taxonomy"
-    else
-      self.revision_comment += " (matched to GBIF Backbone Taxonomy)"
-    end
   end
 
 end
