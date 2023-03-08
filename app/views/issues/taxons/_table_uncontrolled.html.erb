@@ -47,15 +47,21 @@
         <% if can? :manage, Taxon %>
           <td>
             <div class="btn-toolbar justify-content-end">
-              <div class="btn-group me-2">
-                <%= bootstrap_form_for taxon do |f| %>
-                  <%= f.hidden_field :gbif_id, value: taxon.gbif_match.usageKey %>
-                  <%= f.hidden_field :revision_comment, value: "Matched to GBIF Backbone Taxonomy" %>
-                  <%= f.primary class: "btn btn-sm btn-success" do %>
-                    <%= fa_icon "check" %>
+                <div class="btn-group me-2">
+                  <%= bootstrap_form_for taxon do |f| %>
+                    <%= f.hidden_field :gbif_id, value: taxon.gbif_match.usageKey %>
+                    <%= f.hidden_field :revision_comment, value: "Matched to GBIF Backbone Taxonomy" %>
+                    <% if taxon.gbif_match.usageKey.present? %>
+                      <%= f.primary class: "btn btn-sm btn-success", title: "Accept suggestion" do %>
+                        <%= fa_icon "check" %>
+                      <% end %>
+                    <% else %>
+                      <%= button_tag class: "btn btn-sm btn-success", disabled: true do %>
+                        <%= fa_icon "check" %>
+                      <% end %>
+                    <% end %>
                   <% end %>
-                <% end %>
-              </div>
+                </div>
               <%= render "shared/action_buttons_compact", i: taxon %>
           </td>
           <% end %>
