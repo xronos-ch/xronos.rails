@@ -3,11 +3,26 @@
 <table class="table table-hover">
   <thead>
     <tr>
-      <th scope="col">ID</th>
-      <th scope="col">Taxon</th>
-      <th scope="col">Suggested match</th>
+      <th scope="col">
+        <%= link_to_order_by "ID", :id %>
+        <% if ordered_by?(:id) %>
+          <span class="text-muted"><%= order_indicator %></span>
+        <% end %>
+      </th>
+      <th scope="col">
+        <%= link_to_order_by "Name", :name %>
+        <% if ordered_by?(:name) %>
+          <span class="text-muted"><%= order_indicator %></span>
+        <% end %>
+      </th>
+      <th scope="col">Suggested GBIF match</th>
       <th scope="col">Match type</th>
-      <th scope="col" class="text-end">Samples</th>
+      <th scope="col" class="text-end">
+        <%= link_to_order_by "Samples", :samples_count %>
+        <% if ordered_by?(:samples_count) %>
+          <span class="text-muted"><%= order_indicator %></span>
+        <% end %>
+      </th>
       <% if can? :manage, Taxon %><th scope="col"><span class="visually-hidden">Actions</span></th><% end %>
     </tr>
   </thead>

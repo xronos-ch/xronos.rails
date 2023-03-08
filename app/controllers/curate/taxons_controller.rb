@@ -13,6 +13,11 @@ class Curate::TaxonsController < ApplicationController
 
     @taxons = @taxons.with_samples_count
 
+    if params.has_key?(:taxons_order_by)
+      order = { params[:taxons_order_by] => params.fetch(:taxons_order, "asc") }
+      @taxons = @taxons.reorder(order)
+    end
+
     respond_to do |format|
       format.html { @pagy, @taxons = pagy(@taxons) }
     end
