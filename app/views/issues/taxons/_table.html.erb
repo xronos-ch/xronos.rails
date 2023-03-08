@@ -25,6 +25,7 @@
           <span class="text-muted"><%= order_indicator %></span>
         <% end %>
       </th>
+      <th scope="col" class="text-end">Issues</th>
       <% if can? :manage, Taxon %><th scope="col"><span class="visually-hidden">Actions</span></th><% end %>
     </tr>
   </thead>
@@ -36,6 +37,9 @@
         <td><%= taxon.name %></td>
         <td><%= render "taxons/gbif_usage", gbif_usage: taxon.gbif_usage %></td>
         <td class="text-end"><%= taxon.samples_count %></td>
+        <td class="text-end">
+          <%= issue_badge("UNCONTROLLED_TAXON") unless taxon.controlled? %>
+        </td>
         <% if can? :manage, Taxon %>
           <td class="text-end"><%= render "shared/action_buttons_compact", i: taxon %></td>
         <% end %>

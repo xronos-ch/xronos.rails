@@ -7,23 +7,22 @@
 <% end %>
 
 <% content_for :content do %>
-  <div class="flex-grow-1 d-flex flex-column overflow-auto">
-    <div class="d-flex flex-grow-1 align-items-stretch">
+  <div class="container-fluid">
+    <div class="row">
 
-      <nav class="nav flex-column p-3 bg-primary border-end text-muted small shadow" style="width: 15rem">
-        <%= render "curate_nav" %>
+      <nav class="col p-3 bg-light" id="curate-nav">
+        <%= render "curate/curate_nav" %>
       </nav>
 
-      <div class="flex-grow-1">
+      <div class="col col-8 p-3" id="curate-content">
         <%= yield %>
       </div>
 
-      <!--
-      <aside class="p-3 bg-light text-muted small" style="width: 20rem">
-        <h2 class="h5 border-bottom">Help</h2>
-        <%= yield :help %>
-      </aside>
-      -->
+      <% if content_for? :help %>
+        <aside class="col p-3 pt-5 bg-light text-muted small" id="curate-help">
+          <%= yield :help %>
+        </aside>
+      <% end %>
 
     </div>
   </div>

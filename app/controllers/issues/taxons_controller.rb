@@ -1,4 +1,5 @@
 class Issues::TaxonsController < ApplicationController
+  layout "curate"
   include Pagy::Backend
 
   load_and_authorize_resource
