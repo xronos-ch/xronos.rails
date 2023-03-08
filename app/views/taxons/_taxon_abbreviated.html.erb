@@ -9,11 +9,6 @@
       title: "Taxon not matched to backbone taxonomy"
     %>
   <% else %>
-    <%= render "taxons/gbif_usage", gbif_usage: taxon.gbif_usage %>
-    <%= fa_icon "question-circle",
-      class: "text-info",
-      data: { "bs-toggle": "tooltip", controller: "tooltips" },
-      title: "Taxonomic data from GBIF.org"
-    %>
+    <i><%= taxon.gbif_usage.canonicalName %></i>
   <% end %>
 <% end %>
