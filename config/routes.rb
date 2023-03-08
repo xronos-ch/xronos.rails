@@ -12,7 +12,7 @@ Rails.application.routes.draw do
   get '/about/about', to: redirect('/about')
   get '/about/:page' => 'about#show'
 
-  # Primary resources
+  # Primary data resources
   resources :c14s do
     get 'search', on: :collection
     member do
@@ -38,7 +38,7 @@ Rails.application.routes.draw do
   end
   resources :typos
 
-  # Secondary resources (no independent show/index views)
+  # Secondary data resources (no independent show/index views)
   resources :taxons, except: [:index, :show] do
     get 'search', on: :collection
   end
@@ -49,7 +49,7 @@ Rails.application.routes.draw do
       registrations: "registrations"
     }
 
-  # Data views
+  # Data browser
   get 'data/index'
   post 'data/index'
   get "/data" => "data#index"
@@ -64,21 +64,22 @@ Rails.application.routes.draw do
 
   # Curation backend
   get "/curate" => "curate#index"
-
-  concern :has_issues do
-    collection do
-      get ":issue", action: :index
-    end
-  end
-
   namespace :curate do
-    resources :taxons, only: [ :index ], concerns: [ :has_issues ]
-
     resources :import_tables do
       get 'edit' => 'import_tables#edit_read_options'
       get 'edit/read_options' => 'import_tables#edit_read_options'
       get 'edit/mapping' => 'import_tables#edit_mapping'
     end
+  end
+
+  # Data issues
+  concern :has_issues do
+    collection do
+      get ":issue", action: :index
+    end
+  end
+  namespace :issues do 
+    resources :taxons, only: [ :index ], concerns: [ :has_issues ]
   end
 
   # API

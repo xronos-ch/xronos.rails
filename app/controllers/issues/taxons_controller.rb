@@ -1,9 +1,9 @@
-class Curate::TaxonsController < ApplicationController
+class Issues::TaxonsController < ApplicationController
   include Pagy::Backend
 
   load_and_authorize_resource
 
-  # GET /curate/taxons
+  # GET /issues/taxons/:issue
   def index
     if params[:issue] == "uncontrolled"
       @taxons = Taxon.uncontrolled

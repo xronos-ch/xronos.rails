@@ -1,5 +1,4 @@
-<% content_for :title, "Curate taxons" %>
-<% content_for :meta_description, "List of biological taxa in XRONOS that are not currently matched to the GBIF Backbone Taxonomy." %>
+<% content_for :title, "Issues: Taxons" %>
 
 <div class="container my-5">
 
@@ -8,18 +7,18 @@
   <div class="my-3" id="issues-taxon-nav">
     <ul class="nav nav-pills">
       <li class="nav-item">
-        <a href="<%= curate_taxons_path %>" 
-           class="nav-link <%= active_class(curate_taxons_path) %>"
-           <%= active_aria(curate_taxons_path) %>>
+        <a href="<%= issues_taxons_path %>" 
+           class="nav-link <%= active_class(issues_taxons_path) %>"
+           <%= active_aria(issues_taxons_path) %>>
            All
            <span class="badge text-bg-info"><%= Taxon.count %></span>
         </a>
       </li>
       <li class="nav-item">
-        <% curate_uncontrolled_taxons_path = curate_taxons_path + "/uncontrolled" %>
-        <a href="<%= curate_uncontrolled_taxons_path %>" 
-           class="nav-link <%= active_class(curate_uncontrolled_taxons_path) %>"
-           <%= active_aria(curate_uncontrolled_taxons_path) %>>
+        <% uncontrolled_taxons_path = issues_taxons_path + "/uncontrolled" %>
+        <a href="<%= uncontrolled_taxons_path %>" 
+           class="nav-link <%= active_class(uncontrolled_taxons_path) %>"
+           <%= active_aria(uncontrolled_taxons_path) %>>
            Uncontrolled
            <span class="badge text-bg-info"><%= Taxon.uncontrolled.count %></span>
         </a>
@@ -33,7 +32,7 @@
       data: { turbo_frame: "remote_modal" } %>
   </div>
 
-  <turbo-frame id="curate-taxons-table">
+  <turbo-frame id="issues-taxons-table">
     <%=
         case params[:issue]
         when "uncontrolled"
