@@ -87,8 +87,6 @@ class Taxon < ApplicationRecord
     end
   end
 
-  private
-
   def control
     return if skip_control
     set_gbif_id_from_match
