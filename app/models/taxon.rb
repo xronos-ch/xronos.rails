@@ -52,14 +52,14 @@ class Taxon < ApplicationRecord
     SQL
   }
 
-  def gbif_usage
-    if gbif_id.blank?
+  def gbif_usage(id = gbif_id)
+    if id.blank?
       return nil
     end
 
-    Rails.cache.fetch("#{cache_key_with_version}/gbif_usage", expires_in: 24.hours) do
-      logger.debug "GBIF API request: https://api.gbif.org/v1/species/#{gbif_id}"
-      resp = Gbif::Request.new("species/#{gbif_id}", nil, nil, nil).perform
+    Rails.cache.fetch("gbif_usage/#{id}", expires_in: 30.days) do
+      logger.debug "GBIF API request: https://api.gbif.org/v1/species/#{id}"
+      resp = Gbif::Request.new("species/#{id}", nil, nil, nil).perform
       # TODO: recover from server errors?
       OpenStruct.new(resp)
     end
@@ -72,11 +72,23 @@ class Taxon < ApplicationRecord
     end
   end
 
+  def gbif_id_from_match(match = gbif_match)
+    if match.synonym
+      match.acceptedUsageKey
+    else
+      match.usageKey
+    end
+  end
+
+  def gbif_usage_from_match(match = gbif_match)
+    gbif_usage(gbif_id_from_match(match))
+  end
+
   def set_gbif_id_from_match(strict = true)
-    gbif = gbif_match(strict = strict)
+    match = gbif_match(strict = strict)
     fuzzy_matches = ["AGGREGATE", "FUZZY", "HIGHERRANK"]
-    if gbif.matchType == "EXACT" or (!strict and gbif.matchType.in?(fuzzy_matches))
-      self.gbif_id = gbif.usageKey
+    if match.matchType == "EXACT" or (!strict and match.matchType.in?(fuzzy_matches))
+      self.gbif_id = gbif_id_from_match(match)
     end
   end
 

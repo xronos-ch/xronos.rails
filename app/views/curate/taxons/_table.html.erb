@@ -14,7 +14,7 @@
       <tr>
         <td><%= taxon.id %></td>
         <td><%= taxon.name %></td>
-        <td><%= render "taxons/gbif", gbif: taxon.gbif_usage %></td>
+        <td><%= render "taxons/gbif_usage", gbif_usage: taxon.gbif_usage %></td>
         <td class="text-end"><%= taxon.samples_count %></td>
         <% if can? :manage, Taxon %><td class="text-end">
             <%= link_to taxon, method: :edit, class: "btn btn-sm btn-secondary" do %>

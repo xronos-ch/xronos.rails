@@ -1,9 +1,0 @@
-<% unless gbif_match.matchType == "NONE" %>
-  <%= render "taxons/gbif", gbif: gbif_match %>
-<% else %>
-  <% if gbif_match.note.present? %>
-    <%= gbif_match.note %>
-  <% else %>
-    None
-  <% end %>
-<% end %>

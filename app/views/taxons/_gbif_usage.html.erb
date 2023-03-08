@@ -1,0 +1,8 @@
+<% if gbif_usage.blank? %>
+  <%= na_value %>
+<% else %>
+  <span class="badge text-bg-info"><%= gbif_usage.rank %></span>
+  <a href="https://gbif.org/species/<%= gbif_usage.key %>" title="<%= gbif_usage.scientificName %> – GBIF Backbone Taxonomy">
+    <i><%= gbif_usage.canonicalName %></i> <%= gbif_usage.authorship %>
+  </a>
+<% end %>

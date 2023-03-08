@@ -17,7 +17,17 @@
       <tr class="table-<%= colour_from_gbif_match_type(taxon.gbif_match.matchType) %>">
         <td><%= taxon.id %></td>
         <td><%= taxon.name %></td>
-        <td><%= render "taxons/gbif_match", gbif_match: taxon.gbif_match %></td>
+        <td>
+          <% if taxon.gbif_match.matchType == "NONE" %>
+            <% if taxon.gbif_match.note.present? %>
+              <%= taxon.gbif_match.note %>
+            <% else %>
+              None
+            <% end %>
+          <% else %>
+            <%= render "taxons/gbif_usage", gbif_usage: taxon.gbif_usage_from_match %>
+          <% end %>
+        </td>
         <td><%= taxon.gbif_match.matchType %></td>
         <td class="text-end"><%= taxon.samples_count %></td>
         <% if can? :manage, Taxon %><td class="text-end">
