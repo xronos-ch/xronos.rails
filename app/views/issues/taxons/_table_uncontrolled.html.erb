@@ -28,7 +28,7 @@
 
   <tbody>
     <% taxons.each do |taxon| %>
-      <tr class="table-<%= colour_from_gbif_match_type(taxon.gbif_match.matchType) %>">
+      <tr>
         <td class="text-muted"><%= taxon.id %></td>
         <td><%= taxon.name %></td>
         <td>
@@ -42,7 +42,11 @@
             <%= render "taxons/gbif_usage", gbif_usage: taxon.gbif_usage_from_match %>
           <% end %>
         </td>
-        <td><%= taxon.gbif_match.matchType %></td>
+        <td>
+          <span class="badge text-bg-<%= colour_from_gbif_match_type(taxon.gbif_match.matchType) %>">
+            <%= taxon.gbif_match.matchType %>
+          </span>
+        </td>
         <td class="text-end"><%= taxon.samples_count %></td>
         <% if can? :manage, Taxon %>
           <td>
@@ -52,11 +56,11 @@
                     <%= f.hidden_field :gbif_id, value: taxon.gbif_match.usageKey %>
                     <%= f.hidden_field :revision_comment, value: "Matched to GBIF Backbone Taxonomy" %>
                     <% if taxon.gbif_match.usageKey.present? %>
-                      <%= f.primary class: "btn btn-sm btn-success", title: "Accept suggestion" do %>
+                      <%= f.primary class: "btn btn-sm btn-primary", title: "Use suggested GBIF match" do %>
                         <%= fa_icon "check" %>
                       <% end %>
                     <% else %>
-                      <%= button_tag class: "btn btn-sm btn-success", disabled: true do %>
+                      <%= button_tag class: "btn btn-sm btn-primary", disabled: true do %>
                         <%= fa_icon "check" %>
                       <% end %>
                     <% end %>
