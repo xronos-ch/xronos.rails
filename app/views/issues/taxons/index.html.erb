@@ -1,44 +1,22 @@
-<% content_for :title, "Taxons – Curation" %>
-<% content_for :help do %>
-  <p>This table lists biological taxa in XRONOS that are not currently matched to the <a href="https://www.gbif.org/dataset/d7dddbf4-2cf0-4f39-9b2a-bb099caae36c">GBIF Backbone Taxonomy</a>. Matching scientific names are suggested using the <a href="https://www.gbif.org/developer/species">GBIF Species API</a>.</p>
+<% content_for :title, "Issues – Samples" %>
+<% if params[:issue] == "unknown_taxon" %>
+  <% content_for :help do %>
+    <p>This table lists biological taxa in XRONOS that are not currently matched to the <a href="https://www.gbif.org/dataset/d7dddbf4-2cf0-4f39-9b2a-bb099caae36c">GBIF Backbone Taxonomy</a>. Matching scientific names are suggested using the <a href="https://www.gbif.org/developer/species">GBIF Species API</a>.</p>
+  <% end %>
 <% end %>
 
-<div class="container ms-0">
+<h2 class="border-bottom">Taxons</h2>
 
-  <h2 class="border-bottom">Taxons</h2>
+<%= render "issues/nav", model: Taxon, base_path: issues_taxons_path %>
 
-  <nav class="mb-5 d-flex" id="issues-taxons-nav">
-    <ul class="nav nav-pills">
-      <li class="nav-item">
-        <a href="<%= issues_taxons_path %>" 
-           class="nav-link <%= active_class(issues_taxons_path) %>"
-           <%= active_aria(issues_taxons_path) %>>
-           All
-           <span class="badge text-bg-info"><%= Taxon.count %></span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <% uncontrolled_taxons_path = issues_taxons_path + "/uncontrolled" %>
-        <a href="<%= uncontrolled_taxons_path %>" 
-           class="nav-link <%= active_class(uncontrolled_taxons_path) %>"
-           <%= active_aria(uncontrolled_taxons_path) %>>
-           UNCONTROLLED_TAXON
-           <span class="badge text-bg-info"><%= Taxon.uncontrolled.count %></span>
-        </a>
-      </li>
-    </ul>
-  </nav>
-
-  <turbo-frame id="issues-taxons-table">
-    <%=
-        case params[:issue]
-        when "uncontrolled"
-          render "table_uncontrolled", taxons: @taxons 
-        else
-          render "table", taxons: @taxons
-        end
-      %>
-    <%== pagy_bootstrap_nav(@pagy) %>
-  </turbo-frame>
-
-</div>
+<turbo-frame id="issues-taxons-table">
+  <%=
+    case params[:issue]
+    when "unknown_taxon"
+      render "issues/taxons/unknown_taxon/table", taxons: @taxons 
+    else
+      render "table", taxons: @taxons
+    end
+  %>
+<%== pagy_bootstrap_nav(@pagy) %>
+</turbo-frame>

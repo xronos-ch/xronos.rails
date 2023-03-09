@@ -6,8 +6,8 @@ class Issues::TaxonsController < ApplicationController
 
   # GET /issues/taxons/:issue
   def index
-    if params[:issue] == "uncontrolled"
-      @taxons = Taxon.uncontrolled
+    if params[:issue] == "unknown_taxon"
+      @taxons = Taxon.unknown_taxon
     else
       @taxons = Taxon.all
     end

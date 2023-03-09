@@ -7,19 +7,19 @@
 <% end %>
 
 <% content_for :content do %>
-  <div class="container-fluid">
-    <div class="row">
+  <div class="container-fluid d-flex min-vh-100">
+    <div class="row flex-grow-1">
 
-      <nav class="col p-3 bg-light" id="curate-nav">
+      <nav class="col-lg col-lg-3 col-xl-2 p-3 bg-light" id="curate-nav">
         <%= render "curate/curate_nav" %>
       </nav>
 
-      <div class="col col-8 p-3" id="curate-content">
+      <div class="col-lg p-3" id="curate-content">
         <%= yield %>
       </div>
 
       <% if content_for? :help %>
-        <aside class="col p-3 pt-5 bg-light text-muted small" id="curate-help">
+        <aside class="col-xxl col-xxl-2 p-3 pt-5 bg-light text-muted small" id="curate-help">
           <%= yield :help %>
         </aside>
       <% end %>

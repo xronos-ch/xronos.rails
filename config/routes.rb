@@ -29,7 +29,6 @@ Rails.application.routes.draw do
   end
   resources :measurement_states
   resources :references
-  resources :samples
   resources :sites do
     get 'search', on: :collection
   end
@@ -79,7 +78,8 @@ Rails.application.routes.draw do
     end
   end
   namespace :issues do 
-    resources :taxons, only: [ :index ], concerns: [ :has_issues ]
+    resources :samples, only: :index, concerns: :has_issues
+    resources :taxons, only: :index, concerns: :has_issues
   end
 
   # API

@@ -37,9 +37,9 @@
         <td><%= taxon.name %></td>
         <td><%= render "taxons/gbif_usage", gbif_usage: taxon.gbif_usage %></td>
         <td class="text-end"><%= taxon.samples_count %></td>
-        <td class="text-end">
-          <%= issue_badge("UNCONTROLLED_TAXON") unless taxon.controlled? %>
-        </td>
+        <td class="text-end"><% taxon.issues.each do |issue| %>
+          <%= issue_badge(issue) %>
+        <% end %></td>
         <% if can? :manage, Taxon %>
           <td class="text-end"><%= render "shared/action_buttons_compact", i: taxon %></td>
         <% end %>

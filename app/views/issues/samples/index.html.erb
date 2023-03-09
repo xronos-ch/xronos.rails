@@ -1,0 +1,12 @@
+<% content_for :title, "Issues – Samples" %>
+<% content_for :help do %>
+<% end %>
+
+<h2 class="border-bottom">Samples</h2>
+
+<%= render "issues/nav", model: Sample, base_path: issues_samples_path %>
+
+<turbo-frame id="issues-samples-table">
+  <%= render "table", samples: @samples %>
+  <%== pagy_bootstrap_nav(@pagy) %>
+</turbo-frame>

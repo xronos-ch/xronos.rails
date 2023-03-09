@@ -23,18 +23,16 @@ class Taxon < ApplicationRecord
 
   include Versioned
 
-  include Controlled
-
-  def controlled?
-    gbif_id.present?
-  end
-
-  scope :uncontrolled, -> { where(gbif_id: nil) }
-
-  has_one :unknown_taxon, class_name: 'Issues::UnknownTaxon'
-
-  before_save :control, unless: :controlled?
+  before_save :set_gbif_id_from_match, unless: :gbif_id?
   before_save :set_name_from_gbif
+
+  include HasIssues
+  @issues = [ :unknown_taxon ]
+
+  scope :unknown_taxon, -> { where(gbif_id: nil) }
+  def unknown_taxon?
+    not gbif_id?
+  end
 
   include PgSearch::Model
   pg_search_scope :search, 
@@ -51,6 +49,10 @@ class Taxon < ApplicationRecord
       ) AS samples_count
     SQL
   }
+
+  def gbif_id?
+    gbif_id.present?
+  end
 
   def gbif_usage(id = gbif_id)
     if id.blank?
@@ -99,11 +101,6 @@ class Taxon < ApplicationRecord
     unless gbif.blank?
       self.name = gbif.canonicalName
     end
-  end
-
-  def control
-    return if skip_control
-    set_gbif_id_from_match
   end
 
 end
