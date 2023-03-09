@@ -103,4 +103,8 @@ class Taxon < ApplicationRecord
     end
   end
 
+  def self.label
+    "taxon"
+  end
+
 end

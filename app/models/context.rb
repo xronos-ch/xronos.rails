@@ -30,4 +30,8 @@ class Context < ApplicationRecord
   has_many :typos, through: :samples
   has_paper_trail
 
+  def self.label
+    "context"
+  end
+
 end

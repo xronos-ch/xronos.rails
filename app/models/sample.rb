@@ -51,4 +51,8 @@ class Sample < ApplicationRecord
   def missing_taxon?
     taxon.blank?
   end
+
+  def self.label
+    "sample"
+  end
 end
