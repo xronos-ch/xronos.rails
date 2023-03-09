@@ -1,7 +1,4 @@
-class Issues::SamplesController < ApplicationController
-  layout "curate"
-  include Pagy::Backend
-
+class Issues::SamplesController < IssuesController
   load_and_authorize_resource
 
   # GET /issues/samples/:issue
