@@ -28,6 +28,8 @@ class Article < ApplicationRecord
   def splash_variant(variant)
     return nil unless splash.present?
     case variant
+    when :card
+      splash.variant(resize_to_fill: [1320, 160])
     when :xs
       splash.variant(resize_to_fill: [576, 320])
     when :sm

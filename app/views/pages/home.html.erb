@@ -56,29 +56,30 @@
 </section>
 
 
-<div class="container">
+<section class="mb-5">
+  <div class="container my-3">
+    <h3 class="visually-hidden">What is XRONOS?</h3>
+    <p class="lead">
+    In the spirit of the Open Science, the XRONOS project aims at developing a worldwide unique and novel database, to compile and manage the two most important forms of absolute chronological information – radiocarbon and dendrochronological data – to enable a multitude of transdisciplinary research projects on population dynamics, human-environmental dependencies and thus fundamental transformations in the past.
+    </p>
+  </div>
+</section>
 
-  <section class="mb-5">
-      <h3>What is XRONOS?</h3>
-      <p>
-      In the spirit of the Open Science, the XRONOS project aims at developing a worldwide unique and novel database, to compile and manage the two most important forms of absolute chronological information – radiocarbon and dendrochronological data – to enable a multitude of transdisciplinary research projects on population dynamics, human-environmental dependencies and thus fundamental transformations in the past.
-      </p>
-  </section>
+<section class="bg-light">
+  <% unless @news.blank? %>
+    <div class="container my-5">
+      <h3 class="display-5 mb-4">Latest news</h3>
 
-  <section class="mb-5">
-    <h3>News</h3>
-
-    <% news = Article.news_section.order(published_at: :desc) %>
-    <% unless news.blank? %>
-      <% news.each do |article| %>
+      <% @news.each do |article| %>
         <%= render "articles/card", article: article %>
       <% end %>
-    <% end %>
+
+      <a href="/news" class="btn btn-lg btn-info">More news</a>
+
     </div>
-
-  </section>
-
-</div>
+  <% end %>
+  </div>
+</section>
 
 
 
