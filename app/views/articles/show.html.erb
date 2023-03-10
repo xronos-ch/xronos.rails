@@ -13,9 +13,25 @@
       height: 20rem;
       width: 100%;
       z-index: -1;
-      background-image: url('<%= url_for(@article.splash) %>');
+      background-image: url('<%= url_for(@article.splash_variant(:xs)) %>');
       background-size: cover;
       background-position: center center;
+    }
+
+    @media (min-width: 576px)  { 
+      .article-hero:before { background-image: url('<%= url_for(@article.splash_variant(:sm)) %>'); }
+    }
+    @media (min-width: 768px)  { 
+      .article-hero:before { background-image: url('<%= url_for(@article.splash_variant(:md)) %>'); }
+    }
+    @media (min-width: 992px)  { 
+      .article-hero:before { background-image: url('<%= url_for(@article.splash_variant(:lg)) %>'); }
+    }
+    @media (min-width: 1200px) { 
+      .article-hero:before { background-image: url('<%= url_for(@article.splash_variant(:xl)) %>'); }
+    }
+    @media (min-width: 1400px) { 
+      .article-hero:before { background-image: url('<%= url_for(@article.splash_variant(:xxl)) %>'); }
     }
   </style>
 <% end %>

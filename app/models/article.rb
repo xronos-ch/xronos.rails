@@ -24,6 +24,25 @@ class Article < ApplicationRecord
   belongs_to :user
   has_one_attached :splash
 
+  # Workaround lack of named attachment variants in Rails <7
+  def splash_variant(variant)
+    return nil unless splash.present?
+    case variant
+    when :xs
+      splash.variant(resize_to_fill: [576, 320])
+    when :sm
+      splash.variant(resize_to_fill: [768, 320])
+    when :md
+      splash.variant(resize_to_fill: [992, 320])
+    when :lg
+      splash.variant(resize_to_fill: [1200, 320])
+    when :xl
+      splash.variant(resize_to_fill: [1400, 320])
+    when :xxl
+      splash.variant(resize_to_fill: [2500, 320])
+    end
+  end
+
   validates :title, presence: true
   validates :section, presence: true
   validates :slug, presence: true, uniqueness: true, format: {
