@@ -1,4 +1,5 @@
 <% content_for :title, "#{@typo.name} (#{@typo.sample.context.site.name})" %>
+<% content_for :meta_description, "#{@typo.site.name} has been typologically classified as a #{@typo.name} (c. #{@typo.approx_start_time}–#{@typo.approx_end_time}) site, according to #{@typo.references.map(&:render_citation).to_sentence}. XRONOS' record for this typological date may include further information on this typological date." %>
 
 <header id="typo-header" class="bg-light text-primary">
   <div class="container my-5">
@@ -25,6 +26,11 @@
         <dt class="col-sm-3">Approximate end time</dt>
         <dd class="col-sm-9"><%= @typo.approx_end_time %></dd>
       </div>
+
+      <dt class="col-sm-3"><%= "Reference".pluralize(@typo.references.count) %></dt>
+      <dd class="col-sm-9 text-end">
+        <%= render "references/citations", references: @typo.references %>
+      </dd>
 
     </dl>
   </div>

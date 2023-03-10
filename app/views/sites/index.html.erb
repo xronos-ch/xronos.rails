@@ -1,6 +1,10 @@
+<% content_for :title, Site.label.humanize.pluralize %>
+<% content_for :meta_description do %>List of <%= @pagy.count %> archaeological sites from around the world with radiocarbon dates, typological dates and bibliographic references.<% end %>
+
 <div class="container my-5">
 
   <h1>Sites</h1>
+  <p>Showing <%= @pagy.count %> <%= Site.label.pluralize(@pagy.count) %>.</p>
 
   <turbo-frame id="sites-table">
     <table class="responsive nowrap table table-hover align-middle">

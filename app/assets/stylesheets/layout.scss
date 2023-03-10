@@ -458,3 +458,8 @@ span.hero_caption:hover {
 #filter-info div.dataTables_paginate {
 	display: none;
 }
+
+#navbarSupportedContent.show {
+  background-color: rgba(var(--bs-primary-rgb), var(--bs-bg-opacity)) !important;
+  padding: 1em;
+}

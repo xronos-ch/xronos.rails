@@ -1,4 +1,5 @@
 <% content_for :title, @site.name %>
+<% content_for :meta_description, "Chronometric data for #{@site.name}, an archaeological site in #{@site.country}, including #{@site.c14s.count} radiocarbon dates, #{@site.typos.count} typological classifications, and #{@site.references.count} bibliographic references." %>
 
 <header id="site-header" class="bg-light text-primary">
   <div class="container my-5">

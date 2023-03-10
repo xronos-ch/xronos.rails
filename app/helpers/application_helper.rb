@@ -8,6 +8,14 @@ module ApplicationHelper
       icon = icon[0] + "-light." + icon[1]
     end
 
+    unless html_options.has_key?(:alt)
+      html_options[:alt] = model.label
+    end
+
+    # Set intrinsic dimensions (actual display dimensions assumed to be set by CSS!)
+    html_options[:width] = 72
+    html_options[:height] = 72
+
     image_tag icon, html_options
   end
 
