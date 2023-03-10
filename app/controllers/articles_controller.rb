@@ -1,4 +1,6 @@
 class ArticlesController < ApplicationController
+  include Pagy::Backend
+
   load_and_authorize_resource
 
   before_action :set_article, only: [:edit, :update, :destroy]
@@ -16,6 +18,8 @@ class ArticlesController < ApplicationController
       .published
       .where(section: params[:section])
       .order(published_at: :desc)
+
+    @pagy, @articles = pagy(@articles)
   end
 
   # GET /articles/1
