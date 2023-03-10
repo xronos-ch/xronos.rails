@@ -22,6 +22,7 @@ class Article < ApplicationRecord
   enum section: [ :news, :about, :docs ], _suffix: true
 
   belongs_to :user
+  has_one_attached :splash
 
   validates :title, presence: true
   validates :section, presence: true

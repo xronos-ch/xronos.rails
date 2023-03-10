@@ -7,6 +7,9 @@
   }
 %>
 
+<%= f.file_field :splash, label: "Splash image", 
+  help: 'Should be at least 2600x320 px. Stuck? Try <a href="https://unsplash.com/s/photos/archaeology">Unsplash</a> or <a href="https://commons.wikimedia.org/wiki/Category:Archaeology">Wikimedia Commons</a>.'.html_safe %>
+
 <%= f.text_area :body, label_as_placeholder: true, 
   label: "Body text. Styling with **Markdown** is supported.",
   data: { controller: "markdown-editor", markdown_editor_target: "field" } %>

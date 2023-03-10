@@ -1,17 +1,42 @@
-<header class="bg-light text-primary">
-  <div class="container my-5">
-    <h1 class="display-3"><%= @article.title %></h1>
+<% if @article.splash.present? %>
+  <% content_for :page_styles %>
+  <style>
+    .article-hero {
+      height: 20rem;
+      background: none !important;
+    }
+
+    .article-hero:before {
+      content: "";
+      display: block;
+      position: absolute;
+      height: 20rem;
+      width: 100%;
+      z-index: -1;
+      background-image: url('<%= url_for(@article.splash) %>');
+      background-size: cover;
+      background-position: center center;
+    }
+  </style>
+<% end %>
+
+<header class="bg-light article-hero d-flex flex-column justify-content-end">
+  <div class="container my-3">
     <% if @article.news_section? %>
-      <p class="text-muted">
-      By
-      <%= @article.user.email %>, 
-      <%= @article.published_at.present? ? @article.published_at.to_formatted_s : "draft" %>
-      </p>
+      <span class="badge bg-primary text-uppercase">News</span>
     <% end %>
+    <h1 class="display-3 text-light" style="text-shadow: var(--bs-dark) 0 0 1rem;"><%= @article.title %></h1>
   </div>
 </header>
 
 <div class="container my-5">
+  <% if @article.news_section? %>
+    <p class="text-muted">
+      By <%= @article.user.email %>, 
+      <%= @article.published_at.present? ? @article.published_at.to_formatted_s : "draft" %>
+    </p>
+  <% end %>
+
   <%= @article.body_html.html_safe %>
 </div>
 

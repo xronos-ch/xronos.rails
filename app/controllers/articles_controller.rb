@@ -90,7 +90,8 @@ class ArticlesController < ApplicationController
         :title, 
         :user_id, 
         :published_at,
-        :body
+        :body,
+        :splash
       )
     end
 end
