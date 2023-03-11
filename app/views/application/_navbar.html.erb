@@ -21,18 +21,28 @@
            <li class="nav-item">
              <a class="nav-link <%= active_class data_path %>" href="/data" <%= active_aria data_path %>>Browse data</a>
            </li>
-           <li class="nav-item">
-             <a class="nav-link <%= active_class database_path %>" href="/database" <%= active_aria database_path %>>Schema</a>
-           </li>
-           <li class="nav-item">
-             <a class="nav-link <%= active_class api_path %>" href="/api" <%= active_aria api_path %>>API</a>
-           </li>
            <li class="nav-item dropdown">
-             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+             <a class="nav-link dropdown-toggle" href="#" id="aboutDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                About
              </a>
-             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+             <ul class="dropdown-menu" aria-labelledby="aboutDropdown">
                <%= render "about/nav", {itemclass: "", linkclass: "dropdown-item nav-link text-dark" } %>
+             </ul>
+           </li>
+           <li class="nav-item dropdown">
+             <a class="nav-link dropdown-toggle" href="#" id="toolsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+               Tools
+             </a>
+             <ul class="dropdown-menu" aria-labelledby="toolsDropdown">
+               <li class="nav-item">
+                 <a class="nav-link dropdown-item text-dark <%= active_class database_path %>" href="/database" <%= active_aria database_path %>>Schema</a>
+               </li>
+               <li class="nav-item">
+                 <a class="nav-link dropdown-item text-dark <%= active_class api_path %>" href="/api" <%= active_aria api_path %>>API</a>
+               </li>
+               <li class="nav-item">
+                 <a class="nav-link dropdown-item text-dark" href="https://r.xronos.ch" target="_blank">R package <span class="badge text-dark"><%= fa_icon "external-link" %></span></a>
+               </li>
              </ul>
            </li>
            <li class="nav-item">
