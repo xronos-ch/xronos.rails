@@ -4,6 +4,7 @@
 #
 #  id                 :bigint           not null, primary key
 #  body               :text
+#  publish            :boolean          default(FALSE)
 #  published_at       :datetime
 #  section            :integer          not null
 #  slug               :string

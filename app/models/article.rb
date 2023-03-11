@@ -4,6 +4,7 @@
 #
 #  id                 :bigint           not null, primary key
 #  body               :text
+#  publish            :boolean          default(FALSE)
 #  published_at       :datetime
 #  section            :integer          not null
 #  slug               :string
@@ -53,20 +54,23 @@ class Article < ApplicationRecord
     message: "may only contain lowercase letters, numbers, and hyphens (-)"
   }
 
+  before_save :set_published_at
+
   scope :published, -> { 
-    where("published_at <= ?", DateTime.now)
+    where(publish: true)
+      .where("published_at <= ?", DateTime.now)
   }
 
   def published?
-    published_at.present? and published_at <= DateTime.now
+    publish and published_at <= DateTime.now
   end
 
   def scheduled?
-    published_at.present? and published_at > DateTime.now
+    publish and published_at > DateTime.now
   end
 
   def draft?
-    !(published? or scheduled?)
+    not publish
   end
 
   def path
@@ -75,5 +79,13 @@ class Article < ApplicationRecord
 
   def body_html
     Kramdown::Document.new(body).to_html
+  end
+
+  private
+
+  def set_published_at
+    if publish and published_at.blank?
+      self.published_at = DateTime.now
+    end
   end
 end

@@ -89,14 +89,15 @@ class ArticlesController < ApplicationController
 
     def article_params
       params.require(:article).permit(
+        :body,
+        :publish,
+        :published_at,
         :section, 
         :slug, 
+        :splash,
+        :splash_attribution,
         :title, 
         :user_id, 
-        :published_at,
-        :body,
-        :splash,
-        :splash_attribution
       )
     end
 end

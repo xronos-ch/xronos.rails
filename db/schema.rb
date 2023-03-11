@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_11_092323) do
+ActiveRecord::Schema.define(version: 2023_03_11_101806) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -55,6 +55,7 @@ ActiveRecord::Schema.define(version: 2023_03_11_092323) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "splash_attribution"
+    t.boolean "publish", default: false
     t.index ["section"], name: "index_articles_on_section"
     t.index ["slug"], name: "index_articles_on_slug", unique: true
     t.index ["user_id"], name: "index_articles_on_user_id"
