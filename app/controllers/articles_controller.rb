@@ -95,7 +95,8 @@ class ArticlesController < ApplicationController
         :user_id, 
         :published_at,
         :body,
-        :splash
+        :splash,
+        :splash_attribution
       )
     end
 end

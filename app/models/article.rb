@@ -2,15 +2,16 @@
 #
 # Table name: articles
 #
-#  id           :bigint           not null, primary key
-#  body         :text
-#  published_at :datetime
-#  section      :integer          not null
-#  slug         :string
-#  title        :string
-#  created_at   :datetime         not null
-#  updated_at   :datetime         not null
-#  user_id      :bigint
+#  id                 :bigint           not null, primary key
+#  body               :text
+#  published_at       :datetime
+#  section            :integer          not null
+#  slug               :string
+#  splash_attribution :string
+#  title              :string
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  user_id            :bigint
 #
 # Indexes
 #

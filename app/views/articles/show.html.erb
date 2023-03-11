@@ -36,7 +36,7 @@
   </style>
 <% end %>
 
-<header class="bg-light article-hero d-flex flex-column justify-content-end">
+<header class="bg-light article-hero d-flex flex-column justify-content-end position-relative">
   <div class="container my-3">
     <% if @article.news_section? %>
       <span class="badge bg-primary text-uppercase">News</span>
@@ -56,11 +56,13 @@
   <%= @article.body_html.html_safe %>
 </div>
 
-<% unless @article.news_section? %>
-  <footer>
-    <div class="container my-5 text-muted">
-      <hr>
+<footer class="bg-light">
+  <div class="container my-5 text-muted small">
+    <% if @article.splash_attribution? %>
+      <p>Cover photo: <%= @article.splash_attribution.html_safe %></span>
+    <% end %>
+    <% unless @article.news_section? %>
       <p>Last updated <%= @article.updated_at.to_formatted_s %>.</p>
-    </div>
-  </footer>
-<% end %>
+    <% end %>
+  </div>
+</footer>

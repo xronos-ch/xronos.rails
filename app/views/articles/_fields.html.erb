@@ -8,7 +8,10 @@
 %>
 
 <%= f.file_field :splash, label: "Splash image", 
-  help: 'Should be at least 2600x320 px. Stuck? Try <a href="https://unsplash.com/s/photos/archaeology">Unsplash</a> or <a href="https://commons.wikimedia.org/wiki/Category:Archaeology">Wikimedia Commons</a>.'.html_safe %>
+  help: 'Cropped and resized automatically. Original should be at least 2400x320 px. Stuck? Try <a href="https://unsplash.com/s/photos/archaeology">Unsplash</a> or <a href="https://commons.wikimedia.org/wiki/Category:Archaeology">Wikimedia Commons</a>.'.html_safe %>
+
+<%= f.text_field :splash_attribution, placeholder: "Jane Smith / Wikimedia Commons",
+  help: "HTML is supported." %>
 
 <%= f.text_area :body, label_as_placeholder: true, 
   label: "Body text. Styling with **Markdown** is supported.",

@@ -7,9 +7,11 @@
 #  superseded_by :integer
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#  gbif_id       :integer
 #
 # Indexes
 #
+#  index_taxons_on_gbif_id        (gbif_id)
 #  index_taxons_on_name           (name)
 #  index_taxons_on_superseded_by  (superseded_by)
 #
