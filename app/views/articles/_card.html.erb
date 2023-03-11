@@ -1,6 +1,8 @@
 <article class="card mb-5 border-0 rounded-0">
   <% if article.splash.present? %>
-    <img class="card-img-top rounded-0" style="height: 10rem; object-fit: none;" src="<%= url_for(article.splash_variant(:card)) %>" />
+    <a href="/<%= article.path %>">
+      <img class="card-img-top rounded-0" style="height: 10rem; object-fit: none;" src="<%= url_for(article.splash_variant(:card)) %>" />
+    </a>
   <% end %>
   <div class="card-body">
     <h1 class="h3 card-title">
