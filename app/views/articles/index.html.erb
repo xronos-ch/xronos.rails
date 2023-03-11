@@ -1,20 +1,27 @@
-<div class="container my-5">
-  <h1>Articles</h1>
+<header>
+  <div class="container my-5 d-flex flex-row">
+    <div>
+      <h1 class="display-3">News</h1>
+      <h2 class="h2 text-muted">From the XRONOS team</h2>
+    </div>
+    <% if can? :manage, Article %>
+      <div class="ms-auto">
+        <%= link_to 'Manage', admin_articles_path, class: 'btn btn-outline-primary' %>
+      </div>
+    <% end %>
+  </div>
+</header>
 
-  <% if can? :create, Article %><%= link_to 'New article', new_article_path, class: 'btn btn-secondary' %><% end %>
+<% unless @articles.blank? %>
+  <div class="bg-light">
+    <div class="container my-5">
+      <% @articles.each do |article| %>
+        <%= render "card", article: article %>
+      <% end %>
 
-  <section class="my-5">
-    <h2>News posts</h2>
-    <%= render "table", articles: @news %>
-  </section>
-
-  <section class="my-5">
-    <h2>About pages</h2>
-    <%= render "table", articles: @about %>
-  </section>
-
-  <section class="my-5">
-    <h2>Documentation</h2>
-    <%= render "table", articles: @docs %>
-  </section>
-</div>
+      <% unless @pagy.pages < 2 %>
+        <%== pagy_bootstrap_nav(@pagy) %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

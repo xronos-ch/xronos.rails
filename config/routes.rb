@@ -7,12 +7,14 @@ Rails.application.routes.draw do
   get '/database' => 'pages#database'
   get '/api' => 'pages#api'
 
-  # Articles (news posts and pseudo-static pages)
-  resources :articles
-  get '/news', to: 'articles#feed', section: 'news'
+  # Articles (news posts and other pseudo-static pages)
+  get '/news', to: 'articles#index', section: 'news'
   get 'news/:slug', to: 'articles#show'
   get 'about/:slug', to: 'articles#show'
   get 'docs/:slug', to: 'articles#show'
+  namespace :admin do
+    resources :articles, except: :show
+  end
 
   # Redirects for backwards compatibility
   get '/about', to: redirect('/about/xronos')
