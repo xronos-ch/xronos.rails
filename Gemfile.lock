@@ -87,6 +87,10 @@ GEM
     bootstrap_form (5.0.0)
       actionpack (>= 5.2)
       activemodel (>= 5.2)
+    breadcrumbs (0.3.0)
+      actionview
+      activesupport
+      i18n
     brotli (0.4.0)
     builder (3.2.4)
     bullet (7.0.4)
@@ -477,6 +481,7 @@ DEPENDENCIES
   bootsnap (>= 1.1.0)
   bootstrap (~> 5.1)
   bootstrap_form (~> 5.0)
+  breadcrumbs
   bullet
   byebug
   cancancan

@@ -11,7 +11,6 @@ class Ability
     cannot :read, [UserProfile]
     cannot :read, Article
     can :read, Article, published?: true
-    can :feed, Article
     can :search, :all
     can :calibrate, :all
     can :calibrate_multi, :all

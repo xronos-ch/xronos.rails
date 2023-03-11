@@ -1,9 +1,10 @@
-class Admin::ArticlesController < ArticlesController
+class Admin::ArticlesController < AdminController
   include Pagy::Backend
 
   load_and_authorize_resource
 
   before_action :set_article, only: [:edit, :update, :destroy]
+  before_action :add_articles_breadcrumb
 
   # GET /admin/articles
   def index
@@ -15,10 +16,12 @@ class Admin::ArticlesController < ArticlesController
   # GET /admin/articles/new
   def new
     @article = Article.new
+    breadcrumbs.add "New article"
   end
 
   # GET /admin/articles/:id/edit
   def edit
+    breadcrumbs.add @article.title
   end
 
   # POST /admin/articles
@@ -60,6 +63,10 @@ class Admin::ArticlesController < ArticlesController
   end
 
   private
+    def add_articles_breadcrumb
+      breadcrumbs.add "Articles", admin_articles_path
+    end
+
     def set_article
       @article = Article.find(params[:id])
     end
