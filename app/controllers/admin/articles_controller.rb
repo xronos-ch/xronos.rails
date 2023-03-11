@@ -33,7 +33,7 @@ class Admin::ArticlesController < AdminController
         format.html { redirect_to admin_articles_url, status: :see_other, notice: "'#{@article.path}' created." }
         format.json { render :show, status: :created, location: @article }
       else
-        format.html { render :new }
+        format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @article.errors, status: :unprocessable_entity }
       end
     end
@@ -46,7 +46,7 @@ class Admin::ArticlesController < AdminController
         format.html { redirect_to admin_articles_url, status: :see_other, notice: "'Saved changes to '#{@article.path}'." }
         format.json { render :index, status: :ok, location: @article }
       else
-        format.html { render :edit }
+        format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @article.errors, status: :unprocessable_entity }
       end
     end
