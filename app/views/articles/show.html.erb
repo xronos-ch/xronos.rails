@@ -41,7 +41,11 @@
     <% if @article.news_section? %>
       <span class="badge bg-primary text-uppercase">News</span>
     <% end %>
-    <h1 class="display-3 text-light" style="text-shadow: var(--bs-dark) 0 0 1rem;"><%= @article.title %></h1>
+    <% if @article.splash.present? %>
+      <h1 class="display-3 text-light" style="text-shadow: var(--bs-dark) 0 0 1rem;"><%= @article.title %></h1>
+    <% else %>
+      <h1 class="display-3 text-primary"><%= @article.title %></h1>
+    <% end %>
   </div>
 </header>
 
