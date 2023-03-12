@@ -20,7 +20,7 @@
 <div>
   <label for="basic-url" class="form-label">Location</label>
   <div class="input-group">
-    <%= f.select :section, options_for_select(Article.sections.keys), hide_label: true %>
+    <%= f.select :section, options_for_select(Article.sections.keys, f.object.section), hide_label: true %>
     <%= f.text_field :slug, 
       label: "lowercase-slug-without-spaces", 
       label_as_placeholder: true, 
