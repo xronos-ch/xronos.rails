@@ -9,4 +9,6 @@ class Taxon < ApplicationRecord
   validates :name, presence: true
 
   has_many :samples
+
+  acts_as_copy_target # enable CSV exports
 end

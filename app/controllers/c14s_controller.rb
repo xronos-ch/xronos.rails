@@ -1,6 +1,7 @@
 class C14sController < ApplicationController
   include C14sHelper
   include Pagy::Backend
+  include Tabulatable
 
   load_and_authorize_resource
 
@@ -8,6 +9,7 @@ class C14sController < ApplicationController
 
   # GET /c14s
   # GET /c14s.json
+  # GET /c14s.csv
   def index
     @c14s = C14.includes(
       {sample: [
@@ -24,8 +26,7 @@ class C14sController < ApplicationController
       }
       format.json
       format.csv {
-        template = File.open("app/views/c14s/index.csv").read
-        @c14s = @c14s.select(template)
+        @c14s = @c14s.select(index_csv_template)
         render csv: @c14s
       }
     end

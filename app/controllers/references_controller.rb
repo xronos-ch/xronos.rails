@@ -1,4 +1,5 @@
 class ReferencesController < ApplicationController
+  include Tabulatable
   include Pagy::Backend
 
   load_and_authorize_resource
@@ -7,12 +8,22 @@ class ReferencesController < ApplicationController
 
   # GET /references
   # GET /references.json
+  # GET /references.csv
   def index
     @references = Reference
       .left_joins(:citations)
       .select('"references".*, COUNT(citations.id) AS citations_count')
       .group(:id)
-    @pagy, @references = pagy(@references)
+
+    respond_to do |format|
+      format.html {
+        @pagy, @references = pagy(@references)
+      }
+      format.csv {
+        @references = @references.select(index_csv_template)
+        render csv: @references
+      }
+    end
   end
 
   # GET /references/1

@@ -1,4 +1,5 @@
 class TyposController < ApplicationController
+  include Tabulatable
   include Pagy::Backend
 
   load_and_authorize_resource
@@ -7,6 +8,7 @@ class TyposController < ApplicationController
 
   # GET /typos
   # GET /typos.json
+  # GET /typos.csv
   def index
     @typos = Typo.includes([
       :references, 
@@ -23,6 +25,7 @@ class TyposController < ApplicationController
       }
       format.json
       format.csv {
+        @typos = @typos.select(index_csv_template)
         render csv: @typos
       }
     end

@@ -1,12 +1,21 @@
 class MaterialsController < ApplicationController
+  include Tabulatable
+
   load_and_authorize_resource
 
   before_action :set_material, only: [:show, :edit, :update, :destroy]
 
   # GET /materials
   # GET /materials.json
+  # GET /materials.csv
   def index
     @materials = Material.all
+    respond_to do |format|
+      format.csv {
+        @materials = @materials.select(index_csv_template)
+        render csv: @materials
+      }
+    end
   end
 
   # GET /materials/search.json

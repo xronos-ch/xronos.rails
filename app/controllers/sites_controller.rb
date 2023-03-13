@@ -1,4 +1,5 @@
 class SitesController < ApplicationController
+  include Tabulatable
   include Pagy::Backend
 
   load_and_authorize_resource
@@ -15,10 +16,10 @@ class SitesController < ApplicationController
     respond_to do |format|
       format.html { 
         @pagy, @sites = pagy(Site.all.order(:name))
-        render :index
       }
       format.json
       format.csv {
+        @sites = @sites.select(index_csv_template)
         render csv: @sites
       }
     end

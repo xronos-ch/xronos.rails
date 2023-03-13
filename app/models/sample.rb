@@ -16,4 +16,6 @@ class Sample < ApplicationRecord
 
   has_many :c14s
   has_many :typos
+
+  acts_as_copy_target # enable CSV exports
 end

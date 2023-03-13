@@ -10,6 +10,8 @@ class Reference < ApplicationRecord
   has_many :c14s, :through => :citations, :source => :citing, :source_type => 'C14'
   has_many :typos, :through => :citations, :source => :citing, :source_type => 'Typo'
 
+  acts_as_copy_target # enable CSV exports
+
   def anchor
     if short_ref.blank?
       return ""
