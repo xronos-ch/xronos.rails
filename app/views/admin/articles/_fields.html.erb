@@ -33,7 +33,7 @@
   </div>
 </div>
 
-<%= f.collection_select :user_id, User.all, :id, :email %>
+<%= f.collection_select :user_id, User.all, :id, :email, label: "Author" %>
 
 <div class="mb-3">
   <%= f.check_box :publish %>

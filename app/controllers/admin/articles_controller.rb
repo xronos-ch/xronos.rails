@@ -16,6 +16,8 @@ class Admin::ArticlesController < AdminController
   # GET /admin/articles/new
   def new
     @article = Article.new
+    @article.user = current_user
+
     breadcrumbs.add "New article"
   end
 
