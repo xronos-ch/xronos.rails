@@ -1,1 +1,1 @@
-id,lab_identifier,c14_lab_id,sample_id,method,bp AS c14_age,std AS c14_error,delta_c13,delta_c13_std AS delta_c13_error
+c14s.id,lab_identifier,c14_lab_id,sample_id,method,bp AS c14_age,std AS c14_error,delta_c13,delta_c13_std AS delta_c13_error

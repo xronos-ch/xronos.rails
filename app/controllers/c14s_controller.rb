@@ -133,23 +133,24 @@ class C14sController < ApplicationController
         :delta_c13,
         :delta_c13_std,
         :method,
-        {sample_attributes: [
+        :sample_id,
+        {sample: [
           :id,
           :material_id,
           :taxon_id,
-          {context_attributes: [
+          :context_id,
+          {contexts: [
             :id,
             :name,
             :approx_start_time,
             :approx_end_time,
-            :_destroy
+            :site_id
           ]},
           :position_description,
           :position_x,
           :position_y,
           :position_z,
-          :position_crs,
-          :_destroy
+          :position_crs
         ]}
       )
     end
