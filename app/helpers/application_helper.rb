@@ -3,10 +3,18 @@ module ApplicationHelper
   def xr_icon(model, options = {}, html_options = {})
     icon = model.icon
 
-    if options.fetch(:light)
+    if options.has_key?(:light)
       icon = icon.split(".")
       icon = icon[0] + "-light." + icon[1]
     end
+
+    unless html_options.has_key?(:alt)
+      html_options[:alt] = model.label
+    end
+
+    # Set intrinsic dimensions (actual display dimensions assumed to be set by CSS!)
+    html_options[:width] = 72
+    html_options[:height] = 72
 
     image_tag icon, html_options
   end
@@ -45,6 +53,18 @@ module ApplicationHelper
   def javascript_exists?(script)
     script = "#{Rails.root}/app/javascript/packs/#{params[:controller]}.js"
     File.exists?(script) || File.exists?("#{script}.coffee") || File.exists?("#{script}.erb") 
+  end
+
+  def markdown(str)
+    Kramdown::Document.new(str).to_html.html_safe
+  end
+
+  def md(str)
+    sanitize Kramdown::Document.new(str)
+      .to_html
+      .remove('<p>')
+      .remove('</p>')
+      .html_safe
   end
 
 end

@@ -1,3 +1,28 @@
+# == Schema Information
+#
+# Table name: c14s
+#
+#  id             :bigint           not null, primary key
+#  bp             :integer
+#  cal_bp         :integer
+#  cal_std        :integer
+#  delta_c13      :float
+#  delta_c13_std  :float
+#  lab_identifier :string
+#  method         :string
+#  std            :integer
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  c14_lab_id     :bigint
+#  sample_id      :bigint
+#
+# Indexes
+#
+#  index_c14s_on_c14_lab_id      (c14_lab_id)
+#  index_c14s_on_lab_identifier  (lab_identifier)
+#  index_c14s_on_method          (method)
+#  index_c14s_on_sample_id       (sample_id)
+#
 class C14 < ApplicationRecord
   include DataHelper
 
@@ -5,9 +30,10 @@ class C14 < ApplicationRecord
   pg_search_scope :search, 
     against: :lab_identifier, 
     using: { tsearch: { prefix: true } } # match partial words
+  multisearchable against: :lab_identifier
 
-  has_paper_trail
   acts_as_copy_target # enable CSV exports
+  has_paper_trail
 
   validates :bp, :std, presence: true
 
@@ -15,8 +41,8 @@ class C14 < ApplicationRecord
   accepts_nested_attributes_for :sample, reject_if: :all_blank
   validates_associated :sample
 
-  has_one :context, :through => :sample
-  has_one :site, :through => :context
+  delegate :context, to: :sample
+  delegate :site, to: :sample
 
   belongs_to :c14_lab, optional: true
   belongs_to :source_database, optional: true

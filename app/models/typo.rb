@@ -1,3 +1,21 @@
+# == Schema Information
+#
+# Table name: typos
+#
+#  id                :bigint           not null, primary key
+#  approx_end_time   :integer
+#  approx_start_time :integer
+#  name              :string
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
+#  parent_id         :integer
+#  sample_id         :bigint
+#
+# Indexes
+#
+#  index_typos_on_name       (name)
+#  index_typos_on_sample_id  (sample_id)
+#
 class Typo < ApplicationRecord
   include DataHelper
   
@@ -16,8 +34,6 @@ class Typo < ApplicationRecord
   # Internal heirarchy
   belongs_to :parent, class_name: "Typo", optional: true
   has_many :children, class_name: "Typo", foreign_key: "typo_id"
-
-  acts_as_copy_target # enable CSV exports
 
   def self.label
     "typological date"

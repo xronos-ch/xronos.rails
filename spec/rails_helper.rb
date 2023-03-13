@@ -5,6 +5,9 @@ require File.expand_path('../config/environment', __dir__)
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require 'rspec/rails'
+
+require 'capybara/rspec'
+require 'capybara/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
@@ -20,7 +23,7 @@ require 'rspec/rails'
 # directory. Alternatively, in the individual `*_spec.rb` files, manually
 # require only the support files necessary.
 #
-# Dir[Rails.root.join('spec', 'support', '**', '*.rb')].sort.each { |f| require f }
+Dir[Rails.root.join('spec', 'support', '**', '*.rb')].sort.each { |f| require f }
 
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.
@@ -61,4 +64,31 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+  config.filter_run focus: true
+  config.run_all_when_everything_filtered = true
+  
+  
+  config.include ApiHelpers
+  
+  config.include Capybara::DSL
+  
+  Capybara.server = :puma, { Silent: true } # To clean up your test output
+  
+  Capybara.register_driver :selenium_chrome_headless do |app|
+    version = Capybara::Selenium::Driver.load_selenium
+    options_key = Capybara::Selenium::Driver::CAPS_VERSION.satisfied_by?(version) ? :capabilities : :options
+    browser_options = ::Selenium::WebDriver::Chrome::Options.new.tap do |opts|
+      opts.add_argument("--headless")
+      opts.add_argument("--disable-gpu") if Gem.win_platform?
+      # Workaround https://bugs.chromium.org/p/chromedriver/issues/detail?id=2650&q=load&sort=-id&colspec=ID%20Status%20Pri%20Owner%20Summary
+      opts.add_argument("--disable-site-isolation-trials")
+      opts.add_preference("download.default_directory", Capybara.save_path)
+      opts.add_preference(:download, default_directory: Capybara.save_path)
+    end
+
+    Capybara::Selenium::Driver.new(app, **{ browser: :chrome, options_key => browser_options })
+  end
+  
+  Capybara.default_driver = :selenium_chrome_headless
+    
 end

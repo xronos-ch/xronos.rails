@@ -1,34 +1,62 @@
+<% content_for :title, Site.label.humanize.pluralize %>
+<% content_for :meta_description do %>List of <%= @pagy.count %> archaeological sites from around the world with radiocarbon dates, typological dates and bibliographic references.<% end %>
+
 <div class="container my-5">
 
   <h1>Sites</h1>
+  <p>Showing <%= @pagy.count %> <%= Site.label.pluralize(@pagy.count) %>.</p>
 
-  <table class="responsive nowrap table table-hover align-middle">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Country</th>
-        <th>Coordinates</th>
-        <th class="text-end">Radiocarbon dates</th>
-        <th class="text-end">Typological dates</th>
-        <% if can? :manage, Site %><th><!-- Actions --></th><% end %>
-      </tr>
-    </thead>
-
-    <tbody>
-      <% @sites.each do |site| %>
+  <turbo-frame id="sites-table">
+    <table class="responsive nowrap table table-hover align-middle">
+      <thead>
         <tr>
-          <td><%= link_to site.name, site %></td>
-          <td><%= render "country", site: site %></td>
-          <td class="font-monospace"><%= site.coordinates.present? ? site.coordinates : na_value %></td>
-          <td class="text-end"><%= site.c14s.count %></td>
-          <td class="text-end"><%= site.typos.count %></td>
-          <% if can? :manage, Site %><td class="text-end"><%= render 'shared/action_buttons_compact', i: site %></td><% end %>
+          <th>
+            <%= link_to_order_by "Name", :name %>
+            <% if ordered_by?(:name) %>
+              <span class="text-muted"><%= order_indicator %></span>
+            <% end %>
+          </th>
+          <th>
+            <%= link_to_order_by "Country", :country_code %>
+            <% if ordered_by?(:country_code) %>
+              <span class="text-muted"><%= order_indicator %></span>
+            <% end %>
+          </th>
+          <th>Coordinates</th>
+          <th class="text-end">
+            <%= link_to_order_by C14.label.humanize.pluralize, 
+              :c14s_count %>
+            <% if ordered_by?(:c14s_count) %>
+              <span class="text-muted"><%= order_indicator %></span>
+            <% end %>
+          </th>
+          <th class="text-end">
+            <%= link_to_order_by Typo.label.humanize.pluralize, 
+              :typos_count %>
+            <% if ordered_by?(:typos_count) %>
+              <span class="text-muted"><%= order_indicator %></span>
+            <% end %>
+          </th>
+          <% if can? :manage, Site %><th><!-- Actions --></th><% end %>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
 
-  <%== pagy_bootstrap_nav(@pagy) %>
+      <tbody>
+        <% @sites.each do |site| %>
+          <tr>
+            <td><%= link_to site.name, site, target: :_top %></td>
+            <td><%= render "country", site: site %></td>
+            <td class="font-monospace"><%= site.coordinates.present? ? site.coordinates : na_value %></td>
+            <td class="text-end"><%= site.c14s_count %></td>
+            <td class="text-end"><%= site.typos_count %></td>
+            <% if can? :manage, Site %><td class="text-end"><%= render 'shared/action_buttons_compact', i: site %></td><% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <%== pagy_bootstrap_nav(@pagy) %>
+  </turbo-frame>
 
   <% if can? :create, Site %>
     <%= link_to 'New site', new_site_path, class: 'btn btn-secondary' %>

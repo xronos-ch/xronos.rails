@@ -1,9 +1,15 @@
 <% content_for :title, "#{@typo.name} (#{@typo.sample.context.site.name})" %>
+<% content_for :meta_description, "#{@typo.site.name} has been typologically classified as a #{@typo.name} (c. #{@typo.approx_start_time}–#{@typo.approx_end_time}) site, according to #{@typo.references.map(&:render_citation).to_sentence}. XRONOS' record for this typological date may include further information on this typological date." %>
 
-<header id="typo-header" class="bg-primary text-light">
+<header id="typo-header" class="bg-light text-primary">
   <div class="container my-5">
     <h1 class="display-1"><%= @typo.name %></h1>
-    <h2 class="display-6">Typological date from <%= link_to @typo.sample.context.site.name, @typo.sample.context.site, class: "link-light" %></h2>
+    <h2 class="display-6">
+      <%= xr_icon Typo, {}, { style: "height: 2.5rem" } %>
+      <%= Typo.label.humanize %>
+      from 
+      <%= link_to @typo.sample.context.site.name, @typo.sample.context.site %>
+    </h2>
   </div>
 </header>
 
@@ -21,6 +27,11 @@
         <dd class="col-sm-9"><%= @typo.approx_end_time %></dd>
       </div>
 
+      <dt class="col-sm-3"><%= "Reference".pluralize(@typo.references.count) %></dt>
+      <dd class="col-sm-9 text-end">
+        <%= render "references/citations", references: @typo.references %>
+      </dd>
+
     </dl>
   </div>
 </section>
@@ -29,14 +40,14 @@
   <div class="container my-5">
     <div class="row">
 
-      <div class="col">
+      <div>
         <h2>XRONOS metadata</h2>
         <%= render "shared/record_metadata", record: @typo, record_label: "reference" %>
       </div>
 
-      <div class="col">
+      <div>
         <h2>Revision history</h2>
-        <%= render "shared/paper_trail", item: @typo %>
+        <%= render "application/paper_trail/versions", item: @typo %>
       </div>
   </div>
 </section>

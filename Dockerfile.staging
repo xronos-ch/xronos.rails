@@ -4,8 +4,11 @@ MAINTAINER Martin Hinz <martin.hinz@iaw.unibe.ch>
 
 # install node and yarn
 RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
-RUN apt-get install -y --no-install-recommends build-essential nodejs
+RUN apt-get install -y --no-install-recommends build-essential nodejs libboost-all-dev
 RUN corepack enable
+
+# install additional system utilities
+RUN apt-get install -y cron nano
 
 # throw errors if Gemfile has been modified since Gemfile.lock
 RUN bundle config --global frozen 1

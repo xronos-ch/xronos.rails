@@ -1,7 +1,25 @@
+# == Schema Information
+#
+# Table name: references
+#
+#  id         :bigint           not null, primary key
+#  bibtex     :text
+#  short_ref  :string
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+# Indexes
+#
+#  index_references_on_short_ref  (short_ref)
+#
 class Reference < ApplicationRecord
   default_scope { order(:short_ref) }
 
+  include PgSearch::Model
+  multisearchable against: [ :short_ref, :bibtex ]
+
   has_paper_trail
+  acts_as_copy_target # enable CSV exports
   
   validates :short_ref, presence: true
   has_many :citations, dependent: :destroy
@@ -10,7 +28,24 @@ class Reference < ApplicationRecord
   has_many :c14s, :through => :citations, :source => :citing, :source_type => 'C14'
   has_many :typos, :through => :citations, :source => :citing, :source_type => 'Typo'
 
-  acts_as_copy_target # enable CSV exports
+  scope :with_citations_count, -> {
+    select <<~SQL
+      "references".*,
+      (
+        SELECT COUNT(citations.id) 
+        FROM citations
+        WHERE reference_id = "references".id
+      ) AS citations_count
+    SQL
+  }
+
+  def self.label
+    "Bibliographic reference"
+  end
+
+  def self.icon
+    "icons/reference.svg"
+  end
 
   def anchor
     if short_ref.blank?

@@ -1,10 +1,15 @@
+<% content_for :title, C14.label.humanize.pluralize %>
+<% content_for :meta_description do %>List of <%= @pagy.count %> radiocarbon dates from archaeological sites around the world, including laboratory measurement, sample and contextual information, and bibliographic references.<% end %>
+
 <div class="container my-5">
 
   <h1><%= C14.label.pluralize.humanize %></h1>
+  <p>Showing <%= @pagy.count %> <%= C14.label.pluralize(@pagy.count) %>.</p>
 
-  <%= render "table", c14s: @c14s %>
-
-  <%== pagy_bootstrap_nav(@pagy) %>
+  <turbo-frame id="c14s-table">
+    <%= render "table", c14s: @c14s %>
+    <%== pagy_bootstrap_nav(@pagy) %>
+  </turbo-frame>
 
   <% if can? :create, C14 %>
     <%= link_to 'New C14 measurement', new_c14_path, class: 'btn btn-secondary' %>

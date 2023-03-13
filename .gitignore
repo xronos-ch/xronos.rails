@@ -88,3 +88,12 @@ yarn-debug.log*
 .Rhistory
 .RData
 
+# test coverage
+coverage
+
+# build calibrator yourself
+vendor/calibrator/bin/calibrator*
+
+# sitemaps
+public/sitemap.xml.gz
+public/sitemaps/*

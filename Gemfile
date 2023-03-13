@@ -1,173 +1,213 @@
 source 'https://rubygems.org'
-git_source(:github) { |repo| "https://github.com/#{repo}.git" }
+git_source(:github) { |repo| 'https://github.com/#{repo}.git' }
 
+
+# CORE ------------------------------------------------------------------------
+
+# Ruby on Rails
 ruby '3.0.4'
+gem 'rails', '~> 6.1.7'
 
-# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 6.1.6'
-# gem 'rails', '~> 5.2.6'
+# Database for Active Record
+gem 'pg'
 
-# Use sqlite3 as the database for Active Record
-gem 'sqlite3'
-# Use Puma as the app server
-gem 'puma', '< 6'
-# Use SCSS for stylesheets
-gem 'sass-rails', '~> 5.0'
-# Use Uglifier as compressor for JavaScript assets
-gem 'uglifier', '>= 1.3.0'
-# See https://github.com/rails/execjs#readme for more supported runtimes
-# gem 'mini_racer', platforms: :ruby
+# App server
+gem 'puma'
 
-# Use CoffeeScript for .coffee assets and views
-gem 'coffee-rails', '~> 4.2'
-# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem 'jbuilder', '~> 2.5'
-# Use Redis adapter to run Action Cable in production
+# Data cache (required to run Action Cable in production)
 gem 'redis', '~> 4.0'
-# Use ActiveModel has_secure_password
-# gem 'bcrypt', '~> 3.1.7'
 
-# Use ActiveStorage variant
-# gem 'mini_magick', '~> 4.8'
-
-# Use Capistrano for deployment
-# gem 'capistrano-rails', group: :development
-
-# Reduces boot times through caching; required in config/boot.rb
+# Reduce boot times through caching (required in config/boot.rb)
 gem 'bootsnap', '>= 1.1.0', require: false
 
+# Compress responses to speed up page loads
+gem "rack-brotli"
+
+# Write cron jobs
+gem "whenever", require: false
+
+# ASSET PIPELINE --------------------------------------------------------------
+
+# WebPacker asset pipeline
+gem 'webpacker'
+
+# SCSS for stylesheets
+gem 'sass-rails', '~> 5.0'
+
+# CoffeeScript for .coffee assets and views
+gem 'coffee-rails', '~> 4.2'
+
+# Compressor for JavaScript assets
+gem 'uglifier', '>= 1.3.0'
+
+
+# APIs ------------------------------------------------------------------------
+
+# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
+gem 'jbuilder', '~> 2.5'
+
+# Fast JSON serialisation
+gem 'oj'
+
+# XML sitemap
+gem 'sitemap_generator'
+
+# FRONTEND FRAMEWORKS ---------------------------------------------------------
+
+# Bootstrap CSS framework
+gem 'bootstrap', '~> 5.1'
+
+# Bootstrap forms
+gem 'bootstrap_form', '~> 5.0'
+
+# FontAwesome 4.7 icons
+gem 'font-awesome-rails'
+
+# Hotwire JS framework
+gem 'turbo-rails'
+gem 'stimulus-rails'
+
+
+# USERS & PERMISSIONS ---------------------------------------------------------
+
+# User management
+gem 'devise', '>= 4.7.1'
+
+# Authorizations management
+gem 'cancancan'
+
+# Oauth2 API
+gem 'doorkeeper'
+
+# Captcha
+gem 'recaptcha'
+
+
+# MODEL HELPERS ---------------------------------------------------------------
+
+# Versioning
+gem 'paper_trail'
+
+# Search
+gem 'pg_search'
+
+# File uploads
+gem 'carrierwave', '~> 2.0'
+
+# ISO-based countries
+gem 'countries'
+gem 'country_select'
+
+# Geocoding
+gem 'geocoder'
+
+# Bibliographic data
+gem 'bibtex-ruby'
+gem 'citeproc-ruby'
+gem 'csl-styles'
+
+# Session store backed by an Active Record class to avoid cookie overflow with 
+# lasso
+gem 'activerecord-session_store'
+
+# VIEW HELPERS ----------------------------------------------------------------
+
+# Pagination
+gem 'pagy'
+
+# Use Postgres COPY for efficient CSV exports
+gem "postgres-copy"
+
+# Markdown rendering
+gem 'kramdown'
+
+# Maps
+gem 'leaflet-rails'
+
+# Charts
+gem 'vega'
+
+# Get posts from blog.xronos.ch
+gem 'feedjira'
+gem 'httparty'
+
+
+# DEVELOPMENT -----------------------------------------------------------------
+
+# Syntax checking/linting
+gem 'rubocop', require: false
+gem 'rubocop-rails', require: false
+
 group :development, :test do
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
+  # Call 'byebug' anywhere in the code to stop execution and get a debugger 
+  # console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
 
-  # RSpec for testing
-  gem 'rspec-rails', '~> 4.0.1'
-  # Generating test data for models
-  gem 'factory_bot_rails'
-  gem 'faker'
-  gem 'guard-rspec'
+  # Load environment variables
+  gem 'dotenv-rails'
 end
 
 group :development do
-  # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
-  gem 'web-console', '>= 3.3.0'
+
+  # Watch for file changes
   gem 'listen'
-  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
+
+  # Access an interactive console on exception pages or by calling 'console' 
+  # anywhere in the code.
+  gem 'web-console', '>= 3.3.0'
+
+  # Spring speeds up development by keeping your application running in the 
+  # background. Read more: https://github.com/rails/spring
   gem 'spring'
   gem 'spring-watcher-listen'
+
+  # Annotate models etc. with current schema
+  gem 'annotate'
+
+  # Watch for N+1 queries and unused eager loading
   gem 'bullet'
+
+end
+
+
+# TESTING ---------------------------------------------------------------------
+
+group :development, :test do
+
+  # RSpec for testing
+  gem 'rspec-rails', '~> 4.0.1'
+
+  # Generate test data from model specs
+  gem 'factory_bot_rails'
+  gem 'faker'
+  gem 'guard-rspec'
+
 end
 
 group :test do
-  # Adds support for Capybara system testing and selenium driver
-#  gem 'minitest-rails-capybara'
+
+  # Unit testing
   gem 'minitest'
-  gem 'selenium-webdriver'
+
+  # Schema testing
+  gem 'json-schema'
+
+  # Acceptance testing
   gem 'webdrivers'
+  gem 'selenium-webdriver'
+  gem 'capybara'
   gem 'capybara-selenium'
+  gem 'launchy'
+
+  # Measure test coverage
+  gem 'simplecov', require: false
+  gem 'simplecov-cobertura'
+
 end
+
+
+# COMPATIBILITY ---------------------------------------------------------------
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
-# irb for bootsnap: rails console
-gem 'irb', require: false
-
-# To use controller variables as javascript variables
-gem 'gon'
-
-# leaflet
-gem 'leaflet-rails'
-
-# jquery
-gem 'jquery-rails'
-gem 'jquery-ui-rails'
-
-# hotwire javascript
-gem 'turbo-rails'
-gem 'stimulus-rails'
-
-# user management
-gem 'devise', ">= 4.7.1"
-
-# authorizations management
-gem 'cancancan'
-
-# menu
-gem 'simple-navigation'
-
-# fontawesome symbols
-gem 'font-awesome-rails'
-
-# postgres adapter for the production mode
-group :production do
-  gem 'pg'
-end
-
-# pagination
-gem "pagy"
-
-# search
-gem "pg_search"
-
-# forms
-gem "bootstrap_form", "~> 5.0"
-
-# file uploads
-gem 'carrierwave', '~> 2.0'
-
-# bibliography
-gem "bibtex-ruby"
-gem "citeproc-ruby"
-gem "csl-styles"
-
-# ISO-based countries
-gem "countries"
-gem "country_select"
-
-# Geocoding
-gem "geocoder"
-
-# rabl for the api
-gem 'rabl'
-
-# a session store backed by an Active Record class to avoid cookie overflow with lasso
-gem 'activerecord-session_store'
-
-# recaptcha for user registration
-gem "recaptcha"
-
-# Oj for json serialisation
-gem 'oj'
-
-# yajl for json serialisation in datatables
-gem 'yajl-ruby', require: 'yajl'
-
-# Dotenv for Management Environmental Variables
-gem 'dotenv-rails', groups: [:development, :test]
-
-# Rubocop for code checking
-gem 'rubocop', require: false
-gem 'rubocop-rails', require: false
-
-# Paper Trail for versioning
-gem 'paper_trail'
-
-# Door Keeper for Oauth2-api
-gem 'doorkeeper'
-
-# WebPacker for up-to-date asset serving
-gem 'webpacker'
-
-# Eye Candy
-gem 'bootstrap', '~> 5.1'
-
-# Getting the blog posts from blog.xronos.ch
-gem "feedjira"
-gem "httparty"
-
-# Markdown static pages
-gem "kramdown"
-
-# Use Postgres COPY for efficient CSV exports
-gem "postgres-copy"

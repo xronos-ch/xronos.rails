@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
@@ -7,18 +7,17 @@
       <% if content_for?(:title) %> &ndash; <% end %>
       XRONOS
     </title>
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <%= stylesheet_link_tag 'application', media: 'all' %>
-    <%= javascript_pack_tag 'application' %>
-    <%#= javascript_include_tag 'application' %>
-    <%= javascript_pack_tag 'frontend' %>
+    <meta name="description" content="<%= content_for?(:meta_description) ? yield(:meta_description) : "An open repository and curation platform for chronometric data from archaeological contexts worldwide." %>">
 
+    <%= stylesheet_link_tag 'application', media: 'all' %>
+
+    <%= javascript_pack_tag 'application' %>
     <%= javascript_pack_tag params[:controller], :media => "all"  if javascript_exists?(params[:controller])
     %>
-
-    <%= include_gon %>
 
     <%= yield :head %>
 
@@ -37,113 +36,29 @@
 
     <%= yield :top %>
 
-    <nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-primary mb-0 main-nav shadow"
-      <% if request.path == "/" %>
-           data-controller="home-hero"
-           data-action="scroll@window->home-hero#scroll"
-         <% end %>>
-      <div class="container">
-        <a class="navbar-brand" href="/"><%= image_tag "xronos_logo_light.svg", style: 'max-height: 1.5rem' %></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link <%= active_class data_path %>" href="/data" <%= active_aria data_path %>>Browse data</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link <%= active_class database_path %>" href="/database" <%= active_aria database_path %>>Schema</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link <%= active_class api_path %>" href="/api" <%= active_aria api_path %>>API</a>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                About
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <%= render "about/nav", {itemclass: "", linkclass: "dropdown-item nav-link text-dark" } %>
-              </ul>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="https://blog.xronos.ch">Blog</a>
-            </li>
-          </ul>
-
-          <div class="d-flex">
-            <% if user_signed_in? %>
-              <div class="dropdown">
-                <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                  <%= current_user.email %>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                  <li> <%= link_to(edit_user_registration_path, class: "dropdown-item") do%><%= fa_icon "edit" %> Edit registration<% end %></li>
-                  <li> <%= link_to(destroy_user_session_path, method: :delete, class: "dropdown-item") do %><%= fa_icon "sign-out" %> Logout<% end %></li>
-                </ul>
-              </div>
-
-
-            <% else %>
-              <div class="dropdown">
-                <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                  Sign in
-                </button>
-
-                <div class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="dropdownMenuLink" style="width: 300px">
-                  <%= form_for :user, :url => session_path(:user), :html => {:class => "px-4"}  do |f| %>
-                    <div class="form-group">
-                      <%= f.label :email, class: "sr-only col-form-label col-form-label-sm" %>
-                      <div class="input-group">
-                        <div class="input-group-text" style="width: 35px;"><%= fa_icon "user" %></div>
-                        <%= f.text_field :email, class: "form-control form-control-sm", placeholder: "email@example.com"  %>
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <%= f.label :password, class: "sr-only col-form-label col-form-label-sm" %>
-                      <div class="input-group">
-                        <div class="input-group-text" style="width: 35px;"><%= fa_icon "unlock" %></div>
-                        <%= f.password_field :password, class: "form-control form-control-sm", placeholder: "password"  %>
-                      </div>
-                    </div>
-                    <div class="form-check" style="display: inline-block;">
-                      <%= f.check_box :remember_me, class: "form-check-input form-check-input-sm"  %>
-                      <%= f.label :remember_me, "Remember me", class: "form-check-label col-form-label-sm" %>
-                    </div>
-                    <%= f.submit 'Sign in', class: "btn btn-primary btn-sm pull-right" %>
-                  <% end %>
-                  <!-- <div class="dropdown-divider"></div>
-                    <%= link_to "Forgot your password?", new_password_path(:user), class: "dropdown-item" %>
-                    <%= link_to('New around here? Sign up', new_user_registration_path, class: "dropdown-item") %> -->
-                </div>
-              </div>
-            <% end %>
-          </div>
-        </div>
-      </div>
-    </nav>
+    <%= render "navbar" %>
 
     <%= content_for?(:content) ? yield(:content) : yield %>
 
     <%= yield :before_footer %>
 
-    <footer class="container-fluid page-footer pb-3 bg-dark shadow-sm text-muted">
+    <footer class="container-fluid page-footer pb-3 bg-dark shadow-sm text-light text-muted">
       <div class="container">
 
           <div class="row">
 
             <div class="col-md-6 mt-5 mb-5">
-              <%= image_tag "xronos_logo_light.svg", class: "mt-3 mb-3", style: "max-height: 3rem;" %>
+              <%= image_tag "xronos_logo_light.svg", alt: "XRONOS", class: "mt-3 mb-3", style: "max-height: 3rem;" %>
               <p class="mt-0 mb-3 text-light">XRONOS is an open repository and curation platform for chronometric data from archaeological contexts worldwide.</p>
 
               <div class="row mt-5">
-                <div class="col"><a href="https://www.snf.ch"><%= image_tag "snf_logo.png", style: "max-height: 3rem;" %></a></div>
-                <div class="col"><a href="https://www.unibe.ch"><%= image_tag "ub_Logo_english_2019_neg.png", style: "max-height: 3rem;"  %></a></div>
+                <div class="col"><a href="https://www.snf.ch"><%= image_tag "sponsors/snf.webp", alt: "Swiss National Science Foundation (SNF)", style: "max-height: 3rem;" %></a></div>
+                <div class="col"><a href="https://www.unibe.ch"><%= image_tag "sponsors/unibe.webp", alt: "University of Bern", style: "max-height: 3rem;"  %></a></div>
               </div>
             </div>
 
             <div class="col-6 col-md-3 mt-md-5 text-md-end">
-              <h6 class="mt-3 fw-bold text-uppercase">Data</h6>
+              <h1 class="h6 mt-3 fw-bold text-uppercase">Data</h6>
               <ul class="nav flex-column mb-3">
                 <li class="nav-item"><a class="nav-link ps-0 pe-0 link-light" href="/data">Browser</a></li>
                 <li class="nav-item"><a class="nav-link ps-0 pe-0 link-light" href="/database">Schema</a></li>
@@ -152,7 +67,7 @@
             </div>
 
             <div class="col-6 col-md-3 mt-md-5 text-md-end">
-              <h6 class="mt-3 fw-bold text-uppercase">About</h6>
+              <h1 class="h6 mt-3 fw-bold text-uppercase">About</h6>
               <ul class="nav flex-column mb-3">
                 <%= render "about/nav", { itemclass: "nav-item", linkclass: "nav-link ps-0 pe-0 link-light" } %>
               </ul>

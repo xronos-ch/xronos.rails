@@ -1,0 +1,25 @@
+<% content_for :title, "Search" %>
+<% content_for :meta_description, "Search the XRONOS database by archaeological site name, radiocarbon laboratory identifier, or bibliographic reference." %>
+
+<div class="container my-5">
+  <h1 class="display-5">Search</h1>
+
+  <%= render "form" %>
+
+  <h2>Results</h2>
+
+  <% @results.each do |result| %>
+    <%= render result.searchable %>
+  <% end %>
+
+  <div class="d-flex mt-3">
+    <p class="flex-grow-1">
+      Showing <%= @results.count %> of <%= @pagy.count %> results.
+    </p>
+
+    <% unless @pagy.pages == 1 %>
+      <%== pagy_bootstrap_nav(@pagy) %>
+    <% end %>
+  </div>
+
+</div>

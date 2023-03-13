@@ -2,9 +2,12 @@ import { Controller } from "@hotwired/stimulus"
 
 // Connects to data-controller="home-hero"
 export default class extends Controller {
+	static targets = [ "navbar", "search" ]
+
 	connect() {
-		this.element.classList.remove("sticky-top")
-		this.element.classList.add("fixed-top")
+		this.navbarTarget.classList.remove("sticky-top")
+		this.navbarTarget.classList.add("fixed-top")
+
 		if (window.scrollY == 0) {
 			this.transparent()
 		}
@@ -20,12 +23,20 @@ export default class extends Controller {
 	}
 
 	transparent() {
-		this.element.classList.add("bg-transparent")
-		this.element.classList.remove("shadow")
+		this.navbarTarget.classList.add("bg-transparent")
+		this.navbarTarget.classList.remove("shadow")
+
+		this.searchTarget.classList.add("visually-hidden")
 	}
 
 	opaque() {
-		this.element.classList.remove("bg-transparent")
-		this.element.classList.add("shadow")
+		this.navbarTarget.classList.remove("bg-transparent")
+		this.navbarTarget.classList.add("shadow")
+
+		this.searchTarget.classList.remove("visually-hidden")
+	}
+
+	disconnect() {
+		this.opaque()
 	}
 }

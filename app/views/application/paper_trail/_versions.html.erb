@@ -1,0 +1,35 @@
+<div class="accordion" id="versionHistory">
+
+  <% item.versions.reverse.each do |version| %>
+    <div class="accordion-item">
+      <div id="version<%= version.id %>" class="accordion-header">
+        <button class="accordion-button collapsed" 
+                type="button" 
+                <% if version.event == 'create' %>
+                  disabled
+                <% end %>
+                data-bs-toggle="collapse" 
+                data-bs-target="#changeset<%= version.id %>" 
+                aria-expanded="true" 
+                aria-controls="changeset<%= version.id %>">
+                <div>
+                  <h3 class="h6">
+                    <%= render "application/paper_trail/event", event: version.event %>
+                    <%= version.revision_comment.blank? ? "Updated." : md(version.revision_comment) %>
+                  </h3>
+                  <p class="small text-muted">
+                  <%= version.whodunnit_user_email %>,
+                  <%= version.created_at.to_formatted_s %>
+                  </p>
+                </div>
+        </button>
+      </div>
+      <div id="changeset<%= version.id %>" class="accordion-collapse collapse" aria-labelledby="version<%= version.id %>" data-bs-parent="#versionHistory">
+        <div class="accordion-body">
+          <%= render "application/paper_trail/changes", version: version %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+</div>
