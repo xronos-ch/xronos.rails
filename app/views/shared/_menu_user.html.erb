@@ -1,0 +1,53 @@
+<% if user_signed_in? %>
+  <div class="dropdown">
+    <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+      <%= fa_icon "user" %> <%= current_user.email %>
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+      <li>
+        <%= link_to(edit_user_registration_path, class: "dropdown-item") do %>
+          <%= fa_icon "edit" %> Edit profile
+        <% end %>
+      </li>
+      <li> 
+        <%= link_to(destroy_user_session_path, data: { turbo_method: :delete }, class: "dropdown-item") do %>
+          <%= fa_icon "sign-out" %> Logout
+        <% end %>
+      </li>
+    </ul>
+  </div>
+
+<% else %>
+  <div class="dropdown">
+    <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+      Sign in
+    </button>
+
+    <div class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="dropdownMenuLink" style="width: 300px">
+      <%= form_for :user, :url => session_path(:user), :html => {:class => "px-4"}  do |f| %>
+        <div class="form-group">
+          <%= f.label :email, class: "sr-only col-form-label col-form-label-sm" %>
+          <div class="input-group">
+            <div class="input-group-text" style="width: 35px;"><%= fa_icon "user" %></div>
+            <%= f.text_field :email, class: "form-control form-control-sm", placeholder: "email@example.com"  %>
+          </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :password, class: "sr-only col-form-label col-form-label-sm" %>
+          <div class="input-group">
+            <div class="input-group-text" style="width: 35px;"><%= fa_icon "unlock" %></div>
+            <%= f.password_field :password, class: "form-control form-control-sm", placeholder: "password"  %>
+          </div>
+        </div>
+        <div class="form-check" style="display: inline-block;">
+          <%= f.check_box :remember_me, class: "form-check-input form-check-input-sm"  %>
+          <%= f.label :remember_me, "Remember me", class: "form-check-label col-form-label-sm" %>
+        </div>
+        <%= f.submit "Sign in", class: "btn btn-primary btn-sm pull-right" %>
+      <% end %>
+      <div class="dropdown-divider"></div>
+      <%= link_to "Register", new_user_registration_path, class: "small dropdown-item" %>
+      <%= link_to "Reset password", new_password_path(:user), class: "small dropdown-item" %>
+    </div>
+  </div>
+<% end %>

@@ -101,6 +101,10 @@ gem 'country_select'
 # Geocoding
 gem 'geocoder'
 
+# GBIF Backbone Taxonomy
+gem 'faraday', '~> 2.5', '>= 2.5.2'
+gem 'gbifrb'
+
 # Bibliographic data
 gem 'bibtex-ruby'
 gem 'citeproc-ruby'
@@ -117,6 +121,9 @@ gem 'pagy'
 
 # Use Postgres COPY for efficient CSV exports
 gem "postgres-copy"
+
+# Breadcrumbs
+gem 'breadcrumbs'
 
 # Markdown rendering
 gem 'kramdown'

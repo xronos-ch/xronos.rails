@@ -29,14 +29,13 @@ SitemapGenerator::Sitemap.create do
     add "/data", priority: nil, changefreq: nil
     add "/database", priority: nil, changefreq: nil
     add "/api", priority: nil, changefreq: nil
-
-    add "/about", priority: nil, changefreq: nil
-    add "/about/acknowledgements", priority: nil, changefreq: nil
-    add "/about/research", priority: nil, changefreq: nil
-    add "/about/disclaimer", priority: nil, changefreq: nil
-    add "/about/contact", priority: nil, changefreq: nil
-
     add "/search", priority: nil, changefreq: nil
+  end
+
+  group sitemaps_path: "sitemaps", filename: "articles" do
+    Article.published.find_each do |article|
+      add article.path, lastmod: article.updated_at, priority: nil, changefreq: nil
+    end
   end
 
   group sitemaps_path: "sitemaps", filename: "indexes" do

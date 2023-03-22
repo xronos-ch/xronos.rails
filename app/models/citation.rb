@@ -18,4 +18,9 @@ class Citation < ApplicationRecord
   belongs_to :reference
 
   acts_as_copy_target # enable CSV exports
+
+  def self.label
+    "citation"
+  end
+
 end

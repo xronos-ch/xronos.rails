@@ -1,0 +1,10 @@
+<%= bootstrap_form_with(model: @taxon, local: true, id: "taxonForm") do |f| %>
+  <%= render  "fields", f: f %>
+
+  <%= render "application/paper_trail/revision_comment_field", f: f %>
+
+  <%= content_for :buttons do %>
+    <%= button_tag "Cancel", type: "reset", class: "btn btn-outline-danger", form: "c14Form", data: { "bs-dismiss": "modal" } %>
+    <%= button_tag "Save", class: "btn btn-primary", form: "taxonForm" %>
+  <% end %>
+<% end %>

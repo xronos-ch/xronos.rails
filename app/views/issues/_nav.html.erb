@@ -1,0 +1,25 @@
+<nav class="mb-5 d-flex">
+  <ul class="nav nav-pills">
+
+    <li class="nav-item">
+      <a href="<%= base_path %>" 
+         class="nav-link <%= active_class(base_path) %>"
+         <%= active_aria(base_path) %>>
+         All
+         <span class="badge text-bg-info"><%= model.count %></span>
+      </a>
+    </li>
+
+    <% model.issues.each do |issue| %>
+      <li class="nav-item">
+        <% issue_path = base_path + "/" + issue.to_s %>
+        <a href="<%= issue_path %>" 
+           class="nav-link <%= active_class(issue_path) %>"
+           <%= active_aria(issue_path) %>>
+           <%= issue_label(issue) %>
+           <span class="badge text-bg-info"><%= model.send(issue).count %></span>
+        </a>
+      </li>
+    <% end %>
+  </ul>
+</nav>

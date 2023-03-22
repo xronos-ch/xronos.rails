@@ -10,25 +10,39 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_01_24_093811) do
+ActiveRecord::Schema.define(version: 2023_03_11_101806) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
   enable_extension "unaccent"
 
-  create_table "articles", force: :cascade do |t|
-    t.integer "section", null: false
-    t.string "slug"
-    t.string "title"
-    t.bigint "user_id"
-    t.datetime "published_at"
-    t.text "body"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["section"], name: "index_articles_on_section"
-    t.index ["slug"], name: "index_articles_on_slug", unique: true
-    t.index ["user_id"], name: "index_articles_on_user_id"
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum", null: false
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
   create_table "articles", force: :cascade do |t|
@@ -40,6 +54,8 @@ ActiveRecord::Schema.define(version: 2023_01_24_093811) do
     t.text "body"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "splash_attribution"
+    t.boolean "publish", default: false
     t.index ["section"], name: "index_articles_on_section"
     t.index ["slug"], name: "index_articles_on_slug", unique: true
     t.index ["user_id"], name: "index_articles_on_user_id"
@@ -50,8 +66,10 @@ ActiveRecord::Schema.define(version: 2023_01_24_093811) do
     t.boolean "active"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "superseded_by"
     t.index ["active"], name: "index_c14_labs_on_active"
     t.index ["name"], name: "index_c14_labs_on_name"
+    t.index ["superseded_by"], name: "index_c14_labs_on_superseded_by"
   end
 
   create_table "c14s", force: :cascade do |t|
@@ -67,10 +85,12 @@ ActiveRecord::Schema.define(version: 2023_01_24_093811) do
     t.bigint "c14_lab_id"
     t.bigint "sample_id"
     t.string "lab_identifier"
+    t.integer "superseded_by"
     t.index ["c14_lab_id"], name: "index_c14s_on_c14_lab_id"
     t.index ["lab_identifier"], name: "index_c14s_on_lab_identifier"
     t.index ["method"], name: "index_c14s_on_method"
     t.index ["sample_id"], name: "index_c14s_on_sample_id"
+    t.index ["superseded_by"], name: "index_c14s_on_superseded_by"
   end
 
   create_table "citations", force: :cascade do |t|
@@ -88,8 +108,10 @@ ActiveRecord::Schema.define(version: 2023_01_24_093811) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "site_id"
+    t.integer "superseded_by"
     t.index ["name"], name: "index_contexts_on_name"
     t.index ["site_id"], name: "index_contexts_on_site_id"
+    t.index ["superseded_by"], name: "index_contexts_on_superseded_by"
   end
 
   create_table "import_tables", force: :cascade do |t|
@@ -107,7 +129,9 @@ ActiveRecord::Schema.define(version: 2023_01_24_093811) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "superseded_by"
     t.index ["name"], name: "index_materials_on_name"
+    t.index ["superseded_by"], name: "index_materials_on_superseded_by"
   end
 
   create_table "measurement_states", force: :cascade do |t|
@@ -186,7 +210,9 @@ ActiveRecord::Schema.define(version: 2023_01_24_093811) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "short_ref"
+    t.integer "superseded_by"
     t.index ["short_ref"], name: "index_references_on_short_ref"
+    t.index ["superseded_by"], name: "index_references_on_superseded_by"
   end
 
   create_table "samples", force: :cascade do |t|
@@ -200,9 +226,11 @@ ActiveRecord::Schema.define(version: 2023_01_24_093811) do
     t.decimal "position_y"
     t.decimal "position_z"
     t.text "position_crs"
+    t.integer "superseded_by"
     t.index ["context_id"], name: "index_samples_on_context_id"
     t.index ["material_id"], name: "index_samples_on_material_id"
     t.index ["position_crs"], name: "index_samples_on_position_crs"
+    t.index ["superseded_by"], name: "index_samples_on_superseded_by"
     t.index ["taxon_id"], name: "index_samples_on_taxon_id"
   end
 
@@ -220,7 +248,9 @@ ActiveRecord::Schema.define(version: 2023_01_24_093811) do
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "superseded_by"
     t.index ["name"], name: "index_site_types_on_name"
+    t.index ["superseded_by"], name: "index_site_types_on_superseded_by"
   end
 
   create_table "site_types_sites", id: false, force: :cascade do |t|
@@ -240,13 +270,18 @@ ActiveRecord::Schema.define(version: 2023_01_24_093811) do
     t.integer "superseded_by"
     t.index ["country_code"], name: "index_sites_on_country_code"
     t.index ["name"], name: "index_sites_on_name"
+    t.index ["superseded_by"], name: "index_sites_on_superseded_by"
   end
 
   create_table "taxons", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "superseded_by"
+    t.integer "gbif_id"
+    t.index ["gbif_id"], name: "index_taxons_on_gbif_id"
     t.index ["name"], name: "index_taxons_on_name"
+    t.index ["superseded_by"], name: "index_taxons_on_superseded_by"
   end
 
   create_table "typos", force: :cascade do |t|
@@ -257,8 +292,10 @@ ActiveRecord::Schema.define(version: 2023_01_24_093811) do
     t.datetime "updated_at", null: false
     t.integer "parent_id"
     t.bigint "sample_id"
+    t.integer "superseded_by"
     t.index ["name"], name: "index_typos_on_name"
     t.index ["sample_id"], name: "index_typos_on_sample_id"
+    t.index ["superseded_by"], name: "index_typos_on_superseded_by"
   end
 
   create_table "user_profiles", force: :cascade do |t|
@@ -299,6 +336,8 @@ ActiveRecord::Schema.define(version: 2023_01_24_093811) do
     t.index ["whodunnit"], name: "index_versions_on_whodunnit"
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "import_tables", "users"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_grants", "users", column: "resource_owner_id"

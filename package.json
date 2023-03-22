@@ -12,6 +12,7 @@
 		"@rails/activestorage": "^6.1.4-1",
 		"@rails/webpacker": "^5.4.3",
 		"bootstrap": "^5.1",
+		"easymde": "^2.18.0",
 		"import-loader": "^1.0.1",
 		"leaflet": "^1.8.0",
 		"leaflet-lasso": "^2.2.8",
