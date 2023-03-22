@@ -87,6 +87,7 @@ Rails.application.routes.draw do
     end
   end
   namespace :issues do 
+    resources :c14s, only: :index, concerns: :has_issues
     resources :samples, only: :index, concerns: :has_issues
     resources :taxons, only: :index, concerns: :has_issues
   end

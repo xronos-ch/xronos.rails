@@ -1,0 +1,50 @@
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">
+        <%= link_to_order_by "ID", :id %>
+        <% if ordered_by?(:id) %>
+          <span class="text-muted"><%= order_indicator %></span>
+        <% end %>
+      </th>
+      <th scope="col">
+        <%= link_to_order_by "Lab ID", :lab_identifier %>
+        <% if ordered_by?(:lab_identifier) %>
+          <span class="text-muted"><%= order_indicator %></span>
+        <% end %>
+      </th>
+      <th scope="col">
+        <%= link_to_order_by "C14 Lab", :c14_lab_id %>
+        <% if ordered_by?(:c14_lab_id) %>
+          <span class="text-muted"><%= order_indicator %></span>
+        <% end %>
+      </th>
+      <th scope="col">Method</th>
+      <th scope="col">Age</th>
+      <th scope="col">Error</th>
+      <th scope="col">δ13C</th>
+      <th scope="col">δ13C error</th>
+      <th scope="col">Issues</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% c14s.each do |c14| %>
+      <tr>
+        <td class="text-muted"><%= link_to c14.id, c14 %></td>
+        <td><%= c14.lab_identifier %></td>
+        <td><%= c14.c14_lab_id %></td>
+        <td><%= c14.method %></td>
+        <td><%= c14.bp %></td>
+        <td><%= c14.std %></td>
+        <td><%= c14.delta_c13 %></td>
+        <td><%= c14.delta_c13_std %></td>
+        <td><% c14.issues.each do |issue| %>
+          <%= issue_badge(issue) %>
+        <% end %></td>
+      </tr>
+
+    </tr>
+  <% end %>
+  </tbody>
+</table>

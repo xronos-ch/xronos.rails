@@ -1,0 +1,12 @@
+<% content_for :title, "Issues – Radiocarbon dates" %>
+<% content_for :help do %>
+<% end %>
+
+<h2 class="border-bottom">Radiocarbon dates</h2>
+
+<%= render "issues/nav", model: C14, base_path: issues_c14s_path %>
+
+<turbo-frame id="issues-c14s-table">
+  <%= render "table", c14s: @c14s %>
+  <%== pagy_bootstrap_nav(@pagy) %>
+</turbo-frame>

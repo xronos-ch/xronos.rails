@@ -15,7 +15,8 @@
         <% issue_path = base_path + "/" + issue.to_s %>
         <a href="<%= issue_path %>" 
            class="nav-link <%= active_class(issue_path) %>"
-           <%= active_aria(issue_path) %>>
+           <%= active_aria(issue_path) %>
+           title="<%= issue_description(issue) %>">
            <%= issue_label(issue) %>
            <span class="badge text-bg-info"><%= model.send(issue).count %></span>
         </a>

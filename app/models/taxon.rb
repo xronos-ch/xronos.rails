@@ -29,10 +29,6 @@ class Taxon < ApplicationRecord
   include HasIssues
   @issues = [ :unknown_taxon ]
 
-  scope :unknown_taxon, -> { where(gbif_id: nil) }
-  def unknown_taxon?
-    not gbif_id?
-  end
 
   include PgSearch::Model
   pg_search_scope :search, 
@@ -111,6 +107,13 @@ class Taxon < ApplicationRecord
 
   def self.label
     "taxon"
+  end
+
+  # Issues
+
+  scope :unknown_taxon, -> { where(gbif_id: nil) }
+  def unknown_taxon?
+    not gbif_id?
   end
 
 end
