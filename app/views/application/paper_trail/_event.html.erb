@@ -1,8 +1,8 @@
 <span class="text-muted">
   <% case event %>
   <% when "create" %>
-    <%= fa_icon "plus-square" %><span class="visually-hidden">Created</span>
+    <%= fa_icon "plus-circle", title: "Create" %>
   <% when "update" %>
-    <%= fa_icon "pencil-square" %><span class="visually-hidden">Modified</span>
+    <%= fa_icon "pencil", title: "Update" %>
   <% end %>
 </span>

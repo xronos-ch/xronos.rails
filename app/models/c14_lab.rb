@@ -24,4 +24,8 @@ class C14Lab < ApplicationRecord
   has_many :c14s, inverse_of: :c14_lab
   has_paper_trail
 
+  def self.label
+    "radiocarbon lab"
+  end
+
 end

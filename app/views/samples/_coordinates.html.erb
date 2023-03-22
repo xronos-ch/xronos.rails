@@ -1,0 +1,10 @@
+<% if sample.position_x.blank? && sample.position_y.blank? && sample.position_z.blank? %>
+  <%= na_value %>
+<% else %>
+  <span class="text-muted">X:</span> <%= sample.position_x.present? ? sample.position_x : na_value %>,
+  <span class="text-muted">Y:</span> <%= sample.position_y.present? ? sample.position_y : na_value %>,
+  <span class="text-muted">Z:</span> <%= sample.position_z.present? ? sample.position_z : na_value %>
+  <% if sample.position_crs.present? %>
+    <span class="badge bg-info text-dark"><%= sample.position_crs %></span>
+  <% end %>
+<% end %>

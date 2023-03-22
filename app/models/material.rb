@@ -25,4 +25,8 @@ class Material < ApplicationRecord
   has_paper_trail
 
   validates :name, presence: true
+
+  def self.label
+    "material"
+  end
 end

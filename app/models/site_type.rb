@@ -27,4 +27,8 @@ class SiteType < ApplicationRecord
 
   validates :name, presence: true
 
+  def self.label
+    "site type"
+  end
+
 end

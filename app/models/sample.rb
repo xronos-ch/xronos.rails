@@ -42,5 +42,17 @@ class Sample < ApplicationRecord
   has_many :c14s
   has_many :typos
 
-  has_paper_trail
+  include Versioned
+
+  include HasIssues
+  @issues = [ :missing_taxon ]
+  
+  scope :missing_taxon, -> { where(taxon_id: nil) }
+  def missing_taxon?
+    taxon.blank?
+  end
+
+  def self.label
+    "sample"
+  end
 end

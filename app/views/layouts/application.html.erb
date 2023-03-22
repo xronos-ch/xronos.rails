@@ -43,10 +43,13 @@
 
     <%= yield :before_footer %>
 
-    <footer class="container-fluid page-footer pb-3 bg-dark shadow-sm text-light text-muted">
-      <div class="container">
+    <footer class="page-footer pb-3 bg-dark shadow-sm text-light text-muted">
+      <div class="container-xxl">
+        <div class="row">
 
-          <div class="row">
+          <div class="col-md-6 mt-5 mb-5">
+            <%= image_tag "xronos_logo_light.svg", alt: "XRONOS", class: "mt-3 mb-3", style: "max-height: 3rem;" %>
+            <p class="mt-0 mb-3 text-light">XRONOS is an open repository and curation platform for chronometric data from archaeological contexts worldwide.</p>
 
             <div class="col-md-6 mt-5 mb-5">
               <%= image_tag "xronos_logo_light.svg", alt: "XRONOS", class: "mt-3 mb-3", style: "max-height: 3rem;" %>
@@ -73,22 +76,39 @@
                 <%= render "articles/nav", section: "about", itemclass: "nav-item", linkclass: "nav-link ps-0 pe-0 link-light" %>
               </ul>
             </div>
-
           </div>
 
-          <hr>
-          <div class="row">
+          <div class="col-6 col-md-3 mt-md-5 text-md-end">
+            <h1 class="h6 mt-3 fw-bold text-uppercase">Data</h6>
+            <ul class="nav flex-column mb-3">
+              <li class="nav-item"><a class="nav-link ps-0 pe-0 link-light" href="/data">Browser</a></li>
+              <li class="nav-item"><a class="nav-link ps-0 pe-0 link-light" href="/database">Schema</a></li>
+              <li class="nav-item"><a class="nav-link ps-0 pe-0 link-light" href="/api">API</a></li>
+            </ul>
+          </div>
 
-            <div class="col-md-9">
-              <small class="rights">This work is licensed under a <a class="link-light" rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</small>
-            </div>
-            <div class="col-md-3 text-md-end">
-              <small class="source-code">
-                <a class="link-light" href="https://github.com/xronos-ch/xronos.rails/"><span class="fa fa-github fa-lg me-1"></span>View source on GitHub</a>
-              </small>
-            </div>
+          <div class="col-6 col-md-3 mt-md-5 text-md-end">
+            <h1 class="h6 mt-3 fw-bold text-uppercase">About</h6>
+            <ul class="nav flex-column mb-3">
+              <%= render "about/nav", { itemclass: "nav-item", linkclass: "nav-link ps-0 pe-0 link-light" } %>
+            </ul>
+          </div>
+
         </div>
 
+        <hr>
+        <div class="row">
+
+          <div class="col-md-9">
+            <small class="rights">This work is licensed under a <a class="link-light" rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</small>
+          </div>
+          <div class="col-md-3 text-md-end">
+            <small class="source-code">
+              <a class="link-light" href="https://github.com/xronos-ch/xronos.rails/"><span class="fa fa-github fa-lg me-1"></span>View source on GitHub</a>
+            </small>
+
+          </div>
+        </div>
     </footer>
 
       </div>

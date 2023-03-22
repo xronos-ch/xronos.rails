@@ -1,0 +1,19 @@
+<% if taxon.blank? %>
+  <%= na_value %>
+<% else %>
+  <% if taxon.gbif_id.blank? %>
+    <span class="text-muted"><%= taxon.name %></span>
+    <%= fa_icon "exclamation-circle",
+      class: "text-warning",
+      data: { "bs-toggle": "tooltip", controller: "tooltips" },
+      title: "Taxon not matched to backbone taxonomy"
+    %>
+  <% else %>
+    <%= render "taxons/gbif_usage", gbif_usage: taxon.gbif_usage %>
+    <%= fa_icon "question-circle",
+      class: "text-info",
+      data: { "bs-toggle": "tooltip", controller: "tooltips" },
+      title: "Taxonomic data from GBIF.org"
+    %>
+  <% end %>
+<% end %>
