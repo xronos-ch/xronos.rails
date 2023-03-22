@@ -17,4 +17,8 @@ class Citation < ApplicationRecord
   belongs_to :citing, polymorphic: true
   belongs_to :reference
 
+  def self.label
+    "citation"
+  end
+
 end

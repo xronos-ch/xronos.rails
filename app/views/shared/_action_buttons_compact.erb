@@ -1,15 +1,18 @@
 <div class="btn-group" role="group" aria-label="Actions for this record">
+  <% record_class = i.class.name.humanize(capitalize: false) %>
   <%= 
     if can? :edit, i
-      link_to edit_polymorphic_path(i), class: 'btn btn-secondary btn-sm', data: { turbo_frame: "remote_modal" } do
-        fa_icon 'pencil', title: 'Edit' 
+      link_to edit_polymorphic_path(i), class: "btn btn-outline-primary btn-sm", 
+        data: { turbo_frame: "remote_modal" } do
+          fa_icon "pencil", title: "Edit #{record_class}"
       end
     end
   %>
   <%= 
     if can? :delete, i
-      link_to i, method: :delete, class: 'btn btn-danger btn-sm', data: { confirm: 'Are you sure?' } do
-        fa_icon 'trash', title: 'Delete'
+      link_to i, class: "btn btn-outline-primary btn-sm", title: "Delete #{record_class}",
+        data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to delete this #{record_class}?" } do
+        fa_icon "trash"
       end
     end 
   %>

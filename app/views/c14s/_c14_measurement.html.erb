@@ -14,7 +14,7 @@
       <dd class="col-sm-9 text-end"><%= c14.sample.material.present? ? c14.sample.material.name : na_value %></dd>
 
       <dt class="col-sm-3">Sample taxon</dt>
-      <dd class="col-sm-9 text-end"><%= c14.sample.taxon.present? ? c14.sample.taxon.name : na_value %></dd>
+      <dd class="col-sm-9 text-end"><%= render "taxons/taxon", taxon: c14.sample.taxon %></dd>
 
     </div>
   </div>

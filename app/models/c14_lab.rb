@@ -2,16 +2,18 @@
 #
 # Table name: c14_labs
 #
-#  id         :bigint           not null, primary key
-#  active     :boolean
-#  name       :string
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id            :bigint           not null, primary key
+#  active        :boolean
+#  name          :string
+#  superseded_by :integer
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
 #
 # Indexes
 #
-#  index_c14_labs_on_active  (active)
-#  index_c14_labs_on_name    (name)
+#  index_c14_labs_on_active         (active)
+#  index_c14_labs_on_name           (name)
+#  index_c14_labs_on_superseded_by  (superseded_by)
 #
 class C14Lab < ApplicationRecord
 
@@ -21,5 +23,9 @@ class C14Lab < ApplicationRecord
 
   has_many :c14s, inverse_of: :c14_lab
   has_paper_trail
+
+  def self.label
+    "radiocarbon lab"
+  end
 
 end

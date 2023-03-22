@@ -12,7 +12,7 @@ Rails.application.routes.draw do
   get '/about/about', to: redirect('/about')
   get '/about/:page' => 'about#show'
 
-  # Ordinary resources
+  # Primary data resources
   resources :c14s do
     get 'search', on: :collection
     member do
@@ -29,17 +29,18 @@ Rails.application.routes.draw do
   end
   resources :measurement_states
   resources :references
-  resources :samples
   resources :sites do
     get 'search', on: :collection
   end
   resources :site_types do
     get 'search', on: :collection
   end
-  resources :taxons do
+  resources :typos
+
+  # Secondary data resources (no independent show/index views)
+  resources :taxons, except: [:index, :show] do
     get 'search', on: :collection
   end
-  resources :typos
 
   # User management
   resources :user_profiles
@@ -47,7 +48,7 @@ Rails.application.routes.draw do
       registrations: "registrations"
     }
 
-  # Data views
+  # Data browser
   get 'data/index'
   post 'data/index'
   get "/data" => "data#index"
@@ -60,7 +61,7 @@ Rails.application.routes.draw do
   get '/turn_off_lasso', :to=>'data#turn_off_lasso'
   get '/reset_manual_table_selection', :to=>'data#reset_manual_table_selection'
 
-  # Curate
+  # Curation backend
   get "/curate" => "curate#index"
   namespace :curate do
     resources :import_tables do
@@ -68,6 +69,18 @@ Rails.application.routes.draw do
       get 'edit/read_options' => 'import_tables#edit_read_options'
       get 'edit/mapping' => 'import_tables#edit_mapping'
     end
+    get "recent_changes" => "recent_changes#index"
+  end
+
+  # Data issues
+  concern :has_issues do
+    collection do
+      get ":issue", action: :index
+    end
+  end
+  namespace :issues do 
+    resources :samples, only: :index, concerns: :has_issues
+    resources :taxons, only: :index, concerns: :has_issues
   end
 
   # API

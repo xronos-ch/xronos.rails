@@ -6,7 +6,7 @@
        data-action="scroll@window->home-hero#scroll"
      <% end %>>
 
-     <div class="container">
+     <div class="container-xxl">
 
        <a class="navbar-brand" href="/">
          <%= image_tag "xronos_logo_light.svg", alt: "XRONOS", style: 'max-height: 1.5rem' %>
@@ -21,6 +21,11 @@
            <li class="nav-item">
              <a class="nav-link <%= active_class data_path %>" href="/data" <%= active_aria data_path %>>Browse data</a>
            </li>
+           <% if user_signed_in? %>
+             <li class="nav-item">
+               <a class="nav-link <%= active_class curate_path %>" href="/curate" <%= active_aria curate_path %>>Curation</a>
+             </li>
+           <% end %>
            <li class="nav-item">
              <a class="nav-link <%= active_class database_path %>" href="/database" <%= active_aria database_path %>>Schema</a>
            </li>

@@ -39,7 +39,7 @@
         <td><%= link_to c14.lab_identifier, c14, target: :_top %></td>
         <td><%= c14.sample.context.name %></td>
         <td><%= c14.sample.material.present? ? c14.sample.material.name : na_value %></td>
-        <td><%= c14.sample.taxon.present? ? c14.sample.taxon.name : na_value %></td>
+        <td><%= render "taxons/taxon_abbreviated", taxon: c14.sample.taxon %></td>
         <td><%= c14.method.present? ? c14.method : na_value %></td>
         <td class="text-end font-monospace"><%= c14.uncal_age %></td>
         <td class="text-end font-monospace"><%= c14.cal_age %></td>
