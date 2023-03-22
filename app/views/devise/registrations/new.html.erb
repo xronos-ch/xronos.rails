@@ -1,10 +1,9 @@
-<h2>Sign up</h2>
+<h1>Register</h2>
 
 <div class="mb-3">
   <%= bootstrap_form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
 
     <%= flash[:recaptcha_error] %>
-    <%= recaptcha_tags theme: :dark %>
 
     <%= render "devise/shared/error_messages", resource: resource %>
 
@@ -18,8 +17,8 @@
 
     <%= f.password_field :password_confirmation, label: "Confirm password", autocomplete: "new-password" %>
 
-    <%= f.submit "Sign up" %>
+    <%= recaptcha_tags theme: :dark %>
+
+    <%= f.submit "Register" %>
   <% end %>
 </div>
-
-<%= render "devise/shared/links" %>

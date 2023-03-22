@@ -46,6 +46,9 @@ $enable-shadows: true;
 @import "rails_bootstrap_forms";
 @import "tom-select/dist/scss/tom-select.bootstrap5";
 
+// Other gems
+@import "easymde/dist/easymde.min";
+
 // Application 
 @import "layout";
 @import "typography";

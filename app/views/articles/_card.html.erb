@@ -1,0 +1,35 @@
+<article class="card mb-5 border-0 rounded-0">
+  <% if article.splash.present? %>
+    <a href="/<%= article.path %>">
+      <img class="card-img-top rounded-0" style="height: 10rem; object-fit: none;" src="<%= url_for(article.splash_variant(:card)) %>" />
+    </a>
+  <% end %>
+  <div class="card-body">
+    <h1 class="h3 card-title">
+      <a href="/<%= article.path %>" class="text-reset text-decoration-none"><%= article.title %></a>
+    </h1>
+    <p class="card-text">
+    <% unless article.body_html.blank? %>
+      <% doc = Nokogiri::HTML(article.body_html) %>
+      <%= doc.xpath('//p').first.children.to_s.html_safe %>
+      <% if doc.xpath('//p').length > 1 %>
+        <a class="text-muted" href="/<%= article.path %>">Read more...</a>
+      <% end %>
+    <% end %>
+    </p>
+  </div>
+  <div class="card-footer d-flex bg-transparent border-0 text-muted">
+    <div class="me-3">
+      <%= fa_icon "calendar-o" %>
+      <% if article.draft? %>
+        draft
+      <% else %>
+        <%= article.published_at.to_date.to_formatted_s %>
+      <% end %>
+    </div>
+    <div>
+      <%= fa_icon "user" %>
+      <%= article.user.email %>
+    </div>
+  </div>
+</article>

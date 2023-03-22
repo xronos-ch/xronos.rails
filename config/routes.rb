@@ -7,10 +7,17 @@ Rails.application.routes.draw do
   get '/database' => 'pages#database'
   get '/api' => 'pages#api'
 
-  # Static about pages
-  get '/about', to: 'about#show', defaults: { page: 'about' }
-  get '/about/about', to: redirect('/about')
-  get '/about/:page' => 'about#show'
+  # Articles (news posts and other pseudo-static pages)
+  get '/news', to: 'articles#index', section: 'news'
+  get 'news/:slug', to: 'articles#show'
+  get 'about/:slug', to: 'articles#show'
+  get 'docs/:slug', to: 'articles#show'
+  namespace :admin do
+    resources :articles, except: :show
+  end
+
+  # Redirects for backwards compatibility
+  get '/about', to: redirect('/about/xronos')
 
   # Primary data resources
   resources :c14s do
@@ -45,7 +52,8 @@ Rails.application.routes.draw do
   # User management
   resources :user_profiles
   devise_for :users, controllers: {
-      registrations: "registrations"
+      registrations: 'registrations',
+      sessions: 'users/sessions'
     }
 
   # Data browser

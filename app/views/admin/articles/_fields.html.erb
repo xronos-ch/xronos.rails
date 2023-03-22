@@ -1,0 +1,42 @@
+<%= f.text_field :title, 
+  label_as_placeholder: true, 
+  class: "form-control-lg",
+  data: {
+    "article-editor-target": "title",
+    action: "article-editor#inputTitle"
+  }
+%>
+
+<%= f.file_field :splash, label: "Splash image", 
+  help: 'Cropped and resized automatically. Original should be at least 2400x320 px. Stuck? Try <a href="https://unsplash.com/s/photos/archaeology">Unsplash</a> or <a href="https://commons.wikimedia.org/wiki/Category:Archaeology">Wikimedia Commons</a>.'.html_safe %>
+
+<%= f.text_field :splash_attribution, placeholder: "Jane Smith / Wikimedia Commons",
+  help: "HTML is supported." %>
+
+<%= f.text_area :body, label_as_placeholder: true, 
+  label: "Body text. Styling with **Markdown** is supported.",
+  data: { controller: "markdown-editor", markdown_editor_target: "field" } %>
+
+<div>
+  <label for="basic-url" class="form-label">Location</label>
+  <div class="input-group">
+    <%= f.select :section, options_for_select(Article.sections.keys, f.object.section), hide_label: true %>
+    <%= f.text_field :slug, 
+      label: "lowercase-slug-without-spaces", 
+      label_as_placeholder: true, 
+      prepend: "/",
+      data: { 
+        "article-editor-target": "slug",
+        action: "article-editor#touchSlug"
+      }
+    %>
+  </div>
+</div>
+
+<%= f.collection_select :user_id, User.all, :id, :email, label: "Author" %>
+
+<div class="mb-3">
+  <%= f.check_box :publish %>
+</div>
+<%= f.datetime_field :published_at, label: "Publish at", 
+  help: "Enter a future date to schedule publication, or leave blank to publish immediately." %>

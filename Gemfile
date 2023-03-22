@@ -119,6 +119,9 @@ gem 'activerecord-session_store'
 # Pagination
 gem 'pagy'
 
+# Breadcrumbs
+gem 'breadcrumbs'
+
 # Markdown rendering
 gem 'kramdown'
 

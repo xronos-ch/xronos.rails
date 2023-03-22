@@ -12,13 +12,9 @@ class ApplicationController < ActionController::Base
     stored_location_for(resource_or_scope) || super
   end
 
-  # access management error handling (messages)
+  # Return 404 for unauthorised resources
   rescue_from CanCan::AccessDenied do |exception|
-    respond_to do |format|
-      format.json { render :status => 401, :json => {:success => false, :errors => [exception.message]} }
-      format.html { redirect_to request.referrer, alert: exception.message}
-      format.js   { render nothing: true, status: :not_found }
-    end
+    raise ActionController::RoutingError.new('Not Found')
   end
 
   def info_for_paper_trail

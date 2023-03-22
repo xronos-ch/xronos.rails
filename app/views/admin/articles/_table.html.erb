@@ -1,0 +1,37 @@
+<table class="responsive nowrap table table-hover align-middle">
+  <thead>
+    <tr>
+      <th>Article</th>
+      <th>Author</th>
+      <th class="text-end">Published</th>
+      <% if can? :manage, Article %><th><!-- Actions --></th><% end %>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% articles.each do |article| %>
+      <tr>
+        <td>
+          <%= link_to article.title, "/#{article.section}/#{article.slug}" %><br />
+          <code><%= article.section %>/<%= article.slug %></code>
+        </td>
+        <td><%= article.user.email %></td>
+        <td class="text-end"><%= render "status", article: article %></td>
+        <% if can? :manage, Article %>
+          <td class="text-end">
+            <%= link_to fa_icon("pencil"), 
+              edit_admin_article_path(article), 
+              class: "btn btn-outline-primary btn-sm",
+              title: "Edit #{article.path}" %>
+            <%= link_to fa_icon("trash"), 
+              admin_article_path(article), 
+              class: "btn btn-outline-primary btn-sm",
+              title: "Delete #{article.path}",
+              data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to delete #{article.path}?" } %>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+
+</table>

@@ -8,7 +8,7 @@
   %>
   <%= 
     if can? :delete, i
-      link_to i, method: :delete, class: 'btn btn-danger', data: { confirm: 'Are you sure?' } do
+      link_to i, method: :delete, class: 'btn btn-danger', data: { turbo_method: :delete, turbo_confirm: 'Are you sure?' } do
         fa_icon 'trash', text: 'Delete'
       end
     end 
