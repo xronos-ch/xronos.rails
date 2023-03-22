@@ -39,6 +39,12 @@ class Taxon < ApplicationRecord
     against: :name, 
     using: { tsearch: { prefix: true } } # match partial words
 
+  acts_as_copy_target # enable CSV exports
+
+  validates :name, presence: true
+
+  has_many :samples
+
   scope :with_samples_count, -> {
     select <<~SQL
       "taxons".*,

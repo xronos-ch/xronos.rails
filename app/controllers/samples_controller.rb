@@ -1,12 +1,21 @@
 class SamplesController < ApplicationController
+  include Tabulatable
+
   load_and_authorize_resource
 
   before_action :set_sample, only: [:show, :edit, :update, :destroy]
 
   # GET /samples
   # GET /samples.json
+  # GET /samples.csv
   def index
     @samples = Sample.all
+    respond_to do |format|
+      format.csv {
+        @samples = @samples.select(index_csv_template)
+        render csv: @samples
+      }
+    end
   end
 
   # GET /samples/1

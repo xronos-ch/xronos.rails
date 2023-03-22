@@ -1,4 +1,5 @@
 class ReferencesController < ApplicationController
+  include Tabulatable
   include Pagy::Backend
 
   load_and_authorize_resource
@@ -7,6 +8,7 @@ class ReferencesController < ApplicationController
 
   # GET /references
   # GET /references.json
+  # GET /references.csv
   def index
     @references = Reference.with_citations_count
 
@@ -26,6 +28,10 @@ class ReferencesController < ApplicationController
         @pagy, @references = pagy(@references)
       }
       format.json
+      format.csv {
+        @references = @references.select(index_csv_template)
+        render csv: @references
+      }
     end
   end
 

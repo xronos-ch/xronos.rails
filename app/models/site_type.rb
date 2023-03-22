@@ -22,8 +22,10 @@ class SiteType < ApplicationRecord
     against: :name,
     using: { tsearch: { prefix: true } } # match partial words
 
-  has_many :sites, inverse_of: :site_type
+  acts_as_copy_target # enable CSV exports
   has_paper_trail
+
+  has_many :sites, inverse_of: :site_type
 
   validates :name, presence: true
 

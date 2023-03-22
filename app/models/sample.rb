@@ -44,6 +44,8 @@ class Sample < ApplicationRecord
 
   include Versioned
 
+  acts_as_copy_target # enable CSV exports
+
   include HasIssues
   @issues = [ :missing_taxon ]
   

@@ -1,7 +1,23 @@
 class TaxonsController < ApplicationController
+  include Tabulatable
+
   load_and_authorize_resource
 
   before_action :set_taxon, only: [:show, :edit, :update, :destroy]
+
+  # GET /taxons
+  # GET /taxons.json
+  # GET /taxons.csv
+  def index
+    @taxons = Taxon.all
+    
+    respond_to do |format|
+      format.csv {
+        @taxons = @taxons.select(index_csv_template)
+        render csv: @taxons
+      }
+    end
+  end
 
   # GET /taxons/search.json
   def search

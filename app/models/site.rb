@@ -31,6 +31,9 @@ class Site < ApplicationRecord
     using: { tsearch: { prefix: true } } # match partial words
   multisearchable against: :name
 
+  has_paper_trail
+  acts_as_copy_target # enable CSV exports
+  
   validates :name, presence: true
 
   has_and_belongs_to_many :site_types, optional: true

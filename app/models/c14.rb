@@ -34,6 +34,9 @@ class C14 < ApplicationRecord
     using: { tsearch: { prefix: true } } # match partial words
   multisearchable against: :lab_identifier
 
+  acts_as_copy_target # enable CSV exports
+  has_paper_trail
+
   validates :bp, :std, presence: true
 
   belongs_to :sample
@@ -48,8 +51,6 @@ class C14 < ApplicationRecord
 
   has_many :citations, as: :citing
   has_many :references, :through => :citations
-
-  has_paper_trail
 
   def self.label
     "radiocarbon date"

@@ -26,7 +26,10 @@ class Material < ApplicationRecord
 
   validates :name, presence: true
 
+  acts_as_copy_target # enable CSV exports
+
   def self.label
     "material"
   end
+
 end

@@ -1,4 +1,5 @@
 class TyposController < ApplicationController
+  include Tabulatable
   include Pagy::Backend
 
   load_and_authorize_resource
@@ -7,6 +8,7 @@ class TyposController < ApplicationController
 
   # GET /typos
   # GET /typos.json
+  # GET /typos.csv
   def index
     @typos = Typo.includes([
       :references, 
@@ -19,7 +21,7 @@ class TyposController < ApplicationController
 
     # filter
     unless typo_params.blank?
-      @typos = @typos.where(typos_params)
+      @typos = @typos.where(typo_params)
     end
 
     # order
@@ -33,6 +35,10 @@ class TyposController < ApplicationController
         @pagy, @typos = pagy(@typos)
       }
       format.json
+      format.csv {
+        @typos = @typos.select(index_csv_template)
+        render csv: @typos
+      }
     end
   end
 
@@ -98,6 +104,17 @@ class TyposController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def typo_params
-      params.fetch(:typo, {}).permit(:name, :approx_start_time, :approx_end_time, :parent_id)
+      params.fetch(:typo, {}).permit(
+        :name, 
+        :approx_start_time, 
+        :approx_end_time, 
+        :sample_id,
+        sample: [
+          :context_id,
+          contexts: [
+            :site_id
+          ]
+        ]
+      )
     end
 end

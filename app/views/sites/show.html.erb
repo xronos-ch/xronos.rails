@@ -46,6 +46,14 @@
           <small class="text-muted">(<%= @pagy_c14s.count %>)</small>
         </h2>
         <turbo-frame id="site-c14s-table">
+          <div id="sites-c14s-toolbar" class="d-flex">
+            <div class="ms-auto">
+              <%= link_to fa_icon("download"), 
+                c14s_path(format: :csv, c14: { sample: { contexts: { site_id: @site.id } } }), 
+                class: "btn btn-sm btn-outline-primary", 
+                title: "Download CSV" %>
+            </div>
+          </div>
           <%= render "c14s/table", c14s: @c14s %>
           <% unless @pagy_c14s.pages <= 1 %>
             <%== pagy_bootstrap_nav(@pagy_c14s) %>
@@ -62,6 +70,14 @@
           <small class="text-muted">(<%= @pagy_typos.count %>)</small>
         </h2>
         <turbo-frame id="site-typos-table">
+          <div id="sites-typos-toolbar" class="d-flex">
+            <div class="ms-auto">
+              <%= link_to fa_icon("download"), 
+                typos_path(format: :csv, typo: { sample: { contexts: { site_id: @site.id } } }), 
+                class: "btn btn-sm btn-outline-primary", 
+                title: "Download CSV" %>
+            </div>
+          </div>
           <%= render "typos/table", typos: @typos %>
           <% unless @pagy_typos.pages <= 1 %>
             <%== pagy_bootstrap_nav(@pagy_typos) %>

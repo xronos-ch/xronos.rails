@@ -21,6 +21,7 @@ class Reference < ApplicationRecord
   multisearchable against: [ :short_ref, :bibtex ]
 
   has_paper_trail
+  acts_as_copy_target # enable CSV exports
   
   validates :short_ref, presence: true
   has_many :citations, dependent: :destroy

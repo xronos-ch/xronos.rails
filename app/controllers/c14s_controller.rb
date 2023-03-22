@@ -1,6 +1,7 @@
 class C14sController < ApplicationController
   include C14sHelper
   include Pagy::Backend
+  include Tabulatable
 
   load_and_authorize_resource
 
@@ -8,6 +9,7 @@ class C14sController < ApplicationController
 
   # GET /c14s
   # GET /c14s.json
+  # GET /c14s.csv
   def index
     @c14s = C14.includes(
       {sample: [
@@ -34,6 +36,10 @@ class C14sController < ApplicationController
         @pagy, @c14s = pagy(@c14s)
       }
       format.json
+      format.csv {
+        @c14s = @c14s.select(index_csv_template)
+        render csv: @c14s
+      }
     end
   end
 
@@ -127,23 +133,24 @@ class C14sController < ApplicationController
         :delta_c13,
         :delta_c13_std,
         :method,
-        {sample_attributes: [
+        :sample_id,
+        {sample: [
           :id,
           :material_id,
           :taxon_id,
-          {context_attributes: [
+          :context_id,
+          {contexts: [
             :id,
             :name,
             :approx_start_time,
             :approx_end_time,
-            :_destroy
+            :site_id
           ]},
           :position_description,
           :position_x,
           :position_y,
           :position_z,
-          :position_crs,
-          :_destroy
+          :position_crs
         ]}
       )
     end

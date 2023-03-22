@@ -30,6 +30,8 @@ class Context < ApplicationRecord
   has_many :typos, through: :samples
   has_paper_trail
 
+  acts_as_copy_target # enable CSV exports
+
   def self.label
     "context"
   end
