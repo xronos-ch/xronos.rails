@@ -47,7 +47,7 @@ class C14 < ApplicationRecord
   include HasIssues
   @issues = [ :missing_c14_age, :very_old_c14, :missing_c14_error, 
               :missing_d13c, :missing_d13c_error, :missing_c14_method, 
-              :missing_c14_lab_id, :missing_c14_lab ]
+              :missing_c14_lab_id, :invalid_lab_id, :missing_c14_lab ]
 
   include PgSearch::Model
   pg_search_scope :search, 
@@ -121,6 +121,11 @@ class C14 < ApplicationRecord
   scope :missing_c14_lab_id, -> { where(lab_identifier: nil) }
   def missing_c14_lab_id?
     lab_identifier.blank?
+  end
+
+  scope :invalid_lab_id, -> { where("lab_identifier !~* ?", C14::LabIdentifier::PATTERN) }
+  def invalid_lab_id?
+    lab_identifier.invalid?
   end
   
   scope :missing_c14_lab, -> { where(c14_lab_id: nil) }

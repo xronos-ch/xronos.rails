@@ -20,6 +20,8 @@ module IssuesHelper
       "Method used to obtain radiocarbon measurement (e.g. conventional, AMS) is not recorded"
     when :missing_c14_lab_id
       "No laboratory identifier recorded for radiocarbon date"
+    when :invalid_lab_id
+      "Laboratory identifier doesn't match the conventional format (e.g. Lab-1234)"
     when :missing_c14_lab
       "No radiocarbon laboratory associated with radiocarbon date"
     # Samples
