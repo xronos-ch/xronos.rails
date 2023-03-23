@@ -46,6 +46,9 @@ class Site < ApplicationRecord
   has_many :citations, as: :citing
   has_many :references, through: :citations
 
+  composed_of :coordinates, mapping: [%w(lng longitude), %w(lat latitude)], 
+    allow_nil: true
+
   scope :with_counts, -> {
     select <<~SQL
       sites.*,
@@ -88,28 +91,6 @@ class Site < ApplicationRecord
       return ISO3166::Country[result.country_code]
     else
       return nil
-    end
-  end
-
-  def coordinates(format = "dd")
-    return nil if lat.blank? || lng.blank?
-
-    y = lat < 0 ? "S" : "N"
-    x = lng < 0 ? "W" : "E"
-
-    case format
-    when "dd"
-      "#{'%07.3f' % lat.abs}° #{y}, #{'%07.3f' % lng.abs}° #{x}"
-    when "dms"
-      ydeg = lat.abs.floor
-      ymin = (lat.abs % 1 * 60).floor
-      ysec = (ymin % 1 * 60).round
-      xdeg = lng.abs.floor
-      xmin = (lng.abs % 1 * 60).floor
-      xsec = (xmin % 1 * 60).round
-      "#{'%03d' % ydeg}° #{'%02d' % ymin}\' #{'%02d' % ysec}\" #{y}" +
-        ", " +
-        "#{'%03d' % xdeg}° #{'%02d' % xmin}\' #{'%02d' % xsec}\" #{x}"
     end
   end
 
