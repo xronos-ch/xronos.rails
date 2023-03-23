@@ -36,6 +36,13 @@ module IssuesHelper
       "Taxonomic classification of the sample material is not recoreded"
     when :missing_crs
       "Coordinate reference system (CRS) of sample coordinates is not recorded"
+    # Sites
+    when :missing_coordinates
+      "At least one geographic coordinate is not recorded"
+    when :invalid_coordinates
+      "At least one geographic coordinate is not valid"
+    when :missing_country_code
+      "Country is not recorded"
     # Taxons
     when :unknown_taxon
       "Taxon not matched to the GBIF Backbone Taxonomy"

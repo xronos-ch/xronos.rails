@@ -18,23 +18,6 @@
 #  index_sites_on_superseded_by  (superseded_by)
 #
 class Site < ApplicationRecord
-  include DataHelper
-
-  include Versioned
-  include Supersedable
-  include Duplicable
-  duplicable :name, :lat, :lng, :country_code
-
-  include PgSearch::Model
-  pg_search_scope :search, 
-    against: :name, 
-    using: { tsearch: { prefix: true } } # match partial words
-  multisearchable against: :name
-
-  has_paper_trail
-  acts_as_copy_target # enable CSV exports
-  
-  validates :name, presence: true
 
   has_and_belongs_to_many :site_types, optional: true
 
@@ -49,6 +32,25 @@ class Site < ApplicationRecord
   composed_of :coordinates, mapping: [%w(lng longitude), %w(lat latitude)], 
     allow_nil: true
 
+  validates :name, presence: true
+
+  include Versioned
+  include Supersedable
+
+  include Duplicable
+  duplicable :name, :lat, :lng, :country_code
+
+  acts_as_copy_target # enable CSV exports
+
+  include HasIssues
+  @issues = [ :missing_coordinates, :invalid_coordinates, :missing_country_code ]
+
+  include PgSearch::Model
+  pg_search_scope :search, 
+    against: :name, 
+    using: { tsearch: { prefix: true } } # match partial words
+  multisearchable against: :name
+  
   scope :with_counts, -> {
     select <<~SQL
       sites.*,
@@ -109,6 +111,24 @@ class Site < ApplicationRecord
     else
       references
     end
+  end
+
+  # Issues
+  scope :missing_coordinates, -> { where("lat IS NULL OR lng IS NULL") }
+  def missing_coordinates?
+    lat.blank? or lng.blank?
+  end
+
+  scope :invalid_coordinates, -> { where("lat > 90 OR lat < -90 OR lng > 180 OR lng < -180") }
+  def invalid_coordinates?
+    unless missing_coordinates?
+      coordinates.invalid_latitude? or coordinates.invalid_longitude?
+    end
+  end
+
+  scope :missing_country_code, -> { where(country_code: nil) }
+  def missing_country_code?
+    country_code.blank?
   end
 
 end

@@ -100,6 +100,12 @@ Rails.application.routes.draw do
           constraints: lambda { |req| Sample.issues.include?(req.params[:issue].to_sym) }
       end
     end
+    resources :sites, only: :index do
+      collection do
+        get ":issue", action: :index,
+          constraints: lambda { |req| Site.issues.include?(req.params[:issue].to_sym) }
+      end
+    end
     resources :taxons, only: :index do
       collection do
         get ":issue", action: :index,

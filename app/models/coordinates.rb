@@ -7,10 +7,12 @@ class Coordinates
   end
 
   def x_bearing
+    return nil if longitude.blank?
     longitude < 0 ? "W" : "E"
   end
 
   def y_bearing
+    return nil if latitude.blank?
     latitude < 0 ? "S" : "N"
   end
 
@@ -20,6 +22,14 @@ class Coordinates
 
   def valid_latitude?
     latitude >= -90 && latitude <= 90
+  end
+
+  def invalid_longitude?
+    not valid_longitude?
+  end
+
+  def invalid_latitude?
+    not valid_latitude?
   end
 
   def to_s(format = "dd")
@@ -41,6 +51,7 @@ class Coordinates
   end
 
   def format_coordinate_dd(coord, bearing)
+    return "" if coord.blank?
     "#{'%07.3f' % coord.abs}° #{bearing}"
   end
 
