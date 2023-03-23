@@ -88,6 +88,12 @@ Rails.application.routes.draw do
           constraints: lambda { |req| C14.issues.include?(req.params[:issue].to_sym) }
       end
     end
+    resources :references, only: :index do
+      collection do
+        get ":issue", action: :index,
+          constraints: lambda { |req| Reference.issues.include?(req.params[:issue].to_sym) }
+      end
+    end
     resources :samples, only: :index do
       collection do
         get ":issue", action: :index,

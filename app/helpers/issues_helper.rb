@@ -24,6 +24,11 @@ module IssuesHelper
       "Laboratory identifier doesn't match the conventional format (e.g. Lab-1234)"
     when :missing_c14_lab
       "No radiocarbon laboratory associated with radiocarbon date"
+    # References
+    when :mixed_reference
+      "Reference potentially combines multiple sources"
+    when :missing_bibtex
+      "No bibliographical information recorded"
     # Samples
     when :missing_taxon
       "Taxonomic classification of the sample material is unknown"

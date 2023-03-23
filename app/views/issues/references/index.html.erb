@@ -1,0 +1,12 @@
+<% content_for :title, "Issues – References" %>
+<% content_for :help do %>
+<% end %>
+
+<h2 class="border-bottom">References</h2>
+
+<%= render "issues/nav", model: Reference, base_path: issues_references_path %>
+
+<turbo-frame id="issues-references-table">
+  <%= render "table", references: @references %>
+  <%== pagy_bootstrap_nav(@pagy) %>
+</turbo-frame>
