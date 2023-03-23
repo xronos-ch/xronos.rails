@@ -74,10 +74,22 @@
             <td class="text-end font-monospace"><%= link_to C14.send(issue).count, issues_c14s_path + "/" + issue.to_s %></td>
           </tr>
         <% end %>
+        <% Reference.issues.each do |issue| %>
+          <tr>
+            <td class="small"><%= issue_label(issue) %></td>
+            <td class="text-end font-monospace"><%= link_to Reference.send(issue).count, issues_references_path + "/" + issue.to_s %></td>
+          </tr>
+        <% end %>
         <% Sample.issues.each do |issue| %>
           <tr>
             <td class="small"><%= issue_label(issue) %></td>
             <td class="text-end font-monospace"><%= link_to Sample.send(issue).count, issues_samples_path + "/" + issue.to_s %></td>
+          </tr>
+        <% end %>
+        <% Site.issues.each do |issue| %>
+          <tr>
+            <td class="small"><%= issue_label(issue) %></td>
+            <td class="text-end font-monospace"><%= link_to Site.send(issue).count, issues_sites_path + "/" + issue.to_s %></td>
           </tr>
         <% end %>
         <% Taxon.issues.each do |issue| %>
