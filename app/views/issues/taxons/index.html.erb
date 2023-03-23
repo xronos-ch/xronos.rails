@@ -1,7 +1,7 @@
 <% content_for :title, "Issues – Samples" %>
 <% if params[:issue] == "unknown_taxon" %>
   <% content_for :help do %>
-    <p>This table lists biological taxa in XRONOS that are not currently matched to the <a href="https://www.gbif.org/dataset/d7dddbf4-2cf0-4f39-9b2a-bb099caae36c">GBIF Backbone Taxonomy</a>. Matching scientific names are suggested using the <a href="https://www.gbif.org/developer/species">GBIF Species API</a>.</p>
+    <%= render "issues/taxons/unknown_taxon/help" %>
   <% end %>
 <% end %>
 
