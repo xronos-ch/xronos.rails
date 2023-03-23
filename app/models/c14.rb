@@ -65,6 +65,10 @@ class C14 < ApplicationRecord
     "icons/c14.svg"
   end
 
+  def lab_identifier
+    C14::LabIdentifier.new(read_attribute(:lab_identifier))
+  end
+
   def uncal_age
     unless bp.blank? && std.blank?
       "#{bp}±#{std} BP"
