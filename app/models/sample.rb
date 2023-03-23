@@ -47,14 +47,29 @@ class Sample < ApplicationRecord
   acts_as_copy_target # enable CSV exports
 
   include HasIssues
-  @issues = [ :missing_taxon ]
-  
+  @issues = [ :missing_material, :missing_taxon, :missing_crs ]
+
+  def self.label
+    "sample"
+  end
+
+  # Issues
+  scope :missing_material, -> { where(material_id: nil) }
+  def missing_material?
+    material.blank?
+  end
+
   scope :missing_taxon, -> { where(taxon_id: nil) }
   def missing_taxon?
     taxon.blank?
   end
 
-  def self.label
-    "sample"
+  scope :missing_crs, -> { where('position_crs IS NULL AND (position_x IS NOT NULL OR position_y IS NOT NULL OR position_z IS NOT NULL)') }
+  def missing_crs?
+    if position_x.blank? and position_y.blank? and position_z.blank?
+      false
+    else
+      position_crs.blank?
+    end
   end
 end

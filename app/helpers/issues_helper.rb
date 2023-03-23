@@ -30,8 +30,12 @@ module IssuesHelper
     when :missing_bibtex
       "No bibliographical information recorded"
     # Samples
+    when :missing_material
+      "Sample material is not recorded"
     when :missing_taxon
-      "Taxonomic classification of the sample material is unknown"
+      "Taxonomic classification of the sample material is not recoreded"
+    when :missing_crs
+      "Coordinate reference system (CRS) of sample coordinates is not recorded"
     # Taxons
     when :unknown_taxon
       "Taxon not matched to the GBIF Backbone Taxonomy"
