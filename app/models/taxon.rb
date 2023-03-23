@@ -27,7 +27,7 @@ class Taxon < ApplicationRecord
   before_save :set_name_from_gbif
 
   include HasIssues
-  @issues = [ :unknown_taxon ]
+  @issues = [ :unknown_taxon, :long_taxon ]
 
 
   include PgSearch::Model
@@ -114,6 +114,12 @@ class Taxon < ApplicationRecord
   scope :unknown_taxon, -> { where(gbif_id: nil) }
   def unknown_taxon?
     not gbif_id?
+  end
+
+  scope :long_taxon, -> { where("LENGTH(name) > 64") }
+  def long_taxon?
+    return nil if name.blank?
+    name.length > 64
   end
 
 end

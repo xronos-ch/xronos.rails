@@ -28,6 +28,8 @@ module IssuesHelper
     # Taxons
     when :unknown_taxon
       "Taxon not matched to the GBIF Backbone Taxonomy"
+    when :long_taxon
+      "Name of taxon is longer than 64 characters"
     else
       ""
     end

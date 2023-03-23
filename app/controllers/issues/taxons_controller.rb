@@ -3,8 +3,8 @@ class Issues::TaxonsController < IssuesController
 
   # GET /issues/taxons/:issue
   def index
-    if params[:issue] == "unknown_taxon"
-      @taxons = Taxon.unknown_taxon
+    if params.has_key?(:issue)
+      @taxons = Taxon.send(params[:issue])
     else
       @taxons = Taxon.all
     end
