@@ -3,8 +3,8 @@ class Issues::SamplesController < IssuesController
 
   # GET /issues/samples/:issue
   def index
-    if params[:issue] == "missing"
-      @samples = Sample.missing
+    if params.has_key?(:issue)
+      @samples = Sample.send(params[:issue])
     else
       @samples = Sample.all
     end

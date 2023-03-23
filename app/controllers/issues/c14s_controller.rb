@@ -3,7 +3,7 @@ class Issues::C14sController < IssuesController
 
   # GET /issues/c14s/:issue
   def index
-    if params[:issue].present?
+    if params.has_key?(:issue)
       @c14s = C14.send(params[:issue])
     else
       @c14s = C14.all

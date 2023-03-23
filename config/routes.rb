@@ -81,15 +81,25 @@ Rails.application.routes.draw do
   end
 
   # Data issues
-  concern :has_issues do
-    collection do
-      get ":issue", action: :index
-    end
-  end
   namespace :issues do 
-    resources :c14s, only: :index, concerns: :has_issues
-    resources :samples, only: :index, concerns: :has_issues
-    resources :taxons, only: :index, concerns: :has_issues
+    resources :c14s, only: :index do
+      collection do
+        get ":issue", action: :index,
+          constraints: lambda { |req| C14.issues.include?(req.params[:issue].to_sym) }
+      end
+    end
+    resources :samples, only: :index do
+      collection do
+        get ":issue", action: :index,
+          constraints: lambda { |req| Sample.issues.include?(req.params[:issue].to_sym) }
+      end
+    end
+    resources :taxons, only: :index do
+      collection do
+        get ":issue", action: :index,
+          constraints: lambda { |req| Taxon.issues.include?(req.params[:issue].to_sym) }
+      end
+    end
   end
 
   # API
@@ -100,3 +110,4 @@ Rails.application.routes.draw do
   end
   
 end
+
