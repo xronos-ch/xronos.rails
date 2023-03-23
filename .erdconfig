@@ -1,0 +1,26 @@
+attributes:
+  - content
+  - foreign_keys
+  - inheritance
+disconnected: true
+filename: erd
+filetype: pdf
+indirect: false
+inheritance: false
+markup: true
+notation: simple
+orientation: horizontal
+polymorphism: false
+sort: true
+warn: true
+title: XRONOS schema
+exclude: null
+only: C14, C14Lab, Citation, Context, Material, Reference, Sample, Site, SiteType, Taxon, Typo
+only_recursion_depth: null
+prepend_primary: false
+cluster: false
+splines: spline
+fonts:
+ normal: "Arial"
+ bold: "Arial Bold"
+ italic: "Arial Italic"

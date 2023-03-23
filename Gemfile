@@ -171,6 +171,9 @@ group :development do
   # Annotate models etc. with current schema
   gem 'annotate'
 
+  # Generate ERD diagrams. Requires graphviz.
+  gem 'rails-erd'
+
   # Watch for N+1 queries and unused eager loading
   gem 'bullet'
 
