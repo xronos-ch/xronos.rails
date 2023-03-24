@@ -94,13 +94,6 @@ gem 'countries'
 gem 'country_select'
 gem 'i18n_data'
 
-# Geocoding
-gem 'geocoder'
-
-# GBIF Backbone Taxonomy
-gem 'faraday', '~> 2.5', '>= 2.5.2'
-gem 'gbifrb'
-
 # Bibliographic data
 gem 'bibtex-ruby'
 gem 'citeproc-ruby'
@@ -109,6 +102,19 @@ gem 'csl-styles'
 # Session store backed by an Active Record class to avoid cookie overflow with 
 # lasso
 gem 'activerecord-session_store'
+
+# EXTERNAL APIS ---------------------------------------------------------------
+
+gem 'faraday', '>= 2.5.2'
+
+# Geocoding
+gem 'geocoder'
+
+# GBIF (Backbone Taxonomy)
+gem 'gbifrb'
+
+# Wikidata
+gem 'wikidata-client', require: 'wikidata'
 
 # VIEW HELPERS ----------------------------------------------------------------
 
