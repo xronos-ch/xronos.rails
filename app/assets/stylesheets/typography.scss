@@ -7,3 +7,20 @@
 .dl-inline dd {
 	display: inline;
 }
+
+// Align embedded svg icons with text
+// Adapted from https://blog.prototypr.io/align-svg-icons-to-text-and-say-goodbye-to-font-icons-d44b3d7b26b4
+.svg-icon {
+	display: inline-flex;
+	align-self: center;
+}
+
+.svg-icon svg {
+	height: 1em;
+	width: 1em;
+}
+
+.svg-icon.svg-baseline svg {
+	top: .125em;
+	position: relative;
+}

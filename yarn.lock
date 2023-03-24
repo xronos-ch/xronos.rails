@@ -1097,6 +1097,11 @@ semver@^7.5.3:
   dependencies:
     lru-cache "^6.0.0"
 
+simple-icons@^8.8.0:
+  version "8.8.0"
+  resolved "https://registry.yarnpkg.com/simple-icons/-/simple-icons-8.8.0.tgz#b1bb8bc7265a20548e67b171610bbca00c270ca2"
+  integrity sha512-/aSnVSF11629RTsm8bizN7MXdO82zNQuuOh4eDd7SUPkwYubM62OgCIFv4pUgXZE5fxO4whgksyFLgB7RzVARg==
+
 simple-update-notifier@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/simple-update-notifier/-/simple-update-notifier-2.0.0.tgz#d70b92bdab7d6d90dfd73931195a30b6e3d7cebb"
