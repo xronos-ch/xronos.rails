@@ -16,6 +16,7 @@ class UserProfilesController < ApplicationController
   # GET /user_profiles/new
   def new
     @user_profile = UserProfile.new
+    @user_profile.user = User.new
   end
 
   # GET /user_profiles/1/edit
@@ -24,11 +25,21 @@ class UserProfilesController < ApplicationController
 
   # POST /user_profiles or /user_profiles.json
   def create
-    @user_profile = UserProfile.new(user_profile_params)
-    @user_profile.user = current_user
+    user_params = user_profile_params.slice(:user_attributes)
+    
+    @user_profile = UserProfile.new(user_profile_params.except(:user_attributes))
+    
+    if current_user.admin?
+      user_params = user_profile_params.slice(:user_attributes)
+      @user = User.new(user_params[:user_attributes])
+    else
+      @user = current_user
+    end
+    
+    @user_profile.user = @user
 
     respond_to do |format|
-      if @user_profile.save
+      if @user.save & @user_profile.save
         format.html { redirect_to @user_profile, notice: "User profile was successfully created." }
         format.json { render :show, status: :created, location: @user_profile }
       else
@@ -65,7 +76,11 @@ class UserProfilesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_user_profile
-      @user_profile = UserProfile.find(params[:id])
+      if params[:id]
+        @user_profile = UserProfile.find(params[:id])
+      else
+        @user_profile = current_user.user_profile
+      end
     end
 
     # Only allow a list of trusted parameters through.
