@@ -15,4 +15,10 @@
     <dd class="col-sm-9 font-monospace text-end"><%= @user_profile.user.email %></dd>
     </dl>
 
-<%= link_to 'Edit', edit_user_profile_path(@user_profile) %>
+  <div class="actions">
+    <%= link_to 'Edit', edit_user_profile_path(@user_profile), class: "btn btn-primary" %>
+    <%if current_user.admin?%>
+      <%= link_to 'List all User Profiles', user_profiles_path, class: "btn btn-danger"%>
+    <%end%>
+  </div>
+  
