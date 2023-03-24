@@ -33,6 +33,9 @@
       help: "#{@minimum_password_length} characters minimum. Leave blank if you don't want to change it." %>
 
     <%= user.password_field :password_confirmation, label: "Confirm new password", autocomplete: "new-password" %>
+    <%if current_user.admin?%>
+      <%= user.check_box :admin %>
+    <%end%>
     <% end %>
     
   <div class="actions">
