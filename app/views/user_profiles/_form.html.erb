@@ -37,6 +37,7 @@
     
   <div class="actions">
     <%= form.submit class: "btn btn-primary" %>
+    <%= link_to 'Cancel', @user_profile, class: "btn btn-secondary" %>
     <%if current_user.admin?%>
       <%= link_to 'List all User Profiles', user_profiles_path, class: "btn btn-danger"%>
     <%end%>
