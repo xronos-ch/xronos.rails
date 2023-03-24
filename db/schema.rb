@@ -340,6 +340,18 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_29_161500) do
     t.index ["whodunnit"], name: "index_versions_on_whodunnit"
   end
 
+  create_table "wikidata_items", force: :cascade do |t|
+    t.integer "qid"
+    t.string "wikidata_link_type"
+    t.bigint "wikidata_link_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["qid"], name: "index_wikidata_items_on_qid"
+    t.index ["wikidata_link_type", "qid"], name: "index_wikidata_items_on_wikidata_link_type_and_qid"
+    t.index ["wikidata_link_type", "wikidata_link_id"], name: "index_wikidata_items_on_wikidata_link"
+    t.index ["wikidata_link_type", "wikidata_link_id"], name: "index_wikidata_items_on_wikidata_link_type_and_wikidata_link_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "import_tables", "users"
