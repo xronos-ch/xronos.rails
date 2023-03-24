@@ -1,21 +1,34 @@
 <dl>
 
-  <div class="row">
-    <dt class="col">Wikidata</dt>
-    <dd class="col text-end"><%= link_to site.wikidata_item.qcode, site.wikidata_item.url, title: "#{site.wikidata_item.label} - Wikidata" %> (<%= site.wikidata_item.label %>)</dd>
+  <div class="row my-2">
+    <dt class="col-sm">
+      <%= simple_icon "wikidata" %>
+      Wikidata
+    </dt>
+    <dd class="col-sm text-sm-end"><%= link_to site.wikidata_item.qcode, site.wikidata_item.url, title: "#{site.wikidata_item.label} - Wikidata" %> (<%= site.wikidata_item.label %>)</dd>
   </div>
 
   <% if site.wikidata_item.sitelink_url("enwiki").present? %>
-    <dt class="col">
-      <%= fa_icon "wikipedia-w" %>
-      Wikipedia <span class="badge text-bg-info">en</span>
-    </dt>
-    <dd class="col text-end"><%= link_to site.wikidata_item.sitelink_title("enwiki"), site.wikidata_item.sitelink_url, title: "#{site.wikidata_item.sitelink_title} - Wikipedia" %></dd>
+    <div class="row my-2">
+      <dt class="col-sm">
+        <%= simple_icon "wikipedia" %>
+        Wikipedia 
+      </dt>
+      <dd class="col-sm text-sm-end">
+        <span class="badge text-bg-info">en</span>
+        <%= link_to site.wikidata_item.sitelink_title("enwiki"), site.wikidata_item.sitelink_url, title: "#{site.wikidata_item.sitelink_title} - Wikipedia" %>
+      </dd>
+    </div>
   <% end %>
 
   <% if site.wikidata_item.sitelink_url("commonswiki").present? %>
-    <dt class="col">Wikimedia Commons</dt>
-    <dd class="col text-end"><%= link_to site.wikidata_item.sitelink_title("commonswiki"), site.wikidata_item.sitelink_url("commonswiki"), title: "#{site.wikidata_item.sitelink_title('commonswiki')} - Wikimedia Commons" %></dd>
+    <div class="row my-2">
+      <dt class="col-sm">
+        <%= simple_icon "wikimediacommons" %>
+        Wikimedia Commons
+      </dt>
+      <dd class="col-sm text-sm-end"><%= link_to site.wikidata_item.sitelink_title("commonswiki"), site.wikidata_item.sitelink_url("commonswiki"), title: "#{site.wikidata_item.sitelink_title('commonswiki')} - Wikimedia Commons" %></dd>
+    </div>
   <% end %>
 
 </dl>

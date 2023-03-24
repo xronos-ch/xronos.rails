@@ -25,6 +25,7 @@
 		"postcss-cli": "^10.1.0",
 		"rails-erb-loader": "^5.5.2",
 		"sass": "^1.66.1",
+		"simple-icons": "^8.8.0",
 		"supercluster": "^7.1.5",
 		"tom-select": "^2.0.1",
 		"vega": "^5.23.0",
