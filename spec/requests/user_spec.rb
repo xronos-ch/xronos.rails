@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "User Interactions", type: :request, js: true do
+RSpec.describe "User Interactions", type: :request do
   describe "signing in" do
 
     before(:each) do
@@ -10,12 +10,12 @@ RSpec.describe "User Interactions", type: :request, js: true do
       @admin_user_profile = UserProfile.create!(first_name: "Willi", last_name: "Wichtig", user: @admin_user)
      end
      
-    it "has a Sign in Button" do
+    it "has a Sign in Button", js: true do
       visit root_path
       expect(page).to have_button('Sign in')
     end
     
-    it "allows users to sign in" do
+    it "allows users to sign in", js: true do
       visit root_path
       click_button('Sign in')
       fill_in 'user_email', :with => @user.email

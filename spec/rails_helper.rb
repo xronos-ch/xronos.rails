@@ -74,19 +74,17 @@ RSpec.configure do |config|
   
   Capybara.server = :puma, { Silent: true } # To clean up your test output
   
-  Capybara.register_driver :headless_chrome do |app|
-    options = Selenium::WebDriver::Chrome::Options.new(
-      args: %w[headless no-sandbox disable-gpu disable-dev-shm-usage],
-    )
-
-    Capybara::Selenium::Driver.new(
-      app,
-      browser: :chrome,
-      options: options
-    )
+  Capybara.register_driver :headless_chrome  do |app|
+    Capybara::Selenium::Driver.new(app, browser: :chrome,
+      options: Selenium::WebDriver::Chrome::Options.new(args: %w[headless no-sandbox disable-gpu]))
   end
-  
-  Capybara.default_driver = :headless_chrome
+
+  Capybara.configure do |config|
+  config.default_driver =:headless_chrome
+  #Capybara.page.driver.browser.manage.window.resize_to(1440,768)
+  end
+
+  Capybara.default_max_wait_time = 60
   
   config.include Devise::Test::ControllerHelpers, type: :controller
   config.include Devise::Test::ControllerHelpers, type: :view
