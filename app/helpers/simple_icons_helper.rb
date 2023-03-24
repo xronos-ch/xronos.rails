@@ -16,6 +16,7 @@ module SimpleIconsHelper
     if asset
       #file = asset.source.force_encoding("UTF-8")
       doc = Nokogiri::HTML::DocumentFragment.parse asset.content
+
       svg = doc.at_css "svg"
       options.each {|attr, value| svg[attr.to_s] = value}
       #svg["class"] = options[:class] if options[:class].present?
