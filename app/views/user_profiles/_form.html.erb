@@ -1,4 +1,4 @@
-<%= form_with(model: user_profile) do |form| %>
+<%= bootstrap_form_with(model: user_profile) do |form| %>
   <% if user_profile.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(user_profile.errors.count, "error") %> prohibited this user_profile from being saved:</h2>
@@ -12,7 +12,26 @@
   <% end %>
 
   <%= render 'user_profiles/user_profile_fields', form: form %>
+  
+  <% devise_mapping = Devise.mappings[:user] %>
+  <% resource = user_profile.user %>
+<%= form.fields_for :user do |user|%>
+    <%= render "devise/shared/error_messages", resource: resource %>
 
+    <%= user.email_field :email, autocomplete: "email" %>
+
+    <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+      <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
+    <% end %>
+
+    <%= user.password_field :current_password, label: "Current password", autocomplete: "current-password" %>
+
+    <%= user.password_field :password, label: "New password", autocomplete: "new-password",
+      help: "#{@minimum_password_length} characters minimum. Leave blank if you don't want to change it." %>
+
+    <%= user.password_field :password_confirmation, label: "Confirm new password", autocomplete: "new-password" %>
+    <% end %>
+    
   <div class="actions">
     <%= form.submit class: "btn btn-primary" %>
   </div>

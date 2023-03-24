@@ -18,7 +18,7 @@
         <td><%= user_profile.user.email %></td>
         <td><%= link_to 'Show', user_profile %></td>
         <td><%= link_to 'Edit', edit_user_profile_path(user_profile) %></td>
-        <td><%= link_to 'Destroy', user_profile, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Destroy', user_profile_url(user_profile), method: :delete, data: { turbo_confirm: 'Are you sure?', turbo_method: :delete} %></td>
       </tr>
     <% end %>
   </tbody>

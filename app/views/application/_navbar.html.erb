@@ -76,7 +76,8 @@
                  <%= current_user.email %>
                </button>
                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                 <li> <%= link_to(edit_user_registration_path, class: "dropdown-item") do%><%= fa_icon "edit" %> Edit registration<% end %></li>
+                 
+                 <li> <%= link_to(new_or_edit_profile_path(current_user.user_profile), class: "dropdown-item") do%><%= fa_icon "edit" %> Manage User Profile<% end %></li>
                  <li> <%= button_to destroy_user_session_path, method: :delete, class: "dropdown-item" do %><%= fa_icon "sign-out" %> Logout<% end %></li>
                </ul>
              </div>

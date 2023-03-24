@@ -1,6 +1,6 @@
 class UserProfilesController < ApplicationController
   load_and_authorize_resource
-  layout "backend"
+  layout "admin"
   before_action :set_user_profile, only: %i[ show edit update destroy ]
 
 
@@ -25,6 +25,7 @@ class UserProfilesController < ApplicationController
   # POST /user_profiles or /user_profiles.json
   def create
     @user_profile = UserProfile.new(user_profile_params)
+    @user_profile.user = current_user
 
     respond_to do |format|
       if @user_profile.save
@@ -39,8 +40,10 @@ class UserProfilesController < ApplicationController
 
   # PATCH/PUT /user_profiles/1 or /user_profiles/1.json
   def update
+    user_params = user_profile_params.slice(:user_attributes)
     respond_to do |format|
-      if @user_profile.update(user_profile_params)
+      if @user_profile.update(user_profile_params.except(:user_attributes)) & @user_profile.user.update_with_password(user_params[:user_attributes])
+        bypass_sign_in(@user_profile.user)
         format.html { redirect_to @user_profile, notice: "User profile was successfully updated." }
         format.json { render :show, status: :ok, location: @user_profile }
       else
@@ -67,6 +70,17 @@ class UserProfilesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def user_profile_params
-      params.require(:user_profile).permit(:first_name, :last_name, :user_id)
+      params.fetch(:user_profile, {}).permit(
+      :first_name,
+      :last_name,
+      :user_id,
+      {user_attributes: [
+        :id,
+        :email,
+        :current_password,
+        :password,
+        :password_confirmation
+      ]}
+      )
     end
 end
