@@ -51,6 +51,7 @@ Rails.application.routes.draw do
 
   # User management
   resources :user_profiles
+  get 'user_profile', to: 'user_profiles#show'
   devise_for :users, controllers: {
       registrations: 'registrations',
       sessions: 'users/sessions'

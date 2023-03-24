@@ -90,5 +90,9 @@ RSpec.configure do |config|
   end
   
   Capybara.default_driver = :selenium_chrome_headless
+  
+  config.include Devise::Test::ControllerHelpers, type: :controller
+  config.include Devise::Test::ControllerHelpers, type: :view
+  config.include Devise::Test::IntegrationHelpers
     
 end

@@ -20,6 +20,7 @@ class Ability
     if user.present?
       can :create, :all
       can [:read, :update], [UserProfile], :user_id => user.id
+      cannot :index, [UserProfile]
       if user.admin?  # additional permissions for administrators
         can :manage, :all
         can :duplicates, :all

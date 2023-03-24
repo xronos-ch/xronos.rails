@@ -25,7 +25,7 @@ FactoryBot.define do
     admin { false }
     passphrase { ENV["REGISTRATION_PASSPHRASE"] }
     trait :admin do
-      email { "admin@xronos.ch" }
+      email { Faker::Internet.unique.email }
       admin { true }
     end
     factory :admin, traits: [:admin]

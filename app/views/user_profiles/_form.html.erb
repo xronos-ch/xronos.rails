@@ -15,7 +15,9 @@
   
   <% devise_mapping = Devise.mappings[:user] %>
   <% resource = user_profile.user %>
+
 <%= form.fields_for :user do |user|%>
+
     <%= render "devise/shared/error_messages", resource: resource %>
 
     <%= user.email_field :email, autocomplete: "email" %>
@@ -24,8 +26,9 @@
       <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
     <% end %>
 
+<% unless resource.new_record? %>
     <%= user.password_field :current_password, label: "Current password", autocomplete: "current-password" %>
-
+<% end %>
     <%= user.password_field :password, label: "New password", autocomplete: "new-password",
       help: "#{@minimum_password_length} characters minimum. Leave blank if you don't want to change it." %>
 
@@ -34,5 +37,9 @@
     
   <div class="actions">
     <%= form.submit class: "btn btn-primary" %>
+    <%if current_user.admin?%>
+      <%= link_to 'List all User Profiles', user_profiles_path, class: "btn btn-danger"%>
+    <%end%>
   </div>
+  
 <% end %>
