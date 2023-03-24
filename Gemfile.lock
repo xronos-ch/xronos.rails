@@ -159,6 +159,7 @@ GEM
       dotenv (= 3.1.2)
       railties (>= 6.1)
     erubi (1.12.0)
+    excon (0.112.0)
     execjs (2.9.1)
     factory_bot (6.4.6)
       activesupport (>= 5.0.0)
@@ -169,6 +170,9 @@ GEM
       i18n (>= 1.8.11, < 2)
     faraday (2.9.1)
       faraday-net_http (>= 2.0, < 3.2)
+    faraday-excon (2.1.0)
+      excon (>= 0.27.4)
+      faraday (~> 2.0)
     faraday-net_http (3.1.0)
       net-http
     feedjira (3.2.3)
@@ -196,6 +200,7 @@ GEM
       guard (~> 2.1)
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
+    hashie (5.0.0)
     httparty (0.22.0)
       csv
       mini_mime (>= 1.0.0)
@@ -451,6 +456,11 @@ GEM
     websocket-extensions (0.1.5)
     whenever (1.0.0)
       chronic (>= 0.6.3)
+    wikidata-client (0.1.0)
+      excon (~> 0.92)
+      faraday (~> 2.2)
+      faraday-excon (~> 2.1)
+      hashie (~> 5.0)
     xpath (3.2.0)
       nokogiri (~> 1.8)
     zeitwerk (2.6.15)
@@ -482,7 +492,7 @@ DEPENDENCIES
   dotenv-rails
   factory_bot_rails
   faker
-  faraday (~> 2.5, >= 2.5.2)
+  faraday (>= 2.5.2)
   feedjira
   gbifrb
   geocoder
@@ -527,6 +537,7 @@ DEPENDENCIES
   vega
   web-console (>= 3.3.0)
   whenever
+  wikidata-client
 
 RUBY VERSION
    ruby 3.0.4p208
