@@ -10,11 +10,12 @@ module SimpleIconsHelper
   # adapted from https://blog.cloud66.com/using-svgs-in-a-rails-stack
   def embedded_svg(filename, options = {})
     assets = Rails.application.assets
-    asset = assets.load_path.find(filename)
+
+    asset = assets.find_asset(filename)
 
     if asset
-      #file = asset.source.force_encoding("UTF-8")
-      doc = Nokogiri::HTML::DocumentFragment.parse asset.content
+      file = asset.source.force_encoding("UTF-8")
+      doc = Nokogiri::HTML::DocumentFragment.parse file
       svg = doc.at_css "svg"
       options.each {|attr, value| svg[attr.to_s] = value}
       #svg["class"] = options[:class] if options[:class].present?
