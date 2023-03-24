@@ -90,6 +90,16 @@
           </dl>
         </div>
       </div>
+    </div>
+  </section>
+
+  <% if @site.wikidata_item.present? %>
+    <section id="site-external-links" class="bg-light">
+      <div class="container my-5">
+        <%= render "external_links", site: @site %>
+      </div>
+    </section>
+  <% end %>
 
   <% unless @c14s.nil? %>
     <section id="site-c14s" class="my-5">
