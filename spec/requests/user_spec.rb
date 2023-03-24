@@ -42,10 +42,9 @@ RSpec.describe "User Interactions", type: :request, js: true do
      
     it "blocks normal users from seeing the user profile index" do
       sign_in @user
-      expect do
-        visit 'user_profiles'
-        expect(page).to have_content("make sure visit is completed")
-      end.to raise_error(ActionController::RoutingError)
+      expect{
+         get '/user_profiles'
+       }.to raise_error(ActionController::RoutingError)
     end
 
     it "allows admin users to see the user profile index" do
