@@ -37,5 +37,4 @@ class WikidataItem
     qid = qid.to_s
     qid = "Q" + qid unless qid.starts_with?("Q")
   end
-
 end
