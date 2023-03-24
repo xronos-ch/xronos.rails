@@ -84,7 +84,7 @@ RSpec.configure do |config|
   #Capybara.page.driver.browser.manage.window.resize_to(1440,768)
   end
 
-  Capybara.default_max_wait_time = 60
+  #Capybara.default_max_wait_time = 60
   
   config.include Devise::Test::ControllerHelpers, type: :controller
   config.include Devise::Test::ControllerHelpers, type: :view

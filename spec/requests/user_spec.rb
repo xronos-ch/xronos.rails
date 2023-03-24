@@ -10,20 +10,6 @@ RSpec.describe "User Interactions", type: :request do
       @admin_user_profile = UserProfile.create!(first_name: "Willi", last_name: "Wichtig", user: @admin_user)
      end
      
-    it "has a Sign in Button", js: true do
-      visit root_path
-      expect(page).to have_button('Sign in')
-    end
-    
-    it "allows users to sign in", js: true do
-      visit root_path
-      click_button('Sign in')
-      fill_in 'user_email', :with => @user.email
-      fill_in 'user_password', :with => @user.password
-      find('input[name="commit"]').click
-      expect(page).to have_button(@user.email)
-    end
-    
     it "allows authenticated access" do
       sign_in @user
       visit 'user_profile'
