@@ -19,11 +19,15 @@ class WikidataLink < ApplicationRecord
   include Turbo::Broadcastable
   include Versioned
 
-  BASE_URL = "https://www.wikidata.org/wiki/"
+   BASE_URL = "https://www.wikidata.org/wiki/"
+  SITE_URL = {
+    enwiki: "https://en.wikipedia.org/wiki/",
+    commonswiki: "https://commons.wikipedia.org/wiki/"
+  }
 
   attr_reader :item
 
-  validates :qid, presence: true, numericality: { only_integer: true }
+  validates :qid, presence: true
 
   belongs_to :wikidata_linkable, polymorphic: true
 
@@ -32,15 +36,24 @@ class WikidataLink < ApplicationRecord
   end
 
   def url
-    BASE_URL + qcode
+    Wikidata::BASE_URL + qcode
   end
 
   def request_item
-    @item = WikidataItem.new(qid)
+    @item = Wikidata::Item.find qcode
   end
 
-  def title
-    item.present? ? item.label : qcode
+  def label(lang = "en")
+    item.labels[lang].value
+  end
+
+  def sitelink_title(site = "enwiki")
+    item.sitelinks[site]["title"]
+  end
+
+  def sitelink_url(site = "enwiki")
+    return nil unless Wikidata::SITE_URL.with_indifferent_access.has_key?(site)
+    Wikidata::SITE_URL.with_indifferent_access[site] + (ERB::Util.url_encode sitelink_title(site))
   end
 
 end
