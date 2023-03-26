@@ -20,6 +20,7 @@ class WikidataLink < ApplicationRecord
   include Versioned
 
    BASE_URL = "https://www.wikidata.org/wiki/"
+
   SITE_URL = {
     enwiki: "https://en.wikipedia.org/wiki/",
     commonswiki: "https://commons.wikipedia.org/wiki/"
