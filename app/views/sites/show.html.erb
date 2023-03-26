@@ -19,6 +19,15 @@
 
   </section>
 
+  <% if @site.wikidata_link.present? %>
+    <%= turbo_stream_from "wikidata_links" %>
+    <section id="site-external-links" class="bg-light">
+      <div class="container my-5">
+        <%= render @site.wikidata_link %>
+      </div>
+    </section>
+  <% end %>
+
   <section id="site-location" class="my-5">
     <h2><%= bs_icon "pin-map" %> Location</h2>
     <div class="row">
@@ -64,17 +73,6 @@
           </dl>
         </div>
       </div>
-
-    </div>
-  </section>
-
-  <% if @site.wikidata_item.present? %>
-    <section id="site-external-links" class="bg-light">
-      <div class="container my-5">
-        <%= render "external_links", site: @site %>
-      </div>
-    </section>
-  <% end %>
 
   <% unless @c14s.nil? %>
     <section id="site-c14s" class="my-5">
