@@ -29,12 +29,8 @@ class Site < ApplicationRecord
   has_many :typos, through: :contexts
   has_many :citations, as: :citing
   has_many :references, through: :citations
-<<<<<<< HEAD
   has_many :lod_links, as: :linkable, dependent: :destroy
 
-=======
-  has_one :wikidata_item, as: :wikidata_link
->>>>>>> b23be7c (Create WikidataItem and add to sites)
   has_and_belongs_to_many :site_types, optional: true
 
   composed_of :coordinates, mapping: [%w(lng longitude), %w(lat latitude)], 
