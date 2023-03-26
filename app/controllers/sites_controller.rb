@@ -5,6 +5,7 @@ class SitesController < ApplicationController
   load_and_authorize_resource
 
   before_action :set_site, only: [:show, :edit, :update, :destroy]
+  after_action :request_wikidata_item, only: :show
 
   # GET /sites
   # GET /sites.json
@@ -131,6 +132,12 @@ class SitesController < ApplicationController
     def set_site
       @site = Site.find(params[:id])
       @wikidata_matches = Site.wikidata_match_candidates_batch([@site]) || {}
+    end
+
+    def request_wikidata_item
+      if @site.wikidata_link.present?
+        RequestWikidataItemJob.perform_later @site.wikidata_link
+      end
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
