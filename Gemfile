@@ -14,7 +14,7 @@ gem 'pg'
 # App server
 gem 'puma'
 
-# Data cache (required to run Action Cable in production)
+# In-memory cache (also required for Turbo broadcasts and ActionCable)
 gem 'redis', '~> 4.0'
 
 # Reduce boot times through caching (required in config/boot.rb)
