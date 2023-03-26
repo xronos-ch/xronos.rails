@@ -27,6 +27,7 @@ class Site < ApplicationRecord
   has_many :references, through: :citations
   has_one :wikidata_link, as: :wikidata_linkable
   has_one :wikidata_item, as: :wikidata_link
+
   has_and_belongs_to_many :site_types, optional: true
 
   composed_of :coordinates, mapping: [%w(lng longitude), %w(lat latitude)], 
