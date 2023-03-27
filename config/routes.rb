@@ -52,6 +52,9 @@ Rails.application.routes.draw do
   end
   resources :taxon_usages, only: :show
 
+  # External data resources
+  resources :wikidata_links, only: :show
+
   # User management
   devise_for :users, controllers: {
       registrations: 'registrations',
