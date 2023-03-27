@@ -1,4 +1,4 @@
-<%= turbo_frame_tag wikidata_link do %>
+<%= turbo_frame_tag @wikidata_link do %>
   <dl>
 
     <div class="row my-2">
@@ -7,12 +7,12 @@
         Wikidata
       </dt>
       <dd class="col-sm text-sm-end">
-        <%= link_to wikidata_link.qcode, wikidata_link.url, title: "#{wikidata_link.title} - Wikidata" %>
-        <% if wikidata_link.item.present? %>(<%= wikidata_link.item.label("en") %>)<% end %>
+        <%= link_to @wikidata_link.qcode, @wikidata_link.url, title: "#{@wikidata_link.title} - Wikidata" %>
+        <% if @wikidata_link.item.present? %>(<%= @wikidata_link.item.label("en") %>)<% end %>
       </dd>
     </div>
 
-    <% item = wikidata_link.item %>
+    <% item = @wikidata_link.item %>
     <% if item.present? %>
 
       <% if item.sitelink_url("enwiki").present? %>

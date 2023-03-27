@@ -1,6 +1,7 @@
 class WikidataLinksController < ApplicationController
   load_and_authorize_resource
 
+<<<<<<< HEAD
   before_action :set_wikidata_link, only: [:show, :edit, :update, :destroy]
 
   def show
@@ -70,4 +71,10 @@ class WikidataLinksController < ApplicationController
       @wikidata_link.qid.to_s
   end
 
+=======
+  def show
+    @wikidata_link.request_item
+    render partial: "wikidata_link"
+  end
+>>>>>>> d08ca8d (Switch to turbo frame for async wikidata links)
 end
