@@ -41,7 +41,6 @@ class WikidataLink < ApplicationRecord
 
   def request_item
     @item = WikidataItem.new(qid)
-    broadcast_update_to "wikidata_links"
   end
 
   def title
