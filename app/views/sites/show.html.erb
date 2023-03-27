@@ -20,10 +20,9 @@
   </section>
 
   <% if @site.wikidata_link.present? %>
-    <%= turbo_stream_from "wikidata_links" %>
     <section id="site-external-links" class="bg-light">
       <div class="container my-5">
-        <%= render @site.wikidata_link %>
+        <%= turbo_frame_tag @site.wikidata_link, src: @site.wikidata_link %>
       </div>
     </section>
   <% end %>
