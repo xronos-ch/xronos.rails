@@ -113,8 +113,9 @@ gem 'geocoder'
 # GBIF (Backbone Taxonomy)
 gem 'gbifrb'
 
-# Wikidata
+# Wikidata & Wikipedia
 gem 'wikidata-client', require: 'wikidata'
+gem 'wikipedia-client', require: 'wikipedia'
 
 # VIEW HELPERS ----------------------------------------------------------------
 
