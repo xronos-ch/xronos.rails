@@ -461,6 +461,8 @@ GEM
       faraday (~> 2.2)
       faraday-excon (~> 2.1)
       hashie (~> 5.0)
+    wikipedia-client (1.17.0)
+      addressable (~> 2.7)
     xpath (3.2.0)
       nokogiri (~> 1.8)
     zeitwerk (2.6.15)
@@ -538,6 +540,7 @@ DEPENDENCIES
   web-console (>= 3.3.0)
   whenever
   wikidata-client
+  wikipedia-client
 
 RUBY VERSION
    ruby 3.0.4p208
