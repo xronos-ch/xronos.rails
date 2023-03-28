@@ -73,6 +73,10 @@ class WikidataLinksController < ApplicationController
 =======
   def show
     @wikidata_link.request_item
+    if @wikidata_link.item.sitelink_title("enwiki").present?
+      @wikidata_link.item.request_wikipedia_extract
+    end
+
     render partial: "wikidata_link"
   end
 >>>>>>> 0b15a9b (Switch to turbo frame for async wikidata links)
