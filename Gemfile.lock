@@ -520,6 +520,7 @@ DEPENDENCIES
   rspec-rails (~> 4.0.1)
   rubocop
   rubocop-rails
+  ruby-progressbar
   sass-rails (~> 5.0)
   selenium-webdriver
   simplecov
