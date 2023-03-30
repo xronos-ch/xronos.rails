@@ -97,5 +97,22 @@ module ApplicationHelper
       .html_safe
   end
 
+  def floating_button(path, options = {})
+    default_classes = "d-block position-absolute top-0 start-100 small"
+    if options.has_key?(:class)
+      options[:class] = options[:class] + " " + default_classes
+    else
+      options[:class] = default_classes
+    end
+
+    options[:title] = "Edit" unless options.has_key?(:title)
+    
+    content_tag :div, class: "position-relative" do
+      link_to path, **options do 
+        fa_icon "pencil"
+      end
+    end
+  end
+
 end
 
