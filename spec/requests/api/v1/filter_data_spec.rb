@@ -9,7 +9,7 @@ RSpec.describe 'Data', type: :request do
   describe 'query_labnr' do
     
     before do
-      @labnr = @c14s.first.lab_identifier
+      @labnr = @c14s.first.lab_identifier.to_s
       get '/api/v1/data?query_labnr=' + @labnr
     end
   
@@ -187,7 +187,7 @@ RSpec.describe 'Data', type: :request do
   describe 'query_labnr & query_species' do
     
     before do
-      @labnr = @c14s.first.lab_identifier
+      @labnr = @c14s.first.lab_identifier.to_s
       @species = @c14s.first.sample.taxon.name
       
       get '/api/v1/data?query_species=' + @species + '&query_labnr=' + @labnr

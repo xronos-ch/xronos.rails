@@ -1,0 +1,55 @@
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">
+        <%= link_to_order_by "ID", :id %>
+        <% if ordered_by?(:id) %>
+          <span class="text-muted"><%= order_indicator %></span>
+        <% end %>
+      </th>
+      <th scope="col">
+        <%= link_to_order_by "Name", :name %>
+        <% if ordered_by?(:name) %>
+          <span class="text-muted"><%= order_indicator %></span>
+        <% end %>
+      </th>
+      <th scope="col">
+        <%= link_to_order_by "Country code", :country_code %>
+        <% if ordered_by?(:country_code) %>
+          <span class="text-muted"><%= order_indicator %></span>
+        <% end %>
+      </th>
+      <th scope="col">Coordinates</th>
+      <th scope="col">
+        <%= link_to_order_by "C14s", :c14s_count %>
+        <% if ordered_by?(:c14s_count) %>
+          <span class="text-muted"><%= order_indicator %></span>
+        <% end %>
+      </th>
+      <th scope="col">
+        <%= link_to_order_by "Typos", :typos_count %>
+        <% if ordered_by?(:typos_count) %>
+          <span class="text-muted"><%= order_indicator %></span>
+        <% end %>
+      </th>
+      <th scope="col">Issues</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% sites.each do |site| %>
+      <tr>
+        <td class="text-muted"><%= site.id %></td>
+        <td><%= link_to site.name, site, target: :_top %></td>
+        <td><%= site.country_code %></td>
+        <td class="font-monospace"><%= site.coordinates.present? ? site.coordinates : na_value %></td>
+        <td class="text-end"><%= site.c14s_count %></td>
+        <td class="text-end"><%= site.typos_count %></td>
+        <td><% site.issues.each do |issue| %>
+          <%= issue_badge(issue) %>
+        <% end %></td>
+      </tr>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

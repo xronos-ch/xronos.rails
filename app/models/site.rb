@@ -18,23 +18,6 @@
 #  index_sites_on_superseded_by  (superseded_by)
 #
 class Site < ApplicationRecord
-  include DataHelper
-
-  include Versioned
-  include Supersedable
-  include Duplicable
-  duplicable :name, :lat, :lng, :country_code
-
-  include PgSearch::Model
-  pg_search_scope :search, 
-    against: :name, 
-    using: { tsearch: { prefix: true } } # match partial words
-  multisearchable against: :name
-
-  has_paper_trail
-  acts_as_copy_target # enable CSV exports
-  
-  validates :name, presence: true
 
   has_and_belongs_to_many :site_types, optional: true
 
@@ -46,6 +29,28 @@ class Site < ApplicationRecord
   has_many :citations, as: :citing
   has_many :references, through: :citations
 
+  composed_of :coordinates, mapping: [%w(lng longitude), %w(lat latitude)], 
+    allow_nil: true
+
+  validates :name, presence: true
+
+  include Versioned
+  include Supersedable
+
+  include Duplicable
+  duplicable :name, :lat, :lng, :country_code
+
+  acts_as_copy_target # enable CSV exports
+
+  include HasIssues
+  @issues = [ :missing_coordinates, :invalid_coordinates, :missing_country_code ]
+
+  include PgSearch::Model
+  pg_search_scope :search, 
+    against: :name, 
+    using: { tsearch: { prefix: true } } # match partial words
+  multisearchable against: :name
+  
   scope :with_counts, -> {
     select <<~SQL
       sites.*,
@@ -91,28 +96,6 @@ class Site < ApplicationRecord
     end
   end
 
-  def coordinates(format = "dd")
-    return nil if lat.blank? || lng.blank?
-
-    y = lat < 0 ? "S" : "N"
-    x = lng < 0 ? "W" : "E"
-
-    case format
-    when "dd"
-      "#{'%07.3f' % lat.abs}° #{y}, #{'%07.3f' % lng.abs}° #{x}"
-    when "dms"
-      ydeg = lat.abs.floor
-      ymin = (lat.abs % 1 * 60).floor
-      ysec = (ymin % 1 * 60).round
-      xdeg = lng.abs.floor
-      xmin = (lng.abs % 1 * 60).floor
-      xsec = (xmin % 1 * 60).round
-      "#{'%03d' % ydeg}° #{'%02d' % ymin}\' #{'%02d' % ysec}\" #{y}" +
-        ", " +
-        "#{'%03d' % xdeg}° #{'%02d' % xmin}\' #{'%02d' % xsec}\" #{x}"
-    end
-  end
-
   def n_c14s
     c14s.count
   end
@@ -128,6 +111,24 @@ class Site < ApplicationRecord
     else
       references
     end
+  end
+
+  # Issues
+  scope :missing_coordinates, -> { where("lat IS NULL OR lng IS NULL") }
+  def missing_coordinates?
+    lat.blank? or lng.blank?
+  end
+
+  scope :invalid_coordinates, -> { where("lat > 90 OR lat < -90 OR lng > 180 OR lng < -180") }
+  def invalid_coordinates?
+    unless missing_coordinates?
+      coordinates.invalid_latitude? or coordinates.invalid_longitude?
+    end
+  end
+
+  scope :missing_country_code, -> { where(country_code: nil) }
+  def missing_country_code?
+    country_code.blank?
   end
 
 end

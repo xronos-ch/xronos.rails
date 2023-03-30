@@ -1,0 +1,37 @@
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">
+        <%= link_to_order_by "ID", :id %>
+        <% if ordered_by?(:id) %>
+          <span class="text-muted"><%= order_indicator %></span>
+        <% end %>
+      </th>
+      <th scope="col">
+        <%= link_to_order_by "Label", :short_ref %>
+        <% if ordered_by?(:short_ref) %>
+          <span class="text-muted"><%= order_indicator %></span>
+        <% end %>
+      </th>
+      <th scope="col">BibTeX</th>
+      <th scope="col">Citations</th>
+      <th scope="col">Issues</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% references.each do |reference| %>
+      <tr>
+        <td class="text-muted"><%= reference.id %></td>
+        <td><%= link_to reference.short_ref, reference, target: :_top %></td>
+        <td><%= reference.render %></td>
+        <td><%= reference.citations_count %></td>
+        <td><% references.issues.each do |issue| %>
+          <%= issue_badge(issue) %>
+        <% end %></td>
+      </tr>
+
+      </tr>
+    <% end %>
+  </tbody>
+</table>

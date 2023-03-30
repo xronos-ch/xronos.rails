@@ -1,6 +1,6 @@
 json.measurement do
   json.id measurement.id
-  json.labnr measurement.lab_identifier
+  json.labnr measurement.lab_identifier.to_s
   json.bp measurement.bp
   json.std measurement.std
   json.cal_bp measurement.cal_bp
@@ -13,8 +13,8 @@ json.measurement do
   else
     measurement.c14_lab.name
   end))
-  json.material measurement.sample.material.name
-  json.species measurement.sample.taxon.name
+  json.material measurement.sample.material_name
+  json.species measurement.sample.taxon_name
   json.feature measurement.sample.context.name
   json.feature_type("")
   json.site measurement.sample.context.site.name
