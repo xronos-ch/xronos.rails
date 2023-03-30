@@ -10,6 +10,9 @@
 <%= render "issues/nav", model: Taxon, base_path: issues_taxons_path %>
 
 <turbo-frame id="issues-taxons-table">
+
+  <%= render "issues/filter_form", filter_path: issues_taxons_path %>
+
   <%=
     case params[:issue]
     when "unknown_taxon"
@@ -18,5 +21,7 @@
       render "table", taxons: @taxons
     end
   %>
-<%== pagy_bootstrap_nav(@pagy) %>
+
+  <%== pagy_bootstrap_nav(@pagy) %>
+
 </turbo-frame>

@@ -29,7 +29,6 @@ class Taxon < ApplicationRecord
   include HasIssues
   @issues = [ :unknown_taxon, :long_taxon ]
 
-
   include PgSearch::Model
   pg_search_scope :search, 
     against: :name, 

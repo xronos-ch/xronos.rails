@@ -44,6 +44,10 @@ class Sample < ApplicationRecord
 
   include Versioned
 
+  include PgSearch::Model
+  pg_search_scope :search, 
+    against: :position_description,
+    using: { tsearch: { prefix: true } } # match partial words
   acts_as_copy_target # enable CSV exports
 
   include HasIssues

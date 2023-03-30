@@ -9,6 +9,10 @@ class Issues::SamplesController < IssuesController
       @samples = Sample.all
     end
 
+    if params.has_key?(:search)
+      @samples = @samples.search params[:search]
+    end
+
     if params.has_key?(:samples_order_by)
       order = { params[:samples_order_by] => params.fetch(:samples_order, "asc") }
     else

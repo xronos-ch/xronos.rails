@@ -1,0 +1,8 @@
+<div class="my-3">
+  <%= bootstrap_form_with url: filter_path, method: :get, layout: :inline do |f| %>
+    <%= f.text_field :search,
+      label: "Filter", label_as_placeholder: true,
+      class: "form-control-sm",
+      append: f.button(fa_icon("filter"), class: "btn btn-sm btn-outline-primary") %>
+  <% end %>
+</div>

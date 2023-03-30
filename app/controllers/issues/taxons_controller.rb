@@ -11,6 +11,10 @@ class Issues::TaxonsController < IssuesController
 
     @taxons = @taxons.with_samples_count
 
+    if params.has_key?(:search)
+      @taxons = @taxons.search params[:search]
+    end
+
     if params.has_key?(:taxons_order_by)
       order = { params[:taxons_order_by] => params.fetch(:taxons_order, "asc") }
     else
@@ -22,5 +26,7 @@ class Issues::TaxonsController < IssuesController
       format.html { @pagy, @taxons = pagy(@taxons) }
     end
   end
+
+  private
 
 end

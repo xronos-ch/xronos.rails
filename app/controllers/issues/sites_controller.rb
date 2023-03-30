@@ -9,6 +9,10 @@ class Issues::SitesController < IssuesController
       @sites = Site.all
     end
 
+    if params.has_key?(:search)
+      @sites = @sites.search params[:search]
+    end
+
     if params.has_key?(:sites_order_by)
       order = { params[:sites_order_by] => params.fetch(:sites_order, "asc") }
     else

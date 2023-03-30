@@ -9,6 +9,10 @@ class Issues::C14sController < IssuesController
       @c14s = C14.all
     end
 
+    if params.has_key?(:search)
+      @c14s = @c14s.search params[:search]
+    end
+
     if params.has_key?(:c14s_order_by)
       order = { params[:c14s_order_by] => params.fetch(:c14s_order, "asc") }
     else

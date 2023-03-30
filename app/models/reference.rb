@@ -32,6 +32,9 @@ class Reference < ApplicationRecord
   @issues = [ :mixed_reference, :missing_bibtex ]
 
   include PgSearch::Model
+  pg_search_scope :search, 
+    against: [ :short_ref, :bibtex ],
+    using: { tsearch: { prefix: true } } # match partial words
   multisearchable against: [ :short_ref, :bibtex ]
 
   scope :with_citations_count, -> {

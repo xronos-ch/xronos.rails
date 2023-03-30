@@ -7,6 +7,7 @@
 <%= render "issues/nav", model: Site, base_path: issues_sites_path %>
 
 <turbo-frame id="issues-sites-table">
+  <%= render "issues/filter_form", filter_path: issues_sites_path %>
   <%= render "table", sites: @sites %>
   <%== pagy_bootstrap_nav(@pagy) %>
 </turbo-frame>

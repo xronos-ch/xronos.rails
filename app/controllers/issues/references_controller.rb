@@ -9,6 +9,10 @@ class Issues::ReferencesController < IssuesController
       @references = Reference.all
     end
 
+    if params.has_key?(:search)
+      @references = @references.search params[:search]
+    end
+
     if params.has_key?(:references_order_by)
       order = { params[:references_order_by] => params.fetch(:references_order, "asc") }
     else
