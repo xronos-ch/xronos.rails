@@ -42,6 +42,8 @@ class C14 < ApplicationRecord
   validates :bp, :std, presence: true
   validates_associated :sample
 
+  composed_of :lab_id, mapping: %w(lab_identifier), allow_nil: true
+
   include Versioned
 
   include HasIssues
@@ -63,10 +65,6 @@ class C14 < ApplicationRecord
 
   def self.icon
     "icons/c14.svg"
-  end
-
-  def lab_identifier
-    C14::LabIdentifier.new(read_attribute(:lab_identifier))
   end
 
   def uncal_age
@@ -123,9 +121,9 @@ class C14 < ApplicationRecord
     lab_identifier.blank?
   end
 
-  scope :invalid_lab_id, -> { where("lab_identifier !~* ?", C14::LabIdentifier::PATTERN) }
+  scope :invalid_lab_id, -> { where("lab_identifier !~* ?", LabId::PATTERN) }
   def invalid_lab_id?
-    lab_identifier.invalid?
+    lab_id.invalid?
   end
   
   scope :missing_c14_lab, -> { where(c14_lab_id: nil) }

@@ -1,10 +1,10 @@
-class C14::LabIdentifier
-  attr_reader :lab_code, :lab_number
+class LabId
+  attr_reader :lab_identifier, :lab_code, :lab_number
 
   PATTERN = '^([[:alpha:]\(\)\/]{1,8})[ -\u2010\u2013_#\.\+](\d*[A-Z]?)$'
 
   def initialize(lab_identifier)
-    @raw_lab_id = lab_identifier
+    @lab_identifier = lab_identifier
     if lab_identifier.match?(PATTERN)
       @lab_code = lab_identifier[Regexp.new(PATTERN), 1]
       @lab_number = lab_identifier[Regexp.new(PATTERN), 2]
@@ -12,7 +12,7 @@ class C14::LabIdentifier
   end
 
   def valid?
-    @raw_lab_id.match?(PATTERN)
+    @lab_identifier.match?(PATTERN)
   end
 
   def invalid?
@@ -20,7 +20,7 @@ class C14::LabIdentifier
   end
 
   def to_s
-    return @raw_lab_id unless @lab_code.present? and @lab_number.present?
+    return @lab_identifier unless @lab_code.present? and @lab_number.present?
     @lab_code + "-" + @lab_number
   end
 
