@@ -19,13 +19,19 @@
 
   </section>
 
-  <% if @site.wikidata_link.present? %>
-    <section id="site-external-links" class="bg-light">
-      <div class="container my-5">
+  <section id="site-external-links" class="bg-light">
+    <div class="container my-5">
+      <h2>Linked data</h2>
+      <% if @site.wikidata_link.present? %>
+        <% if can? :manage, WikidataLink %>
+          <%= floating_button edit_wikidata_link_path(@site.wikidata_link) %>
+        <% end %>
         <%= turbo_frame_tag @site.wikidata_link, src: @site.wikidata_link %>
-      </div>
-    </section>
-  <% end %>
+      <% else %>
+        <p>There is no linked data available for this record.</p>
+      <% end %>
+    </div>
+  </section>
 
   <section id="site-location" class="my-5">
     <h2><%= bs_icon "pin-map" %> Location</h2>
