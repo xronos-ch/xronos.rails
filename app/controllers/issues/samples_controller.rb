@@ -3,8 +3,8 @@ class Issues::SamplesController < IssuesController
 
   # GET /issues/samples/:issue
   def index
-    if params.has_key?(:issue)
-      @samples = Sample.send(params[:issue])
+    if issue_param.present?
+      @samples = Sample.send(issue_param)
     else
       @samples = Sample.all
     end
@@ -23,6 +23,12 @@ class Issues::SamplesController < IssuesController
     respond_to do |format|
       format.html { @pagy, @samples = pagy(@samples) }
     end
+  end
+
+  private
+
+  def issues
+    Sample.issues
   end
 
 end

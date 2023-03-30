@@ -3,8 +3,8 @@ class Issues::TaxonsController < IssuesController
 
   # GET /issues/taxons/:issue
   def index
-    if params.has_key?(:issue)
-      @taxons = Taxon.send(params[:issue])
+    if issue_param.present?
+      @taxons = Taxon.send(issue_param)
     else
       @taxons = Taxon.all
     end
@@ -28,5 +28,9 @@ class Issues::TaxonsController < IssuesController
   end
 
   private
+
+  def issues
+    Taxon.issues
+  end
 
 end
