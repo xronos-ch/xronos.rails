@@ -123,6 +123,7 @@ class C14 < ApplicationRecord
 
   scope :invalid_lab_id, -> { where("lab_identifier !~* ?", LabId::PATTERN) }
   def invalid_lab_id?
+    return false if lab_id.blank?
     lab_id.invalid?
   end
   
