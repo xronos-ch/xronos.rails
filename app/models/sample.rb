@@ -34,10 +34,12 @@ class Sample < ApplicationRecord
   belongs_to :material, optional: true
   accepts_nested_attributes_for :material, reject_if: :all_blank
   validates_associated :material
+  delegate :name, to: :material, prefix: true, allow_nil: true
 
   belongs_to :taxon, optional: true
   accepts_nested_attributes_for :taxon, reject_if: :all_blank
   validates_associated :taxon
+  delegate :name, to: :taxon, prefix: true, allow_nil: true
 
   has_many :c14s
   has_many :typos
