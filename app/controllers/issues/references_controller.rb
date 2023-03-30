@@ -3,8 +3,8 @@ class Issues::ReferencesController < IssuesController
 
   # GET /issues/references/:issue
   def index
-    if params.has_key?(:issue)
-      @references = Reference.send(params[:issue])
+    if issue_param.present?
+      @references = Reference.send(issue_param)
     else
       @references = Reference.all
     end
@@ -25,6 +25,12 @@ class Issues::ReferencesController < IssuesController
     respond_to do |format|
       format.html { @pagy, @references = pagy(@references) }
     end
+  end
+
+  private
+
+  def issues
+    Reference.issues
   end
 
 end

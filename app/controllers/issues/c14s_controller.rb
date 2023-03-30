@@ -3,8 +3,8 @@ class Issues::C14sController < IssuesController
 
   # GET /issues/c14s/:issue
   def index
-    if params.has_key?(:issue)
-      @c14s = C14.send(params[:issue])
+    if issue_param.present?
+      @c14s = C14.send(issue_param)
     else
       @c14s = C14.all
     end
@@ -23,6 +23,12 @@ class Issues::C14sController < IssuesController
     respond_to do |format|
       format.html { @pagy, @c14s = pagy(@c14s) }
     end
+  end
+
+  private
+
+  def issues
+    C14.issues
   end
 
 end

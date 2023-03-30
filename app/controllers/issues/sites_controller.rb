@@ -3,8 +3,8 @@ class Issues::SitesController < IssuesController
 
   # GET /issues/sites/:issue
   def index
-    if params.has_key?(:issue)
-      @sites = Site.send(params[:issue])
+    if issue_param.present?
+      @sites = Site.send(issue_param)
     else
       @sites = Site.all
     end
@@ -25,6 +25,12 @@ class Issues::SitesController < IssuesController
     respond_to do |format|
       format.html { @pagy, @sites = pagy(@sites) }
     end
+  end
+
+  private
+
+  def issues
+    Site.issues
   end
 
 end

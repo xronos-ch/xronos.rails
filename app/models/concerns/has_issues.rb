@@ -21,7 +21,7 @@ module HasIssues
   end
 
   class_methods do
-    attr_accessor :issues
+    attr_reader :issues
 
     def has_issues?
       true
