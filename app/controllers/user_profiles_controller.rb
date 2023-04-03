@@ -94,7 +94,8 @@ class UserProfilesController < ApplicationController
         :email,
         :current_password,
         :password,
-        :password_confirmation
+        :password_confirmation,
+        :admin
       ]}
       )
     end

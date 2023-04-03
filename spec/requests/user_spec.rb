@@ -52,4 +52,29 @@ RSpec.describe "User Interactions", type: :request do
       expect(page).to have_field("user_profile_user_attributes_admin")
     end
   end
+  
+  describe "management" do
+    
+    before(:each) do
+      @user = User.create!(:email => 'test@example.com', :password => 'f4k3p455w0rd')
+      @user_profile = UserProfile.create!(first_name: "Horst", last_name: "Hans", user: @user)
+      @admin_user = FactoryBot.create(:user, :admin)
+      @admin_user_profile = UserProfile.create!(first_name: "Willi", last_name: "Wichtig", user: @admin_user)
+     end
+     
+    it "allows admin user to create a new user", focus: true, js: true do
+      new_user = FactoryBot.build(:user_profile)
+      sign_in @admin_user
+      visit 'user_profile'
+      click_link('List all User Profiles')
+      click_link('New User Profile')
+      fill_in 'user_profile_first_name', with: new_user.first_name
+      fill_in 'user_profile_last_name', with: new_user.last_name
+      fill_in 'user_profile_user_attributes_email', with: new_user.user.email
+      fill_in 'user_profile_user_attributes_password', with: new_user.user.password
+      fill_in 'user_profile_user_attributes_password_confirmation', with: new_user.user.password
+      click_button('Create User profile')
+      expect(page).to have_content(new_user.user.email)
+    end
+  end
 end
