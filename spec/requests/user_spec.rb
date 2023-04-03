@@ -62,7 +62,7 @@ RSpec.describe "User Interactions", type: :request do
       @admin_user_profile = UserProfile.create!(first_name: "Willi", last_name: "Wichtig", user: @admin_user)
      end
      
-    it "allows admin user to create a new user", focus: true, js: true do
+    it "allows admin user to create a new user" do
       new_user = FactoryBot.build(:user_profile)
       sign_in @admin_user
       visit 'user_profile'
