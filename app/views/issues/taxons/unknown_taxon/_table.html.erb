@@ -39,7 +39,7 @@
               None
             <% end %>
           <% else %>
-            <%= render "taxons/gbif_usage", gbif_usage: taxon.gbif_usage_from_match %>
+            <%= render "taxon_usages/taxon_usage", taxon_usage: taxon.gbif_usage_from_match %>
           <% end %>
         </td>
         <td>

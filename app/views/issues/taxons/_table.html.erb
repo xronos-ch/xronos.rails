@@ -35,7 +35,15 @@
       <tr>
         <td class="text-muted"><%= taxon.id %></td>
         <td><%= taxon.name %></td>
-        <td><%= render "taxons/gbif_usage", gbif_usage: taxon.gbif_usage %></td>
+        <td>
+          <% if taxon.gbif_id.present? %>
+            <%= turbo_frame_tag taxon.usage, src: taxon_usage_path(taxon.usage.id) do %>
+              <span class="text-muted">gbif:<%= taxon.gbif_id %></span>
+            <% end %>
+          <% else %>
+            <%= na_value %>
+          <% end %>
+        </td>
         <td class="text-end"><%= taxon.samples_count %></td>
         <td class="text-end"><% taxon.issues.each do |issue| %>
           <%= issue_badge(issue) %>
