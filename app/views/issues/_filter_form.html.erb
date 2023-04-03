@@ -1,5 +1,5 @@
 <div class="my-3">
-  <%= bootstrap_form_with url: filter_path, method: :get, layout: :inline do |f| %>
+  <%= bootstrap_form_with method: :get, layout: :inline do |f| %>
     <%# Preserve GET params, e.g. ordering %>
     <% request.query_parameters.each do |key, value| %>
       <%= hidden_field_tag key, value %>
