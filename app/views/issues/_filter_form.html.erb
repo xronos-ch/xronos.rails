@@ -5,6 +5,7 @@
       <%= hidden_field_tag key, value %>
     <% end %>
     <%= f.text_field :search,
+      value: params.fetch(:search, nil),
       label: "Filter", label_as_placeholder: true,
       class: "form-control-sm",
       append: f.button(fa_icon("filter"), class: "btn btn-sm btn-outline-primary") %>
