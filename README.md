@@ -20,7 +20,7 @@ your_directory
 ```
 
 **db**: An empty directory that will contain the database.  
-**docker-compose.yml**: The `docker-compose.yml` file in this repository.  
+**docker-compose.yml**: A `docker-compose.yml` file ([example](https://github.com/xronos-ch/xronos.rails/blob/f4049a7eb0ee2a6311a72ef5616e4692aa2cad52/docker-compose.yml))
 **env_variables.env**: A file with environment variables.
 
 ```
