@@ -96,3 +96,4 @@ vendor/calibrator/bin/calibrator*
 # sitemaps
 public/sitemap.xml.gz
 public/sitemaps/*
+!public/sitemaps/.keep
