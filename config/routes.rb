@@ -48,6 +48,7 @@ Rails.application.routes.draw do
   resources :taxons, except: [:index, :show] do
     get 'search', on: :collection
   end
+  resources :taxon_usages, only: :show
 
   # User management
   resources :user_profiles

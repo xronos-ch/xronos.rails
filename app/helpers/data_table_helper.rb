@@ -11,7 +11,7 @@ module DataTableHelper
         order_param(table) => "asc"
       )
     end
-    link_to label, new_params
+    link_to label, new_params, data: { turbo_action: :advance }
   end
 
   def ordered_by?(column, table = controller_name)

@@ -1,0 +1,10 @@
+<%= turbo_frame_tag taxon_usage do %>
+  <% if taxon_usage.blank? %>
+    <%= na_value %>
+  <% else %>
+    <span class="badge text-bg-info"><%= taxon_usage.rank %></span>
+    <a href="<%= taxon_usage.url %>" title="gbif:<%= taxon_usage.id %>">
+      <i><%= taxon_usage.canonical_name %></i> <%= taxon_usage.authorship %>
+    </a>
+  <% end %>
+<% end %>

@@ -24,7 +24,7 @@ class Taxon < ApplicationRecord
   include Versioned
 
   before_save :set_gbif_id_from_match, unless: :gbif_id?
-  before_save :set_name_from_gbif
+  before_save :set_name_from_usage
 
   include HasIssues
   @issues = [ :unknown_taxon, :long_taxon ]
@@ -51,21 +51,13 @@ class Taxon < ApplicationRecord
     SQL
   }
 
-  def gbif_id?
-    gbif_id.present?
+  def usage
+    return nil if gbif_id.blank?
+    TaxonUsage.new(id: gbif_id)
   end
 
-  def gbif_usage(id = gbif_id)
-    if id.blank?
-      return nil
-    end
-
-    Rails.cache.fetch("taxons/gbif_usage/#{id}", expires_in: 30.days) do
-      logger.debug "GBIF API request: https://api.gbif.org/v1/species/#{id}"
-      resp = Gbif::Request.new("species/#{id}", nil, nil, nil).perform
-      # TODO: recover from server errors?
-      OpenStruct.new(resp)
-    end
+  def gbif_id?
+    gbif_id.present?
   end
 
   def gbif_match(strict = false)
@@ -84,7 +76,7 @@ class Taxon < ApplicationRecord
   end
 
   def gbif_usage_from_match(match = gbif_match)
-    gbif_usage(gbif_id_from_match(match))
+    TaxonUsage.new(id: gbif_id_from_match(match))
   end
 
   def set_gbif_id_from_match(strict = true)
@@ -97,11 +89,8 @@ class Taxon < ApplicationRecord
     end
   end
 
-  def set_name_from_gbif
-    gbif = gbif_usage
-    unless gbif.blank?
-      self.name = gbif.canonicalName
-    end
+  def set_name_from_usage
+    self.name = usage.canonical_name unless gbif_id.blank?
   end
 
   def self.label

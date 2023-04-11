@@ -1,19 +1,21 @@
-<% if taxon.blank? %>
-  <%= na_value %>
+<% if taxon.gbif_id.blank? %>
+
+  <span class="text-muted"><%= taxon.name %></span>
+  <%= fa_icon "exclamation-circle",
+    class: "text-warning",
+    data: { "bs-toggle": "tooltip", controller: "tooltips" },
+    title: "Taxon not matched to backbone taxonomy"
+  %>
+
 <% else %>
-  <% if taxon.gbif_id.blank? %>
-    <span class="text-muted"><%= taxon.name %></span>
-    <%= fa_icon "exclamation-circle",
-      class: "text-warning",
-      data: { "bs-toggle": "tooltip", controller: "tooltips" },
-      title: "Taxon not matched to backbone taxonomy"
-    %>
-  <% else %>
-    <%= render "taxons/gbif_usage", gbif_usage: taxon.gbif_usage %>
-    <%= fa_icon "question-circle",
-      class: "text-info",
-      data: { "bs-toggle": "tooltip", controller: "tooltips" },
-      title: "Taxonomic data from GBIF.org"
-    %>
+
+  <%= turbo_frame_tag taxon.usage, src: taxon_usage_path(taxon.usage.id) do %>
+    <i><%= taxon.name %></i>
   <% end %>
+  <%= fa_icon "question-circle",
+    class: "text-info",
+    data: { "bs-toggle": "tooltip", controller: "tooltips" },
+    title: "Taxonomic data from GBIF.org"
+  %>
+
 <% end %>

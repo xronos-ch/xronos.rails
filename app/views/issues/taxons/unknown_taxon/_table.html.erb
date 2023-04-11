@@ -39,7 +39,7 @@
               None
             <% end %>
           <% else %>
-            <%= render "taxons/gbif_usage", gbif_usage: taxon.gbif_usage_from_match %>
+            <%= render "taxon_usages/taxon_usage", taxon_usage: taxon.gbif_usage_from_match %>
           <% end %>
         </td>
         <td>
@@ -53,9 +53,9 @@
             <div class="btn-toolbar justify-content-end">
                 <div class="btn-group me-2">
                   <%= bootstrap_form_for taxon do |f| %>
-                    <%= f.hidden_field :gbif_id, value: taxon.gbif_match.usageKey %>
-                    <%= f.hidden_field :revision_comment, value: "Matched to GBIF Backbone Taxonomy" %>
                     <% if taxon.gbif_match.usageKey.present? %>
+                      <%= f.hidden_field :gbif_id, value: taxon.gbif_match.usageKey %>
+                      <%= f.hidden_field :revision_comment, value: "Matched to GBIF Backbone Taxonomy" %>
                       <%= f.primary class: "btn btn-sm btn-primary", title: "Use suggested GBIF match" do %>
                         <%= fa_icon "check" %>
                       <% end %>
