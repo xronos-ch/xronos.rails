@@ -26,6 +26,8 @@ services:
       - "4001:3000"
     depends_on:
       - db
+    volumes:
+      - ./storage:/srv/xronos_staging/storage
     env_file:
       - env_variables.env
   autoheal:
