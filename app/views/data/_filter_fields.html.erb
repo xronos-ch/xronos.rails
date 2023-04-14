@@ -5,108 +5,116 @@
   </div>
 </noscript>
 
-<%= f.fields_for :sites do |f| %>
+<%= accordion_item "dataFilters-Site", "Site", false do %>
 
-  <%= f.text_field :name, label: "Sites", 
-    value: @data.filter_value_string(:sites, :name),
-    multiple: true,
-    data: { 
-      controller: "tom-select",
-      "tom-select-route-value": "sites/search",
-      "tom-select-value-value": "name",
-      "tom-select-label-value": "name",
-      "tom-select-search-value": "name"
-    } 
-  %>
+  <%= f.fields_for :sites do |f| %>
 
-  <div class="mb-3">
-    <%= f.label :country_code, "Countries", class: "form-label" %>
-    <%= f.country_select :country_code, 
-      { selected: @data.filter_value(:sites, :country_code) },
+    <%= f.text_field :name, label: "Site names", 
+      value: @data.filter_value_string(:sites, :name),
+      multiple: true,
+      data: { 
+        controller: "tom-select",
+        "tom-select-route-value": "sites/search",
+        "tom-select-value-value": "name",
+        "tom-select-label-value": "name",
+        "tom-select-search-value": "name"
+      } 
+    %>
+
+    <div class="mb-3">
+      <%= f.label :country_code, "Countries", class: "form-label" %>
+      <%= f.country_select :country_code, 
+        { selected: @data.filter_value(:sites, :country_code) },
+        { 
+          class: "form-select",
+          multiple: true,
+          data: { controller: "tom-select" }
+        }
+      %>
+    </div>
+
+  <% end %>
+
+  <%= f.fields_for :site_types do |f| %>
+    <%= f.text_field :name, label: "Site types", 
+      value: @data.filter_value_string(:site_types, :name),
+      multiple: true,
+      data: {
+        controller: "tom-select",
+        "tom-select-route-value": "site_types/search",
+        "tom-select-value-value": "name",
+        "tom-select-label-value": "name",
+        "tom-select-search-value": "name"
+      }
+    %>
+  <% end %>
+
+<% end %>
+
+<%= accordion_item "dataFiltersSample", "Sample", false do %>
+
+  <%= f.fields_for :materials do |f| %>
+    <%= f.text_field :name, label: "Materials", 
+      value: @data.filter_value_string(:materials, :name),
+      multiple: true,
+      data: {
+        controller: "tom-select",
+        "tom-select-route-value": "materials/search",
+        "tom-select-value-value": "name",
+        "tom-select-label-value": "name",
+        "tom-select-search-value": "name"
+      }
+    %>
+  <% end %>
+
+  <%= f.fields_for :taxons do |f| %>
+    <%= f.text_field :name, label: "Taxons", 
+      value: @data.filter_value_string(:taxons, :name),
+      multiple: true,
+      data: {
+        controller: "tom-select",
+        "tom-select-route-value": "taxons/search",
+        "tom-select-value-value": "name",
+        "tom-select-label-value": "name",
+        "tom-select-search-value": "name"
+      }
+    %>
+  <% end %>
+
+<% end %>
+
+<%= accordion_item "dataFilters-C14", "Radiocarbon", false do %>
+  <%= f.fields_for :c14_labs do |f| %>
+    <%= f.collection_select :name, C14Lab.all, :name, :name,
+      {
+        label: "Labs",
+        selected: @data.filter_value(:c14_labs, :name),
+        include_blank: true,
+      },
       { 
-        class: "form-select",
         multiple: true,
         data: { controller: "tom-select" }
       }
     %>
-  </div>
+  <% end %>
 
-<% end %>
+  <%= f.fields_for :c14s do |f| %>
 
-<%= f.fields_for :site_types do |f| %>
-  <%= f.text_field :name, label: "Site types", 
-    value: @data.filter_value_string(:site_types, :name),
-    multiple: true,
-    data: {
-      controller: "tom-select",
-      "tom-select-route-value": "site_types/search",
-      "tom-select-value-value": "name",
-      "tom-select-label-value": "name",
-      "tom-select-search-value": "name"
-    }
-  %>
-<% end %>
-
-<%= f.fields_for :materials do |f| %>
-  <%= f.text_field :name, label: "Sample materials", 
-    value: @data.filter_value_string(:materials, :name),
-    multiple: true,
-    data: {
-      controller: "tom-select",
-      "tom-select-route-value": "materials/search",
-      "tom-select-value-value": "name",
-      "tom-select-label-value": "name",
-      "tom-select-search-value": "name"
-    }
-  %>
-<% end %>
-
-<%= f.fields_for :taxons do |f| %>
-  <%= f.text_field :name, label: "Sample taxa", 
-    value: @data.filter_value_string(:taxons, :name),
-    multiple: true,
-    data: {
-      controller: "tom-select",
-      "tom-select-route-value": "taxons/search",
-      "tom-select-value-value": "name",
-      "tom-select-label-value": "name",
-      "tom-select-search-value": "name"
-    }
-  %>
-<% end %>
-
-<%= f.fields_for :c14_labs do |f| %>
-  <%= f.collection_select :name, C14Lab.all, :name, :name,
-    {
-      label: "Labs",
-      selected: @data.filter_value(:c14_labs, :name),
-      include_blank: true,
-    },
-    { 
+    <%= f.text_field :lab_identifier, label: "Lab IDs", 
+      value: @data.filter_value_string(:c14s, :lab_identifier),
       multiple: true,
-      data: { controller: "tom-select" }
-    }
-  %>
-<% end %>
+      data: {
+        controller: "tom-select",
+        "tom-select-route-value": "c14s/search",
+        "tom-select-value-value": "lab_identifier",
+        "tom-select-label-value": "lab_identifier",
+        "tom-select-search-value": "lab_identifier"
+      }
+    %>
 
-<%= f.fields_for :c14s do |f| %>
+    <%# f.number_field :bp, label: "Uncalibrated age", append: "uncal BP", 
+      value: @data.filter_value_string(:sites, :contexts, :samples, :c14s, :bp) %>
 
-  <%= f.text_field :lab_identifier, label: "Lab IDs", 
-    value: @data.filter_value_string(:c14s, :lab_identifier),
-    multiple: true,
-    data: {
-      controller: "tom-select",
-      "tom-select-route-value": "c14s/search",
-      "tom-select-value-value": "lab_identifier",
-      "tom-select-label-value": "lab_identifier",
-      "tom-select-search-value": "lab_identifier"
-    }
-  %>
-
-  <%# f.number_field :bp, label: "Uncalibrated age", append: "uncal BP", 
-    value: @data.filter_value_string(:sites, :contexts, :samples, :c14s, :bp) %>
-
-  <%# f.number_field :cal_bp, label: "Calibrated age", append: "cal BP", 
-    value: @data.filter_value_string(:sites, :contexts, :samples, :c14s, :bp) %>
+  <% end %>
 
 <% end %>
