@@ -89,10 +89,13 @@ class Data
 
   def slice_ranges(x)
     x.map! { |i| i.to_i }
-    x = x.each_slice(2).map { |n| 
-      return n[0] if n.length == 1
-      n = n.sort
-      n[0]..n[1] 
+    x.each_slice(2).map { |n| 
+      if n.length == 1
+        n[0]..n[0]
+      else
+        n.sort!
+        n[0]..n[1] 
+      end
     }
   end
 

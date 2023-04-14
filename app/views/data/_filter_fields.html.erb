@@ -117,13 +117,13 @@
         append: "uncal BP",
         min: 0,
         max: 50000,
-        value: @data.filter_value(:c14s, :bp)[0].min %>
+        value: @data.filter_value(:c14s, :bp).present? ? @data.filter_value(:c14s, :bp)[0].min : 0 %>
 
       <%= f.number_field nil, label: "Maximum radiocarbon age",
         append: "uncal BP",
         min: 0,
         max: 50000,
-        value: @data.filter_value(:c14s, :bp)[0].max %>
+        value: @data.filter_value(:c14s, :bp).present? ? @data.filter_value(:c14s, :bp)[0].max : 50000 %>
 
     <% end %>
 
