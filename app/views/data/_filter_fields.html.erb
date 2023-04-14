@@ -112,8 +112,20 @@
       }
     %>
 
-    <%# f.number_field :bp, label: "Uncalibrated age", append: "uncal BP", 
-      value: @data.filter_value_string(:sites, :contexts, :samples, :c14s, :bp) %>
+    <%= f.fields_for :bp do |f| %>
+      <%= f.number_field nil, label: "Minimum radiocarbon age",
+        append: "uncal BP",
+        min: 0,
+        max: 50000,
+        value: @data.filter_value(:c14s, :bp)[0].min %>
+
+      <%= f.number_field nil, label: "Maximum radiocarbon age",
+        append: "uncal BP",
+        min: 0,
+        max: 50000,
+        value: @data.filter_value(:c14s, :bp)[0].max %>
+
+    <% end %>
 
   <% end %>
 

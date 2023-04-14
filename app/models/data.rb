@@ -34,7 +34,7 @@ class Data
   def filters=(value)
     filters = value.to_h
     filters = deep_compact(filters)
-    #filters = decode_range_filters(filters)
+    filters = decode_range_filters(filters)
     filters = decode_array_filters(filters)
 
     @filters = filters
@@ -88,7 +88,8 @@ class Data
   end
 
   def slice_ranges(x)
-    x.each_slice(2).map { |n| 
+    x.map! { |i| i.to_i }
+    x = x.each_slice(2).map { |n| 
       return n[0] if n.length == 1
       n = n.sort
       n[0]..n[1] 
