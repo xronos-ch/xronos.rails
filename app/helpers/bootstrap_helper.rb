@@ -28,7 +28,7 @@ module BootstrapHelper
   end
 
   def accordion_button(id, title, collapsed)
-    classes = [ "accordion-button" ]
+    classes = [ "accordion-button", "bg-body" ]
     classes.push("collapsed") if collapsed
     button_tag title, name: nil, class: classes.join(" "), type: :button,
       data: { bs_toggle: "collapse", bs_target: "#" + id.to_s },
