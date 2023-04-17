@@ -37,7 +37,7 @@
         <td class="text-muted"><%= sample.id %></td>
         <td><%= render "contexts/context", context: sample.context %></td>
         <td><%= sample.material.present? ? sample.material.name : na_value %></td>
-        <td><%= render "taxons/taxon", taxon: sample.taxon %></td>
+        <td><%= sample.taxon.present? ? render("taxons/taxon", taxon: sample.taxon) : na_value %></td>
         <td><%= sample.position_description.present? ? sample.position_description : na_value %></td>
         <td class="font-monospace"><%= render "samples/coordinates", sample: sample %></td>
         <td><% sample.issues.each do |issue| %>
