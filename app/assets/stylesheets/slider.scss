@@ -17,10 +17,3 @@
 	display: block !important;
 }
 
-/* Nudge outer labels back inside parent box */
-.noUi-rtl .noUi-value-horizontal:nth-child(2) {
-	transform: translate(50%, 50%);
-}
-.noUi-rtl .noUi-value-horizontal:last-child {
-	transform: translate(90%, 50%);
-}

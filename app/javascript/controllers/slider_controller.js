@@ -35,7 +35,8 @@ export default class extends Controller {
 			range: range,
 			pips: {
 				mode: 'range',
-				density: density
+				density: density,
+				format: this.formatter()
 			}
 		});
 
@@ -54,8 +55,7 @@ export default class extends Controller {
 			"integer": wNumb({ decimal: 0 }),
 			"uncalBP": wNumb({
 				decimal: 0,
-				thousands: "&thinsp;",
-				suffix: " uncal BP"
+				thousand: "&thinsp;"
 			})
 		}
 		return formatters[this.formatterValue];
