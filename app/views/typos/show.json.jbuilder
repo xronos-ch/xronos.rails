@@ -1,1 +1,1 @@
-json.partial! "periods/period", period: @period
+json.partial! "typos/typo", typo: @typo

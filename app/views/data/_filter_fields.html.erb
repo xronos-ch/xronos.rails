@@ -159,5 +159,23 @@
     </noscript>
 
   <% end %>
-
 <% end %>
+
+<%= accordion_item "dataFilters-Typo", "Typochronology", false do %>
+  <%= f.fields_for :typos do |f| %>
+
+    <%= f.text_field :name, label: "Typochronological unit", 
+      value: @data.filter_value_string(:typos, :name),
+      multiple: true,
+      data: { 
+        controller: "tom-select",
+        "tom-select-route-value": "typos/search",
+        "tom-select-value-value": "name",
+        "tom-select-label-value": "name",
+        "tom-select-search-value": "name"
+      } 
+    %>
+
+  <% end %>
+<% end %>
+

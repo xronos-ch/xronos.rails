@@ -42,6 +42,22 @@ class TyposController < ApplicationController
     end
   end
 
+  # GET /typos/search
+  # GET /typos/search.json
+  def search
+    @typos = Typo.search(params[:q])
+
+    respond_to do |format|
+      format.html { 
+        @pagy, @typos = pagy(@typos)
+        render :index
+      }
+      format.json  {
+        render :index
+      }
+    end
+  end
+
   # GET /typos/1
   # GET /typos/1.json
   def show

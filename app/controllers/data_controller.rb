@@ -53,6 +53,10 @@ class DataController < ApplicationController
         :name,
         {name: []}
       ]},
+      {typos: [
+        :name,
+        {name: []}
+      ]},
       {sites: [
         :name,
         {name: []},
