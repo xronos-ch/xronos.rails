@@ -1,3 +1,7 @@
+.noUi-connect {
+	background: $primary !important;
+}
+
 /* Compensate for absolute-positioned pips */
 .has-slider::after {
 	content: "";
