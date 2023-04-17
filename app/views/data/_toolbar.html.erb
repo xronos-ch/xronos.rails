@@ -1,13 +1,25 @@
 <div class="d-flex">
-  <a class="navbar-brand link-dark" href="#">
+
+  <h1 class="h5 my-0 me-3 px-3 py-2 text-primary fw-bold">
     <%= fa_icon "hourglass-half" %>
     Data browser
-  </a>
+  </h1>
 
-  <ul class="nav nav-pills ms-3" role="tablist">
-    <li class="nav-item">
-      <a class="nav-link disabled text-dark">View:</a>
-    </li>
+  <button class="me-3 btn btn btn-outline-primary"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#dataFilters"
+          aria-expanded="true"
+          aria-controls="dataFilters">
+    <%= fa_icon "filter", text: "Filters" %>
+    <span class="collapse-status-open"><%= fa_icon "angle-left" %></span>
+    <span class="collapse-status-closed"><%= fa_icon "angle-right" %></span>
+  </button>
+
+  <div class="px-3 py-2 text-muted">
+    View:
+  </div>
+  <ul class="me-3 nav nav-pills" role="tablist">
     <li class="nav-item" role="presentation">
       <a id="dataMapTab" 
          class="nav-link active" 
@@ -17,7 +29,7 @@
          aria-controls="dataMap"
          aria-selected="true">
         <%= fa_icon "map-marker" %>
-        Map
+        Sites
       </a>
     </li>
     <li class="nav-item" role="presentation">
@@ -29,22 +41,12 @@
          aria-controls="dataTable"
          aria-selected="false">
         <%= fa_icon "table" %>
-        Table
+        Radiocarbon dates
       </a>
     </li>
   </ul>
 
-  <button class="btn btn-secondary ms-3"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#dataFilters"
-          aria-expanded="true"
-          aria-controls="dataFilters">
-    <%= fa_icon "filter" %>
-    Show/hide filters
-  </button>
-
-  <span class="navbar-text ms-3">
+  <span class="navbar-text me-3">
     <%= render "filter_status" %>
   </span>
 

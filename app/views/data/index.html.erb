@@ -1,13 +1,13 @@
 <% content_for :title, "Browse data" %>
 <% content_for :meta_description, "Browse and download #{@data.everything.count} chronometric records from XRONOS, including radiocarbon dates, typological classifications, and dendrochronological dates. Filter by countries, specific archaeological site(s), site types, sample materials, sample taxa, radiocarbon laboratories, or laboratory IDs." %>
-<div class="px-3 py-2 bg-secondary border-bottom shadow-sm">
+
+<div class="px-1 py-2 border-bottom shadow-sm">
   <%= render "toolbar" %>
 </div>
 
 <div class="flex-grow-1 d-flex">
 
-  <aside id="dataFilters" 
-         class="collapse collapse-horizontal show border-end shadow-sm">
+  <aside id="dataFilters" class="collapse collapse-horizontal show bg-light">
     <%= render "filters" %>
   </aside>
 

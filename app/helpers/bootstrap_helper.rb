@@ -1,7 +1,7 @@
 module BootstrapHelper
 
   def accordion_item(id, title, collapsed = true)
-    content_tag :div, class: "accordion-item" do
+    content_tag :div, class: "accordion-item bg-transparent border-0" do
       header = accordion_header id, title, collapsed
       collapse = accordion_collapse id, collapsed do
         yield
@@ -28,7 +28,7 @@ module BootstrapHelper
   end
 
   def accordion_button(id, title, collapsed)
-    classes = [ "accordion-button", "bg-body" ]
+    classes = [ "accordion-button", "bg-transparent" ]
     classes.push("collapsed") if collapsed
     button_tag title, name: nil, class: classes.join(" "), type: :button,
       data: { bs_toggle: "collapse", bs_target: "#" + id.to_s },

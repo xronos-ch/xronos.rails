@@ -5,7 +5,7 @@
   </div>
 </noscript>
 
-<%= accordion_item "dataFilters-Site", "Site", false do %>
+<%= accordion_item "dataFilters-Site", "Sites", false do %>
 
   <%= f.fields_for :sites do |f| %>
 
@@ -20,18 +20,6 @@
         "tom-select-search-value": "name"
       } 
     %>
-
-    <div class="mb-3">
-      <%= f.label :country_code, "Countries", class: "form-label" %>
-      <%= f.country_select :country_code, 
-        { selected: @data.filter_value(:sites, :country_code) },
-        { 
-          class: "form-select",
-          multiple: true,
-          data: { controller: "tom-select" }
-        }
-      %>
-    </div>
 
   <% end %>
 
@@ -49,6 +37,24 @@
     %>
   <% end %>
 
+<% end %>
+
+<%= accordion_item "dataFiltersLocation", "Location", false do %>
+  <%= f.fields_for :sites do |f| %>
+
+    <div class="mb-3">
+      <%= f.label :country_code, "Countries", class: "form-label" %>
+      <%= f.country_select :country_code, 
+        { selected: @data.filter_value(:sites, :country_code) },
+        { 
+          class: "form-select",
+          multiple: true,
+          data: { controller: "tom-select" }
+        }
+      %>
+    </div>
+
+  <% end %>
 <% end %>
 
 <%= accordion_item "dataFiltersSample", "Sample", false do %>
