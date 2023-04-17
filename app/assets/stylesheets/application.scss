@@ -53,5 +53,8 @@ $enable-shadows: true;
 @import "layout";
 @import "typography";
 
+// Components
+@import "slider";
+
 // View-specific
 @import "data";

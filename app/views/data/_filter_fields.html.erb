@@ -112,20 +112,45 @@
       }
     %>
 
-    <%= f.fields_for :bp do |f| %>
-      <%= f.number_field nil, label: "Minimum radiocarbon age",
-        append: "uncal BP",
-        min: 0,
-        max: 50000,
-        value: @data.filter_value(:c14s, :bp).present? ? @data.filter_value(:c14s, :bp)[0].min : 0 %>
+    <%# TODO: abstract as a helper or FormBuilder extension %>
+    <div class="mb-3"
+         data-controller="slider" 
+         data-slider-formatter-value="uncalBP"
+         data-slider-step-value=10
+         data-slider-direction-value=rtl
+         data-slider-range-value='{ "min": [0, 20], "25%": [2000, 100], "50%": [10000, 250], "75%": [30000, 500], "max": 50000 }'
+         data-slider-density-value=2>
 
-      <%= f.number_field nil, label: "Maximum radiocarbon age",
-        append: "uncal BP",
-        min: 0,
-        max: 50000,
-        value: @data.filter_value(:c14s, :bp).present? ? @data.filter_value(:c14s, :bp)[0].max : 50000 %>
+      <%= f.fields_for :bp do |f| %>
+        <%= f.hidden_field nil, data: { slider_target: "minInput" },
+          min: 0, max: 50000,
+          value: @data.filter_value(:c14s, :bp).present? ? @data.filter_value(:c14s, :bp)[0].min : 0 %>
+        <%= f.hidden_field nil, data: { slider_target: "maxInput" },
+          min: 0, max: 50000,
+          value: @data.filter_value(:c14s, :bp).present? ? @data.filter_value(:c14s, :bp)[0].max : 50000 %>
+      <% end %>
 
-    <% end %>
+      <label class="form-label" for="uncal_bp_slider">Radiocarbon age</label>
+      <div id="uncal_bp_slider" data-slider-target="slider"></div>
+
+    </div>
+    
+    <noscript>
+      <%# TODO: Switch to range fields if this is fixed:
+        https://github.com/bootstrap-ruby/bootstrap_form/issues/677 %>
+      <%= f.fields_for :bp do |f| %>
+        <%= f.number_field nil, label: "Minimum radiocarbon age",
+          append: "uncal BP",
+          min: 0,
+          max: 50000,
+          value: @data.filter_value(:c14s, :bp).present? ? @data.filter_value(:c14s, :bp)[0].min : 0 %>
+        <%= f.number_field nil, label: "Maximum radiocarbon age",
+          append: "uncal BP",
+          min: 0,
+          max: 50000,
+          value: @data.filter_value(:c14s, :bp).present? ? @data.filter_value(:c14s, :bp)[0].max : 50000 %>
+      <% end %>
+    </noscript>
 
   <% end %>
 
