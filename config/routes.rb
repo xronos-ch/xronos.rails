@@ -35,7 +35,9 @@ Rails.application.routes.draw do
     get 'search', on: :collection
   end
   resources :measurement_states
-  resources :references
+  resources :references do
+    get 'search', on: :collection
+  end
   resources :sites do
     get 'search', on: :collection
   end

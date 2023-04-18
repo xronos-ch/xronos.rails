@@ -179,3 +179,20 @@
   <% end %>
 <% end %>
 
+<%= accordion_item "dataFilters-Reference", "Bibliography", true do %>
+  <%= f.fields_for :references do |f| %>
+
+    <%= f.text_field :short_ref, label: "References", 
+      value: @data.filter_value_string(:references, :short_ref),
+      multiple: true,
+      data: { 
+        controller: "tom-select",
+        "tom-select-route-value": "references/search",
+        "tom-select-value-value": "short_ref",
+        "tom-select-label-value": "short_ref",
+        "tom-select-search-value": "short_ref"
+      } 
+    %>
+
+  <% end %>
+<% end %>

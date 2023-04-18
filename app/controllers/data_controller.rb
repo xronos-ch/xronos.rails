@@ -57,6 +57,10 @@ class DataController < ApplicationController
         :name,
         {name: []}
       ]},
+      {references: [
+        :short_ref,
+        {short_ref: []},
+      ]},
       {sites: [
         :name,
         {name: []},
