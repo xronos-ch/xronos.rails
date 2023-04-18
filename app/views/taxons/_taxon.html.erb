@@ -1,4 +1,4 @@
-<% if taxon.gbif_id? %>
+<% if !taxon.gbif_id? %>
 
   <span class="text-muted"><%= taxon.name %></span>
   <%= fa_icon "exclamation-circle",
