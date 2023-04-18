@@ -5,7 +5,7 @@
   </div>
 </noscript>
 
-<%= accordion_item "dataFilters-Site", "Sites", false do %>
+<%= accordion_item "dataFilters-Site", "Sites", true do %>
 
   <%= f.fields_for :sites do |f| %>
 
@@ -57,7 +57,7 @@
   <% end %>
 <% end %>
 
-<%= accordion_item "dataFiltersSample", "Sample", false do %>
+<%= accordion_item "dataFiltersSample", "Sample", true do %>
 
   <%= f.fields_for :materials do |f| %>
     <%= f.text_field :name, label: "Materials", 
@@ -89,7 +89,7 @@
 
 <% end %>
 
-<%= accordion_item "dataFilters-C14", "Radiocarbon", false do %>
+<%= accordion_item "dataFilters-C14", "Radiocarbon", true do %>
   <%= f.fields_for :c14_labs do |f| %>
     <%= f.collection_select :name, C14Lab.all, :name, :name,
       {
@@ -161,7 +161,7 @@
   <% end %>
 <% end %>
 
-<%= accordion_item "dataFilters-Typo", "Typochronology", false do %>
+<%= accordion_item "dataFilters-Typo", "Typochronology", true do %>
   <%= f.fields_for :typos do |f| %>
 
     <%= f.text_field :name, label: "Typochronological unit", 
