@@ -27,7 +27,7 @@ class WikidataLink < ApplicationRecord
 
   attr_reader :item
 
-  validates :qid, presence: true
+  validates :qid, presence: true, numericality: { only_integer: true }
 
   belongs_to :wikidata_linkable, polymorphic: true
 
