@@ -1,14 +1,23 @@
 class TaxonsController < ApplicationController
   include SupersedableController
+  include Tabulatable
 
   load_and_authorize_resource
 
   before_action :set_taxon, only: [:show, :edit, :update, :destroy]
 
-  # GET /taxon
-  # GET /taxon.json
+  # GET /taxons
+  # GET /taxons.json
+  # GET /taxons.csv
   def index
-    @taxon = Taxon.all
+    @taxons = Taxon.all
+    
+    respond_to do |format|
+      format.csv {
+        @taxons = @taxons.select(index_csv_template)
+        render csv: @taxons
+      }
+    end
   end
 
   # GET /taxons/search.json
@@ -20,11 +29,6 @@ class TaxonsController < ApplicationController
         render :index
       }
     end
-  end
-
-  # GET /taxon/1
-  # GET /taxon/1.json
-  def show
   end
 
   # GET /taxon/new
@@ -43,7 +47,7 @@ class TaxonsController < ApplicationController
 
     respond_to do |format|
       if @taxon.save
-        format.html { redirect_to @taxon, notice: 'Taxon was successfully created.' }
+        format.html { redirect_back fallback_location: root_path, notice: 'Taxon was successfully created.' }
         format.json { render :show, status: :created, location: @taxon }
       else
         format.html { render :new }
@@ -57,7 +61,7 @@ class TaxonsController < ApplicationController
   def update
     respond_to do |format|
       if @taxon.update(taxon_params)
-        format.html { redirect_to @taxon, notice: 'Taxon was successfully updated.' }
+        format.html { redirect_back fallback_location: root_path, notice: 'Taxon was successfully updated.' }
         format.json { render :show, status: :ok, location: @taxon }
       else
         format.html { render :edit }
@@ -71,7 +75,7 @@ class TaxonsController < ApplicationController
   def destroy
     @taxon.destroy
     respond_to do |format|
-      format.html { redirect_to taxon_index_url, notice: 'Taxon was successfully destroyed.' }
+      format.html { redirect_back fallback_location: root_path, notice: 'Taxon was successfully destroyed.' }
       format.json { head :no_content }
     end
   end
@@ -84,6 +88,6 @@ class TaxonsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def taxon_params
-      params.require(:taxon).permit(:name)
+      params.require(:taxon).permit([ :name, :gbif_id, :revision_comment ])
     end
 end

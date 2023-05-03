@@ -1,18 +1,22 @@
 <% content_for :title, "#{@c14.lab_identifier}, #{C14.label} from #{@c14.site.name}" %>
+<% content_for :meta_description do %>
+<%= @c14.site.name %> (<%= @c14.site.country %>) has been radiocarbon dated to <%= @c14.uncal_age %> uncal BP. This determination is designated by the laboratory identifier <%= @c14.lab_identifier %> and was made on a sample of <%= @c14.sample.material.name %> (<%= @c14.sample.taxon.present? ? @c14.sample.taxon.name : "taxon unknown" %>). XRONOS' record for this radiocarbon date may include further information on the laboratory measurement, archaeological context, and bibliographic references.
+<% end %>
 
-<header id="c14-header" class="bg-primary text-light">
+<header id="c14-header" class="bg-light text-primary">
   <div class="container my-5">
     <h1 class="display-1"><%= @c14.lab_identifier %></h1>
     <h2 class="display-6">
+      <%= xr_icon C14, {}, { style: "height: 2.5rem;" } %>
       <%= "#{C14.label.humanize} from " %>
-      <%= link_to @c14.site.name, @c14.site, class: "link-light" %>
+      <%= link_to @c14.site.name, @c14.site %>
     </h2>
   </div>
 </header>
 
-<section id="c14-calibration" class="bg-secondary">
-  <div class="d-flex justify-content-center">
-    <%= render 'c14s/calibrate', :c14 => @c14 %>
+<section id="c14-calibration" class="bg-primary">
+  <div class="container d-flex justify-content-center p-0" style="margin-bottom: -31px" data-controller="vega">
+    <%= calibrator(@c14) %>
   </div>
 </section>
 
@@ -36,7 +40,7 @@
   </div>
 </section>
 
-<section id="c14-site-details" class="bg-light">
+<section id="c14-site-details" class="bg-body">
   <div class="container my-5">
     <h2>Site details</h2>
     <%= render 'sites/site_details', :site => @c14.site %>
@@ -46,21 +50,24 @@
 
 <section id="references" class="bg-body">
   <div class="container my-5">
-    <h2>Bibliography</h2>
+    <% references = (@c14.references + @c14.site.references).uniq %>
+    <h2>
+      <%= xr_icon Reference, {}, style: "height: 2rem" %>
+      <%= Reference.label.humanize.pluralize %>
+      <small class="text-muted">(<%= references.count %>)</small>
+    </h2>
     <%= render "references/bibliography", references: (@c14.references + @c14.site.references).uniq %>
   </div>
 </section>
 
-<section id="xronos-metadata" class="bg-body">
+<section id="xronos-metadata" class="bg-light">
   <div class="container my-5">
-    <div class="my-3">
-      <h2>XRONOS metadata</h2>
-      <%= render "shared/record_metadata", record: @c14, record_label: C14.label %>
-    </div>
+    <h2>Metadata</h2>
+    <%= render "shared/record_metadata", record: @c14, record_label: C14.label %>
+  </div>
 
-    <div class="my-3">
-      <h2>Version history</h2>
-      <%= render "application/paper_trail/versions", item: @c14 %>
-    </div>
+  <div class="container my-5">
+    <h2>Changelog</h2>
+    <%= render "application/paper_trail/versions", item: @c14 %>
   </div>
 </section>

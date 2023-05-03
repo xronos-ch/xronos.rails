@@ -1,5 +1,6 @@
 class SitesController < ApplicationController
   include SupersedableController
+  include Tabulatable
   include Pagy::Backend
 
   load_and_authorize_resource
@@ -9,17 +10,28 @@ class SitesController < ApplicationController
   # GET /sites
   # GET /sites.json
   def index
+    @sites = Site.with_counts
+
+    # filter
     unless site_params.blank?
-      @sites = Site.all.where(site_params)
+      @sites = @sites.where(site_params)
     end
 
+    # order
+    if params.has_key?(:sites_order_by)
+      order = { params[:sites_order_by] => params.fetch(:sites_order, "asc") }
+      @sites = @sites.reorder(order)
+    end
 
     respond_to do |format|
       format.html { 
-        @pagy, @sites = pagy(Site.all.order(:name))
-        render :index
+        @pagy, @sites = pagy(@sites)
       }
       format.json
+      format.csv {
+        @sites = @sites.select(index_csv_template)
+        render csv: @sites
+      }
     end
   end
 
@@ -43,8 +55,26 @@ class SitesController < ApplicationController
   # GET /sites/1.json
   def show
     @site = Site.find(params[:id])
+
     @c14s = @site.c14s.includes([:references, sample: [ :material, :taxon, :context ]])
+    if params.has_key?(:c14s_order_by)
+      order = { params[:c14s_order_by] => params.fetch(:c14s_order, "asc") }
+      @c14s = @c14s.reorder(order)
+    end
+
     @typos = @site.typos.includes([:references])
+    if params.has_key?(:typos_order_by)
+      order = { params[:typos_order_by] => params.fetch(:typos_order, "asc") }
+      @typos = @typos.reorder(order)
+    end
+
+    respond_to do |format|
+      format.html {
+        @pagy_c14s, @c14s = pagy(@c14s, page_param: :c14s_page)
+        @pagy_typos, @typos = pagy(@typos, page_param: :typos_page)
+      }
+      format.json
+    end
   end
 
   # GET /sites/new
@@ -108,7 +138,6 @@ class SitesController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def site_params
       params.fetch(:site, {}).permit(
-        :q,
         :id,
         :name,
         :lat,

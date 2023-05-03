@@ -1,9 +1,13 @@
-<% content_for :title, @reference.render_citation %>
+<% content_for :title, "#{@reference.render_citation}, #{Reference.label.downcase}" %>
+<% content_for :meta_description, "#{@reference.render_citation} is cited by #{@reference.citations.count} records of archaeological sites, radiocarbon dates, and/or other chronometric determinations in the XRONOS repository." %>
 
-<header id="reference-header" class="bg-primary text-light">
+<header id="reference-header" class="bg-light text-primary">
   <div class="container my-5">
     <h1 class="display-1"><%= @reference.render_citation %></h1>
-    <h2 class="display-6">Bibliographic reference</h2>
+    <h2 class="display-6">
+      <%= xr_icon Reference, {}, style: "height: 2.5rem;" %>
+      <%= Reference.label.humanize %>
+    </h2>
   </div>
 </header>
 
@@ -13,7 +17,7 @@
   </div>
 </section>
 
-<section id="reference-citations" class="bg-light">
+<section id="reference-citations" class="bg-body">
   <div class="container my-5">
     <h2>Citing records</h2>
     <% c = @reference.citations.count %>
@@ -21,38 +25,67 @@
         in XRONOS that <%= c > 1 ? 'cite' : 'cites' %> this reference.</p>
 
     <% unless @sites.blank? %>
-      <h3><%= Site.label.humanize.pluralize %> (<%= @sites.count %>)</h3>
-      <ul>
-      <% @sites.each do |site| %>
-        <li><%= link_to site.name, site %>, <%= render "sites/country", site: site %></li>
-      <% end %>
-      </ul>
+      <div class="my-5">
+        <h3>
+          <%= xr_icon Site, {}, style: "height: 1.75rem; vertical-align: top;" %>
+          <%= Site.label.humanize.pluralize %>
+          <small class="text-muted">(<%= @pagy_sites.count %>)</small>
+        </h3>
+        <turbo-frame id="reference-sites-table">
+          <ul>
+            <% @sites.each do |site| %>
+              <li><%= link_to site.name, site %>, <%= render "sites/country", site: site %></li>
+            <% end %>
+          </ul>
+          <% unless @pagy_sites.pages <= 1 %>
+            <%== pagy_bootstrap_nav(@pagy_sites) %>
+          <% end %>
+        </turbo-frame>
+      </div>
     <% end %>
 
     <% unless @c14s.blank? %>
-      <h3><%= C14.label.humanize.pluralize %> (<%= @c14s.count %>)</h3>
-      <%= render "c14s/table", c14s: @c14s %>
+      <div class="my-5">
+        <h3>
+          <%= xr_icon C14, {}, style: "height: 1.75rem; vertical-align: top;" %>
+          <%= C14.label.humanize.pluralize %>
+          <small class="text-muted">(<%= @pagy_c14s.count %>)</small>
+        </h3>
+        <turbo-frame id="reference-c14s-table">
+          <%= render "c14s/table", c14s: @c14s %>
+          <% unless @pagy_c14s.pages <= 1 %>
+            <%== pagy_bootstrap_nav(@pagy_c14s) %>
+          <% end %>
+        </turbo-frame>
+      </div>
     <% end %>
 
     <% unless @typos.blank? %>
-      <h3><%= Typo.label.humanize.pluralize %> (<%= @typos.count %>)</h3>
-      <%= render "typos/table", typos: @typos %>
+      <div class="my-5">
+        <h3>
+          <%= xr_icon Typo, {}, style: "height: 1.75rem; vertical-align: top;" %>
+          <%= Typo.label.humanize.pluralize %>
+          <small class="text-muted">(<%= @pagy_typos.count %>)</small>
+        </h3>
+        <turbo-frame id="reference-typos-table">
+          <%= render "typos/table", typos: @typos %>
+          <% unless @pagy_c14s.pages <= 1 %>
+            <%== pagy_bootstrap_nav(@pagy_typos) %>
+          <% end %>
+        </turbo-frame>
+      </div>
     <% end %>
   </div>
 </section>
 
-<section id="xronos-metadata" class="bg-body">
+<section id="xronos-metadata" class="bg-light">
   <div class="container my-5">
-    <div class="row">
+    <h2>Metadata</h2>
+    <%= render "shared/record_metadata", record: @reference, record_label: "reference" %>
+  </div>
 
-      <div class="col">
-        <h2>XRONOS metadata</h2>
-        <%= render "shared/record_metadata", record: @reference, record_label: "reference" %>
-      </div>
-
-      <div class="col">
-        <h2>Revision history</h2>
-        <%= render "application/paper_trail/versions", item: @reference %>
-      </div>
+  <div class="container my-5">
+    <h2>Changelog</h2>
+    <%= render "application/paper_trail/versions", item: @reference %>
   </div>
 </section>

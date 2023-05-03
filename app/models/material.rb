@@ -27,4 +27,11 @@ class Material < ApplicationRecord
   has_many :samples, inverse_of: :material
 
   validates :name, presence: true
+
+  acts_as_copy_target # enable CSV exports
+
+  def self.label
+    "material"
+  end
+
 end

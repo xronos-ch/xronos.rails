@@ -6,10 +6,10 @@
        data-action="scroll@window->home-hero#scroll"
      <% end %>>
 
-     <div class="container">
+     <div class="container-xxl">
 
        <a class="navbar-brand" href="/">
-         <%= image_tag "xronos_logo_light.svg", style: 'max-height: 1.5rem' %>
+         <%= image_tag "xronos_logo_light.svg", alt: "XRONOS", style: 'max-height: 1.5rem' %>
        </a>
 
        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -21,22 +21,37 @@
            <li class="nav-item">
              <a class="nav-link <%= active_class data_path %>" href="/data" <%= active_aria data_path %>>Browse data</a>
            </li>
-           <li class="nav-item">
-             <a class="nav-link <%= active_class database_path %>" href="/database" <%= active_aria database_path %>>Schema</a>
-           </li>
-           <li class="nav-item">
-             <a class="nav-link <%= active_class api_path %>" href="/api" <%= active_aria api_path %>>API</a>
-           </li>
+           <% if user_signed_in? %>
+             <li class="nav-item">
+               <a class="nav-link <%= active_class curate_path %>" href="/curate" <%= active_aria curate_path %>>Curation</a>
+             </li>
+           <% end %>
            <li class="nav-item dropdown">
-             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+             <a class="nav-link dropdown-toggle" href="#" id="aboutDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                About
              </a>
-             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-               <%= render "about/nav", {itemclass: "", linkclass: "dropdown-item nav-link text-dark" } %>
+             <ul class="dropdown-menu" aria-labelledby="aboutDropdown">
+               <%= render "articles/nav", section: "about", itemclass: "nav-item", linkclass: "dropdown-item nav-link text-dark" %>
+             </ul>
+           </li>
+           <li class="nav-item dropdown">
+             <a class="nav-link dropdown-toggle" href="#" id="toolsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+               Tools
+             </a>
+             <ul class="dropdown-menu" aria-labelledby="toolsDropdown">
+               <li class="nav-item">
+                 <a class="nav-link dropdown-item text-dark <%= active_class database_path %>" href="/database" <%= active_aria database_path %>>Schema</a>
+               </li>
+               <li class="nav-item">
+                 <a class="nav-link dropdown-item text-dark <%= active_class api_path %>" href="/api" <%= active_aria api_path %>>API</a>
+               </li>
+               <li class="nav-item">
+                 <a class="nav-link dropdown-item text-dark" href="https://r.xronos.ch" target="_blank">R package <span class="badge text-dark"><%= fa_icon "external-link" %></span></a>
+               </li>
              </ul>
            </li>
            <li class="nav-item">
-             <a class="nav-link" href="https://blog.xronos.ch">Blog</a>
+             <a class="nav-link" href="/news">News</a>
            </li>
          </ul>
 
@@ -47,7 +62,7 @@
                action="/search"
                method="get">
            <div class="input-group">
-             <input class="form-control form-control-sm" type="search" name="q" placeholder="e.g. '<%= random_search %>'" aria-label="Search">
+             <input class="form-control form-control-sm" type="search" name="q" placeholder="<%= random_search %>" aria-label="Search">
              <button class="btn btn-sm btn-info" type="submit">
                <%= fa_icon "search", text: "Search" %>
              </button>
@@ -62,7 +77,7 @@
                </button>
                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                  <li> <%= link_to(edit_user_registration_path, class: "dropdown-item") do%><%= fa_icon "edit" %> Edit registration<% end %></li>
-                 <li> <%= link_to(destroy_user_session_path, method: :delete, class: "dropdown-item") do %><%= fa_icon "sign-out" %> Logout<% end %></li>
+                 <li> <%= button_to destroy_user_session_path, method: :delete, class: "dropdown-item" do %><%= fa_icon "sign-out" %> Logout<% end %></li>
                </ul>
              </div>
 

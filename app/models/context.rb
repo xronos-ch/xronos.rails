@@ -30,4 +30,10 @@ class Context < ApplicationRecord
   has_many :c14s, through: :samples
   has_many :typos, through: :samples
 
+  acts_as_copy_target # enable CSV exports
+
+  def self.label
+    "context"
+  end
+
 end

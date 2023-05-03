@@ -1,0 +1,27 @@
+<% content_for :title, "Issues – Samples" %>
+<% if params[:issue] == "unknown_taxon" %>
+  <% content_for :help do %>
+    <%= render "issues/taxons/unknown_taxon/help" %>
+  <% end %>
+<% end %>
+
+<h2 class="border-bottom">Taxons</h2>
+
+<%= render "issues/nav", model: Taxon, base_path: issues_taxons_path %>
+
+<turbo-frame id="issues-taxons-table">
+
+  <%= render "issues/filter_form" %>
+
+  <%=
+    case params[:issue]
+    when "unknown_taxon"
+      render "issues/taxons/unknown_taxon/table", taxons: @taxons 
+    else
+      render "table", taxons: @taxons
+    end
+  %>
+
+  <%== pagy_bootstrap_nav(@pagy) %>
+
+</turbo-frame>

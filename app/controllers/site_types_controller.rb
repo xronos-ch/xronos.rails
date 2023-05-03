@@ -1,5 +1,6 @@
 class SiteTypesController < ApplicationController
   include SupersedableController
+  include Tabulatable
 
   load_and_authorize_resource
 
@@ -7,8 +8,15 @@ class SiteTypesController < ApplicationController
 
   # GET /site_types
   # GET /site_types.json
+  # GET /site_types.csv
   def index
     @site_types = SiteType.all
+    respond_to do |format|
+      format.csv {
+        @site_types = @site_types.select(index_csv_template)
+        render csv: @site_types
+      }
+    end
   end
 
   # GET /site_types/search.json

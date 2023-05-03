@@ -1,0 +1,50 @@
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">
+        <%= link_to_order_by "ID", :id %>
+        <% if ordered_by?(:id) %>
+          <span class="text-muted"><%= order_indicator %></span>
+        <% end %>
+      </th>
+      <th scope="col">
+        <%= link_to_order_by "Context", :context_id %>
+        <% if ordered_by?(:context_id) %>
+          <span class="text-muted"><%= order_indicator %></span>
+        <% end %>
+      </th>
+      <th scope="col">
+        <%= link_to_order_by "Material", :material_id %>
+        <% if ordered_by?(:material_id) %>
+          <span class="text-muted"><%= order_indicator %></span>
+        <% end %>
+      </th>
+      <th scope="col">
+        <%= link_to_order_by "Taxon", :taxon_id %>
+        <% if ordered_by?(:taxon_id) %>
+          <span class="text-muted"><%= order_indicator %></span>
+        <% end %>
+      </th>
+      <th scope="col">Position</th>
+      <th scope="col">Coordinates</th>
+      <th scope="col">Issues</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% samples.each do |sample| %>
+      <tr>
+        <td class="text-muted"><%= sample.id %></td>
+        <td><%= render "contexts/context", context: sample.context %></td>
+        <td><%= sample.material.present? ? sample.material.name : na_value %></td>
+        <td><%= sample.taxon.present? ? render("taxons/taxon", taxon: sample.taxon) : na_value %></td>
+        <td><%= sample.position_description.present? ? sample.position_description : na_value %></td>
+        <td class="font-monospace"><%= render "samples/coordinates", sample: sample %></td>
+        <td><% sample.issues.each do |issue| %>
+          <%= issue_badge(issue) %>
+        <% end %></td>
+      </tr>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

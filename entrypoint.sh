@@ -1,3 +1,14 @@
+# make calibrator
+cd vendor/calibrator
+make clean
+make
+rm bin/calibrator_linux
+mv bin/calibrator bin/calibrator_linux
+cd ../..
+
+# update cron jobs
+bundle exec whenever --update-crontab
+
 # migrate the database
 # bundle exec rake db:create db:migrate
 

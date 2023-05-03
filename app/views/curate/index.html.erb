@@ -1,15 +1,105 @@
-<div class="d-flex align-items-stretch">
-  <div class="flex-fill m-2">
-    <%= render partial: "stat_card", locals: { entity: 'site', count: @n_site, icon: 'site' } %>
-  </div>
-  <div class="flex-fill m-2">
-    <%= render partial: "stat_card", locals: { entity: 'radiocarbon date', count: @n_c14, icon: 'c14' } %>
-  </div>
-  <div class="flex-fill m-2">
-    <%= render partial: "stat_card", locals: { entity: 'dendro date', count: @n_dendro, icon: 'dendro' } %>
-  </div>
-  <div class="flex-fill m-2">
-    <%= render partial: "stat_card", locals: { entity: 'typological date', count: @n_typo, icon: 'typo' } %>
-  </div>
-</div>
+<div class="row">
 
+  <div class="mb-5">
+    <h2 class="h3">Records</h2>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Record type</th>
+          <th class="text-end">Records</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><%= C14.label.humanize.pluralize %></td>
+          <td class="text-end font-monospace"><%= C14.count %></td>
+        </tr>
+        <tr>
+          <td><%= C14Lab.label.humanize.pluralize %></td>
+          <td class="text-end font-monospace"><%= C14Lab.count %></td>
+        </tr>
+        <tr>
+          <td><%= Citation.label.humanize.pluralize %></td>
+          <td class="text-end font-monospace"><%= Citation.count %></td>
+        </tr>
+        <tr>
+          <td><%= ::Context.label.humanize.pluralize %></td>
+          <td class="text-end font-monospace"><%= ::Context.count %></td>
+        </tr>
+        <tr>
+          <td><%= Material.label.humanize.pluralize %></td>
+          <td class="text-end font-monospace"><%= Material.count %></td>
+        </tr>
+        <tr>
+          <td><%= Reference.label.humanize.pluralize %></td>
+          <td class="text-end font-monospace"><%= Reference.count %></td>
+        </tr>
+        <tr>
+          <td><%= Sample.label.humanize.pluralize %></td>
+          <td class="text-end font-monospace"><%= Sample.count %></td>
+        </tr>
+        <tr>
+          <td><%= Site.label.humanize.pluralize %></td>
+          <td class="text-end font-monospace"><%= Site.count %></td>
+        </tr>
+        <tr>
+          <td><%= SiteType.label.humanize.pluralize %></td>
+          <td class="text-end font-monospace"><%= SiteType.count %></td>
+        </tr>
+        <tr>
+          <td><%= Taxon.label.humanize.pluralize %></td>
+          <td class="text-end font-monospace"><%= Taxon.count %></td>
+        </tr>
+        <tr>
+          <td><%= Typo.label.humanize.pluralize %></td>
+          <td class="text-end font-monospace"><%= Typo.count %></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mb-5">
+    <h2 class="h3">Issues</h2>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Issue</th>
+          <th class="text-end">Records effected</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% C14.issues.each do |issue| %>
+          <tr>
+            <td class="small"><%= issue_label(issue) %></td>
+            <td class="text-end font-monospace"><%= link_to C14.send(issue).count, issues_c14s_path + "/" + issue.to_s %></td>
+          </tr>
+        <% end %>
+        <% Reference.issues.each do |issue| %>
+          <tr>
+            <td class="small"><%= issue_label(issue) %></td>
+            <td class="text-end font-monospace"><%= link_to Reference.send(issue).count, issues_references_path + "/" + issue.to_s %></td>
+          </tr>
+        <% end %>
+        <% Sample.issues.each do |issue| %>
+          <tr>
+            <td class="small"><%= issue_label(issue) %></td>
+            <td class="text-end font-monospace"><%= link_to Sample.send(issue).count, issues_samples_path + "/" + issue.to_s %></td>
+          </tr>
+        <% end %>
+        <% Site.issues.each do |issue| %>
+          <tr>
+            <td class="small"><%= issue_label(issue) %></td>
+            <td class="text-end font-monospace"><%= link_to Site.send(issue).count, issues_sites_path + "/" + issue.to_s %></td>
+          </tr>
+        <% end %>
+        <% Taxon.issues.each do |issue| %>
+          <tr>
+            <td class="small"><%= issue_label(issue) %></td>
+            <td class="text-end font-monospace"><%= link_to Taxon.send(issue).count, issues_taxons_path + "/" + issue.to_s %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+</div>

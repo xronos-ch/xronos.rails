@@ -63,8 +63,7 @@ yarn-debug.log*
 .yarn-integrity
 
 # Ignore uploaded files in development
-/storage/*
-!/storage/.keep
+/storage
 /public/uploads
 
 
@@ -88,3 +87,13 @@ yarn-debug.log*
 .Rhistory
 .RData
 
+# test coverage
+coverage
+
+# build calibrator yourself
+vendor/calibrator/bin/calibrator*
+
+# sitemaps
+public/sitemap.xml.gz
+public/sitemaps/*
+!public/sitemaps/.keep

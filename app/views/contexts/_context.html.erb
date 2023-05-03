@@ -1,0 +1,10 @@
+<% if context.blank? %>
+  <%= na_value %>
+<% else %>
+  <span class="badge bg-info"><%= link_to context.site.name, context.site %></span>
+  <% if context.name.present? %>
+    <%= context.name %>
+  <% else %>
+    <%= na_value %>
+  <% end %>
+<% end %>

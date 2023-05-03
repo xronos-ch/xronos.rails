@@ -1,5 +1,6 @@
 class C14LabsController < ApplicationController
   include SupersedableController
+  include Tabulatable
 
   load_and_authorize_resource
 
@@ -7,8 +8,15 @@ class C14LabsController < ApplicationController
 
   # GET /c14_labs
   # GET /c14_labs.json
+  # GET /c14_labs.csv
   def index
     @c14_labs = C14Lab.all
+    respond_to do |format|
+      format.csv {
+        @c14_labs = @c14_labs.select(index_csv_template)
+        render csv: @c14_labs
+      }
+    end
   end
 
   # GET /c14_labs/1

@@ -1,5 +1,6 @@
 class ContextsController < ApplicationController
   include SupersedableController
+  include Tabulatable
 
   load_and_authorize_resource
 
@@ -7,8 +8,15 @@ class ContextsController < ApplicationController
 
   # GET /contexts
   # GET /contexts.json
+  # GET /contexts.csv
   def index
     @contexts = Context.all
+    respond_to do |format|
+      format.csv {
+        @contexts = @contexts.select(index_csv_template)
+        render csv: @contexts
+      }
+    end
   end
 
   # GET /contexts/1

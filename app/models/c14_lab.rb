@@ -26,4 +26,10 @@ class C14Lab < ApplicationRecord
 
   has_many :c14s, inverse_of: :c14_lab
 
+  acts_as_copy_target # enable CSV exports
+
+  def self.label
+    "radiocarbon lab"
+  end
+
 end

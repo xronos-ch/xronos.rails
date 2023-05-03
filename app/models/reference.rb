@@ -15,20 +15,40 @@
 #  index_references_on_superseded_by  (superseded_by)
 #
 class Reference < ApplicationRecord
-  default_scope { order(:short_ref) }
+  DELIM_PATTERN = '[;,]'
 
   include Versioned
   include Supersedable
 
+  include HasIssues
+  @issues = [ :mixed_reference, :missing_bibtex ]
+
   include PgSearch::Model
+  pg_search_scope :search, 
+    against: [ :short_ref, :bibtex ],
+    using: { tsearch: { prefix: true } } # match partial words
   multisearchable against: [ :short_ref, :bibtex ]
 
-  validates :short_ref, presence: true
+  acts_as_copy_target # enable CSV exports
+
   has_many :citations, dependent: :destroy
 
   has_many :sites, :through => :citations, :source => :citing, :source_type => 'Site'
   has_many :c14s, :through => :citations, :source => :citing, :source_type => 'C14'
   has_many :typos, :through => :citations, :source => :citing, :source_type => 'Typo'
+
+  validates :short_ref, presence: true
+
+  scope :with_citations_count, -> {
+    select <<~SQL
+      "references".*,
+      (
+        SELECT COUNT(citations.id) 
+        FROM citations
+        WHERE reference_id = "references".id
+      ) AS citations_count
+    SQL
+  }
 
   def self.label
     "Bibliographic reference"
@@ -80,6 +100,17 @@ class Reference < ApplicationRecord
       cp.render :citation, id: e.key
     end
     html.join.delete('()').html_safe
+  end
+
+  # Issues
+  scope :mixed_reference, -> { where("short_ref ~* ?", DELIM_PATTERN) }
+  def mixed_reference?
+    short_ref.match?(DELIM_PATTERN)
+  end
+  
+  scope :missing_bibtex, -> { where(bibtex: nil) }
+  def missing_bibtex?
+    bibtex.blank?
   end
 
   private

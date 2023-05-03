@@ -7,12 +7,19 @@ Rails.application.routes.draw do
   get '/database' => 'pages#database'
   get '/api' => 'pages#api'
 
-  # Static about pages
-  get '/about', to: 'about#show', defaults: { page: 'about' }
-  get '/about/about', to: redirect('/about')
-  get '/about/:page' => 'about#show'
+  # Articles (news posts and other pseudo-static pages)
+  get '/news', to: 'articles#index', section: 'news'
+  get 'news/:slug', to: 'articles#show'
+  get 'about/:slug', to: 'articles#show'
+  get 'docs/:slug', to: 'articles#show'
+  namespace :admin do
+    resources :articles, except: :show
+  end
 
-  # Ordinary resources
+  # Redirects for backwards compatibility
+  get '/about', to: redirect('/about/xronos')
+
+  # Primary data resources
   resources :c14s do
     get 'search', on: :collection
     member do
@@ -29,25 +36,28 @@ Rails.application.routes.draw do
   end
   resources :measurement_states
   resources :references
-  resources :samples
   resources :sites do
     get 'search', on: :collection
   end
   resources :site_types do
     get 'search', on: :collection
   end
-  resources :taxons do
+  resources :typos
+
+  # Secondary data resources (no independent show/index views)
+  resources :taxons, except: [:index, :show] do
     get 'search', on: :collection
   end
-  resources :typos
+  resources :taxon_usages, only: :show
 
   # User management
   resources :user_profiles
   devise_for :users, controllers: {
-      registrations: "registrations"
+      registrations: 'registrations',
+      sessions: 'users/sessions'
     }
 
-  # Data views
+  # Data browser
   get 'data/index'
   post 'data/index'
   get "/data" => "data#index"
@@ -60,13 +70,48 @@ Rails.application.routes.draw do
   get '/turn_off_lasso', :to=>'data#turn_off_lasso'
   get '/reset_manual_table_selection', :to=>'data#reset_manual_table_selection'
 
-  # Curate
+  # Curation backend
   get "/curate" => "curate#index"
   namespace :curate do
     resources :import_tables do
       get 'edit' => 'import_tables#edit_read_options'
       get 'edit/read_options' => 'import_tables#edit_read_options'
       get 'edit/mapping' => 'import_tables#edit_mapping'
+    end
+    get "recent_changes" => "recent_changes#index"
+  end
+
+  # Data issues
+  namespace :issues do 
+    resources :c14s, only: :index do
+      collection do
+        get ":issue", action: :index,
+          constraints: lambda { |req| C14.issues.include?(req.params[:issue].to_sym) }
+      end
+    end
+    resources :references, only: :index do
+      collection do
+        get ":issue", action: :index,
+          constraints: lambda { |req| Reference.issues.include?(req.params[:issue].to_sym) }
+      end
+    end
+    resources :samples, only: :index do
+      collection do
+        get ":issue", action: :index,
+          constraints: lambda { |req| Sample.issues.include?(req.params[:issue].to_sym) }
+      end
+    end
+    resources :sites, only: :index do
+      collection do
+        get ":issue", action: :index,
+          constraints: lambda { |req| Site.issues.include?(req.params[:issue].to_sym) }
+      end
+    end
+    resources :taxons, only: :index do
+      collection do
+        get ":issue", action: :index,
+          constraints: lambda { |req| Taxon.issues.include?(req.params[:issue].to_sym) }
+      end
     end
   end
 
@@ -78,3 +123,4 @@ Rails.application.routes.draw do
   end
   
 end
+

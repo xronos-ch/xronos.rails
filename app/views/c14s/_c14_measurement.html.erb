@@ -14,7 +14,13 @@
       <dd class="col-sm-9 text-end"><%= c14.sample.material.present? ? c14.sample.material.name : na_value %></dd>
 
       <dt class="col-sm-3">Sample taxon</dt>
-      <dd class="col-sm-9 text-end"><%= c14.sample.taxon.present? ? c14.sample.taxon.name : na_value %></dd>
+      <dd class="col-sm-9 text-end">
+        <% if c14.sample.taxon.present? %>
+          <%= render c14.sample.taxon %>
+        <% else %>
+          <%= na_value %>
+        <% end %>
+      </dd>
 
     </div>
   </div>
@@ -23,12 +29,18 @@
     <!-- Results -->
     <div class="row">
 
-      <dt class="col-sm-3">Age (uncal BP)</dt>
+      <dt class="col-sm-3">Age <small>(uncal BP)</small></dt>
       <dd class="col-sm-9 font-monospace text-end"><%= c14.bp %></dd>
 
       <dt class="col-sm-3">Error</dt>
       <dd class="col-sm-9 font-monospace text-end"><%= c14.std %></dd>
-
+      
+      <dt class="col-sm-3">Calibrated age <small>(2&sigma;, BP)</small></dt>
+      <dd class="col-sm-9 font-monospace text-end"><%= @bp_cal %></dd>
+            
+      <dt class="col-sm-3">Calibration curve</dt>
+      <dd class="col-sm-9 font-monospace text-end">IntCal20 (Reimer et al. 2020)</dd>
+      
     </div>
   </div>
 </dl>

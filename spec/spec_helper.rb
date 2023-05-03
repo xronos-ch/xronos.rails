@@ -92,3 +92,13 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 =end
 end
+
+require 'simplecov'
+require 'simplecov-cobertura'
+
+SimpleCov.formatters = SimpleCov::Formatter::MultiFormatter.new([
+  SimpleCov::Formatter::HTMLFormatter,
+  SimpleCov::Formatter::CoberturaFormatter,
+])
+
+SimpleCov.start 'rails'

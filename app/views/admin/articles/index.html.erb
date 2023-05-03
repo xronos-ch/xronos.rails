@@ -1,0 +1,18 @@
+<h1>Manage articles</h1>
+
+<% if can? :create, Article %><%= link_to 'New article', new_admin_article_path, class: 'btn btn-secondary' %><% end %>
+
+<section class="my-5">
+  <h2>News posts</h2>
+  <%= render "table", articles: @news %>
+</section>
+
+<section class="my-5">
+  <h2>About pages</h2>
+  <%= render "table", articles: @about %>
+</section>
+
+<section class="my-5">
+  <h2>Documentation</h2>
+  <%= render "table", articles: @docs %>
+</section>

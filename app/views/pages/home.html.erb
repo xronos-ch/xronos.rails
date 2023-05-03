@@ -1,8 +1,7 @@
 <div class="jumbotron jumbotron-fluid hero mt-0 position-relative hero py-5 shadow">
 
   <div class="container h-100 d-flex flex-column" style="text-shadow: var(--bs-dark) 0 0 1rem;">
-    <h1 class="w-75 mt-auto h2 fw-bold">XRONOS</h1>
-    <h2 class="w-75 mb-5 display-5 fw-bold">Open chronometric data for archaeology</h2>
+    <p class="w-75 mt-auto mb-5 display-5 fw-bold">Open chronometric data for archaeology</h2>
     <div class="w-50 me-auto mb-auto">
       <%= render "searches/form" %>
     </div>
@@ -18,7 +17,7 @@
 
     <div class="flex-fill">
       <%= xr_icon Site, { light: true }, { class: "d-block mx-auto mb-2", style: "width: 5rem;" } %>
-      <a href="/sites" class="display-5 link-secondary text-decoration-none">
+      <a href="/sites" class="display-5 link-secondary text-decoration-none" title="Browse sites">
         <%= number_with_delimiter(Site.count)%>
       </a>
       <p class="h4"><%= Site.label.humanize.pluralize %></p>
@@ -26,7 +25,7 @@
 
     <div class="flex-fill">
       <%= xr_icon C14, { light: true }, { class: "d-block mx-auto mb-2", style: "width: 5rem;" } %>
-      <a href="/c14s" class="display-5 link-secondary text-decoration-none">
+      <a href="/c14s" class="display-5 link-secondary text-decoration-none" title="Browse radiocarbon dates">
         <%= number_with_delimiter(C14.count)%>
       </a>
       <p class="h4"><%= C14.label.humanize.pluralize %></p>
@@ -34,7 +33,7 @@
 
     <div class="flex-fill">
       <%= xr_icon Typo, { light: true }, { class: "d-block mx-auto mb-2", style: "width: 5rem;" } %>
-      <a href="/typos" class="display-5 link-secondary text-decoration-none">
+      <a href="/typos" class="display-5 link-secondary text-decoration-none" title="Browse typological dates">
         <%= number_with_delimiter(Typo.count)%>
       </a>
       <p class="h4"><%= Typo.label.humanize.pluralize %></p>
@@ -56,46 +55,44 @@
 </section>
 
 
-<div class="container">
-
-  <section class="mb-5">
-      <h3>What is XRONOS?</h3>
-      <p>
-      In the spirit of the Open Science, the XRONOS project aims at developing a worldwide unique and novel database, to compile and manage the two most important forms of absolute chronological information – radiocarbon and dendrochronological data – to enable a multitude of transdisciplinary research projects on population dynamics, human-environmental dependencies and thus fundamental transformations in the past.
-      </p>
-  </section>
-
-  <section class="mb-5">
-    <h3>News</h3>
-
-    <% xml = HTTParty.get("https://blog.xronos.ch/index.php/feed/").body %>
-    <% feed = Feedjira.parse(xml) %>
-
-    <div class="d-flex flex-column">
-      <% feed.entries.each do |entry| %>
-        <% doc = Nokogiri::HTML(entry.content) %>
-        <article class="card flex-row mt-3">
-          <% if img = doc.xpath('//img').first %>
-            <img class="card-img-top" style="width: 10rem; height: auto;" src="<%=img.attr('src')%>" />
-          <% end %>
-          <div class="card-body">
-            <h4 class="card-title"><%= entry.title %></h4>
-            <p class="card-subtitle text-muted"><%= entry.published.strftime('%Y-%m-%d') %></p>
-            <p class="card-text">
-              <%= doc.xpath('//p').first.children.to_s.html_safe %>
-              <% if doc.xpath('//p').length > 1 %>
-                <span class="text-muted">[...]</span>
-              <% end %>
-            </p>
-            <a class="card-link" href="<%= entry.url %>">Read more</a>
-          </div>
-        </article>
-      <% end %>
+<section class="mb-5">
+  <div class="container my-3">
+    <h3 class="visually-hidden">What is XRONOS?</h3>
+    <div class="row">
+      <div class="col">
+        <a href="/data" title="Browse XRONOS data">
+          <%= image_tag "xronos_mapviz.png", width: 640, height: 320, alt: "Map showing the density of chronometric records in XRONOS" %>
+        </a>
+      </div>
+      <div class="col my-auto">
+        <p class="lead">XRONOS is an open data infrastructure for the backbone of the archaeological record – chronology. It provides open access to published radiocarbon dates and other chronometric data from any period, anywhere in the world.</p>
+        <ul class="nav">
+          <li class="nav-item"><a class="nav-link ps-0 me-3" href="/about">Learn more</a></li>
+          <li class="nav-item"><a class="nav-link" href="/about/contribute">Get involved</a></li>
+        </ul>
+      </div>
     </div>
+</section>
 
-  </section>
+<section class="bg-light">
+  <% unless @news.blank? %>
+    <div class="container my-5">
+      <div class="row">
+        <div class="col col-lg-9 mx-auto">
+          <h3 class="display-5 mb-4">Latest news</h3>
 
-</div>
+          <% @news.each do |article| %>
+            <%= render "articles/card", article: article %>
+          <% end %>
+
+          <a href="/news" class="btn btn-lg btn-info">More news</a>
+        </div>
+      </div>
+
+    </div>
+  <% end %>
+  </div>
+</section>
 
 
 

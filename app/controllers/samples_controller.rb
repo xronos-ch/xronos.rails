@@ -1,5 +1,6 @@
 class SamplesController < ApplicationController
   include SupersedableController
+  include Tabulatable
 
   load_and_authorize_resource
 
@@ -7,8 +8,15 @@ class SamplesController < ApplicationController
 
   # GET /samples
   # GET /samples.json
+  # GET /samples.csv
   def index
     @samples = Sample.all
+    respond_to do |format|
+      format.csv {
+        @samples = @samples.select(index_csv_template)
+        render csv: @samples
+      }
+    end
   end
 
   # GET /samples/1

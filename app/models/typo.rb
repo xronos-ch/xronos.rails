@@ -19,10 +19,10 @@
 #  index_typos_on_superseded_by  (superseded_by)
 #
 class Typo < ApplicationRecord
-  include DataHelper
-  
   include Versioned
   include Supersedable
+
+  acts_as_copy_target # enable CSV exports
 
   validates :name, presence: true
   
@@ -36,8 +36,6 @@ class Typo < ApplicationRecord
   # Internal heirarchy
   belongs_to :parent, class_name: "Typo", optional: true
   has_many :children, class_name: "Typo", foreign_key: "typo_id"
-
-  has_paper_trail
 
   def self.label
     "typological date"

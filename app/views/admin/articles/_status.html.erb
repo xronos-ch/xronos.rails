@@ -1,0 +1,13 @@
+<% if article.published? %>
+  <span class="text-success">
+    <%= fa_icon "check" %> 
+    Published at <%= article.published_at %>
+  </span>
+<% elsif article.scheduled? %>
+  <span class="text-warning">
+    <%= fa_icon "clock-o" %>
+    Scheduled to be published at <%= article.published_at %>
+  </span>
+<% else %>
+  <span class="text-muted">Draft</span>
+<% end %>

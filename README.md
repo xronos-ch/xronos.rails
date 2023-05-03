@@ -1,5 +1,6 @@
 ![Website](https://img.shields.io/website?url=https%3A%2F%2Fxronos.ch)
 ![Tests](https://github.com/xronos-ch/xronos.rails/actions/workflows/verify.yml/badge.svg)
+[![Test coverage](https://codecov.io/gh/xronos-ch/xronos.rails/branch/master/graph/badge.svg?token=0E7SVSFTVI)](https://codecov.io/gh/xronos-ch/xronos.rails)
 [![Docker pulls](https://img.shields.io/docker/pulls/xronos/xronos.rails)](https://hub.docker.com/r/xronos/xronos.rails/)
 ![GitHub issues](https://img.shields.io/github/issues/xronos-ch/xronos.rails)
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/xronos-ch/xronos.rails)
@@ -19,7 +20,7 @@ your_directory
 ```
 
 **db**: An empty directory that will contain the database.  
-**docker-compose.yml**: The `docker-compose.yml` file in this repository.  
+**docker-compose.yml**: A `docker-compose.yml` file ([example](https://github.com/xronos-ch/xronos.rails/blob/f4049a7eb0ee2a6311a72ef5616e4692aa2cad52/docker-compose.yml))  
 **env_variables.env**: A file with environment variables.
 
 ```

@@ -1,0 +1,72 @@
+<% if @article.splash.present? %>
+  <% content_for :page_styles %>
+  <style>
+    .article-hero {
+      height: 20rem;
+      background: none !important;
+    }
+
+    .article-hero:before {
+      content: "";
+      display: block;
+      position: absolute;
+      height: 20rem;
+      width: 100%;
+      z-index: -1;
+      background-image: url('<%= url_for(@article.splash_variant(:xs)) %>');
+      background-size: cover;
+      background-position: center center;
+    }
+
+    @media (min-width: 576px)  { 
+      .article-hero:before { background-image: url('<%= url_for(@article.splash_variant(:sm)) %>'); }
+    }
+    @media (min-width: 768px)  { 
+      .article-hero:before { background-image: url('<%= url_for(@article.splash_variant(:md)) %>'); }
+    }
+    @media (min-width: 992px)  { 
+      .article-hero:before { background-image: url('<%= url_for(@article.splash_variant(:lg)) %>'); }
+    }
+    @media (min-width: 1200px) { 
+      .article-hero:before { background-image: url('<%= url_for(@article.splash_variant(:xl)) %>'); }
+    }
+    @media (min-width: 1400px) { 
+      .article-hero:before { background-image: url('<%= url_for(@article.splash_variant(:xxl)) %>'); }
+    }
+  </style>
+<% end %>
+
+<header class="bg-light article-hero d-flex flex-column justify-content-end position-relative">
+  <div class="container my-3">
+    <% if @article.news_section? %>
+      <span class="badge bg-primary text-uppercase">News</span>
+    <% end %>
+    <% if @article.splash.present? %>
+      <h1 class="display-3 text-light" style="text-shadow: var(--bs-dark) 0 0 1rem;"><%= @article.title %></h1>
+    <% else %>
+      <h1 class="display-3 text-primary"><%= @article.title %></h1>
+    <% end %>
+  </div>
+</header>
+
+<div class="container my-5">
+  <% if @article.news_section? %>
+    <p class="text-muted">
+      By <%= @article.user.email %>, 
+      <%= @article.published_at.present? ? @article.published_at.to_formatted_s : "draft" %>
+    </p>
+  <% end %>
+
+  <%= @article.body_html.html_safe %>
+</div>
+
+<footer class="bg-light">
+  <div class="container my-5 text-muted small">
+    <% if @article.splash_attribution? %>
+      <p>Cover photo: <%= @article.splash_attribution.html_safe %></span>
+    <% end %>
+    <% unless @article.news_section? %>
+      <p>Last updated <%= @article.updated_at.to_formatted_s %>.</p>
+    <% end %>
+  </div>
+</footer>

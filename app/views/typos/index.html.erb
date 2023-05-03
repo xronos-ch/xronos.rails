@@ -1,10 +1,20 @@
-<div class="container my-5">
+<% content_for :title, Typo.label.humanize.pluralize %>
+<% content_for :meta_description do %>List of <%= @pagy.count %> typological age determinations from archaeological sites around the world, including bibliographic references.<% end %>
+  
+  <div class="container my-5">
 
   <h1>Typological dates</h1>
+  <p>Showing <%= @pagy.count %> <%= Typo.label.pluralize(@pagy.count) %>.</p>
 
-  <%= render "table", typos: @typos %>
-
-  <%== pagy_bootstrap_nav(@pagy) %>
+  <turbo-frame id="typos-table">
+    <div id="typos-toolbar" class="d-flex">
+      <div class="ms-auto">
+        <%= link_to fa_icon("download"), typos_path(format: :csv, **request.query_parameters), class: "btn btn-sm btn-outline-primary", title: "Download CSV" %>
+      </div>
+    </div>
+    <%= render "table", typos: @typos %>
+    <%== pagy_bootstrap_nav(@pagy) %>
+  </turbo-frame>
 
   <% if can? :create, Typo %>
     <%= link_to 'New typological date', new_typo_path, class: 'btn btn-secondary',

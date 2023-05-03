@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
@@ -11,15 +11,14 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <%= stylesheet_link_tag 'application', media: 'all' %>
-    <%= javascript_pack_tag 'application' %>
-    <%#= javascript_include_tag 'application' %>
-    <%= javascript_pack_tag 'frontend' %>
+    <meta name="description" content="<%= content_for?(:meta_description) ? yield(:meta_description) : "An open repository and curation platform for chronometric data from archaeological contexts worldwide." %>">
 
+    <%= stylesheet_link_tag 'application', media: 'all' %>
+    <%= yield :page_styles %>
+
+    <%= javascript_pack_tag 'application' %>
     <%= javascript_pack_tag params[:controller], :media => "all"  if javascript_exists?(params[:controller])
     %>
-
-    <%= include_gon %>
 
     <%= yield :head %>
 
@@ -44,56 +43,57 @@
 
     <%= yield :before_footer %>
 
-    <footer class="container-fluid page-footer pb-3 bg-dark shadow-sm text-muted">
-      <div class="container">
+    <footer class="page-footer pb-3 bg-dark shadow-sm text-light text-muted">
+      <div class="container-xxl">
+        <div class="row">
 
-          <div class="row">
+          <div class="col-md-6 mt-5 mb-5">
+            <%= image_tag "xronos_logo_light.svg", alt: "XRONOS", class: "mt-3 mb-3", style: "max-height: 3rem;" %>
+            <p class="mt-0 mb-3 text-light">XRONOS is an open repository and curation platform for chronometric data from archaeological contexts worldwide.</p>
 
-            <div class="col-md-6 mt-5 mb-5">
-              <%= image_tag "xronos_logo_light.svg", class: "mt-3 mb-3", style: "max-height: 3rem;" %>
-              <p class="mt-0 mb-3 text-light">XRONOS is an open repository and curation platform for chronometric data from archaeological contexts worldwide.</p>
-
-              <div class="row mt-5">
-                <div class="col"><a href="https://www.snf.ch"><%= image_tag "snf_logo.png", style: "max-height: 3rem;" %></a></div>
-                <div class="col"><a href="https://www.unibe.ch"><%= image_tag "ub_Logo_english_2019_neg.png", style: "max-height: 3rem;"  %></a></div>
-              </div>
+            <div class="row mt-5">
+              <div class="col"><a href="https://www.snf.ch"><%= image_tag "sponsors/snf.webp", alt: "Swiss National Science Foundation (SNF)", style: "max-height: 3rem;" %></a></div>
+              <div class="col"><a href="https://www.unibe.ch"><%= image_tag "sponsors/unibe.webp", alt: "University of Bern", style: "max-height: 3rem;"  %></a></div>
             </div>
+          </div>
 
-            <div class="col-6 col-md-3 mt-md-5 text-md-end">
-              <h6 class="mt-3 fw-bold text-uppercase">Data</h6>
-              <ul class="nav flex-column mb-3">
-                <li class="nav-item"><a class="nav-link ps-0 pe-0 link-light" href="/search">Search</a></li>
-                <li class="nav-item"><a class="nav-link ps-0 pe-0 link-light" href="/data">Browser</a></li>
-                <li class="nav-item"><a class="nav-link ps-0 pe-0 link-light" href="/database">Schema</a></li>
-                <li class="nav-item"><a class="nav-link ps-0 pe-0 link-light" href="/api">API</a></li>
-              </ul>
-            </div>
+          <div class="col-6 col-md-3 mt-md-5 text-md-end">
+            <h6 class="mt-3 fw-bold text-uppercase">Data</h6>
+            <ul class="nav flex-column mb-3">
+              <li class="nav-item"><a class="nav-link ps-0 pe-0 link-light" href="/search">Search</a></li>
+              <li class="nav-item"><a class="nav-link ps-0 pe-0 link-light" href="/data">Browser</a></li>
+              <li class="nav-item"><a class="nav-link ps-0 pe-0 link-light" href="/database">Schema</a></li>
+              <li class="nav-item"><a class="nav-link ps-0 pe-0 link-light" href="/api">API</a></li>
+            </ul>
+          </div>
 
-            <div class="col-6 col-md-3 mt-md-5 text-md-end">
-              <h6 class="mt-3 fw-bold text-uppercase">About</h6>
-              <ul class="nav flex-column mb-3">
-                <%= render "about/nav", { itemclass: "nav-item", linkclass: "nav-link ps-0 pe-0 link-light" } %>
-              </ul>
-            </div>
+          <div class="col-6 col-md-3 mt-md-5 text-md-end">
+            <h1 class="h6 mt-3 fw-bold text-uppercase">About</h6>
+            <ul class="nav flex-column mb-3">
+              <%= render "articles/nav", section: "about", itemclass: "nav-item", linkclass: "nav-link ps-0 pe-0 link-light" %>
+            </ul>
+          </div>
+
+        </div>
+
+        <hr>
+
+        <div class="row">
+
+          <div class="col-md-9">
+            <small class="rights">This work is licensed under a <a class="link-light" rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</small>
+          </div>
+          <div class="col-md-3 text-md-end">
+            <small class="source-code">
+              <a class="link-light" href="https://github.com/xronos-ch/xronos.rails/"><span class="fa fa-github fa-lg me-1"></span>View source on GitHub</a>
+            </small>
 
           </div>
 
-          <hr>
-          <div class="row">
-
-            <div class="col-md-9">
-              <small class="rights">This work is licensed under a <a class="link-light" rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</small>
-            </div>
-            <div class="col-md-3 text-md-end">
-              <small class="source-code">
-                <a class="link-light" href="https://github.com/xronos-ch/xronos.rails/"><span class="fa fa-github fa-lg me-1"></span>View source on GitHub</a>
-              </small>
-            </div>
         </div>
-
     </footer>
 
-      </div>
+    </div>
   </body>
 </html>
 
