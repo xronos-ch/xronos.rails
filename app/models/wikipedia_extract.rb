@@ -9,7 +9,7 @@ class WikipediaExtract
   end
 
   def text
-    @page.summary
+    @page.summary.split("\n", 2)[0]
   end
 
   def url
