@@ -26,7 +26,7 @@ class WikidataLinksController < ApplicationController
         format.html { redirect_back fallback_location: root_path, notice: success_notice }
         format.json { render :show, status: :created, location: @wikidata_link }
       else
-        format.html { render :new }
+        format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @wikidata_link.errors, status: :unprocessable_entity }
       end
     end
@@ -38,7 +38,7 @@ class WikidataLinksController < ApplicationController
         format.html { redirect_back fallback_location: root_path, notice: success_notice }
         format.json { render :show, status: :ok, location: @wikidata_link }
       else
-        format.html { render :edit }
+        format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @wikidata_link.errors, status: :unprocessable_entity }
       end
     end
