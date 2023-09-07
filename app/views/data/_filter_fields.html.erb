@@ -5,108 +5,201 @@
   </div>
 </noscript>
 
-<%= f.fields_for :sites do |f| %>
+<%= accordion_item "dataFilters-Site", "Sites", true do %>
 
-  <%= f.text_field :name, label: "Sites", 
-    value: @data.filter_value_string(:sites, :name),
-    multiple: true,
-    data: { 
-      controller: "tom-select",
-      "tom-select-route-value": "sites/search",
-      "tom-select-value-value": "name",
-      "tom-select-label-value": "name",
-      "tom-select-search-value": "name"
-    } 
-  %>
+  <%= f.fields_for :sites do |f| %>
 
-  <div class="mb-3">
-    <%= f.label :country_code, "Countries", class: "form-label" %>
-    <%= f.country_select :country_code, 
-      { selected: @data.filter_value(:sites, :country_code) },
+    <%= f.text_field :name, label: "Site names", 
+      value: @data.filter_value_string(:sites, :name),
+      multiple: true,
+      data: { 
+        controller: "tom-select",
+        "tom-select-route-value": "sites/search",
+        "tom-select-value-value": "name",
+        "tom-select-label-value": "name",
+        "tom-select-search-value": "name"
+      } 
+    %>
+
+  <% end %>
+
+  <%= f.fields_for :site_types do |f| %>
+    <%= f.text_field :name, label: "Site types", 
+      value: @data.filter_value_string(:site_types, :name),
+      multiple: true,
+      data: {
+        controller: "tom-select",
+        "tom-select-route-value": "site_types/search",
+        "tom-select-value-value": "name",
+        "tom-select-label-value": "name",
+        "tom-select-search-value": "name"
+      }
+    %>
+  <% end %>
+
+<% end %>
+
+<%= accordion_item "dataFiltersLocation", "Location", false do %>
+  <%= f.fields_for :sites do |f| %>
+
+    <div class="mb-3">
+      <%= f.label :country_code, "Countries", class: "form-label" %>
+      <%= f.country_select :country_code, 
+        { selected: @data.filter_value(:sites, :country_code) },
+        { 
+          class: "form-select",
+          multiple: true,
+          data: { controller: "tom-select" }
+        }
+      %>
+    </div>
+
+  <% end %>
+<% end %>
+
+<%= accordion_item "dataFiltersSample", "Sample", true do %>
+
+  <%= f.fields_for :materials do |f| %>
+    <%= f.text_field :name, label: "Materials", 
+      value: @data.filter_value_string(:materials, :name),
+      multiple: true,
+      data: {
+        controller: "tom-select",
+        "tom-select-route-value": "materials/search",
+        "tom-select-value-value": "name",
+        "tom-select-label-value": "name",
+        "tom-select-search-value": "name"
+      }
+    %>
+  <% end %>
+
+  <%= f.fields_for :taxons do |f| %>
+    <%= f.text_field :name, label: "Taxons", 
+      value: @data.filter_value_string(:taxons, :name),
+      multiple: true,
+      data: {
+        controller: "tom-select",
+        "tom-select-route-value": "taxons/search",
+        "tom-select-value-value": "name",
+        "tom-select-label-value": "name",
+        "tom-select-search-value": "name"
+      }
+    %>
+  <% end %>
+
+<% end %>
+
+<%= accordion_item "dataFilters-C14", "Radiocarbon", true do %>
+  <%= f.fields_for :c14_labs do |f| %>
+    <%= f.collection_select :name, C14Lab.all, :name, :name,
+      {
+        label: "Labs",
+        selected: @data.filter_value(:c14_labs, :name),
+        include_blank: true,
+      },
       { 
-        class: "form-select",
         multiple: true,
         data: { controller: "tom-select" }
       }
     %>
-  </div>
+  <% end %>
 
-<% end %>
+  <%= f.fields_for :c14s do |f| %>
 
-<%= f.fields_for :site_types do |f| %>
-  <%= f.text_field :name, label: "Site types", 
-    value: @data.filter_value_string(:site_types, :name),
-    multiple: true,
-    data: {
-      controller: "tom-select",
-      "tom-select-route-value": "site_types/search",
-      "tom-select-value-value": "name",
-      "tom-select-label-value": "name",
-      "tom-select-search-value": "name"
-    }
-  %>
-<% end %>
-
-<%= f.fields_for :materials do |f| %>
-  <%= f.text_field :name, label: "Sample materials", 
-    value: @data.filter_value_string(:materials, :name),
-    multiple: true,
-    data: {
-      controller: "tom-select",
-      "tom-select-route-value": "materials/search",
-      "tom-select-value-value": "name",
-      "tom-select-label-value": "name",
-      "tom-select-search-value": "name"
-    }
-  %>
-<% end %>
-
-<%= f.fields_for :taxons do |f| %>
-  <%= f.text_field :name, label: "Sample taxa", 
-    value: @data.filter_value_string(:taxons, :name),
-    multiple: true,
-    data: {
-      controller: "tom-select",
-      "tom-select-route-value": "taxons/search",
-      "tom-select-value-value": "name",
-      "tom-select-label-value": "name",
-      "tom-select-search-value": "name"
-    }
-  %>
-<% end %>
-
-<%= f.fields_for :c14_labs do |f| %>
-  <%= f.collection_select :name, C14Lab.all, :name, :name,
-    {
-      label: "Labs",
-      selected: @data.filter_value(:c14_labs, :name),
-      include_blank: true,
-    },
-    { 
+    <%= f.text_field :lab_identifier, label: "Lab IDs", 
+      value: @data.filter_value_string(:c14s, :lab_identifier),
       multiple: true,
-      data: { controller: "tom-select" }
-    }
-  %>
+      data: {
+        controller: "tom-select",
+        "tom-select-route-value": "c14s/search",
+        "tom-select-value-value": "lab_identifier",
+        "tom-select-label-value": "lab_identifier",
+        "tom-select-search-value": "lab_identifier"
+      }
+    %>
+
+    <%# TODO: abstract as a helper or FormBuilder extension %>
+    <div class="mb-3"
+         data-controller="slider" 
+         data-slider-formatter-value="uncalBP"
+         data-slider-step-value=10
+         data-slider-direction-value=rtl
+         data-slider-range-value='{ "min": [0, 20], "25%": [2000, 100], "50%": [10000, 250], "75%": [30000, 500], "max": 50000 }'
+         data-slider-density-value=2>
+
+      <%= f.fields_for :bp do |f| %>
+        <%= f.hidden_field nil, data: { slider_target: "minInput" },
+          min: 0, max: 50000,
+          value: @data.filter_value(:c14s, :bp).present? ? @data.filter_value(:c14s, :bp)[0].min : 0 %>
+        <%= f.hidden_field nil, data: { slider_target: "maxInput" },
+          min: 0, max: 50000,
+          value: @data.filter_value(:c14s, :bp).present? ? @data.filter_value(:c14s, :bp)[0].max : 50000 %>
+      <% end %>
+
+      <label class="form-label" for="uncal_bp_slider">Radiocarbon age <span class="text-muted">(uncal BP)</span></label>
+      <div class="mx-3 my-1" id="uncal_bp_slider" data-slider-target="slider"></div>
+
+    </div>
+    
+    <noscript>
+      <%# TODO: Switch to range fields if this is fixed:
+        https://github.com/bootstrap-ruby/bootstrap_form/issues/677 %>
+      <%= f.fields_for :bp do |f| %>
+        <%= f.number_field nil, label: "Minimum radiocarbon age",
+          append: "uncal BP",
+          min: 0,
+          max: 50000,
+          value: @data.filter_value(:c14s, :bp).present? ? @data.filter_value(:c14s, :bp)[0].min : 0 %>
+        <%= f.number_field nil, label: "Maximum radiocarbon age",
+          append: "uncal BP",
+          min: 0,
+          max: 50000,
+          value: @data.filter_value(:c14s, :bp).present? ? @data.filter_value(:c14s, :bp)[0].max : 50000 %>
+      <% end %>
+    </noscript>
+
+  <% end %>
 <% end %>
 
-<%= f.fields_for :c14s do |f| %>
+<%# The following don't have a straightforward association to C14s and are
+    disabled pending a better solution to:
+    https://github.com/xronos-ch/xronos.rails/issues/165 %>
+<% if false %>
 
-  <%= f.text_field :lab_identifier, label: "Lab IDs", 
-    value: @data.filter_value_string(:c14s, :lab_identifier),
-    multiple: true,
-    data: {
-      controller: "tom-select",
-      "tom-select-route-value": "c14s/search",
-      "tom-select-value-value": "lab_identifier",
-      "tom-select-label-value": "lab_identifier",
-      "tom-select-search-value": "lab_identifier"
-    }
-  %>
+<%= accordion_item "dataFilters-Typo", "Typochronology", true do %>
+  <%= f.fields_for :typos do |f| %>
 
-  <%# f.number_field :bp, label: "Uncalibrated age", append: "uncal BP", 
-    value: @data.filter_value_string(:sites, :contexts, :samples, :c14s, :bp) %>
+    <%= f.text_field :name, label: "Typochronological unit", 
+      value: @data.filter_value_string(:typos, :name),
+      multiple: true,
+      data: { 
+        controller: "tom-select",
+        "tom-select-route-value": "typos/search",
+        "tom-select-value-value": "name",
+        "tom-select-label-value": "name",
+        "tom-select-search-value": "name"
+      } 
+    %>
 
-  <%# f.number_field :cal_bp, label: "Calibrated age", append: "cal BP", 
-    value: @data.filter_value_string(:sites, :contexts, :samples, :c14s, :bp) %>
+  <% end %>
+<% end %>
+
+<%= accordion_item "dataFilters-Reference", "Bibliography", true do %>
+  <%= f.fields_for :references do |f| %>
+
+    <%= f.text_field :short_ref, label: "References", 
+      value: @data.filter_value_string(:references, :short_ref),
+      multiple: true,
+      data: { 
+        controller: "tom-select",
+        "tom-select-route-value": "references/search",
+        "tom-select-value-value": "short_ref",
+        "tom-select-label-value": "short_ref",
+        "tom-select-search-value": "short_ref"
+      } 
+    %>
+
+  <% end %>
+<% end %>
 
 <% end %>

@@ -1,0 +1,4 @@
+.collapse-status-open { display: initial; }
+.collapse-status-closed { display: none; }
+.collapsed .collapse-status-open { display: none; }
+.collapsed .collapse-status-closed { display: initial; }

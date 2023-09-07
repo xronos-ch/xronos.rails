@@ -4,29 +4,32 @@
 
 import { application } from "./application"
 
-import ArticleEditorController from "./article_editor_controller.js"
+import ArticleEditorController from "./article_editor_controller"
 application.register("article-editor", ArticleEditorController)
 
-import FlashController from "./flash_controller.js"
+import FlashController from "./flash_controller"
 application.register("flash", FlashController)
 
-import HomeHeroController from "./home_hero_controller.js"
+import HomeHeroController from "./home_hero_controller"
 application.register("home-hero", HomeHeroController)
 
-import MapController from "./map_controller.js"
+import MapController from "./map_controller"
 application.register("map", MapController)
 
-import MarkdownEditorController from "./markdown_editor_controller.js"
+import MarkdownEditorController from "./markdown_editor_controller"
 application.register("markdown-editor", MarkdownEditorController)
 
-import RemoteModalController from "./remote_modal_controller.js"
+import RemoteModalController from "./remote_modal_controller"
 application.register("remote-modal", RemoteModalController)
 
-import TomSelectController from "./tom_select_controller.js"
+import SliderController from "./slider_controller"
+application.register("slider", SliderController)
+
+import TomSelectController from "./tom_select_controller"
 application.register("tom-select", TomSelectController)
 
-import TooltipsController from "./tooltips_controller.js"
+import TooltipsController from "./tooltips_controller"
 application.register("tooltips", TooltipsController)
 
-import VegaController from "./vega_controller.js"
+import VegaController from "./vega_controller"
 application.register("vega", VegaController)

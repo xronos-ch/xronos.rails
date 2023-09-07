@@ -37,6 +37,12 @@ class Typo < ApplicationRecord
   belongs_to :parent, class_name: "Typo", optional: true
   has_many :children, class_name: "Typo", foreign_key: "typo_id"
 
+  include PgSearch::Model
+  pg_search_scope :search, 
+    against: :name, 
+    using: { tsearch: { prefix: true } } # match partial words
+  #multisearchable against: :name # needs to be cleaned up a bit more
+
   def self.label
     "typological date"
   end

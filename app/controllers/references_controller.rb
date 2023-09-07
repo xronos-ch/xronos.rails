@@ -35,6 +35,28 @@ class ReferencesController < ApplicationController
     end
   end
 
+  # GET /c14s/search
+  # GET /c14s/search.json
+  def search
+    @references = Reference.with_citations_count.search(params[:q])
+
+    # order
+    if params.has_key?(:references_order_by)
+      order = { params[:references_order_by] => params.fetch(:references_order, "asc") }
+      @references = @references.reorder(order)
+    end
+
+    respond_to do |format|
+      format.html { 
+        @pagy, @references = pagy(@references)
+        render :index
+      }
+      format.json  {
+        render :index
+      }
+    end
+  end
+
   # GET /references/1
   # GET /references/1.json
   def show

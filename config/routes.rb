@@ -35,14 +35,18 @@ Rails.application.routes.draw do
     get 'search', on: :collection
   end
   resources :measurement_states
-  resources :references
+  resources :references do
+    get 'search', on: :collection
+  end
   resources :sites do
     get 'search', on: :collection
   end
   resources :site_types do
     get 'search', on: :collection
   end
-  resources :typos
+  resources :typos do
+    get 'search', on: :collection
+  end
 
   # Secondary data resources (no independent show/index views)
   resources :taxons, except: [:index, :show] do

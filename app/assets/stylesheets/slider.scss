@@ -1,0 +1,19 @@
+.noUi-connect {
+	background: $primary !important;
+}
+
+/* Compensate for absolute-positioned pips */
+.has-slider::after {
+	content: "";
+	display: block;
+	height: 30px;
+}
+
+/* Only show tooltips when sliding handles */
+.noUi-tooltip {
+	display: none !important;
+}
+.noUi-active .noUi-tooltip {
+	display: block !important;
+}
+

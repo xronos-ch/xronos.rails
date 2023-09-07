@@ -1,4 +1,5 @@
 class C14LabsController < ApplicationController
+  include Pagy::Backend
   include Tabulatable
 
   load_and_authorize_resource
@@ -11,6 +12,9 @@ class C14LabsController < ApplicationController
   def index
     @c14_labs = C14Lab.all
     respond_to do |format|
+      format.html {
+        @pagy, @c14_labs = pagy(@c14_labs)
+      }
       format.csv {
         @c14_labs = @c14_labs.select(index_csv_template)
         render csv: @c14_labs

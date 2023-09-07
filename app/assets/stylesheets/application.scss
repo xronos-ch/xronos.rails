@@ -39,6 +39,7 @@ $font-family-sans-serif:
 	sans-serif;
 
 $headings-font-family: "Raleway", $font-family-sans-serif;
+$enable-rounded: false;
 $enable-shadows: true;
 
 // Bootstrap
@@ -52,6 +53,10 @@ $enable-shadows: true;
 // Application 
 @import "layout";
 @import "typography";
+
+// Components
+@import "components";
+@import "slider";
 
 // View-specific
 @import "data";
