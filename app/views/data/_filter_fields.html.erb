@@ -161,6 +161,11 @@
   <% end %>
 <% end %>
 
+<%# The following don't have a straightforward association to C14s and are
+    disabled pending a better solution to:
+    https://github.com/xronos-ch/xronos.rails/issues/165 %>
+<% if false %>
+
 <%= accordion_item "dataFilters-Typo", "Typochronology", true do %>
   <%= f.fields_for :typos do |f| %>
 
@@ -195,4 +200,6 @@
     %>
 
   <% end %>
+<% end %>
+
 <% end %>
