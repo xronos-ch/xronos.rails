@@ -6,6 +6,12 @@
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/xronos-ch/xronos.rails)
 ![GitHub last commit](https://img.shields.io/github/last-commit/xronos-ch/xronos.rails)
 
+This repository contains the source code for the web application at the core of [XRONOS](https://xronos.ch), an open infrastructure for chronometric data from archaeological contexts worldwide.
+It uses [Ruby on Rails](https://rubyonrails.org/), [Hotwire](https://hotwired.dev/) and [Bootstrap 5](https://getbootstrap.com/).
+
+XRONOS is an open source project and contributions to this repository are welcome from anyone.
+If you find a bug or have a suggestion to improve XRONOS, please create an [issue](https://github.com/xronos-ch/xronos.rails/issues).
+
 ## Server setup
 
 ### Start the system
