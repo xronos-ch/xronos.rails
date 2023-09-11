@@ -79,3 +79,7 @@ docker-compose stop
 ```
 docker-compose down
 ```
+
+## Development
+
+Use `bin/dev` to run the server in development mode. This watches for changes in CSS and JS files.
