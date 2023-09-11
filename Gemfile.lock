@@ -134,13 +134,6 @@ GEM
       citeproc (~> 1.0, >= 1.0.9)
       csl (~> 2.0)
     coderay (1.1.3)
-    coffee-rails (4.2.2)
-      coffee-script (>= 2.2.0)
-      railties (>= 4.0.0)
-    coffee-script (2.4.1)
-      coffee-script-source
-      execjs
-    coffee-script-source (1.12.2)
     concurrent-ruby (1.2.2)
     countries (5.6.0)
       unaccent (~> 0.3)
@@ -289,6 +282,11 @@ GEM
     postgres-copy (1.7.1)
       activerecord (>= 5.1)
       pg (>= 0.17)
+    propshaft (0.7.0)
+      actionpack (>= 7.0.0)
+      activesupport (>= 7.0.0)
+      rack
+      railties (>= 7.0.0)
     pry (0.14.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
@@ -482,7 +480,6 @@ DEPENDENCIES
   capybara-selenium
   carrierwave (~> 2.0)
   citeproc-ruby
-  coffee-rails (~> 4.2)
   countries
   country_select
   csl-styles
@@ -513,6 +510,7 @@ DEPENDENCIES
   pg
   pg_search
   postgres-copy
+  propshaft
   puma
   rack-brotli
   rails (~> 7.0.0)

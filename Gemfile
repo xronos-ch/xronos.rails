@@ -28,14 +28,13 @@ gem "whenever", require: false
 
 # ASSET PIPELINE --------------------------------------------------------------
 
+gem "propshaft"
+
 # JavaScript bundling
 gem 'jsbundling-rails'
 
 # CSS bundling
 gem 'cssbundling-rails'
-
-# CoffeeScript for .coffee assets and views
-gem 'coffee-rails', '~> 4.2'
 
 # Compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
