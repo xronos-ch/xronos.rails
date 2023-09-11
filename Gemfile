@@ -31,8 +31,8 @@ gem "whenever", require: false
 # JavaScript bundling
 gem 'jsbundling-rails'
 
-# SCSS for stylesheets
-gem 'sass-rails', '~> 5.0'
+# CSS bundling
+gem 'cssbundling-rails'
 
 # CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 4.2'

@@ -13,7 +13,8 @@
 
     <meta name="description" content="<%= content_for?(:meta_description) ? yield(:meta_description) : "An open repository and curation platform for chronometric data from archaeological contexts worldwide." %>">
 
-    <%= stylesheet_link_tag 'application', media: 'all' %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "frontend", "data-turbo-track": "reload" %>
     <%= yield :page_styles %>
 
     <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>

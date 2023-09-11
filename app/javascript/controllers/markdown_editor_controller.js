@@ -1,6 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 import EasyMDE from "easymde" // https://github.com/Ionaru/easy-markdown-editor
+import "easymde/dist/easymde.min.css"
 
 // Connects to data-controller="markdown-editor"
 export default class extends Controller {

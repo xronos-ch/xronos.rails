@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 import L from "leaflet"
+import "leaflet/dist/leaflet.css"
 import "leaflet-providers"
 import "leaflet-lasso"
 import "leaflet-spin"
@@ -137,9 +138,8 @@ export default class extends Controller {
 								color: '#b99555',
 								fillColor: '#b99555',
 								fillOpacity: 0.5,
-								weight: 2,
-								radius: 300,
 								weight: 10,
+								radius: 300,
 								id: data.id
 							}
 						)
