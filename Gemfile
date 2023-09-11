@@ -28,8 +28,8 @@ gem "whenever", require: false
 
 # ASSET PIPELINE --------------------------------------------------------------
 
-# WebPacker asset pipeline
-gem 'webpacker'
+# JavaScript bundling
+gem 'jsbundling-rails'
 
 # SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'

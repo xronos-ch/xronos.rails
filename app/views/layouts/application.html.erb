@@ -16,8 +16,8 @@
     <%= stylesheet_link_tag 'application', media: 'all' %>
     <%= yield :page_styles %>
 
-    <%= javascript_pack_tag 'application' %>
-    <%= javascript_pack_tag params[:controller], :media => "all"  if javascript_exists?(params[:controller])
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+    <%# javascript_pack_tag params[:controller], :media => "all"  if javascript_exists?(params[:controller])
     %>
 
     <%= yield :head %>
