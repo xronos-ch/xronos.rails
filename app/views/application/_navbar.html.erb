@@ -1,5 +1,5 @@
-<nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-primary mb-0 main-nav shadow"
-     data-bs-theme="dark"
+<nav class="navbar navbar-expand-lg sticky-top text-bg-primary mb-0 main-nav shadow"
+     data-bs-theme="light"
   <% if request.path == "/" %>
        data-controller="home-hero"
        data-home-hero-target="navbar"
@@ -19,39 +19,39 @@
        <div class="collapse navbar-collapse" id="navbarSupportedContent">
          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
            <li class="nav-item">
-             <a class="nav-link <%= active_class data_path %>" href="/data" <%= active_aria data_path %>>Browse data</a>
+             <a class="nav-link link-info <%= active_class data_path %>" href="/data" <%= active_aria data_path %>>Browse data</a>
            </li>
            <% if user_signed_in? %>
              <li class="nav-item">
-               <a class="nav-link <%= active_class curate_path %>" href="/curate" <%= active_aria curate_path %>>Curation</a>
+               <a class="nav-link link-info <%= active_class curate_path %>" href="/curate" <%= active_aria curate_path %>>Curation</a>
              </li>
            <% end %>
            <li class="nav-item dropdown">
-             <a class="nav-link dropdown-toggle" href="#" id="aboutDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+             <a class="nav-link link-info dropdown-toggle" href="#" id="aboutDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                About
              </a>
              <ul class="dropdown-menu" aria-labelledby="aboutDropdown">
-               <%= render "articles/nav", section: "about", itemclass: "nav-item", linkclass: "dropdown-item nav-link text-dark" %>
+               <%= render "articles/nav", section: "about", itemclass: "nav-item", linkclass: "dropdown-item nav-link" %>
              </ul>
            </li>
            <li class="nav-item dropdown">
-             <a class="nav-link dropdown-toggle" href="#" id="toolsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+             <a class="nav-link link-info dropdown-toggle" href="#" id="toolsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                Tools
              </a>
              <ul class="dropdown-menu" aria-labelledby="toolsDropdown">
                <li class="nav-item">
-                 <a class="nav-link dropdown-item text-dark <%= active_class database_path %>" href="/database" <%= active_aria database_path %>>Schema</a>
+                 <a class="nav-link dropdown-item <%= active_class database_path %>" href="/database" <%= active_aria database_path %>>Schema</a>
                </li>
                <li class="nav-item">
-                 <a class="nav-link dropdown-item text-dark <%= active_class api_path %>" href="/api" <%= active_aria api_path %>>API</a>
+                 <a class="nav-link dropdown-item <%= active_class api_path %>" href="/api" <%= active_aria api_path %>>API</a>
                </li>
                <li class="nav-item">
-                 <a class="nav-link dropdown-item text-dark" href="https://r.xronos.ch" target="_blank">R package <span class="badge text-dark"><%= fa_icon "external-link" %></span></a>
+                 <a class="nav-link dropdown-item" href="https://r.xronos.ch" target="_blank">R package <span class="badge"><%= fa_icon "external-link" %></span></a>
                </li>
              </ul>
            </li>
            <li class="nav-item">
-             <a class="nav-link" href="/news">News</a>
+             <a class="nav-link link-info" href="/news">News</a>
            </li>
          </ul>
 
