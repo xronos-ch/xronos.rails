@@ -19,11 +19,11 @@
         <td class="text-end"><%= render "status", article: article %></td>
         <% if can? :manage, Article %>
           <td class="text-end">
-            <%= link_to fa_icon("pencil"), 
+            <%= link_to edit_icon,
               edit_admin_article_path(article), 
               class: "btn btn-outline-primary btn-sm",
               title: "Edit #{article.path}" %>
-            <%= link_to fa_icon("trash"), 
+            <%= link_to delete_icon,
               admin_article_path(article), 
               class: "btn btn-outline-primary btn-sm",
               title: "Delete #{article.path}",

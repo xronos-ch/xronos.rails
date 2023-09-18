@@ -9,7 +9,7 @@
   <turbo-frame id="typos-table">
     <div id="typos-toolbar" class="d-flex">
       <div class="ms-auto">
-        <%= link_to fa_icon("download"), typos_path(format: :csv, **request.query_parameters), class: "btn btn-sm btn-outline-primary", title: "Download CSV" %>
+        <%= link_to bs_icon("download"), typos_path(format: :csv, **request.query_parameters), class: "btn btn-sm btn-outline-primary", title: "Download CSV" %>
       </div>
     </div>
     <%= render "table", typos: @typos %>

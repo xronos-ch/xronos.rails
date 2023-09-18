@@ -18,7 +18,7 @@
         <td><%= it.user.email %></td>
         <td><%= it.created_at %></td>
         <td class="text-end"><%= render "import_status", import_table: it %></td>
-        <td class="text-end"><%= link_to fa_icon("trash"), it, method: :delete, class: "btn btn-sm btn-danger" %></td>
+        <td class="text-end"><%= link_to delete_icon, it, method: :delete, class: "btn btn-sm btn-danger" %></td>
       </tr>
     <% end %>
   </tbody>

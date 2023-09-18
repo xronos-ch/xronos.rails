@@ -1,7 +1,7 @@
 <div class="d-flex">
 
   <h1 class="h5 my-0 me-3 px-3 py-2 text-primary fw-bold">
-    <%= fa_icon "hourglass-half" %>
+    <%= bs_icon "hourglass-split" %>
     Data browser
   </h1>
 
@@ -11,9 +11,10 @@
           data-bs-target="#dataFilters"
           aria-expanded="true"
           aria-controls="dataFilters">
-    <%= fa_icon "filter", text: "Filters" %>
-    <span class="collapse-status-open"><%= fa_icon "angle-left" %></span>
-    <span class="collapse-status-closed"><%= fa_icon "angle-right" %></span>
+    <%= bs_icon "filter" %>
+    Filters
+    <span class="collapse-status-open"><%= bs_icon "chevron-left" %></span>
+    <span class="collapse-status-closed"><%= bs_icon "chevron-right" %></span>
   </button>
 
   <div class="px-3 py-2 text-muted">
@@ -28,7 +29,7 @@
          role="tab" 
          aria-controls="dataMap"
          aria-selected="true">
-        <%= fa_icon "map-marker" %>
+        <%= bs_icon "pin-map-fill" %>
         Sites
       </a>
     </li>
@@ -40,7 +41,7 @@
          role="tab" 
          aria-controls="dataTable"
          aria-selected="false">
-        <%= fa_icon "table" %>
+        <%= bs_icon "table" %>
         Radiocarbon dates
       </a>
     </li>
@@ -58,7 +59,7 @@
          role="button" 
          data-bs-toggle="dropdown" 
          aria-expanded="false" href="#">
-        <%= fa_icon "area-chart" %>
+        <%= bs_icon "clipboard-data-fill" %>
         Analyse
       </a>
       <ul class="dropdown-menu" aria-labelledby="dataTools">
@@ -73,7 +74,7 @@
          data-bs-toggle="dropdown" 
          aria-expanded="false" 
          href="#">
-        <%= fa_icon "download" %>
+        <%= bs_icon "download" %>
         Download
       </a>
       <ul class="dropdown-menu" aria-labelledby="dataDownload">

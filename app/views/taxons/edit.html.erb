@@ -1,7 +1,7 @@
 <%= render "shared/remote_modal", title: "Edit taxon" do %>
   <% if @taxon.samples.count > 1 %>
     <div class="alert alert-warning small" role="alert">
-      <%= fa_icon "exclamation-circle", title: "Warning" %>
+      <%= bs_icon "exclamation-circle", title: "Warning" %>
       Editing this taxon will affect <strong><%= @taxon.samples.count %></strong> samples.
     </div>
   <% end %>

@@ -1,11 +1,11 @@
 <% if article.published? %>
   <span class="text-success">
-    <%= fa_icon "check" %> 
+    <%= bs_icon "check-lg" %> 
     Published at <%= article.published_at %>
   </span>
 <% elsif article.scheduled? %>
   <span class="text-warning">
-    <%= fa_icon "clock-o" %>
+    <%= bs_icon "clock" %>
     Scheduled to be published at <%= article.published_at %>
   </span>
 <% else %>

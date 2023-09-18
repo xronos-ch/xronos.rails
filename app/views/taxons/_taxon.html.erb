@@ -1,7 +1,7 @@
 <% if !taxon.gbif_id? %>
 
   <span class="text-muted"><%= taxon.name %></span>
-  <%= fa_icon "exclamation-circle",
+  <%= bs_icon "exclamation-circle",
     class: "text-warning",
     data: { "bs-toggle": "tooltip", controller: "tooltips" },
     title: "Taxon not matched to backbone taxonomy"
@@ -12,7 +12,7 @@
   <%= turbo_frame_tag taxon.usage, src: taxon_usage_path(taxon.usage.id) do %>
     <i><%= taxon.name %></i>
   <% end %>
-  <%= fa_icon "question-circle",
+  <%= bs_icon "question-circle",
     class: "text-info",
     data: { "bs-toggle": "tooltip", controller: "tooltips" },
     title: "Taxonomic data from GBIF.org"

@@ -2,13 +2,13 @@
 <%= f.hidden_field :gbif_id %>
 <% if @taxon.gbif_id.present? %>
   <div class="mb-3 small text-success">
-    <%= fa_icon "check" %>
+    <%= bs_icon "check-lg" %>
     Matched to GBIF Backbone Taxonomy:
     <%= render "taxons/gbif_usage", gbif_usage: @taxon.usage %>
   </div>
 <% else %>
   <div class="mb-3 small text-warning">
-    <%= fa_icon "exclamation-circle", title: "Warning" %>
+    <%= bs_icon "exclamation-circle", title: "Warning" %>
     Name not matched to GBIF Backbone Taxonomy.
   </div>
 <% end %>

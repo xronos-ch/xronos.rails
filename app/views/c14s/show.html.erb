@@ -24,7 +24,7 @@
   <% if can? :edit, C14 %>
     <div class="container my-5">
       <%= link_to(edit_c14_path, class: "btn btn-sm btn-primary", data: { "turbo_frame": "remote_modal" }) do %>
-        <%= fa_icon "pencil", text: "Edit radiocarbon date" %>
+        <%= edit_icon %> Edit radiocarbon date
       <% end %>
     </div>
   <% end %>

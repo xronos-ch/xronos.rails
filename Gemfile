@@ -6,7 +6,7 @@ git_source(:github) { |repo| 'https://github.com/#{repo}.git' }
 
 # Ruby on Rails
 ruby '3.0.4'
-gem 'rails', '~> 6.1.7'
+gem 'rails', '~> 7.0.0'
 
 # Database for Active Record
 gem 'pg'
@@ -28,14 +28,13 @@ gem "whenever", require: false
 
 # ASSET PIPELINE --------------------------------------------------------------
 
-# WebPacker asset pipeline
-gem 'webpacker'
+gem 'propshaft', '>= 0.6.2'
 
-# SCSS for stylesheets
-gem 'sass-rails', '~> 5.0'
+# JavaScript bundling
+gem 'jsbundling-rails'
 
-# CoffeeScript for .coffee assets and views
-gem 'coffee-rails', '~> 4.2'
+# CSS bundling
+gem 'cssbundling-rails'
 
 # Compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
@@ -61,7 +60,7 @@ gem 'bootstrap', '~> 5.1'
 gem 'bootstrap_form', '~> 5.0'
 
 # FontAwesome 4.7 icons
-gem 'font-awesome-rails'
+#gem 'font-awesome-rails'
 
 # Hotwire JS framework
 gem 'turbo-rails'

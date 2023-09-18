@@ -2,14 +2,15 @@
   <%= 
     if can? :edit, i
       link_to edit_polymorphic_path(i), class: 'btn btn-secondary' do
-        fa_icon 'pencil', text: 'Edit' 
+        edit_icon + " Edit"
       end
     end
   %>
   <%= 
     if can? :delete, i
-      link_to i, method: :delete, class: 'btn btn-danger', data: { turbo_method: :delete, turbo_confirm: 'Are you sure?' } do
-        fa_icon 'trash', text: 'Delete'
+      link_to i, method: :delete, class: 'btn btn-danger', 
+        data: { turbo_method: :delete, turbo_confirm: 'Are you sure?' } do
+        delete_icon + " Delete"
       end
     end 
   %>

@@ -19,6 +19,24 @@ module ApplicationHelper
     image_tag icon, html_options
   end
 
+  # Bootstrap Icons (icon font method)
+  def bs_icon(icon, options = {})
+    classes = ["bi-#{icon}"].append(options.delete(:class)).compact
+    content_tag :i, "", options.merge(class: classes)
+  end
+
+  def create_icon(options = {})
+    bs_icon "plus", options
+  end
+
+  def edit_icon(options = {})
+    bs_icon "pencil-fill", options
+  end
+
+  def delete_icon(options = {})
+    bs_icon "trash-fill", options
+  end
+
   def active_class(path)
     "active" if current_page?(path)
   end
