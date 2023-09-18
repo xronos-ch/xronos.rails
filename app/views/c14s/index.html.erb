@@ -9,7 +9,7 @@
   <turbo-frame id="c14s-table">
     <div id="c14s-toolbar" class="d-flex">
       <div class="ms-auto">
-        <%= link_to fa_icon("download"), c14s_path(format: :csv, **request.query_parameters), class: "btn btn-sm btn-outline-primary", title: "Download CSV" %>
+        <%= link_to bs_icon("download"), c14s_path(format: :csv, **request.query_parameters), class: "btn btn-sm btn-outline-primary", title: "Download CSV" %>
       </div>
     </div>
     <%= render "table", c14s: @c14s %>

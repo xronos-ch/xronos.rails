@@ -20,7 +20,7 @@
   </div>
   <div class="card-footer d-flex bg-transparent border-0 text-muted">
     <div class="me-3">
-      <%= fa_icon "calendar-o" %>
+      <%= bs_icon "calendar" %>
       <% if article.draft? %>
         draft
       <% else %>
@@ -28,7 +28,7 @@
       <% end %>
     </div>
     <div>
-      <%= fa_icon "user" %>
+      <%= bs_icon "person-circle" %>
       <%= article.user.email %>
     </div>
   </div>

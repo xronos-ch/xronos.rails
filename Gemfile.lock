@@ -179,8 +179,6 @@ GEM
       loofah (>= 2.3.1)
       sax-machine (>= 1.0)
     ffi (1.15.5)
-    font-awesome-rails (4.7.0.8)
-      railties (>= 3.2, < 8.0)
     formatador (1.1.0)
     gbifrb (0.2.0)
     geocoder (1.8.2)
@@ -491,7 +489,6 @@ DEPENDENCIES
   faker
   faraday (~> 2.5, >= 2.5.2)
   feedjira
-  font-awesome-rails
   gbifrb
   geocoder
   guard-rspec
@@ -510,7 +507,7 @@ DEPENDENCIES
   pg
   pg_search
   postgres-copy
-  propshaft
+  propshaft (>= 0.6.2)
   puma
   rack-brotli
   rails (~> 7.0.0)

@@ -28,7 +28,7 @@ gem "whenever", require: false
 
 # ASSET PIPELINE --------------------------------------------------------------
 
-gem "propshaft"
+gem 'propshaft', '>= 0.6.2'
 
 # JavaScript bundling
 gem 'jsbundling-rails'
@@ -60,7 +60,7 @@ gem 'bootstrap', '~> 5.1'
 gem 'bootstrap_form', '~> 5.0'
 
 # FontAwesome 4.7 icons
-gem 'font-awesome-rails'
+#gem 'font-awesome-rails'
 
 # Hotwire JS framework
 gem 'turbo-rails'

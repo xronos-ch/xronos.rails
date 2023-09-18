@@ -1,17 +1,17 @@
 <% if user_signed_in? %>
   <div class="dropdown">
     <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-      <%= fa_icon "user" %> <%= current_user.email %>
+      <%= bs_icon "person-fill" %> <%= current_user.email %>
     </button>
     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
       <li>
         <%= link_to(edit_user_registration_path, class: "dropdown-item") do %>
-          <%= fa_icon "edit" %> Edit profile
+          <%= edit_icon %> Edit profile
         <% end %>
       </li>
       <li> 
         <%= link_to(destroy_user_session_path, data: { turbo_method: :delete }, class: "dropdown-item") do %>
-          <%= fa_icon "sign-out" %> Logout
+          Logout
         <% end %>
       </li>
     </ul>
@@ -28,14 +28,14 @@
         <div class="form-group">
           <%= f.label :email, class: "sr-only col-form-label col-form-label-sm" %>
           <div class="input-group">
-            <div class="input-group-text" style="width: 35px;"><%= fa_icon "user" %></div>
+            <div class="input-group-text" style="width: 35px;"><%= bs_icon "person-fill" %></div>
             <%= f.text_field :email, class: "form-control form-control-sm", placeholder: "email@example.com"  %>
           </div>
         </div>
         <div class="form-group">
           <%= f.label :password, class: "sr-only col-form-label col-form-label-sm" %>
           <div class="input-group">
-            <div class="input-group-text" style="width: 35px;"><%= fa_icon "unlock" %></div>
+            <div class="input-group-text" style="width: 35px;"><%= bs_icon "key-fill" %></div>
             <%= f.password_field :password, class: "form-control form-control-sm", placeholder: "password"  %>
           </div>
         </div>

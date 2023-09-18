@@ -46,7 +46,7 @@
                  <a class="nav-link dropdown-item <%= active_class api_path %>" href="/api" <%= active_aria api_path %>>API</a>
                </li>
                <li class="nav-item">
-                 <a class="nav-link dropdown-item" href="https://r.xronos.ch" target="_blank">R package <span class="badge"><%= fa_icon "external-link" %></span></a>
+                 <a class="nav-link dropdown-item" href="https://r.xronos.ch" target="_blank">R package <span class="badge"><%= bs_icon "box-arrow-up-right" %></span></a>
                </li>
              </ul>
            </li>
@@ -64,7 +64,8 @@
            <div class="input-group">
              <input class="form-control form-control-sm" type="search" name="q" placeholder="<%= random_search %>" aria-label="Search">
              <button class="btn btn-sm btn-info" type="submit">
-               <%= fa_icon "search", text: "Search" %>
+               <%= bs_icon "search" %>
+               Search
              </button>
            </div>
          </form>
@@ -76,8 +77,8 @@
                  <%= current_user.email %>
                </button>
                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                 <li> <%= link_to(edit_user_registration_path, class: "dropdown-item") do%><%= fa_icon "edit" %> Edit registration<% end %></li>
-                 <li> <%= button_to destroy_user_session_path, method: :delete, class: "dropdown-item" do %><%= fa_icon "sign-out" %> Logout<% end %></li>
+                 <li> <%= link_to(edit_user_registration_path, class: "dropdown-item") do%><%= bs_icon "pencil-square" %> Edit registration<% end %></li>
+                 <li> <%= button_to destroy_user_session_path, method: :delete, class: "dropdown-item" do %>Logout<% end %></li>
                </ul>
              </div>
 
@@ -93,14 +94,14 @@
                    <div class="form-group">
                      <%= f.label :email, class: "sr-only col-form-label col-form-label-sm" %>
                      <div class="input-group">
-                       <div class="input-group-text" style="width: 35px;"><%= fa_icon "user" %></div>
+                       <div class="input-group-text" style="width: 35px;"><%= bs_icon "person" %></div>
                        <%= f.text_field :email, class: "form-control form-control-sm", placeholder: "email@example.com"  %>
                      </div>
                    </div>
                    <div class="form-group">
                      <%= f.label :password, class: "sr-only col-form-label col-form-label-sm" %>
                      <div class="input-group">
-                       <div class="input-group-text" style="width: 35px;"><%= fa_icon "unlock" %></div>
+                       <div class="input-group-text" style="width: 35px;"><%= bs_icon "key-fill" %></div>
                        <%= f.password_field :password, class: "form-control form-control-sm", placeholder: "password"  %>
                      </div>
                    </div>
