@@ -84,7 +84,6 @@ class SitesController < ApplicationController
 
   # GET /sites/1/edit
   def edit
-    gon.selected_sites = [{id: @site.id, name: @site.name, lat: @site.lat, lng: @site.lng}].to_json
   end
 
   # POST /sites
