@@ -3,12 +3,11 @@ import L from "leaflet"
 import "leaflet/dist/leaflet.css"
 import "leaflet-providers"
 import "leaflet-lasso"
-import "leaflet-spin"
 import Supercluster from 'supercluster';
 
 // Connects to data-controller="map"
 export default class extends Controller {
-	static targets = [ "container" ]
+	static targets = [ "container", "spinner" ]
 	static values = {
 		baseMap: String,
 		markersData: Array,
@@ -114,7 +113,6 @@ export default class extends Controller {
 	}
 
 	loadMarkers() {
-
 		var markers = this.markersDataValue
 			.map(data =>
 				L.circleMarker(
@@ -190,7 +188,7 @@ export default class extends Controller {
 		var markers_url = new URL(this.markersUrlValue)
 		markers_url.search += "&select[]=sites.id&select[]=sites.name&select[]=sites.lat&select[]=sites.lng"
 		console.debug("Fetching map data from " + markers_url.toString())
-		this.map.spin(true)
+		this.showSpinner()
 
 		// Load markers
 		var data = fetch(markers_url, { headers: { 'Accept': 'application/json' } })
@@ -215,8 +213,16 @@ export default class extends Controller {
 					const bounds = this.map.getBounds();
 					this.markersLayer.addData(this.index.getClusters([bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth()], this.map.getZoom()));                        //this.map.addLayer(index);    
 				}
-				this.map.spin(false)
+				this.hideSpinner()
 
 			})
+	}
+
+	showSpinner() {
+		this.spinnerTarget.classList.remove("visually-hidden")
+	}
+
+	hideSpinner() {
+		this.spinnerTarget.classList.add("visually-hidden")
 	}
 }

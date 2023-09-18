@@ -2,4 +2,10 @@
      data-controller="map" 
      data-map-target="container"
      data-map-markers-url-value="<%= request.original_url %>">
+     <div class="spinner-border position-relative top-50 start-50 visually-hidden" 
+          style="z-index: 800"
+          role="status"
+          data-map-target="spinner">
+       <span class="visually-hidden">Loading...</span>
+     </div>
 </div>
