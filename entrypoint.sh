@@ -9,11 +9,14 @@ cd ../..
 # update cron jobs
 bundle exec whenever --update-crontab
 
-# migrate the database
-# bundle exec rake db:create db:migrate
+# install/update dependencies
+bundle && yarn
 
-# compile the assets
-bundle exec rake assets:precompile
+# run database migrations
+bundle exec rails db:migrate
 
-# start the server
+# precompile assets
+bundle exec rails assets:precompile
+
+# start server
 bundle exec rails server
