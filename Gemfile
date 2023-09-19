@@ -18,7 +18,7 @@ gem 'puma'
 gem 'redis', '~> 4.0'
 
 # Reduce boot times through caching (required in config/boot.rb)
-gem 'bootsnap', '>= 1.1.0', require: false
+# gem 'bootsnap', '>= 1.1.0', require: false
 
 # Compress responses to speed up page loads
 gem "rack-brotli"
