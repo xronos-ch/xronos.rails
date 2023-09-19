@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[6.1].define(version: 2023_03_11_101806) do
-
+ActiveRecord::Schema[7.0].define(version: 2023_09_11_071953) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -22,7 +21,7 @@ ActiveRecord::Schema[6.1].define(version: 2023_03_11_101806) do
     t.string "record_type", null: false
     t.bigint "record_id", null: false
     t.bigint "blob_id", null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
@@ -34,8 +33,8 @@ ActiveRecord::Schema[6.1].define(version: 2023_03_11_101806) do
     t.text "metadata"
     t.string "service_name", null: false
     t.bigint "byte_size", null: false
-    t.string "checksum", null: false
-    t.datetime "created_at", null: false
+    t.string "checksum"
+    t.datetime "created_at", precision: nil, null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
@@ -50,10 +49,10 @@ ActiveRecord::Schema[6.1].define(version: 2023_03_11_101806) do
     t.string "slug"
     t.string "title"
     t.bigint "user_id"
-    t.datetime "published_at"
+    t.datetime "published_at", precision: nil
     t.text "body"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string "splash_attribution"
     t.boolean "publish", default: false
     t.index ["section"], name: "index_articles_on_section"
@@ -64,8 +63,8 @@ ActiveRecord::Schema[6.1].define(version: 2023_03_11_101806) do
   create_table "c14_labs", force: :cascade do |t|
     t.string "name"
     t.boolean "active"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "superseded_by"
     t.index ["active"], name: "index_c14_labs_on_active"
     t.index ["name"], name: "index_c14_labs_on_name"
@@ -80,8 +79,8 @@ ActiveRecord::Schema[6.1].define(version: 2023_03_11_101806) do
     t.float "delta_c13"
     t.float "delta_c13_std"
     t.string "method"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.bigint "c14_lab_id"
     t.bigint "sample_id"
     t.string "lab_identifier"
@@ -105,8 +104,8 @@ ActiveRecord::Schema[6.1].define(version: 2023_03_11_101806) do
     t.string "name"
     t.integer "approx_start_time"
     t.integer "approx_end_time"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "site_id"
     t.integer "superseded_by"
     t.index ["name"], name: "index_contexts_on_name"
@@ -116,9 +115,9 @@ ActiveRecord::Schema[6.1].define(version: 2023_03_11_101806) do
 
   create_table "import_tables", force: :cascade do |t|
     t.string "file"
-    t.datetime "imported_at"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "imported_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.bigint "user_id"
     t.jsonb "read_options"
     t.jsonb "mapping"
@@ -127,8 +126,8 @@ ActiveRecord::Schema[6.1].define(version: 2023_03_11_101806) do
 
   create_table "materials", force: :cascade do |t|
     t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "superseded_by"
     t.index ["name"], name: "index_materials_on_name"
     t.index ["superseded_by"], name: "index_materials_on_superseded_by"
@@ -137,8 +136,8 @@ ActiveRecord::Schema[6.1].define(version: 2023_03_11_101806) do
   create_table "measurement_states", force: :cascade do |t|
     t.string "name"
     t.text "description"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["name"], name: "index_measurement_states_on_name"
   end
 
@@ -148,8 +147,8 @@ ActiveRecord::Schema[6.1].define(version: 2023_03_11_101806) do
     t.string "token", null: false
     t.integer "expires_in", null: false
     t.text "redirect_uri", null: false
-    t.datetime "created_at", null: false
-    t.datetime "revoked_at"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "revoked_at", precision: nil
     t.string "scopes", default: "", null: false
     t.index ["application_id"], name: "index_oauth_access_grants_on_application_id"
     t.index ["resource_owner_id"], name: "index_oauth_access_grants_on_resource_owner_id"
@@ -162,8 +161,8 @@ ActiveRecord::Schema[6.1].define(version: 2023_03_11_101806) do
     t.string "token", null: false
     t.string "refresh_token"
     t.integer "expires_in"
-    t.datetime "revoked_at"
-    t.datetime "created_at", null: false
+    t.datetime "revoked_at", precision: nil
+    t.datetime "created_at", precision: nil, null: false
     t.string "scopes"
     t.string "previous_refresh_token", default: "", null: false
     t.index ["application_id"], name: "index_oauth_access_tokens_on_application_id"
@@ -179,8 +178,8 @@ ActiveRecord::Schema[6.1].define(version: 2023_03_11_101806) do
     t.text "redirect_uri", null: false
     t.string "scopes", default: "", null: false
     t.boolean "confidential", default: true, null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["uid"], name: "index_oauth_applications_on_uid", unique: true
   end
 
@@ -193,8 +192,8 @@ ActiveRecord::Schema[6.1].define(version: 2023_03_11_101806) do
     t.text "content"
     t.string "searchable_type"
     t.bigint "searchable_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["searchable_type", "searchable_id"], name: "index_pg_search_documents_on_searchable"
   end
 
@@ -207,8 +206,8 @@ ActiveRecord::Schema[6.1].define(version: 2023_03_11_101806) do
 
   create_table "references", force: :cascade do |t|
     t.text "bibtex"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "short_ref"
     t.integer "superseded_by"
     t.index ["short_ref"], name: "index_references_on_short_ref"
@@ -216,8 +215,8 @@ ActiveRecord::Schema[6.1].define(version: 2023_03_11_101806) do
   end
 
   create_table "samples", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "material_id"
     t.integer "taxon_id"
     t.integer "context_id"
@@ -237,8 +236,8 @@ ActiveRecord::Schema[6.1].define(version: 2023_03_11_101806) do
   create_table "sessions", force: :cascade do |t|
     t.string "session_id", null: false
     t.text "data"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["session_id"], name: "index_sessions_on_session_id", unique: true
     t.index ["updated_at"], name: "index_sessions_on_updated_at"
   end
@@ -246,8 +245,8 @@ ActiveRecord::Schema[6.1].define(version: 2023_03_11_101806) do
   create_table "site_types", force: :cascade do |t|
     t.string "name"
     t.text "description"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "superseded_by"
     t.index ["name"], name: "index_site_types_on_name"
     t.index ["superseded_by"], name: "index_site_types_on_superseded_by"
@@ -264,8 +263,8 @@ ActiveRecord::Schema[6.1].define(version: 2023_03_11_101806) do
     t.string "name"
     t.decimal "lat"
     t.decimal "lng"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "country_code"
     t.integer "superseded_by"
     t.index ["country_code"], name: "index_sites_on_country_code"
@@ -275,8 +274,8 @@ ActiveRecord::Schema[6.1].define(version: 2023_03_11_101806) do
 
   create_table "taxons", force: :cascade do |t|
     t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "superseded_by"
     t.integer "gbif_id"
     t.index ["gbif_id"], name: "index_taxons_on_gbif_id"
@@ -288,8 +287,8 @@ ActiveRecord::Schema[6.1].define(version: 2023_03_11_101806) do
     t.string "name"
     t.integer "approx_start_time"
     t.integer "approx_end_time"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "parent_id"
     t.bigint "sample_id"
     t.integer "superseded_by"
@@ -302,8 +301,8 @@ ActiveRecord::Schema[6.1].define(version: 2023_03_11_101806) do
     t.string "first_name"
     t.string "last_name"
     t.bigint "user_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_user_profiles_on_user_id"
   end
 
@@ -311,10 +310,10 @@ ActiveRecord::Schema[6.1].define(version: 2023_03_11_101806) do
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "reset_password_sent_at", precision: nil
+    t.datetime "remember_created_at", precision: nil
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.boolean "admin", default: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -326,7 +325,7 @@ ActiveRecord::Schema[6.1].define(version: 2023_03_11_101806) do
     t.string "event", null: false
     t.string "whodunnit"
     t.text "object"
-    t.datetime "created_at"
+    t.datetime "created_at", precision: nil
     t.string "whodunnit_user_email"
     t.text "revision_comment"
     t.jsonb "new_object"
@@ -334,6 +333,17 @@ ActiveRecord::Schema[6.1].define(version: 2023_03_11_101806) do
     t.index ["event"], name: "index_versions_on_event"
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
     t.index ["whodunnit"], name: "index_versions_on_whodunnit"
+  end
+
+  create_table "wikidata_links", force: :cascade do |t|
+    t.integer "qid"
+    t.string "wikidata_linkable_type"
+    t.bigint "wikidata_linkable_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["qid"], name: "index_wikidata_links_on_qid"
+    t.index ["wikidata_linkable_type", "wikidata_linkable_id"], name: "index_wikidata_links_on_linkable_type_and_linkable_id"
+    t.index ["wikidata_linkable_type", "wikidata_linkable_id"], name: "index_wikidata_links_on_wikidata_linkable"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
