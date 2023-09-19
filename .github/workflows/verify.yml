@@ -74,7 +74,7 @@ jobs:
           POSTGRES_PASSWORD: "postgres"
           REGISTRATION_PASSPHRASE: ""
         run: |
-          bin/rails db:setup
+          bin/rails db:prepare
       - name: Run tests
         run: COVERAGE=true bundle exec rspec
         env:
