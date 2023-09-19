@@ -86,8 +86,6 @@ GEM
     bibtex-ruby (6.0.0)
       latex-decode (~> 0.0)
     bindex (0.8.1)
-    bootsnap (1.16.0)
-      msgpack (~> 1.2)
     bootstrap (5.3.1)
       autoprefixer-rails (>= 9.1.0)
       popper_js (>= 2.11.8, < 3)
@@ -240,7 +238,6 @@ GEM
     mini_magick (4.12.0)
     mini_mime (1.1.5)
     minitest (5.20.0)
-    msgpack (1.7.2)
     multi_json (1.15.0)
     multi_xml (0.6.0)
     namae (1.1.1)
@@ -467,7 +464,6 @@ DEPENDENCIES
   activerecord-session_store
   annotate
   bibtex-ruby
-  bootsnap (>= 1.1.0)
   bootstrap (~> 5.1)
   bootstrap_form (~> 5.0)
   breadcrumbs
