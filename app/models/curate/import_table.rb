@@ -23,7 +23,7 @@ class Curate::ImportTable < ApplicationRecord
   before_create :default_values
   before_destroy :delete_file
 
-  mount_uploader :file, ImportTableUploader
+  mount_uploader :file, Curate::ImportTableUploader
   belongs_to :user
 
   attr_reader :parsed
