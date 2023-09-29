@@ -53,9 +53,6 @@ gem 'sitemap_generator'
 
 # FRONTEND FRAMEWORKS ---------------------------------------------------------
 
-# Bootstrap CSS framework
-gem 'bootstrap', '~> 5.1'
-
 # Bootstrap forms
 gem 'bootstrap_form', '~> 5.0'
 
