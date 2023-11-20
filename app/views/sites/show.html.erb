@@ -26,34 +26,42 @@
 
 <section id="site-details" class="bg-body">
   <div class="container my-5">
+    <div class="d-flex">
+      <h2>
+        <%= xr_icon Site, {}, style: "width: auto; height: 2rem" %>
+        <%= Site.label.humanize %> details
+      </h2>
+      <% if can? :edit, Site %>
+        <div class="ms-auto">
+          <%= link_to edit_icon,
+            edit_site_path, 
+            class: "btn btn-sm btn-outline-primary",
+            data: { "turbo_frame": "remote_modal" } %>
+        </div>
+      <% end %>
+    </div>
     <%= render "site_details", site: @site %>
-    <% if can? :edit, Site %>
-      <div class="text-end my-3">
-        <%= link_to(edit_site_path, class: "btn btn-sm btn-primary", data: { "turbo_frame": "remote_modal" }) do %>
-          <%= edit_icon %> Edit site details
-        <% end %>
-      </div>
-    <% end %>
   </div>
 </section>
 
 <section id="site-xrons" class="bg-body">
     <% unless @c14s.nil? %>
       <div id="site-c14s" class="container my-5">
-        <h2>
-          <%= xr_icon C14, {}, style: "height: 2rem" %>
-          <%= C14.label.humanize.pluralize %>
-          <small class="text-muted">(<%= @pagy_c14s.count %>)</small>
-        </h2>
-        <turbo-frame id="site-c14s-table">
-          <div id="sites-c14s-toolbar" class="d-flex">
-            <div class="ms-auto">
-              <%= link_to bs_icon("download"), 
-                c14s_path(format: :csv, c14: { sample: { contexts: { site_id: @site.id } } }), 
-                class: "btn btn-sm btn-outline-primary", 
-                title: "Download CSV" %>
-            </div>
+        <div id="sites-c14s-toolbar" class="d-flex">
+          <h2>
+            <%= xr_icon C14, {}, style: "width: auto; height: 2rem" %>
+            <%= C14.label.humanize.pluralize %>
+            <small class="text-muted">(<%= @pagy_c14s.count %>)</small>
+          </h2>
+          <div class="ms-auto">
+            <%= link_to bs_icon("download"), 
+              c14s_path(format: :csv, c14: { sample: { contexts: { site_id: @site.id } } }), 
+              class: "btn btn-sm btn-outline-primary", 
+              title: "Download CSV" %>
           </div>
+        </div>
+
+        <turbo-frame id="site-c14s-table">
           <%= render "c14s/table", c14s: @c14s %>
           <% unless @pagy_c14s.pages <= 1 %>
             <%== pagy_bootstrap_nav(@pagy_c14s) %>
@@ -64,20 +72,20 @@
 
     <% unless @typos.nil? %>
       <div id="site-typos" class="container my-5">
-        <h2>
-          <%= xr_icon Typo, {}, style: "height: 2rem" %>
-          <%= Typo.label.humanize.pluralize %>
-          <small class="text-muted">(<%= @pagy_typos.count %>)</small>
-        </h2>
-        <turbo-frame id="site-typos-table">
-          <div id="sites-typos-toolbar" class="d-flex">
-            <div class="ms-auto">
-              <%= link_to bs_icon("download"), 
-                typos_path(format: :csv, typo: { sample: { contexts: { site_id: @site.id } } }), 
-                class: "btn btn-sm btn-outline-primary", 
-                title: "Download CSV" %>
-            </div>
+        <div id="sites-typos-toolbar" class="d-flex">
+          <h2>
+            <%= xr_icon Typo, {}, style: "width: auto; height: 2rem" %>
+            <%= Typo.label.humanize.pluralize %>
+            <small class="text-muted">(<%= @pagy_typos.count %>)</small>
+          </h2>
+          <div class="ms-auto">
+            <%= link_to bs_icon("download"), 
+              typos_path(format: :csv, typo: { sample: { contexts: { site_id: @site.id } } }), 
+              class: "btn btn-sm btn-outline-primary", 
+              title: "Download CSV" %>
           </div>
+        </div>
+        <turbo-frame id="site-typos-table">
           <%= render "typos/table", typos: @typos %>
           <% unless @pagy_typos.pages <= 1 %>
             <%== pagy_bootstrap_nav(@pagy_typos) %>
@@ -92,9 +100,9 @@
 <section id="references" class="bg-body">
   <div class="container my-5">
     <h2>
-      <%= xr_icon Reference, {}, style: "height: 2rem" %>
+      <%= xr_icon Reference, {}, style: "width: auto; height: 2rem" %>
       <%= Reference.label.humanize.pluralize %>
-      <small class="text-muted">(<%# @site.recursive_references.count %>)</small>
+      <!-- <small class="text-muted">(<%# @site.recursive_references.count %>)</small>-->
     </h2>
     <%= render "references/bibliography", 
       references: @site.recursive_references %>

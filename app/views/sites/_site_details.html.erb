@@ -1,47 +1,30 @@
-<dl class="row gx-5">
+<dl>
 
-  <div class="col-lg">
-    <!-- Site metadata -->
+  <dt><small>Canonical name</small></dt>
+  <dd class="font-monospace"><%= site.name %></dd>
 
-    <div class="row">
-      <dt class="col-sm-3">Canonical name</dt>
-      <dd class="col-sm-9 text-end"><%= site.name %></dd>
+  <dt><small>Other names</small></dt>
+  <dd class="font-monospace"><%= na_value %></dd>
 
-      <dt class="col-sm-3">Other names</dt>
-      <dd class="col-sm-9 text-end"><!-- not yet implemented --><%= na_value %></dd>
+  <dt><small><%= "Site type".pluralize(site.site_types.count) %></small></dt>
+  <dd class="font-monospace">
+    <% if site.site_types.any? %>
+      <%= site.site_types.collect(&:name).to_sentence.humanize %>
+    <% else %>
+      <%= na_value %>
+    <% end %>
+  </dd>
 
-      <dt class="col-sm-3"><%= "Site type".pluralize(site.site_types.count) %></dt>
-      <dd class="col-sm-9 text-end">
-        <% if site.site_types.any? %>
-          <%= site.site_types.collect(&:name).to_sentence.humanize %>
-        <% else %>
-          <%= na_value %>
-        <% end %>
-      </dd>
+  <dt><small>Country</small></dt>
+  <dd class="font-monospace"><%= render "sites/country", site: site %></dd>
 
-      <dt class="col-sm-3"><%= "Reference".pluralize(site.references.count) %></dt>
-      <dd class="col-sm-9 text-end">
-        <%# render "references/citations", references: site.references %>
-      </dd>
+  <dt><small>Coordinates</small></dt>
+  <dd class="font-monospace"><%= site.coordinates.present? ? site.coordinates : na_value %></dd>
 
-    </div>
-
-  </div>
-
-  <div class="col-lg">
-    <!-- Location data -->
-
-    <div class="row">
-      <dt class="col-sm-3">Country</dt>
-      <dd class="col-sm-9 text-end"><%= render "sites/country", site: site %></dd>
-    </div>
-
-    <div class="row">
-      <dt class="col-sm-3">Coordinates</dt>
-      <dd class="col-sm-9 font-monospace text-end"><%= site.coordinates.present? ? site.coordinates : na_value %></dd>
-    </div>
-
-  </div>
+  <dt><small><%= "Reference".pluralize(site.references.count) %></small></dt>
+  <dd class="font-monospace">
+    <%= render "references/citations", references: site.references %>
+  </dd>
 
 </dl>
 
