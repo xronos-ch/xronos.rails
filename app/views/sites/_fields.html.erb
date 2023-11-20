@@ -10,19 +10,14 @@
     construct the label and wrapper HTML manually here %>
 <div class="mb-3">
   <%= f.label :country_code, "Country", class: "form-label" %>
-  <%
+  <%=
+    country_select_options = { include_blank: na_value }
     if @site.country_from_coordinates.present?
-      country_guess = @site.country_from_coordinates.alpha2
-    else
-      country_guess = nil
+      country_select_options[:priority_countries] = [@site.country_from_coordinates.alpha2]
     end
-  %>
-  <%= f.country_select :country_code, 
-    { 
-      include_blank: na_value, 
-      priority_countries: [country_guess]
-    }, 
-    { data: { controller: 'tom-select' } } 
+
+    f.country_select :country_code, country_select_options,
+      { data: { controller: 'tom-select' } } 
   %>
 </div>
 
