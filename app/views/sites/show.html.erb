@@ -1,16 +1,7 @@
 <% content_for :title, @site.name %>
 <% content_for :meta_description, "Chronometric data for #{@site.name}, an archaeological site in #{@site.country}, including #{@site.c14s.count} radiocarbon dates, #{@site.typos.count} typological classifications, and #{@site.references.count} bibliographic references." %>
 
-<header id="site-header" class="bg-light text-primary">
-  <div class="container my-5">
-    <h1 class="display-1"><%= @site.name %></h1>
-    <h2 class="display-6">
-      <%= xr_icon Site, {}, { style: "height: 2.5rem;" } %>
-      <%= Site.label.humanize %> 
-      <% if @site.country.present? %> in <%= @site.country.common_name %><%end%>
-    </h2>
-  </div>
-</header>
+<%= render "header", site: @site %>
 
 <% unless @site.lat.blank? or @site.lng.blank? %>
   <section id="siteMap" class="bg-primary">
@@ -26,21 +17,22 @@
 
 <section id="site-details" class="bg-body">
   <div class="container my-5">
-    <div class="d-flex">
-      <h2>
-        <%= xr_icon Site, {}, style: "width: auto; height: 2rem" %>
-        <%= Site.label.humanize %> details
-      </h2>
-      <% if can? :edit, Site %>
-        <div class="ms-auto">
-          <%= link_to edit_icon,
-            edit_site_path, 
-            class: "btn btn-sm btn-outline-primary",
-            data: { "turbo_frame": "remote_modal" } %>
-        </div>
-      <% end %>
-    </div>
-    <%= render "site_details", site: @site %>
+    <%= turbo_frame_tag @site do %>
+      <div class="d-flex">
+        <h2>
+          <%= xr_icon Site, {}, style: "width: auto; height: 2rem" %>
+          <%= Site.label.humanize %> details
+        </h2>
+        <% if can? :edit, Site %>
+          <div class="ms-auto">
+            <%= link_to edit_icon,
+              edit_site_path, 
+              class: "btn btn-sm btn-outline-primary" %>
+          </div>
+        <% end %>
+      </div>
+      <%= render "site_details", site: @site %>
+    <% end %>
   </div>
 </section>
 

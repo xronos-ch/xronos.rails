@@ -37,6 +37,14 @@ module ApplicationHelper
     bs_icon "trash-fill", options
   end
 
+  def confirm_icon(options = {})
+    bs_icon "check", options
+  end
+
+  def cancel_icon(options = {})
+    bs_icon "x", options
+  end
+
   def active_class(path)
     "active" if current_page?(path)
   end

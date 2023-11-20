@@ -1,0 +1,10 @@
+<header id="site-header" class="bg-light text-primary">
+  <div class="container my-5">
+    <h1 class="display-1"><%= site.name %></h1>
+    <h2 class="display-6">
+      <%= xr_icon Site, {}, { style: "width: auto; height: 2.5rem;" } %>
+      <%= Site.label.humanize %> 
+      <% if site.country.present? %> in <%= site.country.common_name %><%end%>
+    </h2>
+  </div>
+</header>

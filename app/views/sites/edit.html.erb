@@ -1,6 +1,26 @@
-<%= render "shared/remote_modal", title: "Edit site details" do %>
+<%= render "header", site: @site %>
 
-  <%= render 'form' %>
-
-<% end %>
+<div class="container my-5">
+  <%= turbo_frame_tag @site do %>
+    <div class="d-flex">
+      <h2>
+        <%= xr_icon Site, {}, style: "width: auto; height: 2rem" %>
+        <%= Site.label.humanize %> details
+      </h2>
+      <% if can? :edit, Site %>
+        <div class="ms-auto">
+          <%= link_to cancel_icon, @site,
+            title: "Cancel editing",
+            class: "btn btn-sm btn-outline-danger",
+            form: "siteForm" %>
+          <%= button_tag confirm_icon,
+            title: "Save changes",
+            class: "btn btn-sm btn-success",
+            form: "siteForm" %>
+        </div>
+      <% end %>
+    </div>
+    <%= render 'form' %>
+  <% end %>
+</div>
 
