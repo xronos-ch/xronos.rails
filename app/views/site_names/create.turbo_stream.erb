@@ -1,0 +1,9 @@
+<%= turbo_stream.update dom_id(SiteName.new), "" %>
+
+<%= turbo_stream.append "site_names" do %>
+  <%= turbo_frame_tag @site_name do %>
+    <li><%= render "site_name", site: @site, site_name: @site_name %></li>
+  <% end %>
+<% end %>
+
+<%# TODO: render_turbo_stream_flash_messages %>

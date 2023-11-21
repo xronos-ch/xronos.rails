@@ -15,25 +15,32 @@
   </section>
 <% end %>
 
-<section id="site-details" class="bg-body">
+<section id="site-data" class="bg-body">
+
   <div class="container my-5">
-    <%= turbo_frame_tag @site do %>
-      <div class="d-flex">
-        <h2>
-          <%= xr_icon Site, {}, style: "width: auto; height: 2rem" %>
-          <%= Site.label.humanize %> details
-        </h2>
-        <% if can? :edit, Site %>
-          <div class="ms-auto">
-            <%= link_to edit_icon,
-              edit_site_path, 
-              class: "btn btn-sm btn-outline-primary" %>
-          </div>
-        <% end %>
-      </div>
-      <%= render "site_details", site: @site %>
-    <% end %>
+    <!-- TODO: Wikipedia extract here -->
+    <dt><%= "Site type".pluralize(@site.site_types.count) %></dt>
+    <dd>
+      <% if @site.site_types.any? %>
+        <%= @site.site_types.collect(&:name).to_sentence.humanize %>
+      <% else %>
+        <%= na_value %>
+      <% end %>
+    </dd>
   </div>
+
+  <div class="container my-5">
+    <h2><%= bs_icon "pin-map" %> Location</h2>
+    <dl>
+      <dt>Coordinates</dt>
+      <dd class="font-monospace"><%= @site.coordinates.present? ? @site.coordinates : na_value %></dd>
+    </dl>
+  </div>
+
+  <div class="container my-5">
+    <h2><%= bs_icon "share" %> Identifiers</h2>
+  </div>
+
 </section>
 
 <section id="site-xrons" class="bg-body">
@@ -103,11 +110,6 @@
 
 <section id="xronos-metadata" class="bg-light">
   <div class="container my-5">
-
-    <div class="my-5">
-      <h2>Metadata</h2>
-      <%= render "shared/record_metadata", record: @site, record_label: Site.label %>
-    </div>
 
     <div class="my-5">
       <h2>Changelog</h2>

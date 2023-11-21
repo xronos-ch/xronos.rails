@@ -1,0 +1,19 @@
+<span<% if site_name.language.present? %> lang="<%= site_name.language.downcase %>"<% end %>>
+<%= site_name.name %>
+</span>
+<% if site_name.language.present? %><%= language_badge site_name.language %><% end %>
+
+<% if can? :edit, site_name %>
+  <small>
+    <%= link_to edit_icon, [:edit, @site, site_name],
+      title: "Edit"
+    %>
+  </small>
+<% end %>
+<% if can? :destroy, site_name %>
+  <small>
+    <%= link_to delete_icon, [@site, site_name], 
+      title: "Delete",
+      data: { turbo_method: :delete } %>
+  </small>
+<% end %>

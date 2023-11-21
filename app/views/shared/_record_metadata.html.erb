@@ -1,12 +1,4 @@
-<dl>
-
-  <dt><%= record_label %> ID</dt>
-  <dd><%= record.id %></dd>
-
-  <dt>Created at</dt>
-  <dd><%= record.created_at %></dd>
-
-  <dt>Last updated at</dt>
-  <dd><%= record.updated_at %></dd>
-
-</dl>
+<small class="text-muted">
+  Record created in XRONOS on <%= record.created_at %>.
+  Last updated on <%= record.updated_at %>.
+</small>

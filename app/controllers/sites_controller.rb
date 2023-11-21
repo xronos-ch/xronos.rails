@@ -142,6 +142,7 @@ class SitesController < ApplicationController
         :lng,
         {site_type_ids: []},
         :country_code,
+        :revision_comment,
         :_destroy
       )
     end

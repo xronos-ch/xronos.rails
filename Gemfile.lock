@@ -195,6 +195,8 @@ GEM
       multi_xml (>= 0.5.2)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
+    i18n_data (0.17.1)
+      simple_po_parser (~> 1.1)
     image_processing (1.12.2)
       mini_magick (>= 4.9.5, < 5)
       ruby-vips (>= 2.0.17, < 3)
@@ -379,6 +381,7 @@ GEM
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
     shellany (0.0.1)
+    simple_po_parser (1.1.6)
     simplecov (0.22.0)
       docile (~> 1.1)
       simplecov-html (~> 0.11)
@@ -467,6 +470,7 @@ DEPENDENCIES
   geocoder
   guard-rspec
   httparty
+  i18n_data
   jbuilder (~> 2.5)
   jsbundling-rails
   json-schema

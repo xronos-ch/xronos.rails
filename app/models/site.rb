@@ -19,12 +19,13 @@
 #
 class Site < ApplicationRecord
 
-  has_and_belongs_to_many :site_types, optional: true
-
+  has_many :site_names
   has_many :contexts
   has_many :samples, through: :contexts
   has_many :c14s, through: :contexts
   has_many :typos, through: :contexts
+
+  has_and_belongs_to_many :site_types, optional: true
 
   has_many :citations, as: :citing
   has_many :references, through: :citations
@@ -33,6 +34,9 @@ class Site < ApplicationRecord
     allow_nil: true
 
   validates :name, presence: true
+
+  accepts_nested_attributes_for :site_names, 
+    reject_if: :all_blank, allow_destroy: true
 
   include Versioned
   include Supersedable

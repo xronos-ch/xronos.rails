@@ -89,9 +89,10 @@ gem 'carrierwave', '~> 2.0'
 # Validation
 gem 'validate_url'
 
-# ISO-based countries
+# ISO codes
 gem 'countries'
 gem 'country_select'
+gem 'i18n_data'
 
 # Geocoding
 gem 'geocoder'
