@@ -1,4 +1,4 @@
-<table class="table table-hover">
+<table class="responsive nowrap table table-hover align-middle">
   <thead>
     <tr>
       <% unless controller_name == "sites" %>
@@ -27,6 +27,9 @@
       </th>
       <th scope="col" class="text-end">Calibrated age</th>
       <th scope="col" class="text-end">References</th>
+      <% if can? :manage, C14 %>
+        <th scope="col" class="text-end"><!-- Actions --></th>
+      <% end %>
     </tr>
   </thead>
 
@@ -44,6 +47,9 @@
         <td class="text-end font-monospace"><%= c14.uncal_age %></td>
         <td class="text-end font-monospace"><%= c14.cal_age %></td>
         <td class="text-end small"><%= render "references/citations", references: c14.references %></td>
+        <% if can? :manage, C14 %>
+          <td class="text-end"><%= render "application/actions", i: c14 %></td>
+        <% end %>
       </tr>
     <% end %>
   </tbody>
