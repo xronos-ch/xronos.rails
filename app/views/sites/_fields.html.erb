@@ -1,4 +1,4 @@
-<%= f.text_field :name %>
+<%= f.text_field :name, label: "Canonical name", help: "Aliases and names in other languages can be added after the site is created." %>
 
 <%# country_select is not supported by bootstrap_forms gem, so we need to 
     construct the label and wrapper HTML manually here %>
@@ -15,13 +15,14 @@
   %>
 </div>
 
-<%= f.collection_select :site_type_ids, SiteType.all, :id, :name,
-  { label: "Site type(s)", include_blank: na_value },
-  { multiple: true, data: { controller: "tom-select" } }
-%>
-
 <div class="row">
   <div class="col"><%= f.number_field :lat, label: 'Latitude', append: '°N',
     help: '<a href="https://www.fcc.gov/media/radio/dms-decimal" target="_blank">Convert DMS to decimal degrees</a>.'.html_safe %></div>
   <div class="col"><%= f.number_field :lng, label: 'Longitude', append: '°E' %></div>
 </div>
+
+<%= f.collection_select :site_type_ids, SiteType.all, :id, :name,
+  { label: "Site type(s)", include_blank: na_value },
+  { multiple: true, data: { controller: "tom-select" } }
+%>
+

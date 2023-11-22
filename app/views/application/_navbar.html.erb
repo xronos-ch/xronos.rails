@@ -22,6 +22,14 @@
              <a class="nav-link link-info <%= active_class data_path %>" href="/data" <%= active_aria data_path %>>Browse data</a>
            </li>
            <% if user_signed_in? %>
+           <li class="nav-item dropdown">
+             <a class="nav-link link-info dropdown-toggle" href="#" id="contribDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+               Contribute
+             </a>
+             <ul class="dropdown-menu" aria-labelledby="contribDropdown">
+               <li class="nav-item"><a class="dropdown-item nav-link <%= active_class new_site_path %>" href="<%= new_site_path %>">New site</a></li>
+             </ul>
+           </li>
              <li class="nav-item">
                <a class="nav-link link-info <%= active_class curate_path %>" href="/curate" <%= active_aria curate_path %>>Curation</a>
              </li>
