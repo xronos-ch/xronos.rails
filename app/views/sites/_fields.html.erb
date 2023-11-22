@@ -16,9 +16,9 @@
 </div>
 
 <div class="row">
-  <div class="col"><%= f.number_field :lat, label: 'Latitude', append: '°N',
+  <div class="col"><%= f.number_field :lat, label: "Latitude", step: "any", append: "°N",
     help: '<a href="https://www.fcc.gov/media/radio/dms-decimal" target="_blank">Convert DMS to decimal degrees</a>.'.html_safe %></div>
-  <div class="col"><%= f.number_field :lng, label: 'Longitude', append: '°E' %></div>
+  <div class="col"><%= f.number_field :lng, label: "Longitude", step: "any", append: "°E" %></div>
 </div>
 
 <%= f.collection_select :site_type_ids, SiteType.all, :id, :name,
