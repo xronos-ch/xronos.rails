@@ -3,9 +3,10 @@
     Record created in XRONOS on <%= record.created_at %>.
     Last updated on <%= record.updated_at %>.
     <% if record.versions.any? %>
+      <a href="#changelog">See changelog for details</a>.
       <br />
       Contributors:
-      <%= record.versions.collect(&:whodunnit_user_email).uniq.to_sentence %>
+      <%= record.versions.collect(&:whodunnit_user_email).uniq.to_sentence %>.
     <% end %>
   </small>
 </div>

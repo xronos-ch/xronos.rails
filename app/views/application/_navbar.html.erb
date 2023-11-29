@@ -6,7 +6,7 @@
        data-action="scroll@window->home-hero#scroll"
      <% end %>>
 
-     <div class="container-xxl">
+     <div class="container-fluid">
 
        <a class="navbar-brand" href="/">
          <%= image_tag "xronos_logo_light.svg", alt: "XRONOS", style: 'max-height: 1.5rem' %>
@@ -24,7 +24,7 @@
            <% if user_signed_in? %>
            <li class="nav-item dropdown">
              <a class="nav-link link-info dropdown-toggle" href="#" id="contribDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-               Contribute
+               Add data
              </a>
              <ul class="dropdown-menu" aria-labelledby="contribDropdown">
                <li class="nav-item"><a class="dropdown-item nav-link <%= active_class new_site_path %>" href="<%= new_site_path %>">New site</a></li>

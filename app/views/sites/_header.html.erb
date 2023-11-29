@@ -1,52 +1,49 @@
-<header id="site-header" class="bg-light text-primary">
-  <div class="container my-5">
+<header id="site-header">
+  <div class="d-flex">
+    <h1 class="display-3"><%= site.name %></h1>
+    <% if can? :edit, Site %>
+      <div class="ms-auto">
+        <%= link_to edit_icon,
+          edit_site_path, 
+          title: "Edit site details",
+          class: "btn btn-sm btn-outline-primary",
+          data: { turbo_frame: "remote_modal" } %>
+      </div>
+    <% end %>
+  </div>
 
-    <div class="d-flex">
-      <h1 class="display-3"><%= site.name %></h1>
-      <% if can? :edit, Site %>
-        <div class="ms-auto">
-          <%= link_to edit_icon,
-            edit_site_path, 
-            title: "Edit site details",
-            class: "btn btn-sm btn-outline-primary",
-            data: { turbo_frame: "remote_modal" } %>
-        </div>
-      <% end %>
-    </div>
+  <div class="h5">
+    <%= xr_icon Site, {}, { style: "width: auto; height: 1.25rem;" } %>
+    Archaeological site
+    in <%= render "country", site: @site %>
+  </div>
 
-    <div class="h5">
-      <%= xr_icon Site, {}, { style: "width: auto; height: 1.25rem;" } %>
-      Archaeological site
-      in <%= render "country", site: @site %>
-    </div>
-
-    <% if @site.site_names.any? %>
-      <dl>
-        <dt>Also known as</dt>
-        <dd>
-          <ul class="list-unstyled">
-            <%= turbo_frame_tag "site_names", class: "my-3" do %>
-              <% for site_name in @site.site_names.order(:language, :name) do %>
-                <%= turbo_frame_tag site_name do %>
-                  <li><%= render site_name %></li>
-                <% end %>
+  <% if @site.site_names.any? %>
+    <dl>
+      <dt>Also known as</dt>
+      <dd>
+        <ul class="list-unstyled">
+          <%= turbo_frame_tag "site_names", class: "my-3" do %>
+            <% for site_name in @site.site_names.order(:language, :name) do %>
+              <%= turbo_frame_tag site_name do %>
+                <li><%= render site_name %></li>
               <% end %>
             <% end %>
-            <% if can? :create, :site_name %>
-              <%= turbo_frame_tag SiteName.new %>
-            <% end %>
-          </ul>
-        </dd>
-      </dl>
-    <% end %>
-    <% if can? :create, :site_name %>
-      <%= link_to create_icon + "Add alias", [:new, @site, :site_name],
-        data: { turbo_frame: dom_id(SiteName.new) } %>
-    <% end %>
+          <% end %>
+          <% if can? :create, :site_name %>
+            <%= turbo_frame_tag SiteName.new %>
+          <% end %>
+        </ul>
+      </dd>
+    </dl>
+  <% end %>
+  <% if can? :create, :site_name %>
+    <%= link_to create_icon + "Add alias", [:new, @site, :site_name],
+      data: { turbo_frame: dom_id(SiteName.new) } %>
+  <% end %>
 
-    <div class="my-3">
-      <%= render "shared/record_metadata", record: @site %>
-    </div>
-
+  <div class="my-3">
+    <%= render "shared/record_metadata", record: @site %>
   </div>
+
 </header>
