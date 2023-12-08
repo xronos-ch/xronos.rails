@@ -1,3 +1,12 @@
-<h1>Public profile</h1>
+<main class="container my-5">
+  <header class="mb-5">
+    <h1>Public profile</h1>
 
-<%= render 'form', user_profile: @user_profile %>
+    <div>
+      <%= link_to "View your public profile", contributor_path(@user_profile),
+        class: "btn btn-outline-primary" %>
+    </div>
+  </header>
+
+  <%= render 'form', user_profile: @user_profile %>
+</main>
