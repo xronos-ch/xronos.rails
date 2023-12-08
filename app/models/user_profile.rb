@@ -26,10 +26,10 @@ class UserProfile < ApplicationRecord
   validates :orcid, format: { 
     with: /\A(\d{4}-){3}\d{3}(\d|X)\z/, # https://gist.github.com/asencis/644f174855899b873131c2cabcebeb87
     message: "must be in the format xxxx-xxxx-xxxx-xxxx"
-  }
+  }, allow_blank: true
   validates :public_email, format: { 
     with: Devise.email_regexp,
     message: "must be a valid email address"
-  }
+  }, allow_blank: true
   validates :url, url: { allow_blank: true, public_suffix: true }
 end
