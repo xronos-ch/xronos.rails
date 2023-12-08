@@ -4,22 +4,25 @@
 %>
 
 <%= form.text_field :full_name, 
-  help: 'Will be <strong>publicly</strong> associated with any changes you make to records in XRONOS and used to generate citations to your contributions. You can change it later.'.html_safe,
+  help: 'Your name will be used to <strong>publicly</strong> attribute any contributions you make to XRONOS. You can change or remove it at any time.'.html_safe,
   required: true,
+  floating: true,
   disabled: disabled %>
 
 <%= form.text_field :orcid,
-  label: '<acronym title="Open Researcher and Contributor ID">ORCID</acronym> iD'.html_safe,
-  help: 'Used to uniquely identify your contributions to XRONOS. <a href="https://info.orcid.org/what-is-orcid/">What is ORCID</a>?'.html_safe,
+  label: "ORCID",
+  help: '<a href="https://info.orcid.org/what-is-orcid/">What is ORCID</a>?'.html_safe,
+  floating: true,
   disabled: disabled
 %>
 
 <%= form.email_field :public_email,
-  help: "Allows other users to contact you about your contributions. Will be publicly displayed on your user profile.",
+  floating: true,
   disabled: disabled %>
 
 <%= form.url_field :url,
-  help: "Where can people find out more about you? Will be publicaly displayed on your user profile.",
-disabled: disabled
+  label: "URL",
+  floating: true,
+  disabled: disabled
 %>
 

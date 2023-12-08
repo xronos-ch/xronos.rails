@@ -16,7 +16,7 @@ class UserProfilesController < ApplicationController
   # GET /user_profiles/new
   def new
     @user_profile = UserProfile.new
-    @user_profile.user = User.new
+    @user_profile.user = current_user
   end
 
   # GET /user_profiles/1/edit
@@ -86,19 +86,11 @@ class UserProfilesController < ApplicationController
     # Only allow a list of trusted parameters through.
     def user_profile_params
       params.fetch(:user_profile, {}).permit(
-      :full_name,
-      :public_email,
-      :orcid,
-      :url,
-      :user_id,
-      {user_attributes: [
-        :id,
-        :email,
-        :current_password,
-        :password,
-        :password_confirmation,
-        :admin
-      ]}
+        :full_name,
+        :public_email,
+        :orcid,
+        :url,
+        :user_id
       )
     end
 end

@@ -1,18 +1,8 @@
-<h1> User Profile </h1>
+<h1><%= @user_profile.full_name %></h1>
 
     <dl class="row gx-5">
-    <dt class="col-sm-3">First Name</dt>
-    <dd class="col-sm-9 font-monospace text-end"><%= @user_profile.first_name %></dd>
-    </dl>
-
-    <dl class="row gx-5">
-    <dt class="col-sm-3">Last Name</dt>
-    <dd class="col-sm-9 font-monospace text-end"><%= @user_profile.last_name %></dd>
-    </dl>
-
-    <dl class="row gx-5">
-    <dt class="col-sm-3">Email</dt>
-    <dd class="col-sm-9 font-monospace text-end"><%= @user_profile.user.email %></dd>
+      <dt class="col-sm-3">Email</dt>
+      <dd class="col-sm-9 font-monospace text-end"><%= @user_profile.user.email %></dd>
     </dl>
 
   <div class="actions">

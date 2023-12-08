@@ -77,8 +77,20 @@
                  <%= current_user.email %>
                </button>
                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                 <li> <%= link_to(new_or_edit_profile_path(current_user.user_profile), class: "dropdown-item") do%><%= bs_icon "pencil-square" %> Manage User Profile<% end %></li>
-                 <li> <%= button_to destroy_user_session_path, method: :delete, class: "dropdown-item" do %>Logout<% end %></li>
+                 <li>
+                   <%= link_to(new_or_edit_profile_path(current_user.user_profile), class: "dropdown-item") do %>
+                     <%= bs_icon "person-circle" %> Edit public profile
+                   <% end %>
+                 </li>
+                 <li>
+                   <%= link_to(edit_user_registration_path, class: "dropdown-item") do %>
+                     <%= bs_icon "gear" %> Account settings
+                   <% end %>
+                 </li>
+                 <hr>
+                 <li>
+                   <%= button_to destroy_user_session_path, method: :delete, class: "dropdown-item" do %>Sign out<% end %>
+                 </li>
                </ul>
              </div>
 

@@ -13,31 +13,6 @@
 
   <%= render 'fields', form: form %>
   
-  <% devise_mapping = Devise.mappings[:user] %>
-  <% resource = user_profile.user %>
-
-<%= form.fields_for :user do |user|%>
-
-    <%= render "devise/shared/error_messages", resource: resource %>
-
-    <%= user.email_field :email, autocomplete: "email" %>
-
-    <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-      <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
-    <% end %>
-
-<% unless resource.new_record? %>
-    <%= user.password_field :current_password, label: "Current password", autocomplete: "current-password" %>
-<% end %>
-    <%= user.password_field :password, label: "New password", autocomplete: "new-password",
-      help: "#{@minimum_password_length} characters minimum. Leave blank if you don't want to change it." %>
-
-    <%= user.password_field :password_confirmation, label: "Confirm new password", autocomplete: "new-password" %>
-    <%if current_user.admin?%>
-      <%= user.check_box :admin %>
-    <%end%>
-    <% end %>
-    
   <div class="actions">
     <%= form.submit class: "btn btn-primary" %>
     <%= link_to 'Cancel', @user_profile, class: "btn btn-secondary" %>
