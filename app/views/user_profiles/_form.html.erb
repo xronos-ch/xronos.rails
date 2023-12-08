@@ -11,7 +11,7 @@
     </div>
   <% end %>
 
-  <%= render 'user_profiles/user_profile_fields', form: form %>
+  <%= render 'fields', form: form %>
   
   <% devise_mapping = Devise.mappings[:user] %>
   <% resource = user_profile.user %>

@@ -3,8 +3,7 @@
 # Table name: user_profiles
 #
 #  id         :bigint           not null, primary key
-#  first_name :string
-#  last_name  :string
+#  full_name  :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  user_id    :bigint           not null
@@ -23,4 +22,5 @@ class UserProfile < ApplicationRecord
   accepts_nested_attributes_for :user
   
   validates :user_id, uniqueness: true, presence: true
+  validates :full_name, presence: true
 end

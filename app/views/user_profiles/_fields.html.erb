@@ -1,0 +1,8 @@
+<% disabled ||= false  
+   # We do this so if disabled is not passed to the partial it doesn't crash. 
+   # We default it to false 
+%>
+
+<%= form.text_field :full_name, 
+  help: 'Your full name will be <strong>publicly</strong> associated with any changes you make to records in XRONOS and used to generate citations to your contributions. You can change it later.'.html_safe,
+  disabled: disabled %>
