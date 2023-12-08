@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   get 'docs/:slug', to: 'articles#show'
   namespace :admin do
     resources :articles, except: :show
+    resources :users
   end
 
   # Redirects for backwards compatibility
