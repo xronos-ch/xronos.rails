@@ -90,6 +90,9 @@ gem 'pg_search'
 # File uploads
 gem 'carrierwave', '~> 2.0'
 
+# URL validation
+gem 'validate_url'
+
 # ISO-based countries
 gem 'countries'
 gem 'country_select'

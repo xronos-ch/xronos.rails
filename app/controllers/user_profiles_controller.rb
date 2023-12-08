@@ -89,6 +89,7 @@ class UserProfilesController < ApplicationController
       :full_name,
       :public_email,
       :orcid,
+      :url,
       :user_id,
       {user_attributes: [
         :id,
