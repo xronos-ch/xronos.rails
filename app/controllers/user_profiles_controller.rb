@@ -1,16 +1,28 @@
 class UserProfilesController < ApplicationController
   load_and_authorize_resource
-  layout "admin"
+  #layout "admin"
   before_action :set_user_profile, only: %i[ show edit update destroy ]
 
+  include Pagy::Backend
 
   # GET /user_profiles or /user_profiles.json
   def index
     @user_profiles = UserProfile.all
   end
 
-  # GET /user_profiles/1 or /user_profiles/1.json
+  # GET /contributors/1 or /contributors/1.json
   def show
+    user = @user_profile.user
+    @contribs = PaperTrail::Version
+      .where(whodunnit_user_email: user.email)
+      .reorder(created_at: :desc)
+
+    respond_to do |format|
+      format.html {
+        @pagy, @contribs = pagy(@contribs)
+      }
+      format.json
+    end
   end
 
   # GET /user_profiles/new

@@ -1,14 +1,65 @@
-<h1><%= @user_profile.full_name %></h1>
+<% content_for :title, @user_profile.full_name %>
 
-    <dl class="row gx-5">
-      <dt class="col-sm-3">Email</dt>
-      <dd class="col-sm-9 font-monospace text-end"><%= @user_profile.user.email %></dd>
+<header class="bg-light text-primary">
+  <div class="container my-5">
+    <small class="text-muted">
+      <%= bs_icon "person-circle" %>
+      XRONOS contributor
+    </small>
+
+    <h1>
+      <%= @user_profile.full_name %>
+    </h1>
+
+    <dl class="dl-inline">
+
+      <% if @user_profile.orcid.present? %>
+        <dt>
+          <%= bs_icon "circle" %><!-- TODO: replace with real logo from simple icons -->
+          <span class="visually-hidden">ORCID</span>
+        </dt>
+        <dd>
+          <%= render "orcid", user_profile: @user_profile %>
+        </dd>
+      <% end %>
+
+      <% if @user_profile.public_email.present? %>
+        <dt>
+          <%= bs_icon "envelope" %>
+          <span class="visually-hidden">Email</span>
+        </dt>
+        <dd>
+          <%= mail_to @user_profile.public_email %>
+        </dd>
+      <% end %>
+
+      <% if @user_profile.url.present? %>
+        <dt>
+          <%= bs_icon "link-45deg" %>
+          <span class="visually-hidden">URL</span>
+        </dt>
+        <dd>
+          <%= link_to @user_profile.url %>
+        </dd>
+      <% end %>
+
     </dl>
-
-  <div class="actions">
-    <%= link_to 'Edit', edit_user_profile_path(@user_profile), class: "btn btn-primary" %>
-    <%if current_user.admin?%>
-      <%= link_to 'List all User Profiles', user_profiles_path, class: "btn btn-danger"%>
-    <%end%>
   </div>
-  
+</header>
+
+<div class="container">
+
+  <section id="contributor-contributions" class="my-5">
+
+    <h2>
+      Contributions
+      <small class="text-muted">(<%= number_to_human(@pagy.count) %>)</small>
+    </h2>
+
+    <%= render "application/paper_trail/version_table", versions: @contribs %>
+    <%== pagy_bootstrap_nav(@pagy) %>
+
+  </section>
+
+</div>
+

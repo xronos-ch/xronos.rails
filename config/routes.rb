@@ -55,12 +55,13 @@ Rails.application.routes.draw do
   resources :taxon_usages, only: :show
 
   # User management
-  resources :user_profiles
-  get 'user_profile', to: 'user_profiles#show'
   devise_for :users, controllers: {
       registrations: 'registrations',
       sessions: 'users/sessions'
     }
+  resources :user_profiles, except: [:index, :show]
+  resources :contributors, controller: :user_profiles, only: [ :show ]
+  #get 'user_profile', to: 'user_profiles#show'
 
   # Data browser
   get 'data/index'
