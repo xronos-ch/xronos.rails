@@ -89,7 +89,9 @@ class UserProfilesController < ApplicationController
         :public_email,
         :orcid,
         :url,
+        :photo,
         :user_id
       )
     end
+
 end

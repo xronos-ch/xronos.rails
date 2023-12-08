@@ -1,49 +1,62 @@
 <% content_for :title, @user_profile.full_name %>
 
 <header class="bg-light text-primary">
-  <div class="container my-5">
-    <small class="text-muted">
-      <%= bs_icon "person-circle" %>
-      XRONOS contributor
-    </small>
+  <div class="container my-5 d-flex flex-">
 
-    <h1>
-      <%= @user_profile.full_name %>
-    </h1>
+    <div>
 
-    <dl class="dl-inline">
+      <p class="text-muted">
+        <%= bs_icon "person-circle" %>
+        XRONOS contributor
+      </p>
 
-      <% if @user_profile.orcid.present? %>
-        <dt>
-          <%= bs_icon "circle" %><!-- TODO: replace with real logo from simple icons -->
-          <span class="visually-hidden">ORCID</span>
-        </dt>
-        <dd>
-          <%= render "orcid", user_profile: @user_profile %>
-        </dd>
-      <% end %>
+      <h1>
+        <%= @user_profile.full_name %>
+      </h1>
 
-      <% if @user_profile.public_email.present? %>
-        <dt>
-          <%= bs_icon "envelope" %>
-          <span class="visually-hidden">Email</span>
-        </dt>
-        <dd>
-          <%= mail_to @user_profile.public_email %>
-        </dd>
-      <% end %>
+      <dl class="dl-inline">
 
-      <% if @user_profile.url.present? %>
-        <dt>
-          <%= bs_icon "link-45deg" %>
-          <span class="visually-hidden">URL</span>
-        </dt>
-        <dd>
-          <%= link_to @user_profile.url %>
-        </dd>
-      <% end %>
+        <% if @user_profile.orcid.present? %>
+          <dt>
+            <%= bs_icon "circle" %><!-- TODO: replace with real logo from simple icons -->
+            <span class="visually-hidden">ORCID</span>
+          </dt>
+          <dd>
+            <%= render "orcid", user_profile: @user_profile %>
+          </dd>
+        <% end %>
 
-    </dl>
+        <% if @user_profile.public_email.present? %>
+          <dt>
+            <%= bs_icon "envelope" %>
+            <span class="visually-hidden">Email</span>
+          </dt>
+          <dd>
+            <%= mail_to @user_profile.public_email %>
+          </dd>
+        <% end %>
+
+        <% if @user_profile.url.present? %>
+          <dt>
+            <%= bs_icon "link-45deg" %>
+            <span class="visually-hidden">URL</span>
+          </dt>
+          <dd>
+            <%= link_to @user_profile.url %>
+          </dd>
+        <% end %>
+
+      </dl>
+
+    </div>
+
+    <% if @user_profile.photo.attached? %>
+      <div class="ms-auto">
+        <%= image_tag @user_profile.photo.variant(:thumb),
+          style: "border-radius: 50%" %>
+      </div>
+    <% end %>
+
   </div>
 </header>
 

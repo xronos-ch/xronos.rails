@@ -86,7 +86,7 @@ gem 'pg_search'
 # File uploads
 gem 'carrierwave', '~> 2.0'
 
-# URL validation
+# Validation
 gem 'validate_url'
 
 # ISO-based countries

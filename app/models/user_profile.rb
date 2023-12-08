@@ -21,15 +21,50 @@
 #
 class UserProfile < ApplicationRecord
   belongs_to :user
+
+  has_one_attached :photo do |attachable|
+    attachable.variant :thumb, resize_to_fill: [180, 180]
+  end
   
   validates :user_id, uniqueness: true, presence: true
-  validates :orcid, format: { 
-    with: /\A(\d{4}-){3}\d{3}(\d|X)\z/, # https://gist.github.com/asencis/644f174855899b873131c2cabcebeb87
-    message: "must be in the format xxxx-xxxx-xxxx-xxxx"
-  }, allow_blank: true
-  validates :public_email, format: { 
-    with: Devise.email_regexp,
-    message: "must be a valid email address"
-  }, allow_blank: true
+
+  validates :orcid, 
+    format: { 
+      with: /\A(\d{4}-){3}\d{3}(\d|X)\z/, # https://gist.github.com/asencis/644f174855899b873131c2cabcebeb87
+      message: "must be in the format xxxx-xxxx-xxxx-xxxx"
+    }, 
+    allow_blank: true
+
+  validates :public_email, 
+    format: { 
+      with: Devise.email_regexp,
+      message: "must be a valid email address"
+    }, 
+    allow_blank: true
+
   validates :url, url: { allow_blank: true, public_suffix: true }
+
+  validate :photo_not_too_big
+  validate :variable_photo
+
+  def variable_photo
+    return unless photo.attached?
+    unless ActiveStorage.variable_content_types.include?(photo.content_type)
+      # Workaround for lack of proper validation of ActiveStorage attachments
+      # See https://github.com/rails/rails/issues/31656
+      photo.purge
+      errors.add(:photo, "must be a supported file type")
+    end
+  end
+
+  def photo_not_too_big
+    return unless photo.attached?
+    unless photo.blob.byte_size <= 5.megabyte
+      # Workaround for lack of proper validation of ActiveStorage attachments
+      # See https://github.com/rails/rails/issues/31656
+      photo.purge
+      errors.add(:photo, "must be less than 5 megabytes")
+    end
+  end
+
 end

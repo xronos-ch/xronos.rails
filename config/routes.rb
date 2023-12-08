@@ -59,9 +59,10 @@ Rails.application.routes.draw do
       registrations: 'registrations',
       sessions: 'users/sessions'
     }
-  resources :user_profiles, except: [:index, :show]
+  resources :user_profiles, except: [:index, :show] do
+    resource :photo, only: [ :destroy ], controller: "user_profiles/photo"
+  end
   resources :contributors, controller: :user_profiles, only: [ :show ]
-  #get 'user_profile', to: 'user_profiles#show'
 
   # Data browser
   get 'data/index'
