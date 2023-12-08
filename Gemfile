@@ -75,10 +75,6 @@ gem 'cancancan'
 # Oauth2 API
 gem 'doorkeeper'
 
-# Captcha
-gem 'recaptcha'
-
-
 # MODEL HELPERS ---------------------------------------------------------------
 
 # Versioning

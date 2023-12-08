@@ -8,7 +8,7 @@
     <%= render "devise/shared/error_messages", resource: resource %>
 
     <%= f.text_field :passphrase, autofocus: true, autocomplete: "passphrase",
-      help: "XRONOS is not yet open for public registration. If someone has asked you to register an account, please enter the passphrase." %>
+      help: "XRONOS is not yet open for public registration. If someone has asked you to register an account, please ask them for the passphrase." %>
 
     <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
 
@@ -16,8 +16,6 @@
       help: "#{@minimum_password_length} characters minimum." %>
 
     <%= f.password_field :password_confirmation, label: "Confirm password", autocomplete: "new-password" %>
-
-    <%= recaptcha_tags theme: :dark %>
 
     <%= f.submit "Register" %>
   <% end %>
