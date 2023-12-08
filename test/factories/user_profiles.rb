@@ -4,6 +4,7 @@
 #
 #  id         :bigint           not null, primary key
 #  full_name  :string
+#  orcid      :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  user_id    :bigint           not null
@@ -19,6 +20,7 @@
 FactoryBot.define do
   factory :user_profile do
     full_name { Faker::Name.name }
+    orcid { '0000-0002-1825-0097' }
     user
   end
 end
