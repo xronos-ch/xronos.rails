@@ -22,10 +22,7 @@
 class UserProfile < ApplicationRecord
   belongs_to :user
   
-  accepts_nested_attributes_for :user
-  
   validates :user_id, uniqueness: true, presence: true
-  validates :full_name, presence: true
   validates :orcid, format: { 
     with: /\A(\d{4}-){3}\d{3}(\d|X)\z/, # https://gist.github.com/asencis/644f174855899b873131c2cabcebeb87
     message: "must be in the format xxxx-xxxx-xxxx-xxxx"

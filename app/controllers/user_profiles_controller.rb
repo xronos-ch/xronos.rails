@@ -16,7 +16,6 @@ class UserProfilesController < ApplicationController
   # GET /user_profiles/new
   def new
     @user_profile = UserProfile.new
-    @user_profile.user = current_user
   end
 
   # GET /user_profiles/1/edit
@@ -25,22 +24,12 @@ class UserProfilesController < ApplicationController
 
   # POST /user_profiles or /user_profiles.json
   def create
-    user_params = user_profile_params.slice(:user_attributes)
-    
-    @user_profile = UserProfile.new(user_profile_params.except(:user_attributes))
-    
-    if current_user.admin?
-      user_params = user_profile_params.slice(:user_attributes)
-      @user = User.new(user_params[:user_attributes])
-    else
-      @user = current_user
-    end
-    
-    @user_profile.user = @user
+    # TODO: what if we're an admin trying to create a profile for another user?
+    @user_profile.user = current_user
 
     respond_to do |format|
-      if @user.save & @user_profile.save
-        format.html { redirect_to @user_profile, notice: "User profile was successfully created." }
+      if @user_profile.save
+        format.html { redirect_to @user_profile, notice: "User profile updated." }
         format.json { render :show, status: :created, location: @user_profile }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -51,11 +40,9 @@ class UserProfilesController < ApplicationController
 
   # PATCH/PUT /user_profiles/1 or /user_profiles/1.json
   def update
-    user_params = user_profile_params.slice(:user_attributes)
     respond_to do |format|
-      if @user_profile.update(user_profile_params.except(:user_attributes)) & @user_profile.user.update_with_password(user_params[:user_attributes])
-        bypass_sign_in(@user_profile.user)
-        format.html { redirect_to @user_profile, notice: "User profile was successfully updated." }
+      if @user_profile.update(user_profile_params)
+        format.html { redirect_to @user_profile, notice: "User profile updated." }
         format.json { render :show, status: :ok, location: @user_profile }
       else
         format.html { render :edit, status: :unprocessable_entity }

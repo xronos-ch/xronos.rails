@@ -1,28 +1,13 @@
-<% disabled ||= false  
-   # We do this so if disabled is not passed to the partial it doesn't crash. 
-   # We default it to false 
-%>
-
 <%= form.text_field :full_name, 
-  help: 'Your name will be used to <strong>publicly</strong> attribute any contributions you make to XRONOS. You can change or remove it at any time.'.html_safe,
-  required: true,
-  floating: true,
-  disabled: disabled %>
+  help: 'Your name will be used to <strong>publicly</strong> attribute your contributions. You can change it at any time.'.html_safe,
+  required: true %>
 
 <%= form.text_field :orcid,
   label: "ORCID",
-  help: '<a href="https://info.orcid.org/what-is-orcid/">What is ORCID</a>?'.html_safe,
-  floating: true,
-  disabled: disabled
+  help: '<a href="https://info.orcid.org/what-is-orcid/">What is ORCID</a>?'.html_safe
 %>
 
-<%= form.email_field :public_email,
-  floating: true,
-  disabled: disabled %>
+<%= form.email_field :public_email %>
 
-<%= form.url_field :url,
-  label: "URL",
-  floating: true,
-  disabled: disabled
-%>
+<%= form.url_field :url, label: "URL" %>
 
