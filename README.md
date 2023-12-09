@@ -92,11 +92,11 @@ For development, you will need to run the XRONOS rails app directly (without doc
 
 1. Clone this repository
 2. Ensure ruby, bundler, yarn, and postgresql are installed on your system
-  * Using [rbenv](https://github.com/rbenv/rbenv) or a similar solution to manage ruby versions is highly recommended
+    * Using [rbenv](https://github.com/rbenv/rbenv) or a similar solution to manage ruby versions is highly recommended
 3. Create a postgresql user for xronos with CREATEDB privileges
 4. Create a `.env` file in the root of the repository (see above for a template)
 5. Run `bundle && yarn` to install gem and javascript dependencies respectively
 6. Run `bin/rails db:setup` to set up and seed the database
 7. Start a dev server with `bin/dev`. This watches for changes in CSS and JS files.
-  * If you get an error about foreman being missing, try restarting your terminal.
+    * If you get an error about foreman being missing, try restarting your terminal.
 
