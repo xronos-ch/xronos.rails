@@ -21,7 +21,7 @@
     <%# javascript_pack_tag params[:controller], :media => "all"  if javascript_exists?(params[:controller])
     %>
 
-    <%= if Rails.env.production? %>
+    <% if Rails.env.production? %>
       <script async src="https://analytics.xronos.ch/script.js" data-website-id="e5a03dd9-a74b-4246-834b-988b0a7a1247"></script>
     <% end %>
 
