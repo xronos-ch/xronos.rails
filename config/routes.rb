@@ -12,9 +12,6 @@ Rails.application.routes.draw do
   get 'news/:slug', to: 'articles#show'
   get 'about/:slug', to: 'articles#show'
   get 'docs/:slug', to: 'articles#show'
-  namespace :admin do
-    resources :articles, except: :show
-  end
 
   # Redirects for backwards compatibility
   get '/about', to: redirect('/about/xronos')
@@ -55,11 +52,21 @@ Rails.application.routes.draw do
   resources :taxon_usages, only: :show
 
   # User management
-  resources :user_profiles
   devise_for :users, controllers: {
       registrations: 'registrations',
       sessions: 'users/sessions'
     }
+  resources :user_profiles, except: [:index, :show] do
+    resource :photo, only: [ :destroy ], controller: "user_profiles/photo"
+  end
+  resources :contributors, controller: :user_profiles, only: [ :show ]
+
+  # Admin interface
+  get "/admin" => "admin#index"
+  namespace :admin do
+    resources :articles, except: :show
+    resources :users
+  end
 
   # Data browser
   get 'data/index'

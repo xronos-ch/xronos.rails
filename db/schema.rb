@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_11_071953) do
+ActiveRecord::Schema[7.0].define(version: 2023_12_08_103730) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -242,6 +242,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_11_071953) do
     t.index ["updated_at"], name: "index_sessions_on_updated_at"
   end
 
+  create_table "site_names", force: :cascade do |t|
+    t.string "language"
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "site_id"
+    t.index ["site_id"], name: "index_site_names_on_site_id"
+  end
+
   create_table "site_types", force: :cascade do |t|
     t.string "name"
     t.text "description"
@@ -298,11 +307,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_11_071953) do
   end
 
   create_table "user_profiles", force: :cascade do |t|
-    t.string "first_name"
-    t.string "last_name"
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "full_name"
+    t.string "orcid"
+    t.string "public_email"
+    t.string "url"
     t.index ["user_id"], name: "index_user_profiles_on_user_id"
   end
 
@@ -353,5 +364,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_11_071953) do
   add_foreign_key "oauth_access_grants", "users", column: "resource_owner_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "users", column: "resource_owner_id"
+  add_foreign_key "site_names", "sites"
   add_foreign_key "user_profiles", "users"
 end

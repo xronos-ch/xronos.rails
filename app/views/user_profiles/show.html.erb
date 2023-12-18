@@ -1,22 +1,78 @@
-<h1> <%= @user_profile.user.email %> </h1>
+<% content_for :title, @user_profile.full_name %>
 
-<ul class="nav nav-tabs" id="myTab" role="tablist">
-  <li class="nav-item" role="presentation">
-    <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Profile</button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Something Else</button>
-  </li>
-</ul>
-<div class="tab-content" id="myTabContent">
-  <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-<%= form_for(@user_profile) do |f| %>
-  <%= render 'user_profile_fields', :form => f, :disabled => true %>
-<% end %>
+<header class="bg-light text-primary">
+  <div class="container my-5 d-flex flex-">
+
+    <div>
+
+      <p class="text-muted">
+        <%= bs_icon "person-circle" %>
+        XRONOS contributor
+      </p>
+
+      <h1>
+        <%= @user_profile.full_name %>
+      </h1>
+
+      <dl class="dl-inline">
+
+        <% if @user_profile.orcid.present? %>
+          <dt>
+            <%= bs_icon "circle" %><!-- TODO: replace with real logo from simple icons -->
+            <span class="visually-hidden">ORCID</span>
+          </dt>
+          <dd>
+            <%= render "orcid", user_profile: @user_profile %>
+          </dd>
+        <% end %>
+
+        <% if @user_profile.public_email.present? %>
+          <dt>
+            <%= bs_icon "envelope" %>
+            <span class="visually-hidden">Email</span>
+          </dt>
+          <dd>
+            <%= mail_to @user_profile.public_email %>
+          </dd>
+        <% end %>
+
+        <% if @user_profile.url.present? %>
+          <dt>
+            <%= bs_icon "link-45deg" %>
+            <span class="visually-hidden">URL</span>
+          </dt>
+          <dd>
+            <%= link_to @user_profile.url %>
+          </dd>
+        <% end %>
+
+      </dl>
+
+    </div>
+
+    <% if @user_profile.photo.attached? %>
+      <div class="ms-auto">
+        <%= image_tag @user_profile.photo.variant(:thumb),
+          style: "border-radius: 50%" %>
+      </div>
+    <% end %>
 
   </div>
-  <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
+</header>
+
+<div class="container">
+
+  <section id="contributor-contributions" class="my-5">
+
+    <h2>
+      Contributions
+      <small class="text-muted">(<%= number_to_human(@pagy.count) %>)</small>
+    </h2>
+
+    <%= render "application/paper_trail/version_table", versions: @contribs %>
+    <%== pagy_bootstrap_nav(@pagy) %>
+
+  </section>
+
 </div>
 
-<%= link_to 'Edit', edit_user_profile_path(@user_profile) %> |
-<%= link_to 'Back', user_profiles_path %>

@@ -1,0 +1,9 @@
+.dl-inline dt:before {
+	content: "";
+	display: block;
+}
+
+.dl-inline dt,
+.dl-inline dd {
+	display: inline;
+}

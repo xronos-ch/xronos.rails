@@ -1,11 +1,11 @@
 <h1>User Profiles</h1>
 
-<table>
+<table class="table table-hover">
   <thead>
     <tr>
-      <th>First name</th>
-      <th>Last name</th>
-      <th>Email</th>
+      <th scope="col">First name</th>
+      <th scope="col">Last name</th>
+      <th scope="col">Email</th>
       <th colspan="3"></th>
     </tr>
   </thead>
@@ -18,7 +18,7 @@
         <td><%= user_profile.user.email %></td>
         <td><%= link_to 'Show', user_profile %></td>
         <td><%= link_to 'Edit', edit_user_profile_path(user_profile) %></td>
-        <td><%= link_to 'Destroy', user_profile, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Destroy', user_profile_url(user_profile), method: :delete, data: { turbo_confirm: 'Are you sure?', turbo_method: :delete} %></td>
       </tr>
     <% end %>
   </tbody>
@@ -26,5 +26,7 @@
 
 <br>
 
-<%= link_to 'New User Profile', new_user_profile_path %>
+<%if current_user.admin?%>
+  <%= link_to 'New User Profile', new_user_profile_path, class: "btn btn-primary"%>
+<%end%>
 

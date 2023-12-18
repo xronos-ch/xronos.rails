@@ -1,0 +1,9 @@
+<h2>Manage users</h2>
+
+<% if can? :create, User %>
+  <div class="mb-3">
+    <%= link_to 'New user', new_admin_user_path, class: 'btn btn-outline-primary' %>
+  </div>
+<% end %>
+
+<%= render "table", users: @users %>

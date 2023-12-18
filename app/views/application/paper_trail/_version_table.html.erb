@@ -1,0 +1,44 @@
+<table class="table table-hover">
+
+  <thead>
+    <tr>
+      <th><span class="visually-hidden">Toggle changes</span></th>
+      <th>Time</th>
+      <th>User</th>
+      <th>Record</th>
+      <th>Summary</th>
+    </tr>
+
+    <% versions.each do |version| %>
+      <tbody>
+        <tr>
+          <td>
+            <button class="btn btn-sm btn-info" 
+                    type="button" 
+                    data-bs-toggle="collapse" 
+                    data-bs-target="#changeset<%= version.id %>"
+                    aria-expanded="false"
+                    aria-controls="changeset<%= version.id %>">
+                    <%= bs_icon "caret-right", title: "Show/hide changes" %>
+            </button>
+          </td>
+          <td><%= version.created_at %></td>
+          <td><%= render "application/paper_trail/whodunnit", version: version %></td>
+          <td><%= version.item_type %>:<%= version.item_id %></td>
+          <td>
+            <%= render "application/paper_trail/event", event: version.event %>
+            <% if version.revision_comment.blank? %>
+              <span class="text-muted">No summary</span>
+            <% else %>
+              <%= md(version.revision_comment) %>
+            <% end %>
+          </td>
+        </tr>
+        <tr class="collapse" id="changeset<%= version.id %>">
+          <td></td>
+          <td colspan=6><%= render "application/paper_trail/changes", version: version %></td>
+        </tr>
+      </tbody>
+    <% end %>
+
+</table>

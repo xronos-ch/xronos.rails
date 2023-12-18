@@ -1,24 +1,27 @@
-<h1>Register</h2>
+<% content_for :title, "New user" %>
+<h1>New user</h2>
 
-<div class="mb-3">
-  <%= bootstrap_form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+<%= bootstrap_form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
 
-    <%= flash[:recaptcha_error] %>
+  <%= render "devise/shared/error_messages", resource: resource %>
 
-    <%= render "devise/shared/error_messages", resource: resource %>
+  <%= f.text_field :passphrase, 
+    autofocus: true, 
+    required: true,
+    help: "XRONOS is not yet open for public registration. If someone has asked you to register an account, please ask them for the passphrase." %>
 
-    <%= f.text_field :passphrase, autofocus: true, autocomplete: "passphrase",
-      help: "XRONOS is not yet open for public registration. If someone has asked you to register an account, please enter the passphrase." %>
+  <%= f.email_field :email, 
+    required: true,
+    autocomplete: "email" %>
 
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+  <%= f.password_field :password, 
+    required: true,
+    help: "#{@minimum_password_length} characters minimum." %>
 
-    <%= f.password_field :password, autocomplete: "new-password",
-      help: "#{@minimum_password_length} characters minimum." %>
+  <%= f.password_field :password_confirmation, 
+    label: "Confirm password", 
+    required: true %>
 
-    <%= f.password_field :password_confirmation, label: "Confirm password", autocomplete: "new-password" %>
+  <%= f.submit "Register", class: "btn btn-primary" %>
 
-    <%= recaptcha_tags theme: :dark %>
-
-    <%= f.submit "Register" %>
-  <% end %>
-</div>
+<% end %>

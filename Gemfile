@@ -75,10 +75,6 @@ gem 'cancancan'
 # Oauth2 API
 gem 'doorkeeper'
 
-# Captcha
-gem 'recaptcha'
-
-
 # MODEL HELPERS ---------------------------------------------------------------
 
 # Versioning
@@ -89,6 +85,9 @@ gem 'pg_search'
 
 # File uploads
 gem 'carrierwave', '~> 2.0'
+
+# Validation
+gem 'validate_url'
 
 # ISO-based countries
 gem 'countries'

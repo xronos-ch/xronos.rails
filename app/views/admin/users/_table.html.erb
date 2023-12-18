@@ -1,0 +1,38 @@
+<table class="responsive nowrap table table-hover align-middle">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Registration email</th>
+      <th>Display name</th>
+      <th>Admin?</th>
+      <% if can? :manage, User %><th><!-- Actions --></th><% end %>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% users.each do |user| %>
+      <tr>
+        <td><%= user.id %></td>
+        <td><%= mail_to user.email %></td>
+        <td>
+          <%= render "users/user", user: user %>
+        </td>
+        <td><%= tick_or_cross user.admin? %></td>
+        <% if can? :manage, User %>
+          <td class="text-end">
+            <%= link_to edit_icon,
+              edit_admin_user_path(user), 
+              class: "btn btn-outline-primary btn-sm",
+              title: "Edit #{user.email}" %>
+            <%= link_to delete_icon,
+              admin_user_path(user), 
+              class: "btn btn-outline-primary btn-sm",
+              title: "Delete #{user.email}",
+              data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to delete #{user.email}?" } %>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+
+</table>
