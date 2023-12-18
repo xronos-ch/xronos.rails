@@ -23,7 +23,7 @@
             </button>
           </td>
           <td><%= version.created_at %></td>
-          <td><%= version.whodunnit_user_email %></td>
+          <td><%= render "application/paper_trail/whodunnit", version: version %></td>
           <td><%= version.item_type %>:<%= version.item_id %></td>
           <td>
             <%= render "application/paper_trail/event", event: version.event %>

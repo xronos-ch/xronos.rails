@@ -18,7 +18,7 @@
                     <%= version.revision_comment.blank? ? "Updated." : md(version.revision_comment) %>
                   </h3>
                   <p class="small text-muted">
-                  <%= version.whodunnit_user_email %>,
+                  <%= render "application/paper_trail/whodunnit", version: version %>
                   <%= version.created_at.to_formatted_s %>
                   </p>
                 </div>
