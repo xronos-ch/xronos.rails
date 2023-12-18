@@ -1,11 +1,24 @@
 <% content_for :content do %>
-  <div class="container my-3">
-    <nav aria-label="breadcrumb">
-      <%= breadcrumbs.render(format: :bootstrap) %>
-    </nav>
+  <main class="container-fluid d-flex min-vh-100">
 
-    <%= yield %>
-  </div>
+    <div class="row flex-grow-1">
+
+      <nav id="admin-nav" aria-label="admin" class="col-lg col-lg-3 col-xl-2 p-3 bg-light">
+        <h1 class="h5 text-primary">Admin</h1>
+        <%= render "admin/nav" %>
+      </nav>
+
+      <div id="admin-content" class="col-lg p-3">
+        <nav aria-label="breadcrumb">
+          <%= breadcrumbs.render(format: :bootstrap) %>
+        </nav>
+
+        <%= yield %>
+      </div>
+
+    </div>
+
+  </main>
 <% end %>
 
 <%= render template: "layouts/application" %>

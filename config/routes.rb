@@ -12,10 +12,6 @@ Rails.application.routes.draw do
   get 'news/:slug', to: 'articles#show'
   get 'about/:slug', to: 'articles#show'
   get 'docs/:slug', to: 'articles#show'
-  namespace :admin do
-    resources :articles, except: :show
-    resources :users
-  end
 
   # Redirects for backwards compatibility
   get '/about', to: redirect('/about/xronos')
@@ -64,6 +60,13 @@ Rails.application.routes.draw do
     resource :photo, only: [ :destroy ], controller: "user_profiles/photo"
   end
   resources :contributors, controller: :user_profiles, only: [ :show ]
+
+  # Admin interface
+  get "/admin" => "admin#index"
+  namespace :admin do
+    resources :articles, except: :show
+    resources :users
+  end
 
   # Data browser
   get 'data/index'

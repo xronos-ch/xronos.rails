@@ -4,9 +4,12 @@ class AdminController < ApplicationController
 
   layout "admin"
 
+  def index
+  end
+
   private
 
   def add_admin_breadcrumb
-    breadcrumbs.add "Admin"
+    breadcrumbs.add "Admin", admin_path
   end
 end

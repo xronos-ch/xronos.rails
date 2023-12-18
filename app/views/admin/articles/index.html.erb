@@ -1,6 +1,8 @@
-<h1>Manage articles</h1>
+<h2>Manage articles</h2>
 
-<% if can? :create, Article %><%= link_to 'New article', new_admin_article_path, class: 'btn btn-secondary' %><% end %>
+<% if can? :create, Article %>
+  <%= link_to 'New article', new_admin_article_path, class: 'btn btn-outline-primary' %>
+<% end %>
 
 <section class="my-5">
   <h2>News posts</h2>
