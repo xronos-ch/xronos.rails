@@ -20,14 +20,12 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class UserProfile < ApplicationRecord
-  belongs_to :user
+  belongs_to :user, required: true
 
   has_one_attached :photo do |attachable|
     attachable.variant :thumb, resize_to_fill: [180, 180]
   end
   
-  validates :user_id, uniqueness: true, presence: true
-
   validates :orcid, 
     format: { 
       with: /\A(\d{4}-){3}\d{3}(\d|X)\z/, # https://gist.github.com/asencis/644f174855899b873131c2cabcebeb87

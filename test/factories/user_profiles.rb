@@ -24,7 +24,6 @@ FactoryBot.define do
     full_name { Faker::Name.name }
     orcid { '0000-0002-1825-0097' }
     public_email { Faker::Internet.email }
-    url { Faker::Internet.url }
-    user
+    url { Faker::Internet.url(host: "example.com") }
   end
 end
