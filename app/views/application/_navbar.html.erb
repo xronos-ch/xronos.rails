@@ -26,7 +26,7 @@
                <a class="nav-link link-info <%= active_class curate_path %>" href="/curate" <%= active_aria curate_path %>>Curation</a>
              </li>
            <% end %>
-           <% if current_user.admin? %>
+           <% if user_signed_in? and current_user.admin? %>
              <li class="nav-item">
                <a class="nav-link link-info <%= active_class admin_path %>" href="/admin" <%= active_aria admin_path %>>Admin</a>
              </li>
