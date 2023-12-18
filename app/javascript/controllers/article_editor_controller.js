@@ -45,9 +45,9 @@ export default class extends Controller {
 		slugifyBtn.type = "button"
 		slugifyBtn.title = "Regenerate slug from title"
 		slugifyBtn.classList.add('btn')
-		slugifyBtn.classList.add('btn-outline-info')
+		slugifyBtn.classList.add('btn-info')
 		slugifyBtn.dataset.action = "article-editor#updateSlug"
-		slugifyBtn.innerHTML = '<i class="fa fa-refresh"></i><span class="visually-hidden">Regenerate slug</span>'
+		slugifyBtn.innerHTML = '<i class="bi-arrow-clockwise"></i><span class="visually-hidden">Regenerate slug</span>'
 		this.slugTarget.parentElement.append(slugifyBtn)
 	}
 
