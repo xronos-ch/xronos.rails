@@ -52,7 +52,7 @@
 <div class="container my-5">
   <% if @article.news_section? %>
     <p class="text-muted">
-      By <%= @article.user.email %>, 
+      By <%= render @article.user %>, 
       <%= @article.published_at.present? ? @article.published_at.to_formatted_s : "draft" %>
     </p>
   <% end %>
