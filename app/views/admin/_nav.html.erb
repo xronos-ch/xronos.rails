@@ -1,7 +1,7 @@
 <ul class="nav flex-column">
 
   <li class="nav-item">
-    <a class="nav-link active" aria-current="page" href="<%= admin_articles_path %>">
+    <a class="nav-link" href="<%= admin_articles_path %>">
       <%= bs_icon "bookmark" %> Articles
     </a>
   </li>
@@ -12,12 +12,26 @@
     </a>
   </li>
 
-  <h2 class="h6 mt-4 text-muted text-uppercase">External tools</h2>
+  <h2 class="h6 mt-4 text-muted text-uppercase">
+    Webmaster tools
+    <%= bs_icon "question-circle",
+      class: "text-muted",
+      data: { bs_toggle: "tooltip", controller: "tooltips" },
+      title: "May require external credentials"
+    %>
+  </h2>
 
   <li class="nav-item">
     <a class="nav-link" href="https://analytics.xronos.ch" target="_blank">
       <%= bs_icon "bar-chart" %>
-      Analytics
+      Analytics (umami)
+    </a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link" href="https://search.google.com/search-console?resource_id=sc-domain:xronos.ch" target="_blank">
+      <%= bs_icon "google" %>
+      Search Console
     </a>
   </li>
 
