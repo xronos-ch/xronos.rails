@@ -1,0 +1,23 @@
+<%= bootstrap_form_with(model: [:admin, @user]) do |f| %>
+
+  <% if @user.errors.any? %>
+    <ul>
+      <% @user.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <%= f.email_field :email, required: true %>
+
+  <%= f.password_field :password, label: "New password" %>
+  
+  <%= f.password_field :password_confirmation, label: "Confirm password" %>
+
+  <%= f.check_box :reset_password_now, label: "Reset password immediately" %>
+
+  <%= f.check_box :admin %>
+
+  <%= f.submit class: "btn btn-primary" %>
+
+<% end %>
