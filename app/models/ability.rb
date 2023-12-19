@@ -8,7 +8,7 @@ class Ability
 
     # permissions for every user, even if not logged in
     can :read, :all
-    cannot :read, [UserProfile]
+    #cannot :read, [UserProfile]
     cannot :read, Article
     can :read, Article, published?: true
     can :search, :all

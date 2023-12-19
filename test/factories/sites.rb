@@ -13,9 +13,8 @@
 #
 # Indexes
 #
-#  index_sites_on_country_code   (country_code)
-#  index_sites_on_name           (name)
-#  index_sites_on_superseded_by  (superseded_by)
+#  index_sites_on_country_code  (country_code)
+#  index_sites_on_name          (name)
 #
 FactoryBot.define do
   

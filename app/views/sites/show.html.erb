@@ -1,117 +1,136 @@
 <% content_for :title, @site.name %>
 <% content_for :meta_description, "Chronometric data for #{@site.name}, an archaeological site in #{@site.country}, including #{@site.c14s.count} radiocarbon dates, #{@site.typos.count} typological classifications, and #{@site.references.count} bibliographic references." %>
 
-<header id="site-header" class="bg-light text-primary">
-  <div class="container my-5">
-    <h1 class="display-1"><%= @site.name %></h1>
-    <h2 class="display-6">
-      <%= xr_icon Site, {}, { style: "height: 2.5rem;" } %>
-      <%= Site.label.humanize %> 
-      <% if @site.country.present? %> in <%= @site.country.common_name %><%end%>
-    </h2>
-  </div>
-</header>
+<main class="container my-5">
 
-<% unless @site.lat.blank? or @site.lng.blank? %>
-  <section id="siteMap" class="bg-primary">
-    <div style="height: 30rem; position: relative;"
-         data-controller="map"
-         data-map-style-value="show_site"
-         data-map-target="container"
-         data-map-base-map-value="Imagery"
-         data-map-markers-data-value='<%= [@site].to_json.html_safe %>'>
+  <%= render "header", site: @site %>
+
+  <section id="site-types my-5">
+
+    <dt><%= "Site type".pluralize(@site.site_types.count) %></dt>
+    <dd>
+      <% if @site.site_types.any? %>
+        <%= @site.site_types.collect(&:name).to_sentence.humanize %>
+      <% else %>
+        <%= na_value %>
+      <% end %>
+    </dd>
     </div>
-  </section>
-<% end %>
 
-<section id="site-details" class="bg-body">
-  <div class="container my-5">
-    <%= render "site_details", site: @site %>
-    <% if can? :edit, Site %>
-      <div class="text-end my-3">
-        <%= link_to(edit_site_path, class: "btn btn-sm btn-primary", data: { "turbo_frame": "remote_modal" }) do %>
-          <%= edit_icon %> Edit site details
+  </section>
+
+  <section id="site-location" class="my-5">
+    <h2><%= bs_icon "pin-map" %> Location</h2>
+    <div class="row">
+
+      <div class="col-lg-8">
+        <% unless @site.lat.blank? or @site.lng.blank? %>
+          <div style="height: 30rem; position: relative;"
+               data-controller="map"
+               data-map-style-value="show_site"
+               data-map-target="container"
+               data-map-base-map-value="Imagery"
+               data-map-markers-data-value='<%= [@site].to_json.html_safe %>'>
+          </div>
+        <% else %>
+          <div style="height: 30rem; position: relative;"
+               class="bg-light d-flex align-items-center justify-content-center"
+               title="Location data missing or incomplete">
+            <%= bs_icon "question-circle", class: "display-1 text-info" %>
+          </div>
         <% end %>
       </div>
-    <% end %>
-  </div>
-</section>
 
-<section id="site-xrons" class="bg-body">
-    <% unless @c14s.nil? %>
-      <div id="site-c14s" class="container my-5">
+      <div class="col-lg-4">
+        <div>
+          <dl>
+
+            <dt>Coordinates (degrees)</dt>
+            <dd class="font-monospace">
+              <%= @site.coordinates.present? ? @site.coordinates.to_s("dd") : na_value %>
+            </dd>
+
+            <dt>Coordinates (<abbr title="Degrees, minutes, seconds">DMS</abbr>)</dt>
+            <dd class="font-monospace">
+              <%= @site.coordinates.present? ? @site.coordinates.to_s("dms") : na_value %>
+            </dd>
+
+            <dt>Country (<a href="https://www.iso.org/iso-3166-country-codes.html">ISO&nbsp;3166<a>)</a></dt>
+            <dd class="font-monospace">
+              <%= render "country", site: @site %>
+              (<%= @site.country_code.present? ? @site.country_code : na_value %>)
+            </dd>
+
+          </dl>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <% unless @c14s.nil? %>
+    <section id="site-c14s" class="my-5">
+      <div id="sites-c14s-toolbar" class="d-flex">
         <h2>
-          <%= xr_icon C14, {}, style: "height: 2rem" %>
+          <%= xr_icon C14, {}, style: "width: auto; height: 2rem" %>
           <%= C14.label.humanize.pluralize %>
           <small class="text-muted">(<%= @pagy_c14s.count %>)</small>
         </h2>
-        <turbo-frame id="site-c14s-table">
-          <div id="sites-c14s-toolbar" class="d-flex">
-            <div class="ms-auto">
-              <%= link_to bs_icon("download"), 
-                c14s_path(format: :csv, c14: { sample: { contexts: { site_id: @site.id } } }), 
-                class: "btn btn-sm btn-outline-primary", 
-                title: "Download CSV" %>
-            </div>
-          </div>
-          <%= render "c14s/table", c14s: @c14s %>
-          <% unless @pagy_c14s.pages <= 1 %>
-            <%== pagy_bootstrap_nav(@pagy_c14s) %>
-          <% end %>
-        </turbo-frame>
+        <div class="ms-auto">
+          <%= link_to bs_icon("download"), 
+            c14s_path(format: :csv, c14: { sample: { contexts: { site_id: @site.id } } }), 
+            class: "btn btn-sm btn-outline-primary", 
+            title: "Download CSV" %>
+        </div>
       </div>
-    <%end%>
 
-    <% unless @typos.nil? %>
-      <div id="site-typos" class="container my-5">
+      <turbo-frame id="site-c14s-table">
+        <%= render "c14s/table", c14s: @c14s %>
+        <% unless @pagy_c14s.pages <= 1 %>
+          <%== pagy_bootstrap_nav(@pagy_c14s) %>
+        <% end %>
+      </turbo-frame>
+      </div>
+    </section>
+  <%end%>
+
+  <% unless @typos.nil? %>
+    <section id="site-typos" class="my-5">
+      <div id="sites-typos-toolbar" class="d-flex">
         <h2>
-          <%= xr_icon Typo, {}, style: "height: 2rem" %>
+          <%= xr_icon Typo, {}, style: "width: auto; height: 2rem" %>
           <%= Typo.label.humanize.pluralize %>
           <small class="text-muted">(<%= @pagy_typos.count %>)</small>
         </h2>
-        <turbo-frame id="site-typos-table">
-          <div id="sites-typos-toolbar" class="d-flex">
-            <div class="ms-auto">
-              <%= link_to bs_icon("download"), 
-                typos_path(format: :csv, typo: { sample: { contexts: { site_id: @site.id } } }), 
-                class: "btn btn-sm btn-outline-primary", 
-                title: "Download CSV" %>
-            </div>
-          </div>
-          <%= render "typos/table", typos: @typos %>
-          <% unless @pagy_typos.pages <= 1 %>
-            <%== pagy_bootstrap_nav(@pagy_typos) %>
-          <% end %>
-        </turbo-frame>
+        <div class="ms-auto">
+          <%= link_to bs_icon("download"), 
+            typos_path(format: :csv, typo: { sample: { contexts: { site_id: @site.id } } }), 
+            class: "btn btn-sm btn-outline-primary", 
+            title: "Download CSV" %>
+        </div>
       </div>
-    <%end%>
+      <turbo-frame id="site-typos-table">
+        <%= render "typos/table", typos: @typos %>
+        <% unless @pagy_typos.pages <= 1 %>
+          <%== pagy_bootstrap_nav(@pagy_typos) %>
+        <% end %>
+      </turbo-frame>
+    </section>
+  <%end%>
 
-  </div>
-</section>
-
-<section id="references" class="bg-body">
-  <div class="container my-5">
+  <section id="site-references" class="my-5">
     <h2>
-      <%= xr_icon Reference, {}, style: "height: 2rem" %>
+      <%= xr_icon Reference, {}, style: "width: auto; height: 2rem" %>
       <%= Reference.label.humanize.pluralize %>
-      <small class="text-muted">(<%# @site.recursive_references.count %>)</small>
+      <!-- <small class="text-muted">(<%# @site.recursive_references.count %>)</small>-->
     </h2>
     <%= render "references/bibliography", 
       references: @site.recursive_references %>
-  </div>
-</section>
+  </section>
 
-<section id="xronos-metadata" class="bg-light">
-  <div class="container my-5">
+  <section id="changelog" class="my-5">
+    <h2>Changelog</h2>
+    <%= render "application/paper_trail/versions", item: @site %>
+  </section>
 
-    <div class="my-5">
-      <h2>Metadata</h2>
-      <%= render "shared/record_metadata", record: @site, record_label: Site.label %>
-    </div>
-
-    <div class="my-5">
-      <h2>Changelog</h2>
-      <%= render "application/paper_trail/versions", item: @site %>
-    </div>
-
-</section>
+</main>

@@ -30,11 +30,19 @@ module ApplicationHelper
   end
 
   def edit_icon(options = {})
-    bs_icon "pencil-fill", options
+    bs_icon "pencil", options
   end
 
   def delete_icon(options = {})
-    bs_icon "trash-fill", options
+    bs_icon "trash", options
+  end
+
+  def confirm_icon(options = {})
+    bs_icon "check-lg", options
+  end
+
+  def cancel_icon(options = {})
+    bs_icon "x-lg", options
   end
 
   def active_class(path)

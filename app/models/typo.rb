@@ -6,7 +6,6 @@
 #  approx_end_time   :integer
 #  approx_start_time :integer
 #  name              :string
-#  superseded_by     :integer
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #  parent_id         :integer
@@ -14,9 +13,8 @@
 #
 # Indexes
 #
-#  index_typos_on_name           (name)
-#  index_typos_on_sample_id      (sample_id)
-#  index_typos_on_superseded_by  (superseded_by)
+#  index_typos_on_name       (name)
+#  index_typos_on_sample_id  (sample_id)
 #
 class Typo < ApplicationRecord
   include DataHelper

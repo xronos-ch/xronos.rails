@@ -37,6 +37,7 @@ Rails.application.routes.draw do
   end
   resources :sites do
     get 'search', on: :collection
+    resources :site_names, except: [:index, :show]
   end
   resources :site_types do
     get 'search', on: :collection

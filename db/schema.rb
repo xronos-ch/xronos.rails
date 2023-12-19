@@ -65,10 +65,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_08_103730) do
     t.boolean "active"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
-    t.integer "superseded_by"
     t.index ["active"], name: "index_c14_labs_on_active"
     t.index ["name"], name: "index_c14_labs_on_name"
-    t.index ["superseded_by"], name: "index_c14_labs_on_superseded_by"
   end
 
   create_table "c14s", force: :cascade do |t|
@@ -84,12 +82,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_08_103730) do
     t.bigint "c14_lab_id"
     t.bigint "sample_id"
     t.string "lab_identifier"
-    t.integer "superseded_by"
     t.index ["c14_lab_id"], name: "index_c14s_on_c14_lab_id"
     t.index ["lab_identifier"], name: "index_c14s_on_lab_identifier"
     t.index ["method"], name: "index_c14s_on_method"
     t.index ["sample_id"], name: "index_c14s_on_sample_id"
-    t.index ["superseded_by"], name: "index_c14s_on_superseded_by"
   end
 
   create_table "citations", force: :cascade do |t|
@@ -107,10 +103,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_08_103730) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.integer "site_id"
-    t.integer "superseded_by"
     t.index ["name"], name: "index_contexts_on_name"
     t.index ["site_id"], name: "index_contexts_on_site_id"
-    t.index ["superseded_by"], name: "index_contexts_on_superseded_by"
   end
 
   create_table "import_tables", force: :cascade do |t|
@@ -128,9 +122,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_08_103730) do
     t.string "name"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
-    t.integer "superseded_by"
     t.index ["name"], name: "index_materials_on_name"
-    t.index ["superseded_by"], name: "index_materials_on_superseded_by"
   end
 
   create_table "measurement_states", force: :cascade do |t|
@@ -184,8 +176,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_08_103730) do
   end
 
   create_table "periods_site_phases", id: false, force: :cascade do |t|
-    t.bigint "site_phase_id"
-    t.bigint "period_id"
+    t.bigint "site_phase_id", null: false
+    t.bigint "period_id", null: false
+    t.index ["site_phase_id", "period_id"], name: "index_spp"
   end
 
   create_table "pg_search_documents", force: :cascade do |t|
@@ -197,11 +190,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_08_103730) do
     t.index ["searchable_type", "searchable_id"], name: "index_pg_search_documents_on_searchable"
   end
 
-  create_table "physical_locations", id: false, force: :cascade do |t|
+  create_table "physical_locations", force: :cascade do |t|
     t.bigint "site_id"
     t.bigint "country_id"
-    t.text "created_at"
-    t.text "updated_at"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.index ["country_id"], name: "index_physical_locations_on_country_id"
+    t.index ["site_id"], name: "index_physical_locations_on_site_id"
   end
 
   create_table "references", force: :cascade do |t|
@@ -209,9 +204,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_08_103730) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.string "short_ref"
-    t.integer "superseded_by"
     t.index ["short_ref"], name: "index_references_on_short_ref"
-    t.index ["superseded_by"], name: "index_references_on_superseded_by"
   end
 
   create_table "samples", force: :cascade do |t|
@@ -225,11 +218,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_08_103730) do
     t.decimal "position_y"
     t.decimal "position_z"
     t.text "position_crs"
-    t.integer "superseded_by"
     t.index ["context_id"], name: "index_samples_on_context_id"
     t.index ["material_id"], name: "index_samples_on_material_id"
     t.index ["position_crs"], name: "index_samples_on_position_crs"
-    t.index ["superseded_by"], name: "index_samples_on_superseded_by"
     t.index ["taxon_id"], name: "index_samples_on_taxon_id"
   end
 
@@ -256,9 +247,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_08_103730) do
     t.text "description"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
-    t.integer "superseded_by"
     t.index ["name"], name: "index_site_types_on_name"
-    t.index ["superseded_by"], name: "index_site_types_on_superseded_by"
   end
 
   create_table "site_types_sites", id: false, force: :cascade do |t|
@@ -278,18 +267,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_08_103730) do
     t.integer "superseded_by"
     t.index ["country_code"], name: "index_sites_on_country_code"
     t.index ["name"], name: "index_sites_on_name"
-    t.index ["superseded_by"], name: "index_sites_on_superseded_by"
   end
 
   create_table "taxons", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
-    t.integer "superseded_by"
     t.integer "gbif_id"
     t.index ["gbif_id"], name: "index_taxons_on_gbif_id"
     t.index ["name"], name: "index_taxons_on_name"
-    t.index ["superseded_by"], name: "index_taxons_on_superseded_by"
   end
 
   create_table "typos", force: :cascade do |t|
@@ -300,10 +286,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_08_103730) do
     t.datetime "updated_at", precision: nil, null: false
     t.integer "parent_id"
     t.bigint "sample_id"
-    t.integer "superseded_by"
     t.index ["name"], name: "index_typos_on_name"
     t.index ["sample_id"], name: "index_typos_on_sample_id"
-    t.index ["superseded_by"], name: "index_typos_on_superseded_by"
   end
 
   create_table "user_profiles", force: :cascade do |t|
@@ -331,7 +315,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_08_103730) do
   end
 
   create_table "versions", force: :cascade do |t|
-    t.string "item_type", null: false
+    t.string "item_type"
+    t.string "{:null=>false}"
     t.bigint "item_id", null: false
     t.string "event", null: false
     t.string "whodunnit"
@@ -344,17 +329,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_08_103730) do
     t.index ["event"], name: "index_versions_on_event"
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
     t.index ["whodunnit"], name: "index_versions_on_whodunnit"
-  end
-
-  create_table "wikidata_links", force: :cascade do |t|
-    t.integer "qid"
-    t.string "wikidata_linkable_type"
-    t.bigint "wikidata_linkable_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["qid"], name: "index_wikidata_links_on_qid"
-    t.index ["wikidata_linkable_type", "wikidata_linkable_id"], name: "index_wikidata_links_on_linkable_type_and_linkable_id"
-    t.index ["wikidata_linkable_type", "wikidata_linkable_id"], name: "index_wikidata_links_on_wikidata_linkable"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

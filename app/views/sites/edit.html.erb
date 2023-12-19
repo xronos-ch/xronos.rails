@@ -1,6 +1,21 @@
+<% content_for :title, "Edit site details" %>
+
 <%= render "shared/remote_modal", title: "Edit site details" do %>
 
-  <%= render 'form' %>
+  <%= bootstrap_form_with(model: @site, local: true, id: "siteForm") do |f| %>
+
+    <%= render 'fields', f: f %>
+
+    <section class="my-3">
+      <h2 class="h5">Change summary</h2>
+      <%= render "application/paper_trail/revision_comment_field", f: f %>
+    </section>
+
+  <% end %>
+
+  <%= content_for :buttons do %>
+    <%= button_tag "Cancel", type: 'reset', class: 'btn btn-outline-primary', form: "siteForm", data: { "bs-dismiss": "modal" } %>
+    <%= button_tag "Save changes", class: 'btn btn-primary', form: "siteForm" %>
+  <% end %>
 
 <% end %>
-

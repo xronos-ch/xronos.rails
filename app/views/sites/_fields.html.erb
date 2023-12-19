@@ -1,32 +1,51 @@
-<%= f.text_field :name %>
+<section class="my-3">
+  <h2 class="h5">Site names</h2>
+  <%= f.text_field :name, label: "Preferred name", help: "Use the most common name for the site in recent scientific literature" %>
+</section>
 
-<div class="row">
-  <div class="col"><%= f.number_field :lat, label: 'Latitude', append: '°N',
-    help: '<a href="https://www.fcc.gov/media/radio/dms-decimal" target="_blank">Convert DMS to decimal degrees</a>.'.html_safe %></div>
-  <div class="col"><%= f.number_field :lng, label: 'Longitude', append: '°E' %></div>
-</div>
+<section class="my-3">
+  <h2 class="h5">Location</h2>
 
-<%# country_select is not supported by bootstrap_forms gem, so we need to 
+  <div class="row">
+    <div class="col">
+      <%= f.number_field :lat, 
+        label: "Latitude", 
+        step: "any", 
+        placeholder: "NA",
+        append: "°N",
+        help: '<a href="https://www.fcc.gov/media/radio/dms-decimal" target="_blank">Convert DMS to decimal degrees</a>.'.html_safe %>
+    </div>
+    <div class="col">
+      <%= f.number_field :lng, 
+        label: "Longitude", 
+        step: "any", 
+        placeholder: "NA",
+        append: "°E" %>
+    </div>
+  </div>
+
+  <%# country_select is not supported by bootstrap_forms gem, so we need to 
     construct the label and wrapper HTML manually here %>
-<div class="mb-3">
-  <%= f.label :country_code, "Country", class: "form-label" %>
-  <%
-    if @site.country_from_coordinates.present?
-      country_guess = @site.country_from_coordinates.alpha2
-    else
-      country_guess = nil
-    end
-  %>
-  <%= f.country_select :country_code, 
-    { 
-      include_blank: na_value, 
-      priority_countries: [country_guess]
-    }, 
-    { data: { controller: 'tom-select' } } 
-  %>
-</div>
+  <div>
+    <%= f.label :country_code, "Country", class: "form-label" %>
+    <%=
+      country_select_options = { include_blank: na_value }
+      if @site.country_from_coordinates.present?
+        country_select_options[:priority_countries] = [@site.country_from_coordinates.alpha2]
+      end
 
-<%= f.collection_select :site_type_ids, SiteType.all, :id, :name,
+      f.country_select :country_code, country_select_options,
+        { data: { controller: 'tom-select' } } 
+      %>
+    <small class="form-text text-muted">
+      Country in whose territory the site is currently situated, following the <a href="https://www.iso.org/iso-3166-country-codes.html">ISO 3166</a> standard for country codes and names.
+    </small>
+  </div>
+
+</section>
+
+<%# f.collection_select :site_type_ids, SiteType.all, :id, :name,
   { label: "Site type(s)", include_blank: na_value },
   { multiple: true, data: { controller: "tom-select" } }
 %>
+

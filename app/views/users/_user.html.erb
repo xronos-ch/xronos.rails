@@ -1,6 +1,5 @@
 <% if user.user_profile.present? %>
-  <%= link_to user.user_profile.full_name, 
-    contributor_path(user.user_profile) %>
+  <%= link_to user.user_profile.full_name, contributor_path(user.user_profile) -%>
 <% else %>
   <span class="text-muted"
         data-bs-toggle="tooltip"

@@ -20,7 +20,7 @@ module DataTableHelper
 
   def order_indicator(table = controller_name)
     order = params.fetch(order_param(table), "asc")
-    order == "asc" ? fa_icon("caret-down") : fa_icon("caret-up")
+    order == "asc" ? bs_icon("caret-down-fill") : bs_icon("caret-up-fill")
   end
 
   protected

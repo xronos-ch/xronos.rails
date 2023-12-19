@@ -79,7 +79,6 @@ class SitesController < ApplicationController
   # GET /sites/new
   def new
     @site = Site.new
-    @site.build_country
   end
 
   # GET /sites/1/edit
@@ -107,7 +106,7 @@ class SitesController < ApplicationController
   def update
     respond_to do |format|
       if @site.update(site_params)
-        format.html { redirect_back(fallback_location: @site, notice: "Saved changes to #{@site.name}.") }
+        format.html { redirect_to @site, notice: "Saved changes to #{@site.name}." }
         format.json { render :show, status: :ok, location: @site }
       else
         format.html { render :edit }
@@ -142,6 +141,7 @@ class SitesController < ApplicationController
         :lng,
         {site_type_ids: []},
         :country_code,
+        :revision_comment,
         :_destroy
       )
     end

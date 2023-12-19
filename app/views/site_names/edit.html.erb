@@ -1,0 +1,11 @@
+<main class="container my-5">
+
+  <%= link_to sanitize("&larr; Back to site"), @site %>
+
+  <h2 class="my-3">Edit alias for <%= @site.name %></h2>
+
+  <%= turbo_frame_tag @site_name do %>
+    <%= render "form", site: @site, site_name: @site_name %>
+  <% end %>
+
+</main>

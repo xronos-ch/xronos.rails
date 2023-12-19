@@ -1,0 +1,4 @@
+<%= f.text_field :name, wrapper: false, hide_label: true, autofocus: true %>
+<%= f.select :language, languages,
+  { include_blank: "Language", wrapper: false, hide_label: true },
+  { data: { controller: "tom-select" } } %>

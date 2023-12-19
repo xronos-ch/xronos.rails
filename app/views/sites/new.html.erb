@@ -1,6 +1,22 @@
-<div class="container">
-  <%= render 'shared/action_breadcrumbs', i: @site %>
-  <h1>New site</h1>
+<% content_for :title, "New site" %>
 
-  <%= render 'form', site: @site %>
-</div>
+<main class="container my-5">
+
+  <div class="row">
+    <div class="col-auto">
+
+      <h1>New site</h1>
+
+      <section class="my-3">
+        Please check that the site does not already exist in XRONOS first!
+      </section>
+
+      <%= bootstrap_form_with(model: @site, local: true, id: "siteForm") do |f| %>
+        <%= render "fields", f: f %>
+        <%= f.submit class: 'btn btn-primary' %>
+      <% end %>
+
+    </div>
+  </div>
+
+</main>
