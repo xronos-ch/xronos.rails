@@ -11,7 +11,6 @@
 #  lab_identifier :string
 #  method         :string
 #  std            :integer
-#  superseded_by  :integer
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  c14_lab_id     :bigint
@@ -23,7 +22,6 @@
 #  index_c14s_on_lab_identifier  (lab_identifier)
 #  index_c14s_on_method          (method)
 #  index_c14s_on_sample_id       (sample_id)
-#  index_c14s_on_superseded_by   (superseded_by)
 #
 class C14 < ApplicationRecord
 
