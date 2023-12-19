@@ -1,12 +1,17 @@
 <div>
   <small class="text-muted">
+
     Record created in XRONOS on <%= record.created_at %>.
     Last updated on <%= record.updated_at %>.
     <% if record.versions.any? %>
       <a href="#changelog">See changelog for details</a>.
-      <br />
-      Contributors:
-      <%= record.versions.collect(&:whodunnit_user_email).uniq.to_sentence %>.
     <% end %>
+
+    <% if record.versions.any? %>
+      <br>Contributors:
+      <% contributors = User.find(record.versions.collect(&:whodunnit).uniq) %>
+      <%= render partial: "users/user", collection: contributors, spacer_template: "comma" || na_value %>
+    <% end %>
+
   </small>
 </div>
