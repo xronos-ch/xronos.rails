@@ -9,8 +9,13 @@
 
     <% if record.versions.any? %>
       <br>Contributors:
-      <% contributors = User.find(record.versions.collect(&:whodunnit).uniq) %>
-      <%= render partial: "users/user", collection: contributors, spacer_template: "comma" || na_value %>
+      <% contributors = record.versions.collect(&:whodunnit).uniq %>
+      <% if contributors.any? %>
+        <%= render partial: "users/user", collection: User.find(contributors),
+          spacer_template: "comma" || na_value %>
+      <% else %>
+        <%= na_value %>
+      <% end %>
     <% end %>
 
   </small>
