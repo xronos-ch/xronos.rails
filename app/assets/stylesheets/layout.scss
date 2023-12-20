@@ -7,6 +7,15 @@ footer {
 	margin-top: auto;
 }
 
+// stop page overflowing on mobile
+@media (max-width: 768px) {
+	html, 
+	body {
+		width: auto !important;
+		overflow-x: hidden !important;
+	}
+}
+
 // front page hero
 div.hero {
 	color: white;
