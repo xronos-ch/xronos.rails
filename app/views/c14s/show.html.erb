@@ -40,14 +40,6 @@
   </div>
 </section>
 
-<section id="c14-site-details" class="bg-body">
-  <div class="container my-5">
-    <h2>Site details</h2>
-    <%= render 'sites/site_details', :site => @c14.site %>
-    <p><%= link_to "More information about #{@c14.site.name}", @c14.site %></p>
-  </div>
-</section>
-
 <section id="references" class="bg-body">
   <div class="container my-5">
     <% references = (@c14.references + @c14.site.references).uniq %>
