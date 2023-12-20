@@ -1,47 +1,27 @@
-<dl class="row gx-5">
+<dl class="row">
 
-  <div class="col-lg">
-    <!-- Labwork -->
-    <div class="row">
-      
-      <dt class="col-sm-3">Lab</dt>
-      <dd class="col-sm-9 text-end"><%= c14.c14_lab.present? ? c14.c14_lab.name : na_value %></dd>
+  <dt>Age <small>(uncal BP)</small></dt>
+  <dd class="font-monospace"><%= c14.bp %></dd>
 
-      <dt class="col-sm-3">Method</dt>
-      <dd class="col-sm-9 text-end"><%= c14.method.present? ? c14.method : na_value %></dd>
+  <dt>Error <small>(±)</small></dt>
+  <dd class="font-monospace"><%= c14.std %></dd>
 
-      <dt class="col-sm-3">Sample material</dt>
-      <dd class="col-sm-9 text-end"><%= c14.sample.material.present? ? c14.sample.material.name : na_value %></dd>
+  <dt>Lab</dt>
+  <dd><%= c14.c14_lab.present? ? c14.c14_lab.name : na_value %></dd>
 
-      <dt class="col-sm-3">Sample taxon</dt>
-      <dd class="col-sm-9 text-end">
-        <% if c14.sample.taxon.present? %>
-          <%= render c14.sample.taxon %>
-        <% else %>
-          <%= na_value %>
-        <% end %>
-      </dd>
+  <dt>Method</dt>
+  <dd><%= c14.method.present? ? c14.method : na_value %></dd>
 
-    </div>
-  </div>
+  <dt>Sample material</dt>
+  <dd><%= c14.sample.material.present? ? c14.sample.material.name : na_value %></dd>
 
-  <div class="col-lg">
-    <!-- Results -->
-    <div class="row">
+  <dt>Sample taxon</dt>
+  <dd>
+    <% if c14.sample.taxon.present? %>
+      <%= render c14.sample.taxon %>
+    <% else %>
+      <%= na_value %>
+    <% end %>
+  </dd>
 
-      <dt class="col-sm-3">Age <small>(uncal BP)</small></dt>
-      <dd class="col-sm-9 font-monospace text-end"><%= c14.bp %></dd>
-
-      <dt class="col-sm-3">Error</dt>
-      <dd class="col-sm-9 font-monospace text-end"><%= c14.std %></dd>
-      
-      <dt class="col-sm-3">Calibrated age <small>(2&sigma;, BP)</small></dt>
-      <dd class="col-sm-9 font-monospace text-end"><%= @bp_cal %></dd>
-            
-      <dt class="col-sm-3">Calibration curve</dt>
-      <dd class="col-sm-9 font-monospace text-end">IntCal20 (Reimer et al. 2020)</dd>
-      
-    </div>
-  </div>
 </dl>
-

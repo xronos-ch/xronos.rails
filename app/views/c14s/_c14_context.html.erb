@@ -1,36 +1,18 @@
-<dl class="row gx-5">
+<dl>
 
-  <!-- On-site context -->
-  <div class="col-lg">
-    <div class="row">
+      <dt>Site</dt>
+      <dd><%= link_to c14.site.name, c14.site  %></dd>
 
-      <dt class="col-sm-3">Site</dt>
-      <dd class="col-sm-9 text-end"><%= link_to c14.site.name, c14.site  %></dd>
+      <dt>Context</dt>
+      <dd><%= c14.context.name %></dd>
 
-      <dt class="col-sm-3">Context</dt>
-      <dd class="col-sm-9 text-end"><%= c14.context.name %></dd>
-
-      <dt class="col-sm-3">Sample position</dt>
-      <dd class="col-sm-9 text-end">
+      <dt>Sample position</dt>
+      <dd>
         <%= c14.sample.position_description.present? ? c14.sample.position_description : na_value %>
       </dd>
 
-      <dt class="col-sm-3">Sample coordinates</dt>
-      <dd class="col-sm-9 text-end"><!-- not implemented --><%= na_value %></dd>
-    </div>
-  </div>
-
-  <!-- Sources -->
-  <div class="col-lg">
-    <div class="row">
-
-      <dt class="col-sm-3"><%= "Reference".pluralize(c14.references.count) %></dt>
-      <dd class="col-sm-9 text-end">
-        <%= render "references/citations", references: @c14.references %>
-      </dd>
-
-    </div>
-  </div>
+      <dt>Sample coordinates</dt>
+      <dd><!-- not implemented --><%= na_value %></dd>
 
 </dl>
 

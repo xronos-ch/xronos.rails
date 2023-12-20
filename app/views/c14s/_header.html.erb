@@ -1,0 +1,29 @@
+<header id="c14-header">
+
+  <div class="d-flex">
+
+    <h1 class="display-3"><%= @c14.lab_id %></h1>
+
+    <% if can? :edit, @c14 %>
+      <div class="ms-auto">
+        <%= link_to edit_icon,
+          edit_c14_path(@c14), 
+          title: "Edit radiocarbon date",
+          class: "btn btn-sm btn-outline-primary",
+          data: { turbo_frame: "remote_modal" } %>
+      </div>
+    <% end %>
+
+  </div>
+
+  <div class="h5">
+    <%= xr_icon C14, {}, { style: "width: auto; height: 1.25rem;" } %>
+    Radiocarbon date from 
+    <%= link_to @c14.site.name, @c14.site %>
+  </div>
+
+  <div class="my-3">
+    <%= render "shared/record_metadata", record: @c14 %>
+  </div>
+
+</header>

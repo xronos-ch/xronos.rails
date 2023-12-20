@@ -44,10 +44,10 @@ module C14sHelper
     .background(nil)
       .view(strokeWidth: 0, fill: "")
       .data(chart_data)
-      .mark(type: "area", color: "#B99555", opacity: 0.9, tooltip: true, "line": {strokeWidth: 4, color: "#B99555"}, interpolate: "monotone")
+      .mark(type: "area", color: "rgb(60, 59, 57)", opacity: 0.9, tooltip: true, "line": {strokeWidth: 4, color: "rgb(60, 59, 57)"}, interpolate: "monotone")
       .encoding(
         x: {field: "bp", type: "quantitative", title: "cal BP",
-          axis: {grid: true, gridColor: "#6C757D", tickMinStep: 50, labelColor: "#212F1F", titleColor: "#212F1F" }},
+          axis: {grid: true, gridColor: "rgb(209, 215, 219)", tickMinStep: 50, labelColor: "#212F1F", titleColor: "#212F1F" }},
         y: {field: "probability", type: "quantitative",
             axis: nil },
       )
