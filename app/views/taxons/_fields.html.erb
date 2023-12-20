@@ -4,7 +4,7 @@
   <div class="mb-3 small text-success">
     <%= bs_icon "check-lg" %>
     Matched to GBIF Backbone Taxonomy:
-    <%= render "taxons/gbif_usage", gbif_usage: @taxon.usage %>
+    <%= render @taxon.usage %>
   </div>
 <% else %>
   <div class="mb-3 small text-warning">
