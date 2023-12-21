@@ -14,9 +14,8 @@
           <span class="text-muted"><%= order_indicator %></span>
         <% end %>
       </th>
-      <th scope="col">Suggested Nominatim match</th>
-      <th scope="col">Suggested Nominatim country code</th>
       <th scope="col">Coordinates</th>
+      <th scope="col">Suggested country code</th>
       <th scope="col" class="text-end">
         <%= link_to_order_by "Samples", :samples_count %>
         <% if ordered_by?(:samples_count) %>
@@ -32,13 +31,15 @@
       <tr>
         <td class="text-muted"><%= site.id %></td>
         <td><%= link_to site.name, site, target: :_top %></td>
-        <td>
-		  <%= site.country_from_coordinates %>
-        </td>
-        <td>
-		  <%= site.country_code_from_coordinates %>
-        </td>
         <td class="font-monospace"><%= site.coordinates.present? ? site.coordinates : na_value %></td>
+        <td>
+          <% if site.country_code_from_coordinates.present? %>
+            <%= site.country_code_from_coordinates %>
+            (<%= site.country_from_coordinates %>)
+          <% else %>
+            <span class="text-muted">None</span>
+          <% end %>
+        </td>
         <td class="text-end"><%= site.c14s_count %></td>
         <% if can? :manage, Site %>
           <td>
@@ -47,8 +48,8 @@
                   <%= bootstrap_form_for site do |f| %>
                     <% if site.country_code_from_coordinates.present? %>
                       <%= f.hidden_field :country_code, value: site.country_code_from_coordinates %>
-                      <%= f.hidden_field :revision_comment, value: "Matched to Nominatim Country Code by Coordinates" %>
-                      <%= f.primary class: "btn btn-sm btn-primary", title: "Use suggested Nominatim match" do %>
+                      <%= f.hidden_field :revision_comment, value: "Inferred country from coordinates (via [Nominatim](https://nominatim.org))" %>
+                      <%= f.primary class: "btn btn-sm btn-primary", title: "Use suggested country code" do %>
                         <%= bs_icon "check-lg" %>
                       <% end %>
                     <% else %>
