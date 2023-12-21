@@ -1,0 +1,67 @@
+
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">
+        <%= link_to_order_by "ID", :id %>
+        <% if ordered_by?(:id) %>
+          <span class="text-muted"><%= order_indicator %></span>
+        <% end %>
+      </th>
+      <th scope="col">
+        <%= link_to_order_by "Name", :name %>
+        <% if ordered_by?(:name) %>
+          <span class="text-muted"><%= order_indicator %></span>
+        <% end %>
+      </th>
+      <th scope="col">Suggested Nominatim match</th>
+      <th scope="col">Suggested Nominatim country code</th>
+      <th scope="col">Coordinates</th>
+      <th scope="col" class="text-end">
+        <%= link_to_order_by "Samples", :samples_count %>
+        <% if ordered_by?(:samples_count) %>
+          <span class="text-muted"><%= order_indicator %></span>
+        <% end %>
+      </th>
+      <% if can? :manage, Site %><th scope="col"><span class="visually-hidden">Actions</span></th><% end %>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% sites.each do |site| %>
+      <tr>
+        <td class="text-muted"><%= site.id %></td>
+        <td><%= link_to site.name, site, target: :_top %></td>
+        <td>
+		  <%= site.country_from_coordinates %>
+        </td>
+        <td>
+		  <%= site.country_code_from_coordinates %>
+        </td>
+        <td class="font-monospace"><%= site.coordinates.present? ? site.coordinates : na_value %></td>
+        <td class="text-end"><%= site.c14s_count %></td>
+        <% if can? :manage, Site %>
+          <td>
+            <div class="btn-toolbar justify-content-end">
+                <div class="btn-group me-2">
+                  <%= bootstrap_form_for site do |f| %>
+                    <% if site.country_code_from_coordinates.present? %>
+                      <%= f.hidden_field :country_code, value: site.country_code_from_coordinates %>
+                      <%= f.hidden_field :revision_comment, value: "Matched to Nominatim Country Code by Coordinates" %>
+                      <%= f.primary class: "btn btn-sm btn-primary", title: "Use suggested Nominatim match" do %>
+                        <%= bs_icon "check-lg" %>
+                      <% end %>
+                    <% else %>
+                      <%= button_tag class: "btn btn-sm btn-primary", disabled: true do %>
+                        <%= bs_icon "check-lg" %>
+                      <% end %>
+                    <% end %>
+                  <% end %>
+                </div>
+              <%= render "shared/action_buttons_compact", i: site %>
+          </td>
+          <% end %>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
