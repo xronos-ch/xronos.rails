@@ -92,7 +92,7 @@ class Site < ApplicationRecord
     return nil if lat.blank? || lng.blank?
 
     result = Geocoder.search([lat, lng]).first
-    if result.country_code.present?
+    if result && result.country_code.present?
       return ISO3166::Country[result.country_code]
     else
       return nil
