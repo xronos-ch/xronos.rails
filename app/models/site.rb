@@ -140,7 +140,7 @@ class Site < ApplicationRecord
     end
   end
 
-  scope :missing_country_code, -> { where(country_code: nil) }
+  scope :missing_country_code, -> { where("country_code = '' OR country_code IS NULL") }
   def missing_country_code?
     country_code.blank?
   end
