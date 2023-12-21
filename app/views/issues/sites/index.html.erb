@@ -1,5 +1,8 @@
 <% content_for :title, "Issues – Sites" %>
-<% content_for :help do %>
+<% if params[:issue] == "missing_country_code" %>
+  <% content_for :help do %>
+    <%= render "issues/sites/missing_country_code/help" %>
+  <% end %>
 <% end %>
 
 <h2 class="border-bottom">Sites</h2>
@@ -7,7 +10,6 @@
 <%= render "issues/nav", model: Site, base_path: issues_sites_path %>
 
 <turbo-frame id="issues-sites-table">
-
 
   <%= render "issues/filter_form" %>
 
