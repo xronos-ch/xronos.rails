@@ -93,7 +93,6 @@ class Site < ApplicationRecord
 
     result = Geocoder.search([lat, lng]).first
     if result && result.country_code.present?
-      logger.debug result.to_yaml
       return ISO3166::Country[result.country_code]
     else
       return nil
