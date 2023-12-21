@@ -1,12 +1,3 @@
-// ensure footer is always below view height
-body {
-	min-height: 100vh;
-}
-
-footer {
-	margin-top: auto;
-}
-
 // stop page overflowing on mobile
 @media (max-width: 768px) {
 	html, 

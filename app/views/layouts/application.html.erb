@@ -30,7 +30,7 @@
     <%= favicon_link_tag asset_path('favicon.ico') %>
   </head>
 
-  <body>
+  <body class="min-vh-100 d-flex flex-column">
 
     <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 9999">
       <% flash.each do |flash_type, message| %>
@@ -48,7 +48,7 @@
 
     <%= yield :before_footer %>
 
-    <footer class="page-footer pb-3 text-bg-dark shadow-sm">
+    <footer class="mt-auto pb-3 text-bg-dark">
       <div class="container">
         <div class="row">
 
