@@ -92,8 +92,19 @@ class Site < ApplicationRecord
     return nil if lat.blank? || lng.blank?
 
     result = Geocoder.search([lat, lng]).first
-    if result.country_code.present?
+    if result && result.country_code.present?
       return ISO3166::Country[result.country_code]
+    else
+      return nil
+    end
+  end
+  
+  def country_code_from_coordinates
+    return nil if lat.blank? || lng.blank?
+
+    result = Geocoder.search([lat, lng]).first
+    if result && result.country_code.present?
+      return result.country_code.upcase
     else
       return nil
     end
@@ -129,7 +140,7 @@ class Site < ApplicationRecord
     end
   end
 
-  scope :missing_country_code, -> { where(country_code: nil) }
+  scope :missing_country_code, -> { where("country_code = '' OR country_code IS NULL") }
   def missing_country_code?
     country_code.blank?
   end
