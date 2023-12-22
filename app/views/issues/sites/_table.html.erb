@@ -20,13 +20,13 @@
         <% end %>
       </th>
       <th scope="col">Coordinates</th>
-      <th scope="col">
+      <th scope="col" class="text-end">
         <%= link_to_order_by "C14s", :c14s_count %>
         <% if ordered_by?(:c14s_count) %>
           <span class="text-muted"><%= order_indicator %></span>
         <% end %>
       </th>
-      <th scope="col">
+      <th scope="col" class="text-end">
         <%= link_to_order_by "Typos", :typos_count %>
         <% if ordered_by?(:typos_count) %>
           <span class="text-muted"><%= order_indicator %></span>
@@ -43,8 +43,8 @@
         <td><%= link_to site.name, site, target: :_top %></td>
         <td><%= site.country_code %></td>
         <td class="font-monospace"><%= site.coordinates.present? ? site.coordinates : na_value %></td>
-        <td class="text-end"><%= site.c14s_count %></td>
-        <td class="text-end"><%= site.typos_count %></td>
+        <td class="font-monospace text-end"><%= site.c14s_count %></td>
+        <td class="font-monospace text-end"><%= site.typos_count %></td>
         <td><% site.issues.each do |issue| %>
           <%= issue_badge(issue) %>
         <% end %></td>

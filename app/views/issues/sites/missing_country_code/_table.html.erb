@@ -17,12 +17,22 @@
       <th scope="col">Coordinates</th>
       <th scope="col">Suggested country code</th>
       <th scope="col" class="text-end">
-        <%= link_to_order_by "Samples", :samples_count %>
-        <% if ordered_by?(:samples_count) %>
+        <%= link_to_order_by "C14s", :c14s_count %>
+        <% if ordered_by?(:c14s_count) %>
           <span class="text-muted"><%= order_indicator %></span>
         <% end %>
       </th>
-      <% if can? :manage, Site %><th scope="col"><span class="visually-hidden">Actions</span></th><% end %>
+      <th scope="col" class="text-end">
+        <%= link_to_order_by "Typos", :typos_count %>
+        <% if ordered_by?(:typos_count) %>
+          <span class="text-muted"><%= order_indicator %></span>
+        <% end %>
+      </th>
+      <% if can? :manage, Site %>
+        <th scope="col">
+          <span class="visually-hidden">Actions</span>
+        </th>
+      <% end %>
     </tr>
   </thead>
 
@@ -40,7 +50,8 @@
             <span class="text-muted">None</span>
           <% end %>
         </td>
-        <td class="text-end"><%= site.c14s_count %></td>
+        <td class="font-monospace text-end"><%= site.c14s_count %></td>
+        <td class="font-monospace text-end"><%= site.typos_count %></td>
         <% if can? :manage, Site %>
           <td>
             <div class="btn-toolbar justify-content-end">
