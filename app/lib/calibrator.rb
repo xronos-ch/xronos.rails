@@ -8,19 +8,19 @@
 module Calibrator
 
   class Calibration
-    attr_reader :c14_age, :c14_error, :prob_dist, :hpd_intervals
+    attr_reader :c14_age, :c14_error, :prob_dist, :hd_intervals
     
     def initialize(c14_age, c14_error, c14_curve)
       @c14_age = c14_age
       @c14_error = c14_error
       @c14_curve = c14_curve
 
-      cal_json = Calibrator.calibrate(c14_age, c14_error) # TODO: c14_curve
+      cal_json = Calibrator.calibrate(c14_age, c14_error, c14_curve)
       unless cal_json.blank?
         @prob_dist = cal_json["date"]["bp"]
           .zip(cal_json["date"]["probabilities"])
           .map{ |k, v| { age: k, pdens: v } }
-        @hpd_intervals = cal_json["date"]["sigma_ranges"]
+        @hd_intervals = cal_json["date"]["sigma_ranges"]
       end
     end
     
@@ -30,13 +30,14 @@ module Calibrator
     # TODO: https://github.com/xronos-ch/xronos.rails/issues/328
   end
 
-  def self.calibrate(age, error)
-    JSON.parse(`cd vendor/calibrator/bin/; ./#{bin} -b #{age} -s #{error} -r`)
+  def self.calibrate(c14_age, c14_error, c14_curve)
+    # TODO: c14_curve
+    JSON.parse(`cd vendor/calibrator/bin/; ./#{calibrator_bin} -b #{c14_age} -s #{c14_error} -r`)
   end
 
   private
 
-  def self.bin
+  def self.calibrator_bin
     if RUBY_PLATFORM =~ /darwin/
       "calibrator_mac"
     elsif RUBY_PLATFORM =~ /linux/
