@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_12_08_103730) do
+ActiveRecord::Schema[7.0].define(version: 2024_01_31_090129) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -86,6 +86,21 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_08_103730) do
     t.index ["lab_identifier"], name: "index_c14s_on_lab_identifier"
     t.index ["method"], name: "index_c14s_on_method"
     t.index ["sample_id"], name: "index_c14s_on_sample_id"
+  end
+
+  create_table "cals", force: :cascade do |t|
+    t.integer "source", null: false
+    t.integer "c14_age"
+    t.integer "c14_error"
+    t.integer "c14_curve"
+    t.jsonb "prob_dist", null: false
+    t.integer "taq"
+    t.integer "median"
+    t.integer "tpq"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["source", "c14_age", "c14_error", "c14_curve"], name: "index_cals_on_source_and_c14_age_and_c14_error_and_c14_curve", unique: true
+    t.index ["source"], name: "index_cals_on_source"
   end
 
   create_table "citations", force: :cascade do |t|
@@ -329,6 +344,17 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_08_103730) do
     t.index ["event"], name: "index_versions_on_event"
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
     t.index ["whodunnit"], name: "index_versions_on_whodunnit"
+  end
+
+  create_table "wikidata_links", force: :cascade do |t|
+    t.integer "qid"
+    t.string "wikidata_linkable_type"
+    t.bigint "wikidata_linkable_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["qid"], name: "index_wikidata_links_on_qid"
+    t.index ["wikidata_linkable_type", "wikidata_linkable_id"], name: "index_wikidata_links_on_linkable_type_and_linkable_id"
+    t.index ["wikidata_linkable_type", "wikidata_linkable_id"], name: "index_wikidata_links_on_wikidata_linkable"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
