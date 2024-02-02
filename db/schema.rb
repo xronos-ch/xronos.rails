@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_02_02_075906) do
+ActiveRecord::Schema[7.0].define(version: 2024_02_02_082804) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -93,7 +93,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_02_075906) do
     t.integer "c14_error"
     t.integer "c14_curve"
     t.integer "taq"
-    t.integer "median"
+    t.integer "centre"
     t.integer "tpq"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
