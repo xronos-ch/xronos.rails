@@ -11,7 +11,7 @@
 #  c14_age    :integer
 #  c14_curve  :integer
 #  c14_error  :integer
-#  median     :integer
+#  centre     :integer
 #  taq        :integer
 #  tpq        :integer
 #  type       :string           not null
@@ -27,11 +27,11 @@ class Cal < ApplicationRecord
   validates :type, presence: true
   validates :prob_dist, presence: true
 
-  # Validate taq >= median >= tpq
+  # Validate taq >= centre >= tpq
   validates :taq, 
     presence: true, 
     comparison: { greater_than_or_equal_to: :tpq }
-  validates :median, 
+  validates :centre, 
     presence: true,
     comparison: { less_than_or_equal_to: :taq, greater_than_or_equal_to: :tpq }
   validates :tpq, 

@@ -6,7 +6,7 @@
 #  c14_age    :integer
 #  c14_curve  :integer
 #  c14_error  :integer
-#  median     :integer
+#  centre     :integer
 #  taq        :integer
 #  tpq        :integer
 #  type       :string           not null

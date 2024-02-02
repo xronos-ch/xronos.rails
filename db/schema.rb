@@ -93,7 +93,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_29_161500) do
     t.integer "c14_error"
     t.integer "c14_curve"
     t.integer "taq"
-    t.integer "median"
+    t.integer "centre"
     t.integer "tpq"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

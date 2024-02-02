@@ -9,7 +9,7 @@
 #  c14_age    :integer
 #  c14_curve  :integer
 #  c14_error  :integer
-#  median     :integer
+#  centre     :integer
 #  taq        :integer
 #  tpq        :integer
 #  type       :string           not null
@@ -59,7 +59,7 @@ class Calibration < Cal
     self.taq = calibration.hd_intervals.map { |i| i["begin"] }.max
     self.tpq = calibration.hd_intervals.map { |i| i["end"] }.min
     # TODO: terrible, but currently unused, so...
-    self.median = self.tpq + ((self.taq - self.tpq) / 2)
+    self.centre = self.tpq + ((self.taq - self.tpq) / 2)
 
     # Not persisted
     self.prob_dist = calibration.prob_dist
