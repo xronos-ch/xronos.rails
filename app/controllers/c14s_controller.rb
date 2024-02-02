@@ -1,5 +1,4 @@
 class C14sController < ApplicationController
-  include C14sHelper
   include Pagy::Backend
   include Tabulatable
 
@@ -62,7 +61,7 @@ class C14sController < ApplicationController
   # GET /c14s/1
   # GET /c14s/1.json
   def show
-    @cal = @c14.cal
+    @calibration = @c14.calibration
   end
 
   # GET /c14s/new

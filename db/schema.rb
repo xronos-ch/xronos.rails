@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_01_31_090129) do
+ActiveRecord::Schema[7.0].define(version: 2024_02_02_072633) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -89,7 +89,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_31_090129) do
   end
 
   create_table "cals", force: :cascade do |t|
-    t.integer "source", null: false
     t.integer "c14_age"
     t.integer "c14_error"
     t.integer "c14_curve"
@@ -99,8 +98,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_31_090129) do
     t.integer "tpq"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["source", "c14_age", "c14_error", "c14_curve"], name: "index_cals_on_source_and_c14_age_and_c14_error_and_c14_curve", unique: true
-    t.index ["source"], name: "index_cals_on_source"
+    t.string "type", null: false
+    t.index ["type", "c14_age", "c14_error", "c14_curve"], name: "index_cals_on_type_and_c14_age_and_c14_error_and_c14_curve", unique: true
   end
 
   create_table "citations", force: :cascade do |t|
