@@ -1,6 +1,6 @@
 <% content_for :title, "#{@c14.lab_identifier}, #{C14.label} from #{@c14.site.name}" %>
 <% content_for :meta_description do %>
-  <%= @c14.site.name %> (<%= @c14.site.country %>) has been radiocarbon dated to <%= @c14.cal.range.join("–").html_safe %> (<%= @c14.uncal_age %> uncal BP). This determination is designated by the laboratory identifier <%= @c14.lab_identifier %> and was made on a sample of <%= @c14.sample.material.name %> (<%= @c14.sample.taxon.present? ? @c14.sample.taxon.name : "taxon unknown" %>). XRONOS' record for this radiocarbon date may include further information on the laboratory measurement, archaeological context, and bibliographic references.
+  <%= @c14.site.name %> (<%= @c14.site.country %>) has been radiocarbon dated to <%= @c14.calibration.range.join("–").html_safe %> (<%= @c14.uncal_age %> uncal BP). This determination is designated by the laboratory identifier <%= @c14.lab_identifier %> and was made on a sample of <%= @c14.sample.material.name %> (<%= @c14.sample.taxon.present? ? @c14.sample.taxon.name : "taxon unknown" %>). XRONOS' record for this radiocarbon date may include further information on the laboratory measurement, archaeological context, and bibliographic references.
 <% end %>
 
 <main class="container my-5">
@@ -17,21 +17,21 @@
     <div class="row">
 
       <div class="col-lg-8" style="margin-bottom: -31px" data-controller="vega">
-        <%= cal_plot(@cal) %>
+        <%= calibration_plot(@calibration) %>
       </div>
 
       <div class="col-lg-4">
         <dl>
           <dt>Calibration curve</dt>
           <dd>
-            <%= @cal.c14_curve %>
-            (<%= c14_curve_ref(@cal.c14_curve) %>)
+            <%= @calibration.c14_curve %>
+            (<%= c14_curve_ref(@calibration.c14_curve) %>)
           </dd>
 
           <dt>Calibrated age <small>(2&sigma;, cal BP)</small></dt>
           <dd class="font-monospace">
             <ul class="list-unstyled">
-            <% @cal.hd_intervals.each do |hdi| %>
+            <% @calibration.hd_intervals.each do |hdi| %>
               <li><%= format_hd_interval(hdi) %></li>
             <% end %>
             </ul>

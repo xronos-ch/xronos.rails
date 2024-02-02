@@ -89,7 +89,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_29_161500) do
   end
 
   create_table "cals", force: :cascade do |t|
-    t.integer "source", null: false
     t.integer "c14_age"
     t.integer "c14_error"
     t.integer "c14_curve"
@@ -99,8 +98,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_29_161500) do
     t.integer "tpq"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["source", "c14_age", "c14_error", "c14_curve"], name: "index_cals_on_source_and_c14_age_and_c14_error_and_c14_curve", unique: true
-    t.index ["source"], name: "index_cals_on_source"
+    t.string "type", null: false
+    t.index ["type", "c14_age", "c14_error", "c14_curve"], name: "index_cals_on_type_and_c14_age_and_c14_error_and_c14_curve", unique: true
   end
 
   create_table "citations", force: :cascade do |t|
