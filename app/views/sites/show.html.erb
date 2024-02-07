@@ -89,6 +89,12 @@
         <% unless @pagy_c14s.pages <= 1 %>
           <%== pagy_bootstrap_nav(@pagy_c14s) %>
         <% end %>
+        <% if can? :create, :c14 %>
+          <%= link_to create_icon + "Add radiocarbon date", 
+            new_c14_path(site: @site),
+            class: "btn btn-outline-primary",
+            data: { turbo_frame: "remote_modal" } %>
+        <% end %>
       </turbo-frame>
       </div>
     </section>

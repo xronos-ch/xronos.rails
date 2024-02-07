@@ -92,7 +92,7 @@ class SitesController < ApplicationController
 
     respond_to do |format|
       if @site.save
-        format.html { redirect_back fallback_location: root_path, notice: 'Site was successfully created.' }
+        format.html { redirect_to site_path(@site), notice: 'Site created.' }
         format.json { render :show, status: :created, location: @site }
       else
         format.html { render :new }
