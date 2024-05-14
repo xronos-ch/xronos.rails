@@ -141,6 +141,8 @@ FROM (
   LEFT JOIN taxons ON taxons.id = samples.taxon_id
   LEFT JOIN contexts ON contexts.id = samples.context_id
   LEFT JOIN sites ON sites.id = contexts.site_id
+  LEFT JOIN site_types_sites ON site_types_sites.site_id = sites.id
+  LEFT JOIN site_types ON site_types_sites.site_type_id = site_types.id
 ] + where_clause + ") sub;"
 
                 #logger.debug C14.connection.exec_query(query).to_yaml
