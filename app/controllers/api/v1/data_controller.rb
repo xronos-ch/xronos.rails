@@ -75,7 +75,7 @@ module Api
           )
         end
         
-        where_clause = @data.to_sql[/ WHERE .*/]
+        where_clause = @data.to_sql[/ WHERE .*/].to_s
         
         query = %q[
 SELECT json_agg(json_build_object('measurement', measurement)) AS measurements
