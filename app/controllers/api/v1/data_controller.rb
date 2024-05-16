@@ -145,9 +145,7 @@ FROM (
   LEFT JOIN site_types ON site_types_sites.site_type_id = site_types.id
 ] + where_clause + ") sub;"
 
-                #logger.debug C14.connection.exec_query(query).to_yaml
-        render json: C14.connection.exec_query(query)[0]['measurements'], adapter: nil, serializer: nil
-        
+        render json: C14.connection.exec_query(query)[0]['measurements'], adapter: nil, serializer: nil        
       end
 
       def show
