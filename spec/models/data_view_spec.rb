@@ -11,6 +11,7 @@
 #  ecochronological_units  :json
 #  feature                 :string
 #  feature_type            :string
+#  lab_name                :text
 #  labnr                   :string
 #  lat                     :text
 #  lng                     :text
@@ -19,6 +20,7 @@
 #  reference               :json
 #  site                    :string
 #  site_type               :string
+#  source_database         :text
 #  species                 :string
 #  std                     :integer
 #  typochronological_units :json

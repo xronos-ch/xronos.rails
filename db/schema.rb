@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_05_27_095244) do
+ActiveRecord::Schema[7.0].define(version: 2024_05_27_113505) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -345,6 +345,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_27_095244) do
       c14s.cal_bp,
       c14s.cal_std,
       c14s.delta_c13,
+      ''::text AS source_database,
+      ''::text AS lab_name,
       materials.name AS material,
       taxons.name AS species,
       contexts.name AS feature,
@@ -366,19 +368,19 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_27_095244) do
                JOIN samples samp ON ((samp.context_id = ctx.id)))
             WHERE ((samp.id = samples.id) AND (st.name IS NOT NULL))
            LIMIT 1) AS site_type,
-      ( SELECT json_agg(json_build_object('periode', tp.name)) AS json_agg
+      COALESCE(( SELECT json_agg(json_build_object('periode', tp.name)) AS json_agg
              FROM typos tp
-            WHERE (tp.sample_id = samples.id)) AS periods,
-      ( SELECT json_agg(json_build_object('typochronological_unit', tp.name)) AS json_agg
+            WHERE (tp.sample_id = samples.id)), '[]'::json) AS periods,
+      COALESCE(( SELECT json_agg(json_build_object('typochronological_unit', tp.name)) AS json_agg
              FROM typos tp
-            WHERE (tp.sample_id = samples.id)) AS typochronological_units,
-      ( SELECT json_agg(json_build_object('ecochronological_unit', tp.name)) AS json_agg
+            WHERE (tp.sample_id = samples.id)), '[]'::json) AS typochronological_units,
+      COALESCE(( SELECT json_agg(json_build_object('ecochronological_unit', tp.name)) AS json_agg
              FROM typos tp
-            WHERE (tp.sample_id = samples.id)) AS ecochronological_units,
-      ( SELECT json_agg(json_build_object('reference', ref.short_ref)) AS json_agg
+            WHERE (tp.sample_id = samples.id)), '[]'::json) AS ecochronological_units,
+      COALESCE(( SELECT json_agg(json_build_object('reference', ref.short_ref)) AS json_agg
              FROM ("references" ref
                JOIN citations cit ON ((ref.id = cit.reference_id)))
-            WHERE (((cit.citing_type)::text = 'C14'::text) AND (cit.citing_id = c14s.id))) AS reference
+            WHERE (((cit.citing_type)::text = 'C14'::text) AND (cit.citing_id = c14s.id))), '[]'::json) AS reference
      FROM (((((((c14s
        LEFT JOIN samples ON ((samples.id = c14s.sample_id)))
        LEFT JOIN materials ON ((materials.id = samples.material_id)))
