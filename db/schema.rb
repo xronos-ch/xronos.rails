@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_05_27_113505) do
+ActiveRecord::Schema[7.0].define(version: 2024_05_28_093935) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -369,14 +369,23 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_27_113505) do
             WHERE ((samp.id = samples.id) AND (st.name IS NOT NULL))
            LIMIT 1) AS site_type,
       COALESCE(( SELECT json_agg(json_build_object('periode', tp.name)) AS json_agg
-             FROM typos tp
-            WHERE (tp.sample_id = samples.id)), '[]'::json) AS periods,
+             FROM (((typos tp
+               JOIN samples sam ON ((tp.sample_id = sam.id)))
+               JOIN contexts contexts_1 ON ((sam.context_id = contexts_1.id)))
+               JOIN samples all_samples ON ((all_samples.context_id = contexts_1.id)))
+            WHERE (all_samples.id = samples.id)), '[]'::json) AS periods,
       COALESCE(( SELECT json_agg(json_build_object('typochronological_unit', tp.name)) AS json_agg
-             FROM typos tp
-            WHERE (tp.sample_id = samples.id)), '[]'::json) AS typochronological_units,
+             FROM (((typos tp
+               JOIN samples sam ON ((tp.sample_id = sam.id)))
+               JOIN contexts contexts_1 ON ((sam.context_id = contexts_1.id)))
+               JOIN samples all_samples ON ((all_samples.context_id = contexts_1.id)))
+            WHERE (all_samples.id = samples.id)), '[]'::json) AS typochronological_units,
       COALESCE(( SELECT json_agg(json_build_object('ecochronological_unit', tp.name)) AS json_agg
-             FROM typos tp
-            WHERE (tp.sample_id = samples.id)), '[]'::json) AS ecochronological_units,
+             FROM (((typos tp
+               JOIN samples sam ON ((tp.sample_id = sam.id)))
+               JOIN contexts contexts_1 ON ((sam.context_id = contexts_1.id)))
+               JOIN samples all_samples ON ((all_samples.context_id = contexts_1.id)))
+            WHERE (all_samples.id = samples.id)), '[]'::json) AS ecochronological_units,
       COALESCE(( SELECT json_agg(json_build_object('reference', ref.short_ref)) AS json_agg
              FROM ("references" ref
                JOIN citations cit ON ((ref.id = cit.reference_id)))
