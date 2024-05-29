@@ -17,6 +17,8 @@ export default class extends Controller {
 
 
 	connect() {
+		this.load()
+		
 		var bounds = new L.LatLngBounds(
 			new L.LatLng(-180, -180), 
 			new L.LatLng(180, 180)
@@ -75,8 +77,6 @@ export default class extends Controller {
 
 		// Initial view
 		this.map.fitWorld();
-
-		this.load()
 
 		function update() {
 			const bounds = map.getBounds();
