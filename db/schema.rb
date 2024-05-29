@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_05_28_093935) do
+ActiveRecord::Schema[7.0].define(version: 2024_05_29_161500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -399,4 +399,13 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_28_093935) do
        LEFT JOIN site_types_sites ON ((site_types_sites.site_id = sites.id)))
        LEFT JOIN site_types ON ((site_types_sites.site_type_id = site_types.id)));
   SQL
+  add_index "data_views", ["country"], name: "index_data_views_on_country"
+  add_index "data_views", ["feature"], name: "index_data_views_on_feature"
+  add_index "data_views", ["id"], name: "index_data_views_on_id"
+  add_index "data_views", ["labnr"], name: "index_data_views_on_labnr"
+  add_index "data_views", ["material"], name: "index_data_views_on_material"
+  add_index "data_views", ["site"], name: "index_data_views_on_site"
+  add_index "data_views", ["site_type"], name: "index_data_views_on_site_type"
+  add_index "data_views", ["species"], name: "index_data_views_on_species"
+
 end

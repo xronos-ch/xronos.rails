@@ -25,6 +25,17 @@
 #  std                     :integer
 #  typochronological_units :json
 #
+# Indexes
+#
+#  index_data_views_on_country    (country)
+#  index_data_views_on_feature    (feature)
+#  index_data_views_on_id         (id)
+#  index_data_views_on_labnr      (labnr)
+#  index_data_views_on_material   (material)
+#  index_data_views_on_site       (site)
+#  index_data_views_on_site_type  (site_type)
+#  index_data_views_on_species    (species)
+#
 require 'rails_helper'
 
 RSpec.describe DataView, type: :model do
