@@ -33,7 +33,7 @@ class DataController < ApplicationController
         'name', name,
         'id', id
     )
-) AS geojson from (" + @sites.to_sql+ "))").to_sql)[0]['measurements'], adapter: nil, serializer: nil        
+) AS geojson from (" + @sites.to_sql+ ") AS subquery1) AS subquery2").to_sql)[0]['measurements'], adapter: nil, serializer: nil        
       }
     end
   end
