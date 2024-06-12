@@ -51,8 +51,8 @@
     <%= render "filter_status" %>
   </span>
 
+  <ul class="nav">
   <!--
-  <ul class="nav ms-auto">
     <li class="nav-item dropdown">
       <a class="nav-link dropdown-toggle" 
          id="dataTools"  
@@ -67,6 +67,7 @@
         <li><a class="dropdown-item" href="#">Sum calibrate</a></li>
       </ul>
     </li>
+  -->
     <li class="nav-item dropdown">
       <a class="nav-link dropdown-toggle" 
          id="dataDownload"  
@@ -77,11 +78,30 @@
         <%= bs_icon "download" %>
         Download
       </a>
-      <ul class="dropdown-menu" aria-labelledby="dataDownload">
-        <li><a class="dropdown-item" href="#">CSV</a></li>
-        <li><a class="dropdown-item" href="#">XLSX</a></li>
+      <ul class="dropdown-menu" aria-labelledby="dataDownload" style="padding:0px;">
+        <li>
+			<div class="d-grid gap-2">
+			
+			<%= link_to data_path(format: :csv, filter: @raw_filter_params), 
+				class: "nav-link", 
+				title: "CSV",
+				download: "data_#{Date.today}.csv" do %>
+					<%=bs_icon("bi bi-filetype-csv")%> CSV
+			<% end %>
+		</div>
+	  </li>
+        <li>
+			<div class="d-grid gap-2">
+			
+			<%= link_to data_path(format: :json, filter: @raw_filter_params), 
+				class: "nav-link", 
+				title: "JSON",
+				download: "data_#{Date.today}.json" do %>
+					<%=bs_icon("bi bi-filetype-json")%> JSON
+			<% end%>
+		</div>
+	  </li>
       </ul>
     </li>
   </ul>
-  -->
 </div>

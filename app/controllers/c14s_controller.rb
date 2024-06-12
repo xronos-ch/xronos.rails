@@ -25,7 +25,11 @@ class C14sController < ApplicationController
     unless c14_params.blank?
       @c14s = @c14s.where(c14_params)
     end
-
+    
+#    if params[:sample_attributes][:context_attributes][:site_id].present?
+#      @c14s = @c14s.joins(sample: { context: :site }).where(sample:{context:{sites:{id: params[:sample_attributes][:context_attributes][:site_id]}}})
+#    end
+        
     # order
     if params.has_key?(:c14s_order_by)
       order = { params[:c14s_order_by] => params.fetch(:c14s_order, "asc") }
@@ -159,7 +163,13 @@ class C14sController < ApplicationController
           :position_y,
           :position_z,
           :position_crs
-        ]}
+        ]},
+        sample: [
+          :context_id,
+          contexts: [
+            :site_id
+          ]
+        ]
       )
     end
 

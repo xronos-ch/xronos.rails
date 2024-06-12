@@ -13,6 +13,7 @@ class DataController < ApplicationController
 
   def index
     @data = Data.new(filter_params, select_params)
+    @raw_filter_params = filter_params
     logger.debug { "Parsed filters: #{@data.filters.inspect}" }
     @sites = @data.xrons.select("sites.id", "sites.lng", "sites.lat", "sites.name").distinct
     
@@ -34,6 +35,20 @@ class DataController < ApplicationController
         'id', id
     )
 ) AS geojson from (" + @sites.to_sql+ ") AS subquery1) AS subquery2").to_sql)[0]['measurements'], adapter: nil, serializer: nil        
+      }
+      format.csv {
+        query = "COPY (SELECT * FROM data_views WHERE id IN (" + @data.xrons.pluck(:id).join(', ').to_s + ") ) TO STDOUT WITH CSV HEADER"
+        
+        connection = ActiveRecord::Base.connection.raw_connection
+            csv_data = ""
+
+            connection.copy_data(query) do
+              while row = connection.get_copy_data
+                csv_data << row
+              end
+            end
+
+            render plain: csv_data, content_type: 'text/csv', filename: "data_#{Date.today}.csv"
       }
     end
   end
