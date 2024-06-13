@@ -97,8 +97,6 @@ For development, you will need to run the XRONOS rails app directly (without doc
 7. Start a dev server with `bin/dev`. This watches for changes in CSS and JS files.
     * If you get an error about foreman being missing, try restarting your terminal.
 
-Here's an improved version of the instructions for compiling the calibrator C++ tool:
-
 ### Using Calibrator
 
 The [calibrator](https://github.com/ISAAKiel/calibrator) is a small command-line tool written in C++ used in XRONOS to calibrate the 14C data live. To use it in your test environment, you need to compile it for your system. This process varies depending on the system, but we provide a brief description for Linux and MacOS below.
