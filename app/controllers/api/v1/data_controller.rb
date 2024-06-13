@@ -16,6 +16,19 @@ module Api
       def index
   
         @data ||= DataView.all
+        
+        logger.debug "========================"
+        logger.debug params.to_yaml
+        logger.debug "========================"
+        
+        # Specify the file name you want to check in the public directory
+        file_path = Rails.root.join("public", "all_data.json")
+        
+        # Check if none of the params keys start with "query_" and if the file exists
+        if params.keys.none? { |key| key.to_s.start_with?('query_') } && File.exist?(file_path)
+            send_file(file_path)
+            return
+        end
 
         # lab_identifier (v1: labnr)
         unless params[:query_labnr].nil?
@@ -66,13 +79,8 @@ module Api
           )
         end
         
-        logger.debug "====================="
-        logger.debug DataView.select("json_agg(json_build_object('measurement', measurement)) AS measurements").from(@data).to_sql
-        logger.debug "====================="
-        
         #render json: @data.to_json      
-        render json: C14.connection.exec_query(DataView.select("json_agg(json_build_object('measurement', subquery)) AS measurements").from(@data).to_sql)[0]['measurements'], adapter: nil, serializer: nil        
-        
+        render json: C14.connection.exec_query(DataView.select("json_agg(json_build_object('measurement', subquery)) AS measurements").from(@data).to_sql)[0]['measurements'], adapter: nil, serializer: nil
       end
 
       def show

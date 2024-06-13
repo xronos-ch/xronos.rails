@@ -56,6 +56,20 @@ class Data
     @filters.dig(*args).join(",") if @filters.dig(*args).present?
   end
 
+  def self.store_data_as_json
+      query = <<-SQL
+        SELECT json_agg(json_build_object('measurement', subquery)) AS measurements
+        FROM (SELECT "data_views".* FROM "data_views") subquery
+      SQL
+
+      result = C14.connection.exec_query(query)
+      measurements = result[0]['measurements']
+
+      File.open(Rails.root.join('public', 'all_data.json'), 'w') do |file|
+        file.write(measurements)
+      end
+  end
+  
   private
 
   def decode_range_filters(filters)
