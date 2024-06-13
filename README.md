@@ -97,3 +97,68 @@ For development, you will need to run the XRONOS rails app directly (without doc
 7. Start a dev server with `bin/dev`. This watches for changes in CSS and JS files.
     * If you get an error about foreman being missing, try restarting your terminal.
 
+Here's an improved version of the instructions for compiling the calibrator C++ tool:
+
+### Using Calibrator
+
+The [calibrator](https://github.com/ISAAKiel/calibrator) is a small command-line tool written in C++ used in XRONOS to calibrate the 14C data live. To use it in your test environment, you need to compile it for your system. This process varies depending on the system, but we provide a brief description for Linux and MacOS below.
+
+#### Prerequisites
+
+The calibrator requires the [Boost](https://www.boost.org) C++ library. Ensure that Boost is installed and accessible on your system. You may need to modify the [Makefile](vendor/calibrator/Makefile) to specify the correct locations for the includes and libraries. The compilation also depends on having [`make`](http://en.wikipedia.org/wiki/Make_%28software%29) and the [`g++`](https://en.wikipedia.org/wiki/GNU_Compiler_Collection) compiler installed.
+
+To install these tools, follow the instructions for your operating system:
+
+**For Linux:**
+- **Arch Linux:** 
+  ```sh
+  sudo pacman -Sy base-devel
+  ```
+- **Ubuntu:**
+  ```sh
+  sudo apt install build-essential
+  ```
+
+**For MacOS:**
+- Install Xcode Command Line Tools:
+  ```sh
+  xcode-select --install
+  ```
+
+You might already have these tools installed. To check, run:
+
+```sh
+make --version
+gcc --version
+```
+
+#### Compilation Steps
+
+1. **Navigate to the calibrator directory:**
+   Open a terminal and change to the `vendor/calibrator` directory within the XRONOS project.
+   ```sh
+   cd vendor/calibrator
+   ```
+
+2. **Clean previous builds (optional but recommended):**
+   ```sh
+   make clean
+   ```
+
+3. **Compile the calibrator:**
+   ```sh
+   make
+   ```
+
+4. **Rename the resulting binary:**
+   Rename the compiled calibrator file to a name appropriate for your operating system.
+   - For Linux:
+     ```sh
+     mv bin/calibrator bin/calibrator_linux
+     ```
+   - For MacOS:
+     ```sh
+     mv bin/calibrator bin/calibrator_mac
+     ```
+
+This should make the calibrator available for use in XRONOS. You may also find the tool useful for other purposes. If you encounter issues or need further assistance, please refer to the [calibrator GitHub page](https://github.com/ISAAKiel/calibrator).
