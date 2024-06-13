@@ -16,11 +16,7 @@ module Api
       def index
   
         @data ||= DataView.all
-        
-        logger.debug "========================"
-        logger.debug params.to_yaml
-        logger.debug "========================"
-        
+            
         # Specify the file name you want to check in the public directory
         file_path = Rails.root.join("public", "all_data.json")
         
