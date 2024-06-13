@@ -66,7 +66,7 @@ jobs:
           yarn install --pure-lockfile
       - name: Install gems
         run: |
-          RAILS_ENV=production rake assets:precompile
+          RAILS_ENV=production bundle exec assets:precompile
       - name: Setup test database
         env:
           RAILS_ENV: test
