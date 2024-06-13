@@ -24,15 +24,18 @@ class ActionDispatch::IntegrationTest
   end
 
   Capybara.register_driver :headless_chrome do |app|
-    options = Selenium::WebDriver::Chrome::Options.new(args: %w[no-sandbox headless disable-gpu disable-dev-shm-usage])
-    Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
+    Capybara::Selenium::Driver.new(
+      app,
+      browser: :chrome,
+      options: capabilities # change keyword
+    )
   end
 
-  Capybara.javascript_driver = :headless_chrome
+  Capybara.javascript_driver = :selenium_chrome_headless
 
   Capybara.configure do |config|
     config.default_max_wait_time = 10 # seconds
-    config.default_driver        = :headless_chrome
+    config.default_driver        = :selenium_chrome_headless
   end
 end
 
