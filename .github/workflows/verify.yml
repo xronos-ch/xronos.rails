@@ -35,7 +35,7 @@ jobs:
       - name: Set up Chrome
         uses: browser-actions/setup-chrome@latest
         with:
-          chrome-version: stable
+          chrome-version: 125.0.6422
       - name: Ruby gem cache
         uses: actions/cache@v1
         with:
@@ -75,6 +75,7 @@ jobs:
           REGISTRATION_PASSPHRASE: ""
         run: |
           bin/rails db:prepare
+          RAILS_ENV=test bundle exec rake assets:precompile
       - name: Run tests
         run: COVERAGE=true bundle exec rspec
         env:

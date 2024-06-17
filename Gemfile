@@ -202,7 +202,6 @@ group :test do
   gem 'json-schema'
 
   # Acceptance testing
-  gem 'webdrivers'
   gem 'selenium-webdriver'
   gem 'capybara'
   gem 'capybara-selenium'
