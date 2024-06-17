@@ -27,7 +27,7 @@
             <td><%= na_value %></td>
           <% end %>
           <td><%= x.bp %>±<%= x.std %></td>
-          <td><%= x.cal_bp %>±<%= x.cal_std %></td>
+          <td><%= x.calibration.taq %>-<%= x.calibration.tpq %></td>
         </tr>
       <% end %>
     </tbody>
