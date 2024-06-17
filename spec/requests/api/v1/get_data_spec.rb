@@ -5,6 +5,8 @@ RSpec.describe 'Data', type: :request do
     
     before do
       FactoryBot.create_list(:c14, 10)
+      DataView.refresh
+      
       get '/api/v1/data'
     end
   

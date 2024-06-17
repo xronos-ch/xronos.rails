@@ -17,6 +17,8 @@ export default class extends Controller {
 
 
 	connect() {
+		this.load()
+		
 		var bounds = new L.LatLngBounds(
 			new L.LatLng(-180, -180), 
 			new L.LatLng(180, 180)
@@ -75,8 +77,6 @@ export default class extends Controller {
 
 		// Initial view
 		this.map.fitWorld();
-
-		this.load()
 
 		function update() {
 			const bounds = map.getBounds();
@@ -186,36 +186,22 @@ export default class extends Controller {
 	loadRemoteMarkers() {
 		// Construct URL to markers data
 		var markers_url = new URL(this.markersUrlValue)
-		markers_url.search += "&select[]=sites.id&select[]=sites.name&select[]=sites.lat&select[]=sites.lng"
 		console.debug("Fetching map data from " + markers_url.toString())
 		this.showSpinner()
 
 		// Load markers
-		var data = fetch(markers_url, { headers: { 'Accept': 'application/json' } })
+		var data = fetch(markers_url, { headers: { 'Accept': 'application/geo+json' } })
 			.then(response => response.json())
 			.then(data => {
-				data = data.xrons
-				var markers = data.filter(data => data.lat && data.lng)
-					.map(data => {
-						var obj = L.marker(
-							[data.lat, data.lng], {
-								id: data.id,
-								name: data.name
-							}
-						).toGeoJSON();
-						obj.properties = {name: data.name, id:data.id};
-						return obj;
-					}
-					)
-
-				if (markers.length > 0) {
-					this.index.load(markers);
-					const bounds = this.map.getBounds();
-					this.markersLayer.addData(this.index.getClusters([bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth()], this.map.getZoom()));                        //this.map.addLayer(index);    
+				if (data.length > 0) {
+                    this.index.load(data);
+                    const bounds = this.map.getBounds();
+                    this.markersLayer.addData(this.index.getClusters([bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth()], this.map.getZoom()));                        //this.map.addLayer(index);    
 				}
 				this.hideSpinner()
-
-			})
+                
+			}
+)
 	}
 
 	showSpinner() {

@@ -4,6 +4,8 @@ RSpec.describe 'Data', type: :request do
   
   before(:all) do
     @c14s = FactoryBot.create_list(:c14, 10)
+    
+    DataView.refresh
   end
   
   describe 'query_labnr' do

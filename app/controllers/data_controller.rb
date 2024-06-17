@@ -14,13 +14,27 @@ class DataController < ApplicationController
   def index
     @data = Data.new(filter_params, select_params)
     logger.debug { "Parsed filters: #{@data.filters.inspect}" }
-
+    @sites = @data.xrons.select("sites.id", "sites.lng", "sites.lat", "sites.name").distinct
+    
     respond_to do |format|
       format.html { 
         @pagy, @xrons = pagy(@data.xrons)
         render layout: "full_page" 
       }
       format.json { render json: @data }
+      format.geojson { 
+      render json: Site.connection.exec_query(Site.select("json_agg(geojson) AS measurements").from("(select jsonb_build_object(
+    'type', 'Feature',
+    'geometry', jsonb_build_object(
+        'type', 'Point',
+        'coordinates', jsonb_build_array(lng, lat)
+    ),
+    'properties', jsonb_build_object(
+        'name', name,
+        'id', id
+    )
+) AS geojson from (" + @sites.to_sql+ ") AS subquery1) AS subquery2").to_sql)[0]['measurements'], adapter: nil, serializer: nil        
+      }
     end
   end
 

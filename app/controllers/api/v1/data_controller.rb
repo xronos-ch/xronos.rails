@@ -15,67 +15,64 @@ module Api
             
       def index
   
-        @data ||= C14.includes(
-          :c14_lab,
-          {sample: [:material,
-            :taxon,
-            {context:
-              [{site:
-                :site_types},
-                :typos]}]},
-          :references
-        )
+        @data ||= DataView.all
 
         # lab_identifier (v1: labnr)
         unless params[:query_labnr].nil?
           @data = @data.where(
-              lab_identifier: params[:query_labnr].split('|')
+              labnr: params[:query_labnr].split('|')
           )
         end
 
         # site name
         unless params[:query_site].nil?
           @data = @data.where(
-            sites: { :name => params[:query_site].split('|') }
+            site: params[:query_site].split('|')
           )
         end
 
         # site type
         unless params[:query_site_type].nil?
           @data = @data.where(
-            site_types: { :name => params[:query_site_type].split('|') }
+            site_type: params[:query_site_type].split('|')
           )
         end
 
         # country
         unless params[:query_country].nil?
           @data = @data.where(
-            sites: { :country_code => params[:query_country].split('|') }
+            country: params[:query_country].split('|')
           )
         end
 
         # feature
         unless params[:query_feature].nil?
           @data = @data.where(
-            contexts: { :name => params[:query_feature].split('|') }
+            feature: params[:query_feature].split('|')
           )
         end
 
         # material
         unless params[:query_material].nil?
           @data = @data.where(
-            materials: { :name => params[:query_material].split('|') }
+            material: params[:query_material].split('|')
           )
         end
 
         # species
         unless params[:query_species].nil?
           @data = @data.where(
-            taxons: { :name => params[:query_species].split('|') }
+            species: params[:query_species].split('|')
           )
         end
         
-        @data = @data.to_a
+        logger.debug "====================="
+        logger.debug DataView.select("json_agg(json_build_object('measurement', measurement)) AS measurements").from(@data).to_sql
+        logger.debug "====================="
+        
+        #render json: @data.to_json      
+        render json: C14.connection.exec_query(DataView.select("json_agg(json_build_object('measurement', subquery)) AS measurements").from(@data).to_sql)[0]['measurements'], adapter: nil, serializer: nil        
+        
       end
 
       def show

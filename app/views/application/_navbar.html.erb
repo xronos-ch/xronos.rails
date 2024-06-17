@@ -115,7 +115,7 @@
                </button>
 
                <div class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="dropdownMenuLink" style="width: 300px">
-                 <%= form_for :user, :url => session_path(:user), :html => {:class => "px-4"}  do |f| %>
+                 <%= form_for :user, :url => session_path(:user), :html => {:class => "px-4"}, data: {turbo: false}  do |f| %>
                    <div class="form-group">
                      <%= f.label :email, class: "sr-only col-form-label col-form-label-sm" %>
                      <div class="input-group">

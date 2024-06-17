@@ -5,6 +5,7 @@ class C14sController < ApplicationController
   load_and_authorize_resource
 
   before_action :set_c14, only: [:show, :edit, :update, :destroy]
+  before_action :set_site, only: [ :new ]
 
   # GET /c14s
   # GET /c14s.json
@@ -67,7 +68,12 @@ class C14sController < ApplicationController
 
   # GET /c14s/new
   def new
-    @c14 = C14.new
+    #@c14 = C14.new
+    @context = @site.contexts.build
+    @sample = @context.samples.build
+    @c14 = @sample.c14s.build
+    #@c14.context = Context.new()
+    #@c14.sample = Sample.new
   end
 
   # GET /c14s/1/edit
@@ -81,7 +87,7 @@ class C14sController < ApplicationController
 
     respond_to do |format|
       if @c14.save
-        format.html { redirect_to @c14, notice: 'C14 measurement was successfully created.' }
+        format.html { redirect_to @c14, notice: 'Radiocarbon date created.' }
         format.json { render :show, status: :created, location: @c14 }
       else
         format.html { render :new }
@@ -95,7 +101,7 @@ class C14sController < ApplicationController
   def update
     respond_to do |format|
       if @c14.update(c14_params)
-        format.html { redirect_to @c14, notice: 'C14 measurement was successfully updated.' }
+        format.html { redirect_to @c14, notice: 'Radiocarbon date saved.' }
         format.json { render :show, status: :ok, location: @c14 }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -110,7 +116,7 @@ class C14sController < ApplicationController
   def destroy
     @c14.destroy
     respond_to do |format|
-      format.html { redirect_to c14s_url, notice: 'C14 measurement was successfully destroyed.' }
+      format.html { redirect_to c14s_url, notice: 'Radiocarbon date deleted.' }
       format.json { head :no_content }
     end
   end
@@ -121,6 +127,10 @@ class C14sController < ApplicationController
       @c14 = C14.find(params[:id])
     end
 
+    def set_site
+      @site = Site.find(params[:site])
+    end
+
     # Never trust parameters from the scary internet, only allow the white list through.
     def c14_params
       params.fetch(:c14, {}).permit(
@@ -128,18 +138,16 @@ class C14sController < ApplicationController
         :c14_lab_id,
         :bp,
         :std,
-        :cal_bp,
-        :cal_std,
         :delta_c13,
         :delta_c13_std,
         :method,
         :sample_id,
-        {sample: [
+        {sample_attributes: [
           :id,
           :material_id,
           :taxon_id,
           :context_id,
-          {contexts: [
+          {context_attributes: [
             :id,
             :name,
             :approx_start_time,
