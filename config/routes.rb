@@ -51,6 +51,7 @@ Rails.application.routes.draw do
     get 'search', on: :collection
   end
   resources :taxon_usages, only: :show
+  resources :calibrations, only: :new
 
   # User management
   devise_for :users, controllers: {

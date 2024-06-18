@@ -1,6 +1,8 @@
 class DataController < ApplicationController
   include Pagy::Backend
 
+  include CalibrationsHelper
+
   def turn_off_lasso
     session[:spatial_lasso_selection] = nil
     redirect_to request.env["HTTP_REFERER"]#:action => 'map'

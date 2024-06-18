@@ -1,0 +1,11 @@
+<%= render "shared/remote_modal", title: "Edit radiocarbon date" do %>
+  <div id="calibration-plot-data" data-calibration-id="<%= @calibration.id %>" style="display:none;">
+    <%= raw calibration_plot_json(@calibration) %>
+  </div>
+
+    <div id="vega-chart" style="width: 100%; height: 400px;"></div>
+	
+	<%= content_for :buttons do %>
+      <%= button_tag "Close", type: 'reset', class: 'btn btn-danger', data: { "bs-dismiss": "modal" } %>
+    <% end %>
+<% end %>

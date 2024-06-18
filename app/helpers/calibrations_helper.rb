@@ -15,6 +15,11 @@ module CalibrationsHelper
       )
   end
 
+  def calibration_plot_json(calibration)
+    plot = calibration_plot(calibration)
+    plot.to_json if plot
+  end
+  
   def format_hd_interval(hdi)
     "#{hdi['begin']}–#{hdi['end']}"
   end

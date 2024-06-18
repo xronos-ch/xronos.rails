@@ -1,9 +1,20 @@
 <%= turbo_frame_tag "data_table" do %>
-  <table class="table">
-
+  <table id="data-table" class="table" data-controller="table">
     <thead>
       <tr>
-        <th><!-- Select --></th>
+        <th style="width: 3%">
+          <div class="btn-group me-1" role="group" aria-label="Select options">
+            <div class="btn btn-sm btn-outline-light">
+              <input type="checkbox" data-table-target="selectAll" id="select-all" class="form-check-input">
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="select-all-dropdown">
+              <li><a class="dropdown-item" href="#" data-action="click->table#selectAllPage">All items on this page</a></li>
+              <li><a class="dropdown-item" href="#" data-value="all" data-action="click->table#changeSelectMode">All items across all pages</a></li>
+            </ul>
+          </div>
+        </th>
         <th>Lab ID</th>
         <th>Site</th>
         <th>Material</th>
@@ -12,11 +23,10 @@
         <th>Age (cal BP)</th>
       </tr>
     </thead>
-
     <tbody>
       <% @xrons.each do |x| %>
         <tr>
-          <td><!-- <%= x.id %> --></td>
+          <td><input type="checkbox" class="form-check-input select-checkbox" data-table-target="checkbox" data-action="change->table#toggleCheckbox" data-model-id="<%= x.id %>"></td>
           <td><%= x.lab_identifier.present? ? (link_to x.lab_identifier, x, target: :_top) : na_value %></td>
           <td><%= x.site.present? ? (link_to x.site.name, x.site, target: :_top) : na_value %></td>
           <% if x.sample.present? %>
@@ -31,9 +41,13 @@
         </tr>
       <% end %>
     </tbody>
-
   </table>
 
   <%== pagy_bootstrap_nav(@pagy) %>
+  
+<%= link_to new_calibration_path, class: "btn btn-outline-primary btn-sm", 
+      data: { turbo_frame: "remote_modal", controller: "table", action: "click->table#showCalibrationPlot", calibration_id_value: 2 } do
+        edit_icon title: "Edit Data"
+    end %>
+	  
 <% end %>
-
