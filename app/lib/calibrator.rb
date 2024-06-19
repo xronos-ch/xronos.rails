@@ -38,6 +38,7 @@ module Calibrator
           unless cal_json.blank?
               @prob_dist = cal_json["sum"]["bp"]
               .zip(cal_json["sum"]["probabilities"])
+              .select { |_, v| v >= 1e-5 }  # Filter out pairs where the value of probabilities is smaller than 1e-5
               .map{ |k, v| { age: k, pdens: v } }
               @hd_intervals = cal_json["sum"]["sigma_ranges"]
           end

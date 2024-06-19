@@ -45,6 +45,6 @@
 
   <%== pagy_bootstrap_nav(@pagy) %>
 
-<%= link_to "Show Alert", new_calibration_path, data: { controller: "table", action: "click->table#handleCalibrationLink" } %>
+<%= link_to "Sum calibrate selected", new_calibration_path(calibration_method: "sum"), data: { controller: "table", action: "click->table#handleCalibrationLink"} %>
 	  
 <% end %>

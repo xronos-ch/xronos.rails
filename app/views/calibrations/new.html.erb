@@ -1,5 +1,5 @@
-<%= render "shared/remote_modal", title: "Edit radiocarbon date" do %>
-  <div id="calibration-plot-data" data-calibration-id="<%= @calibration.id %>" style="display:none;">
+<%= render "shared/remote_modal", title: "Calibration" do %>
+  <div id="calibration-plot-data" style="display:none;">
     <%= raw calibration_plot_json(@calibration) %>
   </div>
 
