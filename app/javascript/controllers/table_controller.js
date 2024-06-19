@@ -71,6 +71,26 @@ export default class extends Controller {
       this.selectAllTarget.indeterminate = false;
     }
   }
+    
+    handleCalibrationLink(event) {
+        event.preventDefault()
+        const rootElement = document.getElementById('data-table')
+        if (rootElement) {
+          const checkedCheckboxes = rootElement.querySelectorAll('input[type="checkbox"]:checked')
+          const checkedCheckboxesArray = Array.from(checkedCheckboxes)
+          const checkedValues = checkedCheckboxesArray.map(checkbox => checkbox.dataset.modelId)
+
+        if (checkedValues.length > 0) {
+              const url = new URL(event.currentTarget.href)
+              url.searchParams.append('ids', checkedValues.join(','))
+              event.currentTarget.href = url.toString()
+            }
+        }
+        const link = event.currentTarget
+        Turbo.visit(link.href, { frame: "remote_modal" })
+        this.showCalibrationPlot(event)
+      }
+    
     showCalibrationPlot(event) {
         console.log("Showing the calibration plot")
 

@@ -44,10 +44,7 @@
   </table>
 
   <%== pagy_bootstrap_nav(@pagy) %>
-  
-<%= link_to new_calibration_path, class: "btn btn-outline-primary btn-sm", 
-      data: { turbo_frame: "remote_modal", controller: "table", action: "click->table#showCalibrationPlot", calibration_id_value: 2 } do
-        edit_icon title: "Edit Data"
-    end %>
+
+<%= link_to "Show Alert", new_calibration_path, data: { controller: "table", action: "click->table#handleCalibrationLink" } %>
 	  
 <% end %>
