@@ -27,12 +27,48 @@ module Calibrator
   end
 
   class SumCalibration
-    # TODO: https://github.com/xronos-ch/xronos.rails/issues/328
+      attr_reader :c14_ages, :c14_errors, :prob_dist, :hd_intervals
+      
+      def initialize(c14_ages, c14_errors, c14_curve)
+          @c14_ages = c14_ages
+          @c14_errors = c14_errors
+          @c14_curve = c14_curve
+          
+          cal_json = Calibrator.sum_calibrate(c14_ages, c14_errors, c14_curve)
+          unless cal_json.blank?
+              @prob_dist = cal_json["sum"]["bp"]
+              .zip(cal_json["sum"]["probabilities"])
+              .map{ |k, v| { age: k, pdens: v } }
+              @hd_intervals = cal_json["sum"]["sigma_ranges"]
+          end
+      end
   end
 
   def self.calibrate(c14_age, c14_error, c14_curve)
     # TODO: c14_curve
     JSON.parse(`cd vendor/calibrator/bin/; ./#{calibrator_bin} -b #{c14_age} -s #{c14_error} -r`)
+  end
+  
+  def self.sum_calibrate(c14_ages, c14_errors, c14_curve)
+      
+      # Initialize an empty hash
+      result = {}
+
+      # Iterate through the bp array
+      c14_ages.each_with_index do |value, index|
+        key = "date#{index + 1}"
+        result[key] = {
+          "bp" => value,
+          "std" => c14_errors[index]
+        }
+      end
+
+      # Convert the hash to JSON
+      json_object = result.to_json
+      
+      puts json_object
+        
+      JSON.parse(`cd vendor/calibrator/bin/; ./#{calibrator_bin} -j '#{json_object}' --sum -r`)
   end
 
   private
