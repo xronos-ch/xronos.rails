@@ -30,3 +30,9 @@ if @environment == 'production'
     rake "refreshers:data_views"
   end
 end
+
+if @environment == 'production'
+  every 1.day, at: '12:00 am' do
+    runner "Data.store_data_as_json"
+  end
+end
