@@ -1,5 +1,4 @@
 # XRONOS web app
-
 ![Website](https://img.shields.io/website?url=https%3A%2F%2Fxronos.ch)
 ![Tests](https://github.com/xronos-ch/xronos.rails/actions/workflows/verify.yml/badge.svg)
 [![Test coverage](https://codecov.io/gh/xronos-ch/xronos.rails/branch/master/graph/badge.svg?token=0E7SVSFTVI)](https://codecov.io/gh/xronos-ch/xronos.rails)
@@ -7,6 +6,8 @@
 ![GitHub issues](https://img.shields.io/github/issues/xronos-ch/xronos.rails)
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/xronos-ch/xronos.rails)
 ![GitHub last commit](https://img.shields.io/github/last-commit/xronos-ch/xronos.rails)
+
+[![DOI](https://zenodo.org/badge/190144724.svg)](https://zenodo.org/doi/10.5281/zenodo.13138531)
 
 This repository contains the source code for the web application at the core of [XRONOS](https://xronos.ch), an open infrastructure for chronometric data from archaeological contexts worldwide.
 It uses [Ruby on Rails](https://rubyonrails.org/), [Hotwire](https://hotwired.dev/) and [Bootstrap 5](https://getbootstrap.com/).
