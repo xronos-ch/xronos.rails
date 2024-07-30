@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Roe"
+  given-names: "Joe"
+  orcid: "https://orcid.org/0000-0002-1011-1244"
+- family-names: "Schmid"
+  given-names: "Clemens"
+  orcid: "https://orcid.org/0000-0003-3448-5715"
+- family-names: "Hinz"
+  given-names: "Martin"
+  orcid: "https://orcid.org/0000-0002-9904-6548"
+title: "XRONOS Web Application"
+version: 1.0.0
+doi: 10.5281/zenodo.1234
+date-released: 2024-07-30
+url: "https://github.com/xronos-ch/xronos.rails"
