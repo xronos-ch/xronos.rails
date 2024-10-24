@@ -12,7 +12,6 @@
 #  c14_curve  :integer
 #  c14_error  :integer
 #  median     :integer
-#  prob_dist  :jsonb            not null
 #  taq        :integer
 #  tpq        :integer
 #  type       :string           not null

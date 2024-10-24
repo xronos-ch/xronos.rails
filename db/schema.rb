@@ -92,7 +92,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_29_161500) do
     t.integer "c14_age"
     t.integer "c14_error"
     t.integer "c14_curve"
-    t.jsonb "prob_dist", null: false
     t.integer "taq"
     t.integer "median"
     t.integer "tpq"
