@@ -67,7 +67,7 @@ class C14sController < ApplicationController
   # GET /c14s/1.json
   def show
     @calibration = @c14.calibration
-    @calibration.calibrate
+    @calibration.calibrate if @c14.calibration.present?
   end
 
   # GET /c14s/new

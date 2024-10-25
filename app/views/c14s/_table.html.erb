@@ -44,9 +44,11 @@
         <td><%= c14.sample.material.present? ? c14.sample.material.name : na_value %></td>
         <td><%= render "taxons/taxon_abbreviated", taxon: c14.sample.taxon %></td>
         <td><%= c14.method.present? ? c14.method : na_value %></td>
-        <td class="text-end font-monospace"><%= c14.uncal_age %></td>
-        <td class="text-end font-monospace"><%= c14.calibration.range.join("–") %> cal BP</td>
-        <td class="text-end small"><%= render "references/citations", references: c14.references %></td>
+        <td class="text-end font-monospace"><%= c14.uncal_age ? c14.uncal_age : na_value %></td>
+		<td class="text-end font-monospace">
+			<%= c14.calibration&.range&.join("–") ? "#{c14.calibration.range.join("–")} cal BP" : na_value %>
+		</td>
+		<td class="text-end small"><%= render "references/citations", references: c14.references %></td>
         <% if can? :manage, C14 %>
           <td class="text-end"><%= render "application/actions", i: c14 %></td>
         <% end %>

@@ -17,7 +17,7 @@
     <div class="row">
 
       <div class="col-lg-8" style="margin-bottom: -31px" data-controller="vega">
-        <%= calibration_plot(@calibration) %>
+        <%=  @calibration.tpq.present? ? calibration_plot(@calibration) : "Can not be calculated" %>
       </div>
 
       <div class="col-lg-4">

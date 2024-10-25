@@ -79,7 +79,6 @@ class C14 < ApplicationRecord
   end
 
   def calibration(curve: site.default_c14_curve)
-    return nil unless bp.present? && std.present? && curve.present?
     Calibration.find_or_create_by c14_age: bp, c14_error: std, c14_curve: curve
   end
 

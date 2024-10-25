@@ -39,7 +39,10 @@ class Cal < ApplicationRecord
     comparison: { less_than_or_equal_to: :taq }
 
   def range
-    [ taq, tpq ]
+    if taq.present? && tpq.present?
+      [taq, tpq]
+    else
+      ["can not be calculated"]
+    end
   end
-
 end
