@@ -19,6 +19,7 @@ class Data
     # TODO: typos, dendros, etc.
     C14
     .left_outer_joins(:c14_lab)
+    .joins("LEFT OUTER JOIN cals on (cals.c14_age = c14s.bp AND cals.c14_error = c14s.std)")
       .left_outer_joins(sample: [
         :material,
         :taxon,
@@ -76,7 +77,18 @@ class Data
     if filters.dig(:c14s, :bp).present?
       filters.dig(:c14s, :bp).replace(slice_ranges(filters.dig(:c14s, :bp)))
     end
-
+    
+    if filters.dig(:cals).present?
+      # Ensure the value for :tpq is replaced with the array
+      tpq_value = filters.dig(:cals, :tpq)
+      filters[:cals][:tpq] = slice_ranges([50000, tpq_value]) if tpq_value
+      #filters[:cals][:tpq] = !nil
+      
+      # Ensure the value for :taq is replaced with the array
+      taq_value = filters.dig(:cals, :taq)
+      filters[:cals][:taq] = slice_ranges([taq_value, 0]) if taq_value
+    end
+    
     return filters
   end
 
