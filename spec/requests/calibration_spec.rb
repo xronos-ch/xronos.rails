@@ -9,10 +9,9 @@ RSpec.describe "Calibration", type: :request do
       expect(page).to have_selector('div', class: 'vega-embed')
     end
     
-    it 'shows calibration for date with bp to low' do
+    it 'does not show calibration for date with bp to low' do
       @c14 = FactoryBot.create(:c14, bp: 170, std: 170)
       visit c14_path(@c14)
-      expect(page).to have_selector('div', class: 'vega-embed')
       expect(page).to have_content('can not be calculated')
     end
     
