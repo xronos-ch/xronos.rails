@@ -127,6 +127,17 @@ class Site < ApplicationRecord
     end
   end
 
+  def default_c14_curve
+    return :IntCal20 unless lat.present?
+    # TODO: what about the sea?
+    # https://github.com/xronos-ch/xronos.rails/issues/326
+    if lat >= 0
+      :IntCal20
+    else
+      :SHCal20
+    end
+  end
+
   # Issues
   scope :missing_coordinates, -> { where("lat IS NULL OR lng IS NULL") }
   def missing_coordinates?

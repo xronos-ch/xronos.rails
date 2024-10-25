@@ -5,7 +5,7 @@ import wNumb from "wnumb";
 
 // Connects to data-controller="slider"
 export default class extends Controller {
-	static targets = [ "minInput", "maxInput", "slider" ]
+	static targets = [ "minInput", "maxInput", "slider", "noscript" ]
 	static values = {
 		step: Number,
 		direction: String,
@@ -15,6 +15,9 @@ export default class extends Controller {
 	}
 
   connect() {
+	  
+        this.noscriptTarget.remove();	
+	  
 		this.element.classList.add("has-slider");
 
 		var minInput = this.minInputTarget;
@@ -45,15 +48,19 @@ export default class extends Controller {
 			maxInput.value = values[1];
 		})
 	}
+	
 
 	disconnect() {
-
 	}
 
 	formatter() {
 		var formatters = {
 			"integer": wNumb({ decimal: 0 }),
 			"uncalBP": wNumb({
+				decimal: 0,
+				thousand: "&thinsp;"
+			}),
+			"calBP": wNumb({
 				decimal: 0,
 				thousand: "&thinsp;"
 			})

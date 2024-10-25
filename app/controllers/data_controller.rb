@@ -63,8 +63,13 @@ class DataController < ApplicationController
       {c14s: [
         :lab_identifier,
         {lab_identifier: []},
-        {bp: []},
-        {cal_bp: []}
+        {bp: []}
+      ]},
+        {cals: [
+        :tpq,
+        {tpq: []},
+        :taq,
+        {taq: []}
       ]},
       {c14_labs: [
         :name,

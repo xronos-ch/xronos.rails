@@ -19,7 +19,8 @@
   <div class="h5">
     <%= xr_icon C14, {}, { style: "width: auto; height: 1.25rem;" } %>
     Radiocarbon date from 
-    <%= link_to @c14.site.name, @c14.site %>
+    <%= link_to @c14.site.name, @c14.site %>,
+    c. <%= @c14.calibration.range.join("–") %> cal BP
   </div>
 
   <div class="my-3">

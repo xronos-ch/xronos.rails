@@ -88,6 +88,19 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_29_161500) do
     t.index ["sample_id"], name: "index_c14s_on_sample_id"
   end
 
+  create_table "cals", force: :cascade do |t|
+    t.integer "c14_age"
+    t.integer "c14_error"
+    t.integer "c14_curve"
+    t.integer "taq"
+    t.integer "centre"
+    t.integer "tpq"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "type", null: false
+    t.index ["type", "c14_age", "c14_error", "c14_curve"], name: "index_cals_on_type_and_c14_age_and_c14_error_and_c14_curve", unique: true
+  end
+
   create_table "citations", force: :cascade do |t|
     t.bigint "reference_id"
     t.string "citing_type"

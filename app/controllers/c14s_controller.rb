@@ -1,5 +1,4 @@
 class C14sController < ApplicationController
-  include C14sHelper
   include Pagy::Backend
   include Tabulatable
 
@@ -67,7 +66,8 @@ class C14sController < ApplicationController
   # GET /c14s/1
   # GET /c14s/1.json
   def show
-    #calibrate_from_external(@c14.id)
+    @calibration = @c14.calibration
+    @calibration.calibrate if @c14.calibration.present?
   end
 
   # GET /c14s/new

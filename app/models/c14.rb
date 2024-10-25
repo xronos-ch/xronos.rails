@@ -1,3 +1,8 @@
+##
+# c14 class
+#
+# Represents radiocarbon dates.
+#
 # == Schema Information
 #
 # Table name: c14s
@@ -73,12 +78,8 @@ class C14 < ApplicationRecord
     end
   end
 
-  def cal_age
-    unless cal_bp.blank? && cal_std.blank?
-      "#{cal_bp}±#{cal_std} cal BP"
-    else
-      nil
-    end
+  def calibration(curve: site.default_c14_curve)
+    Calibration.find_or_create_by c14_age: bp, c14_error: std, c14_curve: curve
   end
 
   # Issues
