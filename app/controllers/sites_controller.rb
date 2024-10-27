@@ -142,7 +142,8 @@ class SitesController < ApplicationController
         {site_type_ids: []},
         :country_code,
         :revision_comment,
-        :_destroy
+        :_destroy,
+        wikidata_link_attributes: [:qid]
       )
     end
 end

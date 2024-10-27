@@ -129,6 +129,16 @@ Rails.application.routes.draw do
       end
     end
   end
+  
+  # LODs
+  namespace :lods do
+    resources :sites, only: :index do
+      collection do
+        get ":lod", action: :index,
+          constraints: lambda { |req| Site.needs_lods.include?(req.params[:lod].to_sym) }
+      end
+    end
+  end
 
   # API
   namespace :api, defaults: {format: 'json'} do
