@@ -109,7 +109,7 @@ module ApplicationHelper
     
     content_tag :div, class: "position-relative" do
       link_to path, **options do 
-        fa_icon "pencil"
+        bs_icon "pencil"
       end
     end
   end

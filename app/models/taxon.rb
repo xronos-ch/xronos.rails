@@ -60,7 +60,7 @@ class Taxon < ApplicationRecord
 
   def gbif_match(strict = false)
     Rails.cache.fetch("gbif_match/#{name}", expires_in: 24.hours) do
-      logger.debug "GBIF API request: https://api.gbif.org/v1/species/match?name=#{name}"
+      logger.debug "GBIF API request: https://www.wikidata.org/w/api.php?action=wbsearchentities&search=#{name}&language=en"
       OpenStruct.new(Gbif::Species.name_backbone(name: name, strict: strict))
     end
   end
