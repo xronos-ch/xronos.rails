@@ -2,3 +2,12 @@
 <%= f.hidden_field :wikidata_linkable_id %>
 
 <%= f.text_field :qid, prepend: "Q", hide_label: true %>
+Suggestion from Name:
+
+<ul>
+<% f.object.wikidata_linkable.wikidata_match_candidates.each do |wikidata_match| %>
+
+ <li><%=wikidata_match.qid%>: <%=link_to (wikidata_match.label + (" (" + wikidata_match.description + ")")), wikidata_match.url, target: "_blank" %></li>
+
+<% end %>
+</ul>

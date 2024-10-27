@@ -46,6 +46,9 @@ class Site < ApplicationRecord
 
   include HasIssues
   @issues = [ :missing_coordinates, :invalid_coordinates, :missing_country_code ]
+  
+  include NeedsLods
+  @lods = [ :needs_wikidata_link ]
 
   include PgSearch::Model
   pg_search_scope :search, 
@@ -108,7 +111,55 @@ class Site < ApplicationRecord
       return nil
     end
   end
+  
+  require 'net/http'
+  require 'json'
+  require 'uri'
 
+   def wikidata_match_candidates
+      Rails.cache.fetch("wikidata_match/#{name}", expires_in: 24.hours) do
+        logger.debug "Wikidata SPARQL request for: #{name}"
+        
+        # Define the SPARQL query
+        sparql_query = <<-SPARQL
+          SELECT ?item ?itemLabel ?itemDescription WHERE {
+            ?item wdt:P31 wd:Q839954. # instance of archaeological site
+            ?item rdfs:label "#{name}"@en. # label must match `name` exactly in English
+            SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+          }
+        SPARQL
+
+        # Encode the query for use in the URL
+        url = URI("https://query.wikidata.org/sparql?query=#{URI.encode_www_form_component(sparql_query)}&format=json")
+
+        # Create an HTTP request and set the user agent
+        request = Net::HTTP::Get.new(url)
+        request['User-Agent'] = 'MyAppName/1.0 (your_email@example.com)' # Replace with your app name and contact
+
+        # Execute the HTTP request
+        response = Net::HTTP.start(url.hostname, url.port, use_ssl: true) do |http|
+          http.request(request)
+        end
+
+        data = JSON.parse(response.body)
+
+        # Extract the relevant data from the response
+        data["results"]["bindings"].map do |result|
+          OpenStruct.new(
+            qid: result.dig("item", "value")&.split("/")&.last&.gsub(/^Q/i, ''), # Strip "Q" prefix
+            label: result.dig("itemLabel", "value"),
+            description: result.dig("itemDescription", "value")
+          )
+        end
+      end
+    end
+    
+    def wikidata_match
+      # Retrieve cached candidates and find an exact match by name
+      match_candidates = wikidata_match_candidates
+      #match_candidates.find { |candidate| candidate.label == name } if match_candidates.present?
+    end
+ 
   def n_c14s
     c14s.count
   end
@@ -153,6 +204,13 @@ class Site < ApplicationRecord
   scope :missing_country_code, -> { where("country_code = '' OR country_code IS NULL") }
   def missing_country_code?
     country_code.blank?
+  end
+  
+  scope :needs_wikidata_link, -> {
+    where.not(id: WikidataLink.where(wikidata_linkable_type: "Site").select(:wikidata_linkable_id).distinct)
+  }
+  def needs_wikidata_link?
+    wikidata_link.blank?
   end
 
 end
