@@ -117,8 +117,6 @@ class Site < ApplicationRecord
     end
   end
   
-
-
   def self.wikidata_match_candidates_batch(sites)
     # Generate a cache key based on site names
     cache_key = generate_cache_key(sites)
