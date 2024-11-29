@@ -37,18 +37,28 @@ class DataController < ApplicationController
 ) AS geojson from (" + @sites.to_sql+ ") AS subquery1) AS subquery2").to_sql)[0]['measurements'], adapter: nil, serializer: nil        
       }
       format.csv {
-        query = "COPY (SELECT * FROM data_views WHERE id IN (" + @data.xrons.pluck(:id).join(', ').to_s + ") ) TO STDOUT WITH CSV HEADER"
-        
+        query = <<~SQL
+          COPY (
+            SELECT DISTINCT "id", "labnr", "bp", "std", "cal_bp", "cal_std", "delta_c13", "source_database", "lab_name", "material", "species", "feature", "feature_type", "site", "country", "lat", "lng", "site_type",
+                   periods::text AS periods,
+                   typochronological_units::text AS typochronological_units,
+                   ecochronological_units::text AS ecochronological_units,
+                   reference::text AS reference
+            FROM data_views
+            WHERE id IN (#{@data.xrons.pluck(:id).join(', ')})
+          ) TO STDOUT WITH CSV HEADER
+        SQL
+
         connection = ActiveRecord::Base.connection.raw_connection
-            csv_data = ""
+        csv_data = ""
 
-            connection.copy_data(query) do
-              while row = connection.get_copy_data
-                csv_data << row
-              end
-            end
+        connection.copy_data(query) do
+          while row = connection.get_copy_data
+            csv_data << row
+          end
+        end
 
-            render plain: csv_data, content_type: 'text/csv', filename: "data_#{Date.today}.csv"
+        render plain: csv_data, content_type: 'text/csv', filename: "data_#{Date.today}.csv"
       }
     end
   end
