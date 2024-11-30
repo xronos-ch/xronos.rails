@@ -18,6 +18,10 @@
 #
 class Site < ApplicationRecord
 
+  require 'net/http'
+  require 'json'
+  require 'uri'
+    
   has_many :site_names
   has_many :contexts
   has_many :samples, through: :contexts
@@ -114,54 +118,19 @@ class Site < ApplicationRecord
     end
   end
   
-  require 'net/http'
-  require 'json'
-  require 'uri'
 
-   def wikidata_match_candidates
-      Rails.cache.fetch("wikidata_match/#{name}", expires_in: 24.hours) do
-        logger.debug "Wikidata SPARQL request for: #{name}"
-        
-        # Define the SPARQL query
-        sparql_query = <<-SPARQL
-          SELECT ?item ?itemLabel ?itemDescription (CONCAT("https://www.wikidata.org/wiki/", SUBSTR(STR(?item), 32)) AS ?itemURL) WHERE {
-            ?item wdt:P31 wd:Q839954. # instance of archaeological site
-            ?item rdfs:label "#{name}"@en. # label must match `name` exactly in English
-            SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-          }
-        SPARQL
 
-        # Encode the query for use in the URL
-        url = URI("https://query.wikidata.org/sparql?query=#{URI.encode_www_form_component(sparql_query)}&format=json")
+  def self.wikidata_match_candidates_batch(sites)
+    # Generate a cache key based on site names
+    cache_key = generate_cache_key(sites)
 
-        # Create an HTTP request and set the user agent
-        request = Net::HTTP::Get.new(url)
-        request['User-Agent'] = 'MyAppName/1.0 (your_email@example.com)' # Replace with your app name and contact
-
-        # Execute the HTTP request
-        response = Net::HTTP.start(url.hostname, url.port, use_ssl: true) do |http|
-          http.request(request)
-        end
-
-        data = JSON.parse(response.body)
-
-        # Extract the relevant data from the response
-        data["results"]["bindings"].map do |result|
-          OpenStruct.new(
-            qid: result.dig("item", "value")&.split("/")&.last&.gsub(/^Q/i, ''), # Strip "Q" prefix
-            label: result.dig("itemLabel", "value"),
-            description: result.dig("itemDescription", "value"),
-            url: result.dig("itemURL", "value"),
-          )
-        end
-      end
+    Rails.cache.fetch(cache_key, expires_in: 24.hours) do
+      site_names = extract_site_names(sites)
+      sparql_query = build_sparql_query(site_names)
+      response = execute_sparql_request(sparql_query)
+      parse_wikidata_response(response)
     end
-    
-    def wikidata_match
-      # Retrieve cached candidates and find an exact match by name
-      match_candidates = wikidata_match_candidates
-      #match_candidates.find { |candidate| candidate.label == name } if match_candidates.present?
-    end
+  end
  
   def n_c14s
     c14s.count
@@ -216,4 +185,58 @@ class Site < ApplicationRecord
     wikidata_link.blank?
   end
 
+  private
+
+  # Generate a unique cache key for the batch of sites
+  def self.generate_cache_key(sites)
+    "wikidata_match_batch/#{Digest::MD5.hexdigest(sites.pluck(:name).sort.join(','))}"
+  end
+
+  # Extracts names from the sites
+  def self.extract_site_names(sites)
+    sites.pluck(:name).map { |name| "\"#{name}\"@en" }.join(" ")
+  end
+
+  # Builds the SPARQL query
+  def self.build_sparql_query(site_names)
+    <<-SPARQL
+      SELECT ?item ?itemLabel ?itemDescription ?name
+             (CONCAT("https://www.wikidata.org/wiki/", SUBSTR(STR(?item), 32)) AS ?itemURL) WHERE {
+        VALUES ?name { #{site_names} }
+        ?item wdt:P31 wd:Q839954.
+        ?item rdfs:label ?name.
+        SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+      }
+    SPARQL
+  end
+
+  # Executes the SPARQL request
+  def self.execute_sparql_request(sparql_query)
+    url = URI("https://query.wikidata.org/sparql?query=#{URI.encode_www_form_component(sparql_query)}&format=json")
+    request = Net::HTTP::Get.new(url)
+    request['User-Agent'] = 'XRONOS/1.0 (martin.hinz@unibe.ch)'
+
+    Net::HTTP.start(url.hostname, url.port, use_ssl: true) do |http|
+      http.request(request)
+    end
+  end
+
+  # Parses the response from Wikidata
+  def self.parse_wikidata_response(response)
+    data = JSON.parse(response.body)
+
+    data["results"]["bindings"]
+      .group_by { |result| result.dig("name", "value") }
+      .transform_values do |matches|
+        matches.map do |match|
+          OpenStruct.new(
+            qid: match.dig("item", "value")&.split("/")&.last&.gsub(/^Q/i, ''),
+            label: match.dig("itemLabel", "value"),
+            description: match.dig("itemDescription", "value"),
+            url: match.dig("itemURL", "value")
+          )
+        end
+      end
+  end
+  
 end
