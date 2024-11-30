@@ -34,7 +34,9 @@
       </th>
       <th scope="col" class="text-end">Wikidata ID</th>
       <th scope="col">Needs LOD</th>
-      <% if can? :manage, Site %><th scope="col"><span class="visually-hidden">Actions</span></th><% end %>
+      <% if can?(:manage, Site) %>
+        <th scope="col"><span class="visually-hidden">Actions</span></th>
+      <% end %>
     </tr>
   </thead>
 
@@ -48,40 +50,50 @@
         <td class="font-monospace text-end"><%= site.c14s_count %></td>
         <td class="font-monospace text-end"><%= site.typos_count %></td>
         <td class="font-monospace text-end">
-			<% if site.wikidata_link %>
-			<%= link_to site.wikidata_link.qid, site.wikidata_link.url  %>
-			<% elsif site.wikidata_match.present? %>
-			  <i>Suggestion: <%=site.wikidata_match.first.qid%>: <%=link_to (site.wikidata_match.first.label + (" (" + site.wikidata_match.first.description + ")")), site.wikidata_match.first.url, target: "_blank" %></i>
-			<% end %>
-		</td>
-        <td><% site.lods.each do |lod| %>
-          <%= lod_badge(lod) %>
-        <% end %></td>
-        <% if can? :manage, Site %>
+          <% if site.wikidata_link %>
+            <%= link_to site.wikidata_link.qid, site.wikidata_link.url %>
+          <% elsif @wikidata_matches.key?(site.name) && @wikidata_matches[site.name].present? %>
+            <% suggested_match = @wikidata_matches[site.name].first %>
+            <i>Suggestion: <%= suggested_match.qid %>: 
+              <%= link_to "#{suggested_match.label} (#{suggested_match.description})", 
+                          suggested_match.url, target: "_blank" %>
+            </i>
+          <% else %>
+            <span class="text-muted">No suggestions</span>
+          <% end %>
+        </td>
+        <td>
+          <% site.lods.each do |lod| %>
+            <%= lod_badge(lod) %>
+          <% end %>
+        </td>
+        <% if can?(:manage, Site) %>
           <td>
             <div class="btn-toolbar justify-content-end">
-                <div class="btn-group me-2">
-				  <%= bootstrap_form_for WikidataLink.new, url: wikidata_links_path, method: :post do |f| %>
-				    <%= f.hidden_field :wikidata_linkable_type, value: "Site" %>
-				    <%= f.hidden_field :wikidata_linkable_id, value: site.id %>
-				    <% if site.wikidata_match.present? %>
-				      <%= f.hidden_field :qid, value: site.wikidata_match.first.qid %>
-				      <%= f.hidden_field :revision_comment, value: "Matched to Wikidata" %>
-				      <%= f.primary class: "btn btn-sm btn-primary", title: "Use suggested Wikidata match" do %>
-				        <%= bs_icon "check-lg" %>
-				      <% end %>
-				    <% else %>
-				      <%= button_tag class: "btn btn-sm btn-primary", disabled: true do %>
-				        <%= bs_icon "check-lg" %>
-				      <% end %>
-				    <% end %>
-				  <% end %>
-                </div>
+              <div class="btn-group me-2">
+                <%= bootstrap_form_for WikidataLink.new, url: wikidata_links_path, method: :post do |f| %>
+                  <%= f.hidden_field :wikidata_linkable_type, value: "Site" %>
+                  <%= f.hidden_field :wikidata_linkable_id, value: site.id %>
+
+                  <% if @wikidata_matches.key?(site.name) && @wikidata_matches[site.name].present? %>
+                    <% suggested_match = @wikidata_matches[site.name].first %>
+                    <%= f.hidden_field :qid, value: suggested_match.qid %>
+                    <%= f.hidden_field :revision_comment, value: "Matched to Wikidata" %>
+                    <%= f.primary class: "btn btn-sm btn-primary", title: "Use suggested Wikidata match" do %>
+                      <%= bs_icon "check-lg" %>
+                    <% end %>
+                  <% else %>
+                    <%= button_tag class: "btn btn-sm btn-primary", disabled: true do %>
+                      <%= bs_icon "check-lg" %>
+                    <% end %>
+                  <% end %>
+                <% end %>
+              </div>
               <%= render "shared/action_buttons_compact", i: site %>
+            </div>
           </td>
         <% end %>
       </tr>
-    </tr>
-  <% end %>
+    <% end %>
   </tbody>
 </table>

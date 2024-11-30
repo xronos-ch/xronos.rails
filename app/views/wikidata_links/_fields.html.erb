@@ -1,13 +1,23 @@
-<%= f.hidden_field :wikidata_linkable_type %>
-<%= f.hidden_field :wikidata_linkable_id %>
+  <!-- Hidden Fields -->
+  <%= f.hidden_field :wikidata_linkable_type %>
+  <%= f.hidden_field :wikidata_linkable_id %>
 
-<%= f.text_field :qid, prepend: "Q", hide_label: true %>
-Suggestion from Name:
+  <!-- QID Input Field -->
+  <div class="input-group">
+    <%= f.text_field :qid, prepend: "Q", hide_label: true, placeholder: "Enter QID" %>
+  </div>
 
-<ul>
-<% f.object.wikidata_linkable.wikidata_match_candidates.each do |wikidata_match| %>
-
- <li><%=wikidata_match.qid%>: <%=link_to (wikidata_match.label + (" (" + wikidata_match.description + ")")), wikidata_match.url, target: "_blank" %></li>
-
-<% end %>
-</ul>
+  <!-- Suggestions from Wikidata Match -->
+  <p>Suggestion from Name:</p>
+  <ul>
+    <% if wikidata_matches_for(f.object.wikidata_linkable).present? %>
+      <% wikidata_matches_for(f.object.wikidata_linkable)[f.object.wikidata_linkable.name]&.each do |match| %>
+        <li>
+          <%= match.qid %>: 
+          <%= link_to "#{match.label} (#{match.description})", match.url, target: "_blank" %>
+        </li>
+      <% end %>
+    <% else %>
+      <li>No suggestions available</li>
+    <% end %>
+  </ul>

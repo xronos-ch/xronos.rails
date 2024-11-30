@@ -23,7 +23,12 @@ class Lods::SitesController < LodsController
     @sites = @sites.with_counts
 
     respond_to do |format|
-      format.html { @pagy, @sites = pagy(@sites) }
+      format.html do
+        @pagy, @sites = pagy(@sites)
+
+        # Fetch and cache Wikidata matches for the current page
+        @wikidata_matches = fetch_wikidata_matches(@sites)
+      end
     end
   end
 
@@ -33,4 +38,8 @@ class Lods::SitesController < LodsController
     Site.lods
   end
 
+  def fetch_wikidata_matches(sites)
+    # Ensure Wikidata matches are always a hash
+    Site.wikidata_match_candidates_batch(sites) || {}
+  end
 end
