@@ -49,7 +49,7 @@
         <td class="font-monospace text-end"><%= site.typos_count %></td>
         <td class="font-monospace text-end">
 			<% if site.wikidata_link %>
-			<%= site.wikidata_link.qid  %>
+			<%= link_to site.wikidata_link.qid, site.wikidata_link.url  %>
 			<% elsif site.wikidata_match.present? %>
 			  <i>Suggestion: <%=site.wikidata_match.first.qid%>: <%=link_to (site.wikidata_match.first.label + (" (" + site.wikidata_match.first.description + ")")), site.wikidata_match.first.url, target: "_blank" %></i>
 			<% end %>
