@@ -122,7 +122,7 @@ class Site < ApplicationRecord
         
         # Define the SPARQL query
         sparql_query = <<-SPARQL
-          SELECT ?item ?itemLabel ?itemDescription WHERE {
+          SELECT ?item ?itemLabel ?itemDescription (CONCAT("https://www.wikidata.org/wiki/", SUBSTR(STR(?item), 32)) AS ?itemURL) WHERE {
             ?item wdt:P31 wd:Q839954. # instance of archaeological site
             ?item rdfs:label "#{name}"@en. # label must match `name` exactly in English
             SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
@@ -148,7 +148,8 @@ class Site < ApplicationRecord
           OpenStruct.new(
             qid: result.dig("item", "value")&.split("/")&.last&.gsub(/^Q/i, ''), # Strip "Q" prefix
             label: result.dig("itemLabel", "value"),
-            description: result.dig("itemDescription", "value")
+            description: result.dig("itemDescription", "value"),
+            url: result.dig("itemURL", "value"),
           )
         end
       end
