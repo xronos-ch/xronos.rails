@@ -8,7 +8,7 @@
 #  cal_std                 :integer
 #  country                 :string
 #  delta_c13               :float
-#  ecochronological_units  :json
+#  ecochronological_units  :jsonb
 #  feature                 :string
 #  feature_type            :string
 #  lab_name                :text
@@ -16,14 +16,14 @@
 #  lat                     :text
 #  lng                     :text
 #  material                :string
-#  periods                 :json
-#  reference               :json
+#  periods                 :jsonb
+#  reference               :jsonb
 #  site                    :string
 #  site_type               :string
 #  source_database         :text
 #  species                 :string
 #  std                     :integer
-#  typochronological_units :json
+#  typochronological_units :jsonb
 #
 # Indexes
 #

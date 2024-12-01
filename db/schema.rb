@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_05_29_161500) do
+ActiveRecord::Schema[7.0].define(version: 2024_11_29_163926) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -340,6 +340,17 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_29_161500) do
     t.index ["whodunnit"], name: "index_versions_on_whodunnit"
   end
 
+  create_table "wikidata_links", force: :cascade do |t|
+    t.integer "qid"
+    t.string "wikidata_linkable_type"
+    t.bigint "wikidata_linkable_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["qid"], name: "index_wikidata_links_on_qid"
+    t.index ["wikidata_linkable_type", "wikidata_linkable_id"], name: "index_wikidata_links_on_linkable_type_and_linkable_id"
+    t.index ["wikidata_linkable_type", "wikidata_linkable_id"], name: "index_wikidata_links_on_wikidata_linkable"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "import_tables", "users"
@@ -351,7 +362,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_29_161500) do
   add_foreign_key "user_profiles", "users"
 
   create_view "data_views", materialized: true, sql_definition: <<-SQL
-      SELECT c14s.id,
+      SELECT DISTINCT c14s.id,
       c14s.lab_identifier AS labnr,
       c14s.bp,
       c14s.std,
@@ -381,28 +392,28 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_29_161500) do
                JOIN samples samp ON ((samp.context_id = ctx.id)))
             WHERE ((samp.id = samples.id) AND (st.name IS NOT NULL))
            LIMIT 1) AS site_type,
-      COALESCE(( SELECT json_agg(json_build_object('periode', tp.name)) AS json_agg
+      (COALESCE(( SELECT json_agg(json_build_object('periode', tp.name)) AS json_agg
              FROM (((typos tp
                JOIN samples sam ON ((tp.sample_id = sam.id)))
                JOIN contexts contexts_1 ON ((sam.context_id = contexts_1.id)))
                JOIN samples all_samples ON ((all_samples.context_id = contexts_1.id)))
-            WHERE (all_samples.id = samples.id)), '[]'::json) AS periods,
-      COALESCE(( SELECT json_agg(json_build_object('typochronological_unit', tp.name)) AS json_agg
+            WHERE (all_samples.id = samples.id)), '[]'::json))::jsonb AS periods,
+      (COALESCE(( SELECT json_agg(json_build_object('typochronological_unit', tp.name)) AS json_agg
              FROM (((typos tp
                JOIN samples sam ON ((tp.sample_id = sam.id)))
                JOIN contexts contexts_1 ON ((sam.context_id = contexts_1.id)))
                JOIN samples all_samples ON ((all_samples.context_id = contexts_1.id)))
-            WHERE (all_samples.id = samples.id)), '[]'::json) AS typochronological_units,
-      COALESCE(( SELECT json_agg(json_build_object('ecochronological_unit', tp.name)) AS json_agg
+            WHERE (all_samples.id = samples.id)), '[]'::json))::jsonb AS typochronological_units,
+      (COALESCE(( SELECT json_agg(json_build_object('ecochronological_unit', tp.name)) AS json_agg
              FROM (((typos tp
                JOIN samples sam ON ((tp.sample_id = sam.id)))
                JOIN contexts contexts_1 ON ((sam.context_id = contexts_1.id)))
                JOIN samples all_samples ON ((all_samples.context_id = contexts_1.id)))
-            WHERE (all_samples.id = samples.id)), '[]'::json) AS ecochronological_units,
-      COALESCE(( SELECT json_agg(json_build_object('reference', ref.short_ref)) AS json_agg
+            WHERE (all_samples.id = samples.id)), '[]'::json))::jsonb AS ecochronological_units,
+      (COALESCE(( SELECT json_agg(json_build_object('reference', ref.short_ref)) AS json_agg
              FROM ("references" ref
                JOIN citations cit ON ((ref.id = cit.reference_id)))
-            WHERE (((cit.citing_type)::text = 'C14'::text) AND (cit.citing_id = c14s.id))), '[]'::json) AS reference
+            WHERE (((cit.citing_type)::text = 'C14'::text) AND (cit.citing_id = c14s.id))), '[]'::json))::jsonb AS reference
      FROM (((((((c14s
        LEFT JOIN samples ON ((samples.id = c14s.sample_id)))
        LEFT JOIN materials ON ((materials.id = samples.material_id)))
