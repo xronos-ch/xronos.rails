@@ -184,7 +184,7 @@ end
 group :development, :test do
 
   # RSpec for testing
-  gem 'rspec-rails', '~> 4.0.1'
+  gem 'rspec-rails', '~> 7.0.0'
 
   # Generate test data from model specs
   gem 'factory_bot_rails'
