@@ -67,7 +67,7 @@ gem 'stimulus-rails'
 # USERS & PERMISSIONS ---------------------------------------------------------
 
 # User management
-gem 'devise', '>= 4.7.1'
+gem 'devise', '>= 4.9.4'
 
 # Authorizations management
 gem 'cancancan'

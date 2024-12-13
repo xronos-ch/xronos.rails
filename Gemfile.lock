@@ -521,7 +521,7 @@ DEPENDENCIES
   country_select
   csl-styles
   cssbundling-rails
-  devise (>= 4.7.1)
+  devise (>= 4.9.4)
   doorkeeper
   dotenv-rails
   factory_bot_rails
