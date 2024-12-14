@@ -135,7 +135,7 @@ Rails.application.routes.draw do
     resources :sites, only: :index do
       collection do
         get ":lod", action: :index,
-          constraints: lambda { |req| Site.needs_lods.include?(req.params[:lod].to_sym) }
+          constraints: lambda { |req| Site.lods.include?(req.params[:lod].to_sym) }
       end
     end
   end
