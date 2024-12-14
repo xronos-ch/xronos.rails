@@ -121,11 +121,16 @@ class Site < ApplicationRecord
 
 
   def self.wikidata_match_candidates_batch(sites)
+    # Filter for sites without a wikidata_link
+    sites_without_wikidata_link = sites.select { |site| site.wikidata_link.nil? }
+
+    return [] if sites_without_wikidata_link.empty?
+
     # Generate a cache key based on site names
-    cache_key = generate_cache_key(sites)
+    cache_key = generate_cache_key(sites_without_wikidata_link)
 
     Rails.cache.fetch(cache_key, expires_in: 24.hours) do
-      site_names = extract_site_names(sites)
+      site_names = extract_site_names(sites_without_wikidata_link)
       sparql_query = build_sparql_query(site_names)
       response = execute_sparql_request(sparql_query)
       parse_wikidata_response(response)
