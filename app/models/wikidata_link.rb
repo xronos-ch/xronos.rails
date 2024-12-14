@@ -19,7 +19,7 @@ class WikidataLink < ApplicationRecord
   include Turbo::Broadcastable
   include Versioned
 
-   BASE_URL = "https://www.wikidata.org/wiki/"
+  BASE_URL = "https://www.wikidata.org/wiki/"
   SITE_URL = {
     enwiki: "https://en.wikipedia.org/wiki/",
     commonswiki: "https://commons.wikipedia.org/wiki/"
