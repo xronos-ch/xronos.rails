@@ -65,10 +65,12 @@
         </div>
       </div>
   </section>
-
-  <section id="site-external-links" class="bg-light">
-    <div class="container my-5">
-      <h2>Linked data</h2>
+  
+  <section id="site-external-links" class="bg-white my-5">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white text-muted">
+          <h3 class="mb-0">
+            <i class="bi-link-45deg"></i> Linked Data</h3>
       <% if @site.wikidata_link.present? %>
         <% if can? :manage, WikidataLink %>
           <%= floating_button edit_wikidata_link_path(@site.wikidata_link),
@@ -89,7 +91,6 @@
           </ul>
         <% end %>
       <% end %>
-    </div>
   </section>
 
   <% if @site.wikidata_item.present? %>

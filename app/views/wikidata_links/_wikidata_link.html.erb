@@ -21,36 +21,51 @@
           <% if item.sitelink_url("enwiki").present? %>
             <div class="row my-2">
               <dt class="col-sm">
-                <%= simple_icon "wikipedia" %>
-                Wikipedia 
+                <%= simple_icon "wikidata" %>
+                Wikidata
               </dt>
               <dd class="col-sm text-sm-end">
-                <span class="badge text-bg-info">en</span>
-                <%= link_to item.sitelink_title("enwiki"), item.sitelink_url, title: "#{item.sitelink_title} - Wikipedia" %>
+                <%= link_to @wikidata_link.qcode, @wikidata_link.url, title: "#{@wikidata_link.title} - Wikidata" %>
+                <% if item.present? %>(<%= item.label("en") %>)<% end %>
               </dd>
             </div>
-          <% end %>
 
-          <% if item.sitelink_url("commonswiki").present? %>
-            <div class="row my-2">
-              <dt class="col-sm">
-                <%= simple_icon "wikimediacommons" %>
-                Wikimedia Commons
-              </dt>
-              <dd class="col-sm text-sm-end"><%= link_to item.sitelink_title("commonswiki"), item.sitelink_url("commonswiki"), title: "#{item.sitelink_title('commonswiki')} - Wikimedia Commons" %></dd>
+            <% if item.present? %>
+              <% if item.sitelink_url("enwiki").present? && item.sitelink_title("enwiki").present? %>
+                <div class="row my-2">
+                  <dt class="col-sm">
+                    <%= simple_icon "wikipedia" %>
+                    Wikipedia
+                  </dt>
+                  <dd class="col-sm text-sm-end">
+                    <span class="badge text-bg-info">en</span>
+                    <%= link_to item.sitelink_title("enwiki"), item.sitelink_url("enwiki"), title: "#{item.sitelink_title('enwiki')} - Wikipedia" %>
+                  </dd>
+                </div>
+              <% end %>
+
+              <% if item.sitelink_url("commonswiki").present? && item.sitelink_title("commonswiki").present? %>
+                <div class="row my-2">
+                  <dt class="col-sm">
+                    <%= simple_icon "wikimediacommons" %>
+                    Wikimedia Commons
+                  </dt>
+                  <dd class="col-sm text-sm-end">
+                    <%= link_to item.sitelink_title("commonswiki"), item.sitelink_url("commonswiki"), title: "#{item.sitelink_title('commonswiki')} - Wikimedia Commons" %>
+                  </dd>
+                </div>
+              <% end %>
+            <% end %>
+          </dl>
+        </div>
+
+        <% if item.wikipedia_extract.present? %>
+          <div class="col-lg">
+            <div class="alert alert-light shadow-sm">
+              <%= render item.wikipedia_extract %>
             </div>
-          <% end %>
-
+          </div>
         <% end %>
-
-      </dl>
-    </div>
-
-    <% if item.wikipedia_extract.present? %>
-      <div class="col-lg">
-        <%= render item.wikipedia_extract %>
       </div>
-    <% end %>
-
-  </div>
+    </div>
 <% end %>

@@ -1,6 +1,6 @@
 <figure>
-  <blockquote class="blockquote text-muted"><%= wikipedia_extract.text %></blockquote>
-  <figcaption class="blockquote-footer">
-    from <a href="<%= wikipedia_extract.url %>" target="_blank">Wikipedia</a>, the free encyclopaedia
+  <blockquote class="blockquote text-muted"><small>&laquo;<%= wikipedia_extract.text %>&raquo;</small></blockquote>
+  <figcaption class="blockquote-footer text-end">
+    from <cite title="Source Title"><a href="<%= wikipedia_extract.url %>" target="_blank">Wikipedia</a>, the free encyclopaedia</cite>
   </figcaption>
 </figure>
