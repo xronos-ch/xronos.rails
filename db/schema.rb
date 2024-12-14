@@ -349,16 +349,14 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_29_163926) do
     t.index ["qid"], name: "index_wikidata_links_on_qid"
     t.index ["wikidata_linkable_type", "wikidata_linkable_id"], name: "index_wikidata_links_on_linkable_type_and_linkable_id"
     t.index ["wikidata_linkable_type", "wikidata_linkable_id"], name: "index_wikidata_links_on_wikidata_linkable"
-
+  end
+  
   create_table "wikidata_items", force: :cascade do |t|
     t.integer "qid"
     t.string "wikidata_linkable_type"
     t.bigint "wikidata_linkable_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["qid"], name: "index_wikidata_links_on_qid"
-    t.index ["wikidata_linkable_type", "wikidata_linkable_id"], name: "index_wikidata_links_on_linkable_type_and_linkable_id"
-    t.index ["wikidata_linkable_type", "wikidata_linkable_id"], name: "index_wikidata_links_on_wikidata_linkable"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
@@ -433,6 +431,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_29_163926) do
        LEFT JOIN site_types_sites ON ((site_types_sites.site_id = sites.id)))
        LEFT JOIN site_types ON ((site_types_sites.site_type_id = site_types.id)));
   SQL
+  
   add_index "data_views", ["country"], name: "index_data_views_on_country"
   add_index "data_views", ["feature"], name: "index_data_views_on_feature"
   add_index "data_views", ["id"], name: "index_data_views_on_id"
@@ -441,5 +440,4 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_29_163926) do
   add_index "data_views", ["site"], name: "index_data_views_on_site"
   add_index "data_views", ["site_type"], name: "index_data_views_on_site_type"
   add_index "data_views", ["species"], name: "index_data_views_on_species"
-
 end
