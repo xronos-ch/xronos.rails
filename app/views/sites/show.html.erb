@@ -72,19 +72,19 @@
           <h3 class="mb-0">
             <i class="bi-link-45deg"></i> Linked Data</h3>
       <% if @site.wikidata_link.present? %>
-        <% if can? :manage, WikidataLink %>
-          <%= floating_button edit_wikidata_link_path(@site.wikidata_link),
+        <% if can? :manage, LodLink %>
+          <%= floating_button edit_lod_link_path(@site.wikidata_link),
             data: { turbo_frame: "remote_modal" } %>
         <% end %>
         <%= turbo_frame_tag @site.wikidata_link, src: @site.wikidata_link %>
       <% else %>
         <p>There is no linked data available for this record.</p>
-        <% if can? :manage, WikidataLink %>
+        <% if can? :manage, LodLink %>
           <ul>
             <li><%= link_to "Add Wikidata link", 
-              new_wikidata_link_path(wikidata_link: { 
-                  wikidata_linkable_type: "Site", 
-                  wikidata_linkable_id: @site
+              new_lod_link_path(lod_link: { 
+                  linkable_type: "Site", 
+                  linkable_id: @site
                 }),
                 data: { turbo_frame: "remote_modal" } %>
             </li>

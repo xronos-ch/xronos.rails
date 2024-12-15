@@ -1,0 +1,24 @@
+  <!-- Hidden Fields -->
+  <%= f.hidden_field :linkable_type %>
+  <%= f.hidden_field :linkable_id %>
+  <%= f.hidden_field :source, value: "Wikidata" %>
+
+  <!-- QID Input Field -->
+  <div class="input-group">
+    <%= f.text_field :external_id, prepend: "Q", hide_label: true, placeholder: "Enter QID" %>
+  </div>
+
+  <!-- Suggestions from Lod Match -->
+  <p>Suggestion from Name:</p>
+  <ul>
+    <% if wikidata_matches_for(f.object.linkable).present? %>
+      <% wikidata_matches_for(f.object.linkable)[f.object.linkable.name]&.each do |match| %>
+        <li>
+          <%= match.qid %>: 
+          <%= link_to "#{match.label} (#{match.description})", match.url, target: "_blank" %>
+        </li>
+      <% end %>
+    <% else %>
+      <li>No suggestions available</li>
+    <% end %>
+  </ul>

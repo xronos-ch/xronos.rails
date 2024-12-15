@@ -51,7 +51,7 @@
         <td class="font-monospace text-end"><%= site.typos_count %></td>
         <td class="font-monospace text-end">
           <% if site.wikidata_link %>
-            <%= link_to site.wikidata_link.qid, site.wikidata_link.url %>
+            <%= link_to site.wikidata_link.external_id, site.wikidata_link.url %>
           <% elsif @wikidata_matches.key?(site.name) && @wikidata_matches[site.name].present? %>
             <% suggested_match = @wikidata_matches[site.name].first %>
             <i>Suggestion: <%= suggested_match.qid %>: 
@@ -71,13 +71,14 @@
           <td>
             <div class="btn-toolbar justify-content-end">
               <div class="btn-group me-2">
-                <%= bootstrap_form_for WikidataLink.new, url: wikidata_links_path, method: :post do |f| %>
-                  <%= f.hidden_field :wikidata_linkable_type, value: "Site" %>
-                  <%= f.hidden_field :wikidata_linkable_id, value: site.id %>
+                <%= bootstrap_form_for LodLink.new, url: lod_links_path, method: :post do |f| %>
+                  <%= f.hidden_field :linkable_type, value: "Site" %>
+                  <%= f.hidden_field :linkable_id, value: site.id %>
+                  <%= f.hidden_field :source, value: "Wikidata" %>
 
                   <% if @wikidata_matches.key?(site.name) && @wikidata_matches[site.name].present? %>
                     <% suggested_match = @wikidata_matches[site.name].first %>
-                    <%= f.hidden_field :qid, value: suggested_match.qid %>
+                    <%= f.hidden_field :external_id, value: suggested_match.qid %>
                     <%= f.hidden_field :revision_comment, value: "Matched to Wikidata" %>
                     <%= f.primary class: "btn btn-sm btn-primary", title: "Use suggested Wikidata match" do %>
                       <%= bs_icon "check-lg" %>

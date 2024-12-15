@@ -15,7 +15,7 @@
 #  index_wikidata_links_on_qid                            (qid)
 #  index_wikidata_links_on_wikidata_linkable              (wikidata_linkable_type,wikidata_linkable_id)
 #
-class WikidataLink < ApplicationRecord
+class LodLink < ApplicationRecord
   include Turbo::Broadcastable
   include Versioned
 
@@ -27,12 +27,13 @@ class WikidataLink < ApplicationRecord
 
   attr_reader :item
 
-  validates :qid, presence: true, numericality: { only_integer: true }
+  validates :external_id, presence: true, numericality: { only_integer: true }
+  validates :source, presence: true
 
-  belongs_to :wikidata_linkable, polymorphic: true
+  belongs_to :linkable, polymorphic: true
 
   def qcode
-    "Q#{qid}"
+    "Q#{external_id}"
   end
 
   def url
@@ -40,7 +41,7 @@ class WikidataLink < ApplicationRecord
   end
 
   def request_item
-    @item = WikidataItem.new(qid)
+    @item = WikidataItem.new(external_id)
   end
 
   def title

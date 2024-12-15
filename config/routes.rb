@@ -53,7 +53,7 @@ Rails.application.routes.draw do
   resources :taxon_usages, only: :show
 
   # External data resources
-  resources :wikidata_links, except: :index
+  resources :lod_links, except: :index
 
   # User management
   devise_for :users, controllers: {
