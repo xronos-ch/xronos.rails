@@ -94,6 +94,10 @@ class Site < ApplicationRecord
     ISO3166::Country[country_code] || 
       ISO3166::Country.find_country_by_any_name(country_code)
   end
+  
+  def wikidata_link
+    lod_links.where(source: "Wikidata").first
+  end
 
   def country_from_coordinates
     return nil if lat.blank? || lng.blank?
@@ -116,8 +120,9 @@ class Site < ApplicationRecord
       return nil
     end
   end
-  
+
   def self.wikidata_match_candidates_batch(sites)
+    
     # Filter for sites without a wikidata_link
     sites_without_wikidata_link = sites.select { |site| site.wikidata_link.nil? }
 
@@ -180,18 +185,47 @@ class Site < ApplicationRecord
     country_code.blank?
   end
   
+  # LODs
   scope :needs_wikidata_link, -> {
-    where.not(id: WikidataLink.where(wikidata_linkable_type: "Site").select(:wikidata_linkable_id).distinct)
+    where.not(id: LodLink.where(linkable_type: "Site", source: "Wikidata").select(:linkable_id).distinct)
   }
   def needs_wikidata_link?
     wikidata_link.blank?
   end
+  
+#  scope :with_potential_wikidata_match, -> {
+#    cache_keys = Rails.cache.instance_variable_get(:@data).keys # Inspect cached keys
+#    
+#    matched_ids = []
+#
+#    cache_keys.each do |key|
+#      cached_data = Rails.cache.read(key)
+#      next if cached_data.blank?
+#
+#      logger.debug "*******************"
+#      logger.debug cached_data.to_yaml      
+#      logger.debug "*******************"
+#
+#      # Find sites matching cached names but exclude those with existing wikidata_links
+#      matched_ids += Site.where(name: cached_data.keys).where.not(id: LodLink.where(linkable_type: "Site", source: "Wikidata").select(:linkable_id)).pluck(:id)
+#    end
+#
+#    where(id: matched_ids.uniq)
+#  }
+#  def with_potential_wikidata_match?
+#    return false if wikidata_link.present? # Exclude if a Wikidata link already exists
+#
+#    cache_key = Site.generate_cache_key([self])
+#    cached_matches = Rails.cache.read(cache_key) || {}
+#    cached_matches.key?(self.name)
+#  end
 
   private
 
   # Generate a unique cache key for the batch of sites
   def self.generate_cache_key(sites)
-    "wikidata_match_batch/#{Digest::MD5.hexdigest(sites.pluck(:name).sort.join(','))}"
+    site_names = sites.pluck(:name).compact.reject(&:blank?) # Remove nil and blank names
+    "wikidata_match_batch/#{Digest::MD5.hexdigest(site_names.sort.join(','))}"
   end
 
   # Extracts names from the sites
