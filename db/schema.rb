@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_12_15_071622) do
+ActiveRecord::Schema[7.0].define(version: 2024_12_15_102659) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -139,6 +139,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_15_071622) do
     t.jsonb "data"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "status", default: "pending", null: false
     t.index ["linkable_type", "linkable_id"], name: "index_lod_links_on_linkable_type_and_linkable_id"
     t.index ["source", "external_id"], name: "index_lod_links_on_source_and_external_id", unique: true
   end

@@ -50,13 +50,12 @@
         <td class="font-monospace text-end"><%= site.c14s_count %></td>
         <td class="font-monospace text-end"><%= site.typos_count %></td>
         <td class="font-monospace text-end">
-          <% if site.wikidata_link %>
+          <% if site.wikidata_link && site.wikidata_link.status == "approved" %>
             <%= link_to site.wikidata_link.external_id, site.wikidata_link.url %>
-          <% elsif @wikidata_matches.key?(site.name) && @wikidata_matches[site.name].present? %>
-            <% suggested_match = @wikidata_matches[site.name].first %>
-            <i>Suggestion: <%= suggested_match.qid %>: 
-              <%= link_to "#{suggested_match.label} (#{suggested_match.description})", 
-                          suggested_match.url, target: "_blank" %>
+          <% elsif site.wikidata_link && site.wikidata_link.status == "pending" %>
+            <i>Suggestion: <%= site.wikidata_link.external_id %>: 
+              <%= link_to "#{site.wikidata_link.data['label']} (#{site.wikidata_link.data['description']})", 
+                          site.wikidata_link.data['url'], target: "_blank" %>
             </i>
           <% else %>
             <span class="text-muted">No suggestions</span>
@@ -67,33 +66,34 @@
             <%= lod_badge(lod) %>
           <% end %>
         </td>
-        <% if can?(:manage, Site) %>
-          <td>
-            <div class="btn-toolbar justify-content-end">
-              <div class="btn-group me-2">
-                <%= bootstrap_form_for LodLink.new, url: lod_links_path, method: :post do |f| %>
-                  <%= f.hidden_field :linkable_type, value: "Site" %>
-                  <%= f.hidden_field :linkable_id, value: site.id %>
-                  <%= f.hidden_field :source, value: "Wikidata" %>
+ <% if can?(:manage, Site) %>
+   <td>
+     <div class="btn-toolbar justify-content-end">
+       <div class="btn-group me-2">
+         <% if site.wikidata_link %>
+          <%= bootstrap_form_for site.wikidata_link, url: lod_link_path(site.wikidata_link), method: :patch do |f| %>
+             <%= f.hidden_field :linkable_type, value: "Site" %>
+             <%= f.hidden_field :linkable_id, value: site.id %>
+             <%= f.hidden_field :source, value: "Wikidata" %>
 
-                  <% if @wikidata_matches.key?(site.name) && @wikidata_matches[site.name].present? %>
-                    <% suggested_match = @wikidata_matches[site.name].first %>
-                    <%= f.hidden_field :external_id, value: suggested_match.qid %>
-                    <%= f.hidden_field :revision_comment, value: "Matched to Wikidata" %>
-                    <%= f.primary class: "btn btn-sm btn-primary", title: "Use suggested Wikidata match" do %>
-                      <%= bs_icon "check-lg" %>
-                    <% end %>
-                  <% else %>
-                    <%= button_tag class: "btn btn-sm btn-primary", disabled: true do %>
-                      <%= bs_icon "check-lg" %>
-                    <% end %>
-                  <% end %>
-                <% end %>
-              </div>
-              <%= render "shared/action_buttons_compact", i: site %>
-            </div>
-          </td>
-        <% end %>
+             <% if site.wikidata_link.status == "pending" %>
+               <%= f.hidden_field :status, value: "approved" %>
+               <%= f.hidden_field :revision_comment, value: "Matched to Wikidata" %>
+               <%= f.primary class: "btn btn-sm btn-primary", title: "Use suggested Wikidata match" do %>
+                 <%= bs_icon "check-lg" %>
+               <% end %>
+             <% else %>
+               <%= button_tag class: "btn btn-sm btn-primary", disabled: true do %>
+                 <%= bs_icon "check-lg" %>
+               <% end %>
+             <% end %>
+           <% end %>
+         <% end %>
+       </div>
+       <%= render "shared/action_buttons_compact", i: site %>
+     </div>
+   </td>
+ <% end %>
       </tr>
     <% end %>
   </tbody>

@@ -60,7 +60,8 @@ class LodLinksController < ApplicationController
       :source, 
       :linkable_type,
       :linkable_id,
-      :revision_comment
+      :revision_comment,
+      :status
     ])
   end
 

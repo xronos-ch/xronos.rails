@@ -53,7 +53,7 @@ class Site < ApplicationRecord
   @issues = [ :missing_coordinates, :invalid_coordinates, :missing_country_code ]
   
   include NeedsLods
-  @lods = [ :needs_wikidata_link ]
+  @lods = [ :needs_wikidata_link, :pending_wikidata_link ]
 
   include PgSearch::Model
   pg_search_scope :search, 
@@ -122,21 +122,35 @@ class Site < ApplicationRecord
   end
 
   def self.wikidata_match_candidates_batch(sites)
-    
-    # Filter for sites without a wikidata_link
-    sites_without_wikidata_link = sites.select { |site| site.wikidata_link.nil? }
+    # Filter for sites without a Wikidata link
+    sites_without_wikidata_link = sites.select { |site| site.lod_links.where(source: "Wikidata").empty? }
 
     return [] if sites_without_wikidata_link.empty?
 
-    # Generate a cache key based on site names
-    cache_key = generate_cache_key(sites_without_wikidata_link)
+    # Prepare the data for SPARQL query
+    site_names = extract_site_names(sites_without_wikidata_link)
+    sparql_query = build_sparql_query(site_names)
+    response = execute_sparql_request(sparql_query)
+    wikidata_results = parse_wikidata_response(response)
 
-    Rails.cache.fetch(cache_key, expires_in: 24.hours) do
-      site_names = extract_site_names(sites_without_wikidata_link)
-      sparql_query = build_sparql_query(site_names)
-      response = execute_sparql_request(sparql_query)
-      parse_wikidata_response(response)
+    # Iterate through the results and populate lod_links
+    wikidata_results.each do |site_name, matches|
+      site = sites_without_wikidata_link.find { |s| s.name == site_name }
+      next unless site
+
+      matches.each do |match|
+        # Find or create the LOD link for this Wikidata match
+        site.lod_links.find_or_create_by(source: "Wikidata", external_id: match.qid) do |lod_link|
+          lod_link.data = {
+            label: match.label,
+            description: match.description
+          }
+          lod_link.save!
+        end
+      end
     end
+
+    wikidata_results # Return results for reference
   end
  
   def n_c14s
@@ -193,32 +207,12 @@ class Site < ApplicationRecord
     wikidata_link.blank?
   end
   
-#  scope :with_potential_wikidata_match, -> {
-#    cache_keys = Rails.cache.instance_variable_get(:@data).keys # Inspect cached keys
-#    
-#    matched_ids = []
-#
-#    cache_keys.each do |key|
-#      cached_data = Rails.cache.read(key)
-#      next if cached_data.blank?
-#
-#      logger.debug "*******************"
-#      logger.debug cached_data.to_yaml      
-#      logger.debug "*******************"
-#
-#      # Find sites matching cached names but exclude those with existing wikidata_links
-#      matched_ids += Site.where(name: cached_data.keys).where.not(id: LodLink.where(linkable_type: "Site", source: "Wikidata").select(:linkable_id)).pluck(:id)
-#    end
-#
-#    where(id: matched_ids.uniq)
-#  }
-#  def with_potential_wikidata_match?
-#    return false if wikidata_link.present? # Exclude if a Wikidata link already exists
-#
-#    cache_key = Site.generate_cache_key([self])
-#    cached_matches = Rails.cache.read(cache_key) || {}
-#    cached_matches.key?(self.name)
-#  end
+  scope :pending_wikidata_link, -> {
+    joins(:lod_links).where(lod_links: { source: "Wikidata", status: "pending" })
+  }
+  def pending_wikidata_link?
+    wikidata_link&.status == "pending"
+  end
 
   private
 
