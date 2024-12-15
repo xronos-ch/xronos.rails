@@ -1,0 +1,30 @@
+<header id="dendro-header">
+
+  <div class="d-flex">
+
+    <h1 class="display-3"><%= @dendro.name %></h1>
+
+    <% if can? :edit, @dendro %>
+      <div class="ms-auto">
+        <%= link_to edit_icon,
+          edit_dendro_path(@dendro), 
+          title: "Edit dendrochronological series",
+          class: "btn btn-sm btn-outline-primary",
+          data: { turbo_frame: "remote_modal" } %>
+      </div>
+    <% end %>
+
+  </div>
+
+  <div class="h5">
+    <%= xr_icon Dendro, {}, { style: "width: auto; height: 1.25rem;" } %>
+    Dendrochronological series from 
+    <%= link_to @dendro.site.name, @dendro.site %>,
+    c. <%= @dendro.start_year %> to <%= @dendro.end_year %> <%= @dendro.is_anchored ? "cal BP" : "floating years"%>
+  </div>
+
+  <div class="my-3">
+    <%= render "shared/record_metadata", record: @dendro %>
+  </div>
+
+</header>

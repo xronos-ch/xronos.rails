@@ -41,6 +41,7 @@ class Sample < ApplicationRecord
 
   has_many :c14s
   has_many :typos
+  has_many :dendros
 
   include Versioned
 

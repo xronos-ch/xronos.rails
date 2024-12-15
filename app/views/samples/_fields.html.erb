@@ -1,7 +1,16 @@
 <h2 class="h5">Context</h5>
 
-<%= f.fields_for :context, @c14.context do |ff| %>
-  <%= render "contexts/fields", f: ff %>
+<% if @c14.present?%>
+  <%= f.fields_for :context, @c14.context do |ff| %>
+    <%= render "contexts/fields", f: ff %>
+  <% end %>
+<% end %>
+
+<% if @dendro.present?%>
+  <%= f.fields_for :context, @dendro.context do |ff| %>
+    <%= ff.hidden_field :site_id, value: @dendro.sample.context.site_id %> <!-- Pass the site ID -->
+    <%= render "contexts/fields", f: ff %>
+  <% end %>
 <% end %>
 
 <h2 class="h5">Sample</h5>

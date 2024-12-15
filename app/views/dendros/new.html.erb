@@ -1,0 +1,7 @@
+<% content_for :title, "New dendrochronological series" %>
+
+<%= render "shared/remote_modal", title: "New dendrochronological series" do %>
+
+  <%= render 'form', dendro: @dendro %>
+
+<% end %>

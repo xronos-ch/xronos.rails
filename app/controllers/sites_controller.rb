@@ -60,6 +60,12 @@ class SitesController < ApplicationController
       order = { params[:c14s_order_by] => params.fetch(:c14s_order, "asc") }
       @c14s = @c14s.reorder(order)
     end
+    
+    @dendros = @site.dendros.includes([:references, sample: [ :material, :taxon, :context ]])
+    if params.has_key?(:dendros_order_by)
+      order = { params[:dendros_order_by] => params.fetch(:dendros_order, "asc") }
+      @dendros = @dendros.reorder(order)
+    end
 
     @typos = @site.typos.includes([:references])
     if params.has_key?(:typos_order_by)
@@ -71,6 +77,7 @@ class SitesController < ApplicationController
       format.html {
         @pagy_c14s, @c14s = pagy(@c14s, page_param: :c14s_page)
         @pagy_typos, @typos = pagy(@typos, page_param: :typos_page)
+        @pagy_dendros, @dendros = pagy(@dendros, page_param: :dendros_page)
       }
       format.json
     end

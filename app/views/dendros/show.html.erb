@@ -1,0 +1,35 @@
+<% content_for :title, "#{@dendro.name}, #{Dendro.label} from #{@dendro.site.name}" %>
+<% content_for :meta_description do %>
+  <%= @dendro.site.name %> (<%= @dendro.site.country %>) has tree ring information from <%= @dendro.start_year %> to <%= @dendro.end_year %> (anchored: <%= @dendro.is_anchored %>). This determination was made on a sample of <%= @dendro.sample.material.present? ? @dendro.sample.material.name : "material unknown" %> (<%= @dendro.sample.taxon.present? ? @dendro.sample.taxon.name : "taxon unknown" %>). XRONOS' record for this dendrochronological series may include further information on the laboratory measurement, archaeological context, and bibliographic references.
+<% end %>
+
+<main class="container my-5">
+
+  <%= render "header" %>
+
+  <section id="dendro-measurement" class="my-5">
+    <h2><%= bs_icon "rulers" %> Measurement</h2>
+    <%= render "dendro_measurement", dendro: @dendro %>
+  </section>
+
+   <section id="dendro-context" class="my-5">
+    <h2><%= bs_icon "diagram-3" %> Context</h2>
+    <%= render "dendro_context", dendro: @dendro %>
+  </section>
+
+  <section id="dendro-references" class="my-5">
+    <% references = (@dendro.references + @dendro.site.references).uniq %>
+    <h2>
+      <%= xr_icon Reference, {}, style: "width: auto; height: 2rem" %>
+      <%= Reference.label.humanize.pluralize %>
+      <small class="text-muted">(<%= references.count %>)</small>
+    </h2>
+    <%= render "references/bibliography", references: (@dendro.references + @dendro.site.references).uniq %>
+  </section>
+
+  <section id="dendro-changelog" class="my-5">
+    <h2>Changelog</h2>
+    <%= render "application/paper_trail/versions", item: @dendro %>
+  </section>
+
+</main>

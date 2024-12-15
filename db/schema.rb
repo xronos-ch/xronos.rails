@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_11_29_163926) do
+ActiveRecord::Schema[7.0].define(version: 2024_12_15_123653) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -120,6 +120,23 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_29_163926) do
     t.index ["site_id"], name: "index_contexts_on_site_id"
   end
 
+  create_table "dendros", force: :cascade do |t|
+    t.bigint "sample_id", null: false
+    t.string "series_code", null: false
+    t.string "name", null: false
+    t.text "description"
+    t.integer "start_year"
+    t.integer "end_year"
+    t.boolean "is_anchored", default: false
+    t.integer "offset"
+    t.jsonb "measurements", default: [], null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["measurements"], name: "index_dendros_on_measurements", using: :gin
+    t.index ["sample_id"], name: "index_dendros_on_sample_id"
+    t.index ["series_code"], name: "index_dendros_on_series_code", unique: true
+  end
+
   create_table "import_tables", force: :cascade do |t|
     t.string "file"
     t.datetime "imported_at", precision: nil
@@ -129,6 +146,19 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_29_163926) do
     t.jsonb "read_options"
     t.jsonb "mapping"
     t.index ["user_id"], name: "index_import_tables_on_user_id"
+  end
+
+  create_table "lod_links", force: :cascade do |t|
+    t.string "source", null: false
+    t.string "external_id", null: false
+    t.string "linkable_type", null: false
+    t.bigint "linkable_id", null: false
+    t.jsonb "data"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "status", default: "pending", null: false
+    t.index ["linkable_type", "linkable_id"], name: "index_lod_links_on_linkable_type_and_linkable_id"
+    t.index ["source", "external_id"], name: "index_lod_links_on_source_and_external_id", unique: true
   end
 
   create_table "materials", force: :cascade do |t|
@@ -353,6 +383,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_29_163926) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "dendros", "samples"
   add_foreign_key "import_tables", "users"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_grants", "users", column: "resource_owner_id"

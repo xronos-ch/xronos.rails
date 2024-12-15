@@ -1,0 +1,42 @@
+<h2 class="h5">Identifier</h2>
+
+<div class="row">
+  <div class="col">
+    <%= f.text_field :name, label: "Name" %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <%= f.text_field :series_code, label: "Series Code" %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <%= f.check_box :is_anchored, label: "Is anchored?" %>
+  </div>
+</div>
+
+<%# f.collection_select :sample_id, 
+  Sample.joins(:context).where('contexts.site_id' => @dendro.site.id), 
+  :id, :position_description,
+  {},
+  { data: { controller: 'tom-select' } }
+%>
+
+<%= f.fields_for :sample, @dendro.sample do |ff| %>
+  <%= render "samples/fields", f: ff %>
+<% end %>
+
+<h2 class="h5">Measurements</h2>
+
+<div class="row">
+  <div class="col"><%= f.number_field :start_year, label: "Start Year", append: "BP" %></div>
+  <div class="col"><%= f.number_field :end_year, label: "End Year", prepend: "BP" %></div>
+</div>
+
+
+<!-- TODO: source database -->
+<!-- TODO: references? -->
+

@@ -1,0 +1,55 @@
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <% unless controller_name == "sites" %>
+        <th scope="col">Site</th>
+      <% end %>
+      <th scope="col">
+        <%= link_to_order_by "Series", :name, :dendros %>
+        <% if ordered_by?(:name, :dendros) %>
+          <span class="text-muted"><%= order_indicator :dendros %></span>
+        <% end %>
+      </th>
+      <th scope="col">
+        <%= link_to_order_by "Start year", :start_year, :dendros %>
+        <% if ordered_by?(:start_year, :dendros) %>
+          <span class="text-muted"><%= order_indicator :dendros %></span>
+        <% end %>
+      </th>
+      <th scope="col">
+        <%= link_to_order_by "End year", :end_year, :dendros %>
+        <% if ordered_by?(:end_year, :dendros) %>
+          <span class="text-muted"><%= order_indicator :dendros %></span>
+        <% end %>
+      </th>
+      <th scope="col">
+        <%= link_to_order_by "is anchored?", :is_anchored, :dendros %>
+        <% if ordered_by?(:is_anchored, :dendros) %>
+          <span class="text-muted"><%= order_indicator :dendros %></span>
+        <% end %>
+      </th>
+      <th scope="col" class="text-end">References</th>
+      <% if can? :manage, Dendro %>
+        <th scope="col" class="text-end"><!-- Actions --></th>
+      <% end %>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% dendros.each do |dendro| %>
+      <tr>
+        <% unless controller_name == "sites" %>
+          <td><%= link_to dendro.site.name, dendro.site, target: :_top %></td>
+        <% end %>
+        <td><%= link_to dendro.name, dendro, target: :_top %></td>
+        <td class="font-monospace"><%= dendro.start_year.present? ? dendro.start_year : na_value %></td>
+        <td class="font-monospace"><%= dendro.end_year.present? ? dendro.end_year : na_value %></td>
+        <td class="font-monospace"><%= dendro.is_anchored.present? ? dendro.is_anchored : na_value %></td>
+        <td class="small text-end"><%= render "references/citations", references: dendro.references %></td>
+        <% if can? :manage, Dendro %>
+          <td class="text-end"><%= render "application/actions", i: dendro %></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

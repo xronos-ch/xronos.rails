@@ -23,6 +23,7 @@ class Site < ApplicationRecord
   has_many :samples, through: :contexts
   has_many :c14s, through: :contexts
   has_many :typos, through: :contexts
+  has_many :dendros, through: :contexts
 
   has_and_belongs_to_many :site_types, optional: true
 
@@ -115,6 +116,10 @@ class Site < ApplicationRecord
   end
 
   def n_typos
+    typos.count
+  end
+  
+  def n_dendros
     typos.count
   end
 

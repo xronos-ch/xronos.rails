@@ -1,0 +1,21 @@
+<dl class="row">
+
+  <dt>Start Year</dt>
+  <dd class="font-monospace"><%= dendro.start_year %></dd>
+  
+  <dt>End Year</dt>
+  <dd class="font-monospace"><%= dendro.end_year %></dd>
+
+  <dt>Sample material</dt>
+  <dd><%= dendro.sample.material.present? ? dendro.sample.material.name : na_value %></dd>
+
+  <dt>Sample taxon</dt>
+  <dd>
+    <% if dendro.sample.taxon.present? %>
+      <%= render dendro.sample.taxon %>
+    <% else %>
+      <%= na_value %>
+    <% end %>
+  </dd>
+
+</dl>

@@ -1,0 +1,14 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Dendros</h1>
+
+<div id="dendros">
+  <% @dendros.each do |dendro| %>
+    <%= render dendro %>
+    <p>
+      <%= link_to "Show this dendro", dendro %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New dendro", new_dendro_path %>

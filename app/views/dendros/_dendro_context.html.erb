@@ -1,0 +1,18 @@
+<dl>
+
+      <dt>Site</dt>
+      <dd><%= link_to dendro.site.name, dendro.site  %></dd>
+
+      <dt>Context</dt>
+      <dd><%= dendro.context.name %></dd>
+
+      <dt>Sample position</dt>
+      <dd>
+        <%= dendro.sample.position_description.present? ? dendro.sample.position_description : na_value %>
+      </dd>
+
+      <dt>Sample coordinates</dt>
+      <dd><!-- not implemented --><%= na_value %></dd>
+
+</dl>
+
