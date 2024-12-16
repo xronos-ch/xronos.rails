@@ -54,6 +54,8 @@ class Dendro < ApplicationRecord
   
   validates_associated :sample
   
+  belongs_to :chronology, optional: true
+  
   include Versioned
     
   def self.label

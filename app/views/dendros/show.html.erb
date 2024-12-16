@@ -1,22 +1,64 @@
 <% content_for :title, "#{@dendro.name}, #{Dendro.label} from #{@dendro.site.name}" %>
 <% content_for :meta_description do %>
-  <%= @dendro.site.name %> (<%= @dendro.site.country %>) has tree ring information from <%= @dendro.start_year %> to <%= @dendro.end_year %> (anchored: <%= @dendro.is_anchored %>). This determination was made on a sample of <%= @dendro.sample.material.present? ? @dendro.sample.material.name : "material unknown" %> (<%= @dendro.sample.taxon.present? ? @dendro.sample.taxon.name : "taxon unknown" %>). XRONOS' record for this dendrochronological series may include further information on the laboratory measurement, archaeological context, and bibliographic references.
+  <%= "#{@dendro.site.name} (#{@dendro.site.country}) has tree ring information from #{@dendro.start_year} to #{@dendro.end_year} (anchored: #{@dendro.is_anchored}). This determination was made on a sample of #{(@dendro.sample.material&.name || 'material unknown')} (#{(@dendro.sample.taxon&.name || 'taxon unknown')}). XRONOS' record for this dendrochronological series may include further information on the laboratory measurement, archaeological context, and bibliographic references." %>
 <% end %>
 
 <main class="container my-5">
 
   <%= render "header" %>
 
+  <%# Measurement Section %>
   <section id="dendro-measurement" class="my-5">
     <h2><%= bs_icon "rulers" %> Measurement</h2>
     <%= render "dendro_measurement", dendro: @dendro %>
   </section>
 
-   <section id="dendro-context" class="my-5">
+  <%# Plot Section %>
+  <section id="dendro-plot" class="my-5">
+    <h2><%= bs_icon "graph-down" %> Plot</h2>
+    <div class="row">
+      <div class="col-lg-8" style="margin-bottom: -31px" data-controller="vega">
+        <%= ring_width_plot(@dendro) %>
+      </div>
+      <div class="col-lg-4">
+        <dl>
+          <dt>Further info</dt>
+          <dd>to be added</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <%# Context Section %>
+  <section id="dendro-context" class="my-5">
     <h2><%= bs_icon "diagram-3" %> Context</h2>
     <%= render "dendro_context", dendro: @dendro %>
   </section>
 
+  <%# Measurements Table Section %>
+  <section id="dendro-values" class="my-5">
+    <h3><%= bs_icon "table" %> Measurements</h3>
+    <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+      <table class="table table-sm table-bordered">
+        <thead class="table-light">
+          <tr>
+            <th>Year</th>
+            <th>Width (mm)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% JSON.parse(@dendro.measurements.to_json).each do |measurement| %>
+            <tr>
+              <td><%= measurement["year"] %></td>
+              <td><%= number_with_precision(measurement["value"], precision: 2) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <%# References Section %>
   <section id="dendro-references" class="my-5">
     <% references = (@dendro.references + @dendro.site.references).uniq %>
     <h2>
@@ -24,9 +66,10 @@
       <%= Reference.label.humanize.pluralize %>
       <small class="text-muted">(<%= references.count %>)</small>
     </h2>
-    <%= render "references/bibliography", references: (@dendro.references + @dendro.site.references).uniq %>
+    <%= render "references/bibliography", references: references %>
   </section>
 
+  <%# Changelog Section %>
   <section id="dendro-changelog" class="my-5">
     <h2>Changelog</h2>
     <%= render "application/paper_trail/versions", item: @dendro %>

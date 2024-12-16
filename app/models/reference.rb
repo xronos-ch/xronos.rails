@@ -20,6 +20,8 @@ class Reference < ApplicationRecord
   has_many :sites, :through => :citations, :source => :citing, :source_type => 'Site'
   has_many :c14s, :through => :citations, :source => :citing, :source_type => 'C14'
   has_many :typos, :through => :citations, :source => :citing, :source_type => 'Typo'
+  has_many :dendros, :through => :citations, :source => :citing, :source_type => 'Dendro'
+
 
   validates :short_ref, presence: true
 

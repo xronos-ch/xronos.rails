@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_12_16_082922) do
+ActiveRecord::Schema[7.0].define(version: 2024_12_16_093633) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -103,7 +103,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_16_082922) do
 
   create_table "chronologies", force: :cascade do |t|
     t.string "name"
-    t.string "type"
+    t.string "chronology_type"
     t.string "method"
     t.string "standardizing_method"
     t.string "certainty"

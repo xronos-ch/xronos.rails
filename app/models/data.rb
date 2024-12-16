@@ -30,6 +30,7 @@ class Data
         ]
     ])
     .all.distinct
+    Dendro
   end
 
   def filters=(value)
