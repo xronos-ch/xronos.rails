@@ -1,7 +1,29 @@
-<article class="p-3 mb-3 bg-light">
-  <h3 class="h4"><%= link_to reference.short_ref, reference %></h3>
-  <p class="mb-0 d-flex align-items-center">
-    <%= xr_icon Reference, {}, { class: "me-1", style: "height: 1.5rem;" } %>
-    <span><%= Reference.label.humanize %></span>
-  </p>
+<article class="card">
+
+  <div class="card-header">
+    <%= xr_icon Reference, {}, { class: "img-fluid", style: "width: auto; height: 1.1rem;" } %>
+    <%= Reference.label.humanize %>
+  </div>
+
+  <div class="card-body">
+    <h1 class="card-title h4">
+      <%= link_to reference.short_ref, reference %>
+    </h1>
+
+    <% unless reference.bibtex.blank? %>
+      <p class="card-text text-sm">
+        <small><%= reference.render %></small>
+      </p>
+    <% end %>
+  </div>
+
+  <div class="card-footer">
+    <%= link_to reference_path(reference, anchor: "reference-citations"), 
+      class: "card-link fw-semibold",
+      title: Citation.label.humanize.pluralize do %>
+      <%= xr_icon Citation, {}, { style: "width: auto; height: 1.1rem;" } %>
+      <%= reference.citations.count %>
+    <% end %>
+  </div>
+
 </article>

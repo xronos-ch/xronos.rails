@@ -23,4 +23,8 @@ class Citation < ApplicationRecord
     "citation"
   end
 
+  def self.icon
+    "icons/citation.svg"
+  end
+
 end

@@ -23,6 +23,10 @@ $headings-font-family: "Raleway", $font-family-sans-serif;
 $enable-rounded: false;
 $enable-shadows: true;
 
+// More lines please
+$card-border-color: $dark;
+$card-cap-bg: none;
+
 // Bootstrap
 @import 'bootstrap/scss/bootstrap';
 @import 'bootstrap-icons/font/bootstrap-icons';
