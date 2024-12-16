@@ -1,6 +1,6 @@
 module Api
   module V1
-    class DataController < ApplicationController
+    class XronosDataController < ApplicationController
     
       before_action only: [:create, :update, :destroy] do
         doorkeeper_authorize! :admin

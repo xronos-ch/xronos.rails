@@ -72,15 +72,15 @@ Rails.application.routes.draw do
   # Data browser
   get 'data/index'
   post 'data/index'
-  get "/data" => "data#index"
+  get "/data" => "xronos_data#index"
 
   # Search
   get "search" => "searches#index"
 
   # Data filter controls
-  get '/resetfilter', :to=>'data#reset_filter_session_variable'
-  get '/turn_off_lasso', :to=>'data#turn_off_lasso'
-  get '/reset_manual_table_selection', :to=>'data#reset_manual_table_selection'
+  get '/resetfilter', to: 'xronos_data#reset_filter_session_variable'
+  get '/turn_off_lasso', to: 'xronos_data#turn_off_lasso'
+  get '/reset_manual_table_selection', to: 'xronos_data#reset_manual_table_selection'
 
   # Curation backend
   get "/curate" => "curate#index"
@@ -130,9 +130,8 @@ Rails.application.routes.draw do
   # API
   namespace :api, defaults: {format: 'json'} do
     namespace :v1 do
-      resources :data
+      resources :data, controller: 'xronos_data'
     end
   end
   
 end
-

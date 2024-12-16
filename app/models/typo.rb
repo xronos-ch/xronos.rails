@@ -17,7 +17,7 @@
 #  index_typos_on_sample_id  (sample_id)
 #
 class Typo < ApplicationRecord
-  include DataHelper
+  include XronosDataHelper
   
   has_paper_trail
   acts_as_copy_target # enable CSV exports
