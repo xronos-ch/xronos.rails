@@ -1,5 +1,5 @@
 # base image
-FROM ruby:3.0.4
+FROM ruby:3.3.6
 MAINTAINER Martin Hinz <martin.hinz@iaw.unibe.ch>
 
 # install node and yarn

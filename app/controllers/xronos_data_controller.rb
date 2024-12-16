@@ -1,4 +1,4 @@
-class DataController < ApplicationController
+class XronosDataController < ApplicationController
   include Pagy::Backend
 
   def turn_off_lasso
@@ -12,7 +12,7 @@ class DataController < ApplicationController
   end
 
   def index
-    @data = Data.new(filter_params, select_params)
+    @data = XronosData.new(filter_params, select_params)
     @raw_filter_params = filter_params
     logger.debug { "Parsed filters: #{@data.filters.inspect}" }
     @sites = @data.xrons.select("sites.id", "sites.lng", "sites.lat", "sites.name").distinct

@@ -1,4 +1,4 @@
-class Data
+class XronosData
   include ActiveModel::Model
 
   attr_accessor :xrons

@@ -5,8 +5,8 @@ git_source(:github) { |repo| 'https://github.com/#{repo}.git' }
 # CORE ------------------------------------------------------------------------
 
 # Ruby on Rails
-ruby '3.0.4'
-gem 'rails', '~> 7.0.0'
+ruby '3.3.6'
+gem 'rails', '~> 7.2'
 
 # Database for Active Record
 gem 'pg'
@@ -67,7 +67,7 @@ gem 'stimulus-rails'
 # USERS & PERMISSIONS ---------------------------------------------------------
 
 # User management
-gem 'devise', '>= 4.7.1'
+gem 'devise', '>= 4.9.4'
 
 # Authorizations management
 gem 'cancancan'
@@ -184,7 +184,7 @@ end
 group :development, :test do
 
   # RSpec for testing
-  gem 'rspec-rails', '~> 4.0.1'
+  gem 'rspec-rails', '~> 7.0.0'
 
   # Generate test data from model specs
   gem 'factory_bot_rails'
