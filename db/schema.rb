@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_12_15_123653) do
+ActiveRecord::Schema[7.0].define(version: 2024_12_16_082922) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -101,6 +101,17 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_15_123653) do
     t.index ["type", "c14_age", "c14_error", "c14_curve"], name: "index_cals_on_type_and_c14_age_and_c14_error_and_c14_curve", unique: true
   end
 
+  create_table "chronologies", force: :cascade do |t|
+    t.string "name"
+    t.string "type"
+    t.string "method"
+    t.string "standardizing_method"
+    t.string "certainty"
+    t.jsonb "parameters", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "citations", force: :cascade do |t|
     t.bigint "reference_id"
     t.string "citing_type"
@@ -132,6 +143,22 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_15_123653) do
     t.jsonb "measurements", default: [], null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "project_title"
+    t.text "project_objective"
+    t.datetime "project_start_date"
+    t.datetime "project_end_date"
+    t.string "object_title"
+    t.string "object_type"
+    t.text "object_description"
+    t.jsonb "object_dimensions", default: {}
+    t.integer "pith_year"
+    t.integer "death_year"
+    t.integer "first_year"
+    t.integer "last_year"
+    t.jsonb "wood_completeness", default: {}
+    t.bigint "chronology_id"
+    t.jsonb "parameters", default: {}
+    t.index ["chronology_id"], name: "index_dendros_on_chronology_id"
     t.index ["measurements"], name: "index_dendros_on_measurements", using: :gin
     t.index ["sample_id"], name: "index_dendros_on_sample_id"
     t.index ["series_code"], name: "index_dendros_on_series_code", unique: true
@@ -383,6 +410,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_15_123653) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "dendros", "chronologies"
   add_foreign_key "dendros", "samples"
   add_foreign_key "import_tables", "users"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
