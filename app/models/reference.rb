@@ -54,6 +54,15 @@ class Reference < ApplicationRecord
     "icons/reference.svg"
   end
 
+  def really_short_ref
+    if short_ref.length <= 30
+      return short_ref
+    else
+      return short_ref[0...27] + "..."
+    end
+  end
+
+
   def anchor
     if short_ref.blank?
       return ""
