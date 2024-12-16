@@ -14,6 +14,7 @@
 #
 class Reference < ApplicationRecord
   DELIM_PATTERN = '[;,]'
+  MAX_SHORT_REF_LENGTH = 30
 
   has_many :citations, dependent: :destroy
 
@@ -27,7 +28,7 @@ class Reference < ApplicationRecord
   acts_as_copy_target # enable CSV exports
 
   include HasIssues
-  @issues = [ :mixed_reference, :missing_bibtex ]
+  @issues = [ :mixed_reference, :missing_bibtex, :long_label ]
 
   include PgSearch::Model
   pg_search_scope :search, 
@@ -55,13 +56,13 @@ class Reference < ApplicationRecord
   end
 
   def really_short_ref
-    if short_ref.length <= 30
+    if short_ref.length <= MAX_SHORT_REF_LENGTH
       return short_ref
     else
-      return short_ref[0...27] + "..."
+      trunc = MAX_SHORT_REF_LENGTH - 4
+      return short_ref[0...trunc] + "..."
     end
   end
-
 
   def anchor
     if short_ref.blank?
@@ -116,6 +117,12 @@ class Reference < ApplicationRecord
   scope :missing_bibtex, -> { where(bibtex: nil) }
   def missing_bibtex?
     bibtex.blank?
+  end
+
+  scope :long_label, -> { where("LENGTH(short_ref) > ?", MAX_SHORT_REF_LENGTH) }
+  def long_label?
+    return false if short_ref.blank?
+    short_ref.length > MAX_SHORT_REF_LENGTH
   end
 
   private
