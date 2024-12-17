@@ -16,7 +16,8 @@ class LodsController < ApplicationController
 
   def lod_param
     lod = params.fetch(:lod, nil)
-    return lod if lod.present? and lod.in?(lods.to_s)
+    allowed_methods = lods.map(&:to_s)
+    return lod.to_sym if lod.present? && allowed_methods.include?(lod)
   end
 
 
