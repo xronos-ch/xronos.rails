@@ -30,8 +30,11 @@ class XronosDataController < ApplicationController
     @c14_data = XronosData.new(filter_params, select_params, :c14)
     @dendro_data = XronosData.new(filter_params.except(:c14s, :cals), select_params, :dendro)
   
-    # Assign the default data view to @data (e.g., C14 by default)
+    # Assign the default data view to @data (e.g., C14 by default) temporarily
     @data = @c14_data
+    
+    @n_data = @c14_data.xrons.count + @dendro_data.xrons.count
+    @total_data = @c14_data.everything.count + @dendro_data.everything.count
   
     # Fetch site data from both C14 and Dendro queries
     c14_sites = @c14_data.xrons

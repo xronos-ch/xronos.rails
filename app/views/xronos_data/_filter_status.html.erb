@@ -1,8 +1,8 @@
 <% if @data.filters.any? %>
-  <span class="<%= @data.xrons.any? ? "text-success" : "text-danger" %>">
-    Showing <%= @data.xrons.count %> of <%= @data.everything.count %> records
+  <span class="<%= @n_data>0 ? "text-success" : "text-danger" %>">
+    Showing <%= @n_data %> of <%= @total_data %> records
     (<%= link_to "clear filters", :data %>)
   </span>
 <% else %>
-  <span class="text-dark">Showing <%= @data.everything.count %> records</span>
+  <span class="text-dark">Showing <%= @total_data %> records</span>
 <% end %>
