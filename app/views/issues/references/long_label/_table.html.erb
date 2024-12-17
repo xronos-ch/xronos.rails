@@ -1,0 +1,78 @@
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">
+        <%= link_to_order_by "ID", :id %>
+        <% if ordered_by?(:id) %>
+          <span class="text-muted"><%= order_indicator %></span>
+        <% end %>
+      </th>
+      <th scope="col">
+        <%= link_to_order_by "Label", :short_ref %>
+        <% if ordered_by?(:short_ref) %>
+          <span class="text-muted"><%= order_indicator %></span>
+        <% end %>
+      </th>
+      <th scope="col">Suggested label</th>
+      <th scope="col">BibTeX</th>
+      <th scope="col">Citations</th>
+      <th scope="col">Other issues</th>
+      <% if can? :manage, Reference %><th scope="col"><span class="visually-hidden">Actions</span></th><% end %>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% references.each do |reference| %>
+      <tr>
+        <td class="text-muted"><%= reference.id %></td>
+        <td><%= link_to reference.short_ref, reference, target: :_top %></td>
+        <td>
+          <% if reference.bibtex.present? %>
+            <% suggestion = reference.render_citation.to_s %>
+            <% if suggestion.length <= Reference::MAX_SHORT_REF_LENGTH %>
+              <%= suggestion %>
+            <% else %>
+              <span class="text-warning">Couldn't generate brief enough label</span>
+            <% end %>
+          <% else %>
+            <span class="text-warning">No BibTeX available</span>
+          <% end %>
+        </td>
+        <td>
+          <% if reference.bibtex.present? %>
+            <%= reference.render %>
+          <% else %>
+            <%= na_value %>
+          <% end %>
+        </td>
+        <td><%= reference.citations_count %></td>
+        <td><% reference.issues.excluding(:long_label).each do |issue| %>
+          <%= issue_badge(issue) %>
+        <% end %></td>
+        <% if can? :manage, Reference %>
+          <td>
+            <div class="btn-toolbar justify-content-end">
+                <div class="btn-group me-2">
+                  <%= bootstrap_form_for reference do |f| %>
+                    <% if suggestion.present? %>
+                      <%= f.hidden_field :short_ref, value: suggestion %>
+                      <%= f.hidden_field :revision_comment, value: "Shortened label using BibTeX" %>
+                      <%= f.primary class: "btn btn-sm btn-primary", title: "Use suggested label" do %>
+                        <%= bs_icon "check-lg" %>
+                      <% end %>
+                    <% else %>
+                      <%= button_tag class: "btn btn-sm btn-primary", disabled: true do %>
+                        <%= bs_icon "check-lg" %>
+                      <% end %>
+                    <% end %>
+                  <% end %>
+                </div>
+              <%= render "shared/action_buttons_compact", i: reference %>
+          </td>
+          <% end %>
+      </tr>
+
+      </tr>
+    <% end %>
+  </tbody>
+</table>

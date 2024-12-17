@@ -1,5 +1,8 @@
 <% content_for :title, "Issues – References" %>
-<% content_for :help do %>
+<% if params[:issue] == "long_label" %>
+  <% content_for :help do %>
+    <%= render "issues/references/long_label/help" %>
+  <% end %>
 <% end %>
 
 <h2 class="border-bottom">References</h2>
@@ -8,6 +11,13 @@
 
 <turbo-frame id="issues-references-table">
   <%= render "issues/filter_form" %>
-  <%= render "table", references: @references %>
+  <%=
+    case params[:issue]
+    when "long_label"
+      render "issues/references/long_label/table", references: @references 
+    else
+      render "table", references: @references
+    end
+  %>
   <%== pagy_bootstrap_nav(@pagy) %>
 </turbo-frame>

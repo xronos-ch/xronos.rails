@@ -6,16 +6,50 @@
 
   <%= render "form" %>
 
-  <h2>Results</h2>
+  <ul class="nav nav-pills mt-5 mb-3">
+    <li class="nav-item">
+      <a class="nav-link<% if @search_type.blank? %> active<% end %>"
+         href="<%= url_for request.params.except(:type) %>">
+        Everything
+        <% if params[:q].present? %><span class="badge text-bg-info"><%= @n_results %></span><% end %>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link<% if @search_type.present? and @search_type == "Site" %> active<% end %>"
+         href="<%= url_for request.params.merge(type: "Site") %>">
+        <%= Site.label.humanize.pluralize %>
+        <% if params[:q].present? %><span class="badge text-bg-info"><%= @n_sites %></span><% end %>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link<% if @search_type.present? and @search_type == "C14" %> active<% end %>"
+         href="<%= url_for request.params.merge(type: "C14") %>">
+        <%= C14.label.humanize.pluralize %>
+        <% if params[:q].present? %><span class="badge text-bg-info"><%= @n_c14s %></span><% end %>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link<% if @search_type.present? and @search_type == "Reference" %> active<% end %>"
+         href="<%= url_for request.params.merge(type: "Reference") %>">
+        <%= Reference.label.humanize.pluralize %>
+        <% if params[:q].present? %><span class="badge text-bg-info"><%= @n_references %></span><% end %>
+      </a>
+    </li>
+  </ul>
 
-  <% @results.each do |result| %>
-    <%= render result.searchable %>
+  <% if @results.blank? %>
+    <p>No results found. Please try again.</p>
+  <% else %>
+    <div class="row g-3 row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5">
+      <% @results.each do |result| %>
+        <div class="col">
+          <%= render result.searchable %>
+        </div>
+      <% end %>
+    </div>
   <% end %>
 
   <div class="d-flex mt-3">
-    <p class="flex-grow-1">
-      Showing <%= @results.count %> of <%= @pagy.count %> results.
-    </p>
 
     <% unless @pagy.pages == 1 %>
       <%== pagy_bootstrap_nav(@pagy) %>
