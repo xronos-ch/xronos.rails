@@ -28,7 +28,7 @@ class XronosDataController < ApplicationController
   def set_data
     # Initialize data for C14 and Dendro, applying filters and selections
     @c14_data = XronosData.new(filter_params, select_params, :c14)
-    @dendro_data = XronosData.new(filter_params, select_params, :dendro)
+    @dendro_data = XronosData.new(filter_params.except(:c14s, :cals), select_params, :dendro)
   
     # Assign the default data view to @data (e.g., C14 by default)
     @data = @c14_data
@@ -45,7 +45,7 @@ class XronosDataController < ApplicationController
                                .distinct
   
     # Combine site queries and remove duplicates
-    combined_sites_query = "(#{c14_sites.to_sql} UNION #{dendro_sites.to_sql}) AS combined_sites"
+    combined_sites_query = "((#{c14_sites.to_sql}) UNION (#{dendro_sites.to_sql})) AS combined_sites"
     @sites = Site.from(combined_sites_query).select("site_id, lng, lat, site_name").distinct
   end
 
