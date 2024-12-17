@@ -1,7 +1,47 @@
-<article class="p-3 mb-3 bg-light">
-  <h3 class="h4"><%= link_to site.name, site %></h3>
-  <p class="mb-0 d-flex align-items-center">
-    <%= xr_icon Site, {}, { class: "me-1", style: "height: 1.5rem;" } %>
-    <span><%= Site.label.humanize %> in <%= site.country %></span>
-  </p>
+<article class="card">
+
+  <div class="card-header">
+    <%= xr_icon Site, {}, { class: "img-fluid", style: "width: auto; height: 1.1rem;" } %>
+    <%= Site.label.humanize %>
+  </div>
+
+  <div class="card-body">
+    <h1 class="card-title h4">
+      <%= link_to site.name, site %>
+    </h1>
+    <% if site.site_names.any? %>
+      <h2 class="card-subtitle h6 mb-2 text-body-secondary">
+        <%= site.site_names.pluck(:name).join(", ") %>
+      </h2>
+    <% end %>
+
+    <p class="card-text">
+      <%= site.site_types.any? ? site.site_types.pluck(:name).to_sentence.humanize : "Archaeological site" %>
+      <% unless site.country.blank? %>in <%= site.country %><% end %>
+      <% unless site.coordinates.blank? %>(<%= site.coordinates.to_s("dd") %>)<% end %>
+    </p>
+
+  </div>
+
+  <div class="card-footer">
+    <%= link_to site_path(site, anchor: "site-c14s"), 
+      class: "card-link fw-semibold",
+      title: C14.label.humanize.pluralize do %>
+      <%= xr_icon C14, {}, { style: "width: auto; height: 1.1rem;" } %>
+      <%= site.c14s.count %>
+    <% end %>
+    <%= link_to site_path(site, anchor: "site-typos"), 
+      class: "card-link fw-semibold",
+      title: Typo.label.humanize.pluralize do %>
+      <%= xr_icon Typo, {}, { style: "width: auto; height: 1.1rem;" } %>
+      <%= site.typos.count %>
+    <% end %>
+    <%= link_to site_path(site, anchor: "site-references"), 
+      class: "card-link fw-semibold",
+      title: Reference.label.humanize.pluralize do %>
+      <%= xr_icon Reference, {}, { style: "width: auto; height: 1.1rem;" } %>
+      <%= site.references.count %>
+    <% end %>
+  </div>
+
 </article>
