@@ -6,7 +6,10 @@ class WikidataItem
     commonswiki: "https://commons.wikipedia.org/wiki/"
   }.with_indifferent_access
 
+  BASE_URL = "https://www.wikidata.org/wiki/"
+  
   def initialize(qid)
+    @qid = qid
     attributes = Wikidata::Item.find(prepend_q(qid))
     attributes.each do |attr,val|
       instance_variable_set("@#{attr}", val)
@@ -29,6 +32,14 @@ class WikidataItem
   def request_wikipedia_extract(lang = "en")
     title = sitelink_title(lang + "wiki")
     @wikipedia_extract = WikipediaExtract.new(title, lang)
+  end
+  
+  def qcode
+    "Q#{@qid}"
+  end
+
+  def url
+    BASE_URL + qcode
   end
 
   protected

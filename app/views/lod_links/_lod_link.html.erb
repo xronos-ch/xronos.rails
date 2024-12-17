@@ -11,7 +11,7 @@
                 Wikidata
               </dt>
               <dd class="col-sm text-sm-end">
-                <%= link_to @wikidata_link.qcode, @wikidata_link.url, title: "#{@wikidata_link.title} - Wikidata" %>
+                <%= link_to @wikidata_link.item.qcode, @wikidata_link.item.url, title: "#{@wikidata_link.title} - Wikidata" %>
                 <% if item.present? %>(<%= item.label("en") %>)<% end %>
 			    <% if @wikidata_link.status == "pending" %>
 			      <span class="text-muted">

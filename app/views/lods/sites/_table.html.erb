@@ -51,11 +51,11 @@
         <td class="font-monospace text-end"><%= site.typos_count %></td>
         <td class="font-monospace text-end">
           <% if site.wikidata_link && site.wikidata_link.status == "approved" %>
-            <%= link_to site.wikidata_link.external_id, site.wikidata_link.url %>
+            <%= link_to site.wikidata_link.external_id, site.wikidata_link.request_item.url %>
           <% elsif site.wikidata_link && site.wikidata_link.status == "pending" %>
             <i>Suggestion: <%= site.wikidata_link.external_id %>: 
               <%= link_to "#{site.wikidata_link.data['label']} (#{site.wikidata_link.data['description']})", 
-                          site.wikidata_link.url, target: "_blank" %>
+                          site.wikidata_link.request_item.url, target: "_blank" %>
             </i>
           <% else %>
             <span class="text-muted">No suggestions</span>

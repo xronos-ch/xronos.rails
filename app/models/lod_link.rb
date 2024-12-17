@@ -21,14 +21,6 @@ class LodLink < ApplicationRecord
   include Turbo::Broadcastable
   include Versioned
 
-  SITE_URL = {
-    enwiki: "https://en.wikipedia.org/wiki/",
-    commonswiki: "https://commons.wikipedia.org/wiki/"
-  }
-  
-  BASE_URL = "https://www.wikidata.org/wiki/"
-  
-
   attr_reader :item
 
   validates :external_id, presence: true, numericality: { only_integer: true }
@@ -41,18 +33,16 @@ class LodLink < ApplicationRecord
   # Scopes for filtering matches
   scope :pending, -> { where(status: "pending") }
   scope :approved, -> { where(status: "approved") }
-
-  def qcode
-    "Q#{external_id}"
-  end
-
-  def url
-    BASE_URL + qcode
+  
+  def item
+    @item ||= request_item
   end
 
   def request_item
-    if source = "Wikidata"
-      @item = WikidataItem.new(external_id)
+    if source == "Wikidata"
+      Rails.cache.fetch("wikidata_item_#{external_id}", expires_in: 24.hours) do
+        WikidataItem.new(external_id)
+      end
     end
   end
 
