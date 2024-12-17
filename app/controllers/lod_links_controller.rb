@@ -4,11 +4,12 @@ class LodLinksController < ApplicationController
   before_action :set_lod_link, only: [:show, :edit, :update, :destroy]
 
   def show
-    @wikidata_link.request_item
-    if @wikidata_link.item.sitelink_title("enwiki").present?
-      @wikidata_link.item.request_wikipedia_extract
+    if source = "Wikidata"
+      @wikidata_link.request_item
+      if @wikidata_link.item.sitelink_title("enwiki").present?
+        @wikidata_link.item.request_wikipedia_extract
+      end
     end
-
     render partial: "lod_link"
   end
 
