@@ -12,7 +12,4 @@ import "./controllers"
 require("@fontsource/inter")
 require("@fontsource/raleway")
 
-//icons
-import { siWikipedia, siWikimediacommons, siWikidata } from 'simple-icons'
-
 ActiveStorage.start()
