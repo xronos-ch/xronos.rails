@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.0.9001 [unreleased]
+
+- Introduced the ability to manage and display external linked data (e.g., Wikidata) within the application
+- Added a new Linked Data section to the site view, providing clear and user-friendly access to external resources
+- Added options for authorized users to add external resource links (e.g., Wikidata entries)
+
 ## 1.0.0.9000 [unreleased]
 
 - Improved search interface; now shows more information and can be filtered by 
