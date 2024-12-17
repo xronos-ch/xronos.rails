@@ -51,7 +51,9 @@ class LodLink < ApplicationRecord
   end
 
   def request_item
-    @item = WikidataItem.new(external_id)
+    if source = "Wikidata"
+      @item = WikidataItem.new(external_id)
+    end
   end
 
   def title
