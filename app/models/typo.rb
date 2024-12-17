@@ -19,7 +19,7 @@
 class Typo < ApplicationRecord
   include XronosDataHelper
   
-  has_paper_trail
+  include Versioned
   acts_as_copy_target # enable CSV exports
 
   validates :name, presence: true

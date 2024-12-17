@@ -20,10 +20,10 @@ class Material < ApplicationRecord
     using: { tsearch: { prefix: true } } # match partial words
 
   has_many :samples, inverse_of: :material
-  has_paper_trail
 
   validates :name, presence: true
 
+  include Versioned
   acts_as_copy_target # enable CSV exports
 
   def self.label
