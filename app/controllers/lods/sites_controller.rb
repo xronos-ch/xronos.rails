@@ -3,8 +3,9 @@ class Lods::SitesController < LodsController
 
   # GET /issues/sites/:issue
   def index
-    if lod_param.present?
-      @sites = Site.send(lod_param)
+    allowed_methods = lods
+    if lod_param.present? && allowed_methods.include?(lod_param.to_sym)
+      @sites = Site.public_send(lod_param)
     else
       @sites = Site.all
     end

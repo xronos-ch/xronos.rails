@@ -11,7 +11,7 @@ class LodsController < ApplicationController
   private
 
   def lods
-    # override, e.g. Site.issues
+    [:issues, :another_allowed_method] # Add all allowed methods here
   end
 
   def lod_param
