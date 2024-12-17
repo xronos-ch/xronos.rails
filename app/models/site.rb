@@ -53,7 +53,7 @@ class Site < ApplicationRecord
   @issues = [ :missing_coordinates, :invalid_coordinates, :missing_country_code ]
   
   include NeedsLods
-  @lods = [ :needs_wikidata_link, :pending_wikidata_link ]
+  @lods = [ :missing_wikidata_link, :pending_wikidata_link ]
 
   include PgSearch::Model
   pg_search_scope :search, 
@@ -200,10 +200,10 @@ class Site < ApplicationRecord
   end
   
   # LODs
-  scope :needs_wikidata_link, -> {
+  scope :missing_wikidata_link, -> {
     where.not(id: LodLink.where(linkable_type: "Site", source: "Wikidata").select(:linkable_id).distinct)
   }
-  def needs_wikidata_link?
+  def missing_wikidata_link?
     wikidata_link.blank?
   end
   
