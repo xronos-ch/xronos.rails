@@ -25,6 +25,9 @@ class LodLink < ApplicationRecord
     enwiki: "https://en.wikipedia.org/wiki/",
     commonswiki: "https://commons.wikipedia.org/wiki/"
   }
+  
+  BASE_URL = "https://www.wikidata.org/wiki/"
+  
 
   attr_reader :item
 

@@ -1,24 +1,10 @@
 <% item = @wikidata_link.item %>
 
 <%= turbo_frame_tag @wikidata_link do %>
-  <div class="row">
-
-    <div class="col-lg">
-      <dl>
-        <div class="row my-2">
-          <dt class="col-sm">
-            <%= simple_icon "wikidata" %>
-            Wikidata
-          </dt>
-          <dd class="col-sm text-sm-end">
-            <%= link_to @wikidata_link.qcode, @wikidata_link.url, title: "#{@wikidata_link.title} - Wikidata" %>
-            <% if item.present? %>(<%= item.label("en") %>)<% end %>
-          </dd>
-        </div>
-
-        <% if item.present? %>
-
-          <% if item.sitelink_url("enwiki").present? %>
+<div class="card-body">
+      <div class="row">
+        <div class="col-lg">
+          <dl>
             <div class="row my-2">
               <dt class="col-sm">
                 <%= simple_icon "wikidata" %>

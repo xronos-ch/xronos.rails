@@ -55,7 +55,7 @@
           <% elsif site.wikidata_link && site.wikidata_link.status == "pending" %>
             <i>Suggestion: <%= site.wikidata_link.external_id %>: 
               <%= link_to "#{site.wikidata_link.data['label']} (#{site.wikidata_link.data['description']})", 
-                          site.wikidata_link.data['url'], target: "_blank" %>
+                          site.wikidata_link.url, target: "_blank" %>
             </i>
           <% else %>
             <span class="text-muted">No suggestions</span>

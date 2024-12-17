@@ -1,33 +1,24 @@
 class WikidataItem
   attr_reader :wikipedia_extract
 
-  validates :qid, presence: true
-
-  belongs_to :wikidata_link, polymorphic: true
-
-  SITE_URLS = {
+  SITE_URL = {
     enwiki: "https://en.wikipedia.org/wiki/",
     commonswiki: "https://commons.wikipedia.org/wiki/"
-  }
+  }.with_indifferent_access
 
-  def qcode
-    "Q#{qid}"
-  end
-
-  def url
-    "https://www.wikidata.org/wiki/#{qcode}"
-  end
-
-  def item
-    Wikidata::Item.find qcode
+  def initialize(qid)
+    attributes = Wikidata::Item.find(prepend_q(qid))
+    attributes.each do |attr,val|
+      instance_variable_set("@#{attr}", val)
+    end
   end
 
   def label(lang = "en")
-    item.labels[lang].value
+    @labels[lang].value
   end
 
   def sitelink_title(site = "enwiki")
-    item.sitelinks[site]["title"]
+    @sitelinks[site]["title"]
   end
 
   def sitelink_url(site = "enwiki")
