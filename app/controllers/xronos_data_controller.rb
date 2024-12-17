@@ -15,9 +15,16 @@ class XronosDataController < ApplicationController
     @raw_filter_params = filter_params
     logger.debug { "Parsed filters: #{@data.filters.inspect}" }
 
+    # Select data based on the 'type' parameter
+    export_data = case params[:type]
+           when "c14" then @c14_data.xrons
+           when "dendro" then @dendro_data.xrons
+           else @data.xrons
+           end
+           
     respond_to do |format|
       format.html { render_index_html }
-      format.json { render json: @data.xrons }
+      format.json { render json: export_data }
       format.geojson { render_geojson }
       format.csv { render_csv }
     end
@@ -26,9 +33,13 @@ class XronosDataController < ApplicationController
   private
 
   def set_data
-    # Initialize data for C14 and Dendro, applying filters and selections
-    @c14_data = XronosData.new(filter_params, select_params, :c14)
-    @dendro_data = XronosData.new(filter_params.except(:c14s, :cals), select_params, :dendro)
+    # Initialize raw filter parameters for C14 and Dendro
+    @c14_filter_params = filter_params
+    @dendro_filter_params = filter_params.except(:c14s, :cals)
+
+    # Initialize data for C14 and Dendro
+    @c14_data = XronosData.new(@c14_filter_params, select_params, :c14)
+    @dendro_data = XronosData.new(@dendro_filter_params, select_params, :dendro)
   
     # Assign the default data view to @data (e.g., C14 by default) temporarily
     @data = @c14_data
@@ -126,14 +137,25 @@ class XronosDataController < ApplicationController
   end
 
   def render_csv
-    query = <<~SQL
-      COPY (
-        SELECT * FROM data_views WHERE id IN (#{@data.xrons.pluck(:id).join(', ')})
-      ) TO STDOUT WITH CSV HEADER
-    SQL
+    # Determine the query based on the 'type' parameter
+    query = case params[:type]
+            when "c14"
+              <<~SQL
+                COPY (
+                  SELECT * FROM data_views WHERE id IN (#{@c14_data.xrons.pluck(:id).join(', ')})
+                ) TO STDOUT WITH CSV HEADER
+              SQL
+            when "dendro" # Preliminary dump the dendro table, ToDo when datastructure is fixed, replace by an related mat_view
+              <<~SQL
+                COPY (
+                  SELECT * FROM dendros WHERE id IN (#{@dendro_data.xrons.pluck(:id).join(', ')})
+                ) TO STDOUT WITH CSV HEADER
+              SQL
+            end
 
+    # Fetch CSV data and render it
     csv_data = fetch_csv_data(query)
-    render plain: csv_data, content_type: 'text/csv', filename: "data_#{Date.today}.csv"
+    render plain: csv_data, content_type: 'text/csv', filename: "#{params[:type] || 'data'}_#{Date.today}.csv"
   end
 
   def fetch_csv_data(query)
