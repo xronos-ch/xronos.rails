@@ -106,6 +106,9 @@ gem 'bibtex-ruby'
 gem 'citeproc-ruby'
 gem 'csl-styles'
 
+# Data import
+gem 'roo' # Read CSV, XLSX, XLSM, ODS
+
 # Session store backed by an Active Record class to avoid cookie overflow with 
 # lasso
 gem 'activerecord-session_store'
