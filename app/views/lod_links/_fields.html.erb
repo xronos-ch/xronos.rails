@@ -8,6 +8,12 @@
     <%= f.text_field :external_id, prepend: "Q", hide_label: true, placeholder: "Enter QID" %>
   </div>
 
+  <!-- Status Checkbox -->
+<div class="form-check">
+  <%= f.hidden_field :status, value: "pending" %>
+  <%= f.check_box :status, { class: "form-check-input", id: "status_checkbox", label: "Approve" }, "approved", "pending" %>
+</div>
+
   <!-- Suggestions from Lod Match -->
   <p>Suggestion from Name:</p>
   <ul>
