@@ -18,7 +18,8 @@
 
   <div class="h5">
     <%= xr_icon Dendro, {}, { style: "width: auto; height: 1.25rem;" } %>
-    Dendrochronological series from 
+	<% count = @dendro.measurements.length %>
+	<%= count > 0 ? "Dendrochronological series with #{count == 1 ? '1 ring' : "#{count} rings"}" : "No rings measured" %> from
     <%= link_to @dendro.site.name, @dendro.site %>,
     c. <%= @dendro.start_year %> to <%= @dendro.end_year %> <%= @dendro.is_anchored ? "cal BP" : "floating years"%>
   </div>
