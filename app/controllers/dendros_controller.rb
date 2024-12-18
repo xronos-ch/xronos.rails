@@ -1,3 +1,5 @@
+require 'csv'
+
 class DendrosController < ApplicationController
   include Tabulatable
   include Pagy::Backend
@@ -97,6 +99,23 @@ class DendrosController < ApplicationController
     respond_to do |format|
       format.html { redirect_to dendros_path, status: :see_other, notice: "Dendro was successfully destroyed." }
       format.json { head :no_content }
+    end
+  end
+  
+  def export_measurements_csv
+    @dendro = Dendro.find(params[:id])
+
+    csv_data = CSV.generate(headers: true) do |csv|
+      csv << ["Year", "Width (mm)"]
+      @dendro.measurements.each do |measurement|
+        csv << [measurement["year"], measurement["value"]]
+      end
+    end
+    
+    file_name = "dendro_measurements_#{@dendro.series_code.parameterize}.csv"
+    
+    respond_to do |format|
+      format.csv { send_data csv_data, filename: file_name }
     end
   end
 

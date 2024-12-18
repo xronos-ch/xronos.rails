@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-  resources :dendros
   use_doorkeeper
 
   # Static pages
@@ -45,6 +44,12 @@ Rails.application.routes.draw do
   end
   resources :typos do
     get 'search', on: :collection
+  end
+  
+  resources :dendros do
+    member do
+      get :export_measurements_csv
+    end
   end
 
   # Secondary data resources (no independent show/index views)
