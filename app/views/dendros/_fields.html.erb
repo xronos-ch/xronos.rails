@@ -18,6 +18,12 @@
   </div>
 </div>
 
+<div class="row">
+  <div class="col">
+    <%= f.check_box :waney_edge, label: "Has Waney Edge?" %>
+  </div>
+</div
+
 <%# f.collection_select :sample_id, 
   Sample.joins(:context).where('contexts.site_id' => @dendro.site.id), 
   :id, :position_description,

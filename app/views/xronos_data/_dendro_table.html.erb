@@ -6,6 +6,7 @@
         <th>Series</th>
         <th>Start Year</th>
         <th>End Year</th>
+        <th>Waney Edge</th>
         <th>Is Anchored?</th>
       </tr>
     </thead>
@@ -20,6 +21,7 @@
           <td><%= dendro.start_year.present? ? dendro.start_year : na_value %></td>
           <td><%= dendro.end_year.present? ? dendro.end_year : na_value %></td>
           <td><%= dendro.is_anchored.present? ? dendro.is_anchored : na_value %></td>
+		  <td><%= dendro.waney_edge.present? ? dendro.waney_edge : na_value %></td>
         </tr>
       <% end %>
     </tbody>

@@ -6,11 +6,11 @@
 <main class="container my-5">
 
   <%= render "header" %>
-
-  <%# Measurement Section %>
-  <section id="dendro-measurement" class="my-5">
-    <h2><%= bs_icon "rulers" %> Measurement</h2>
-    <%= render "dendro_measurement", dendro: @dendro %>
+  
+  <%# Context Section %>
+  <section id="dendro-context" class="my-5">
+    <h2><%= bs_icon "diagram-3" %> Context</h2>
+    <%= render "dendro_context", dendro: @dendro %>
   </section>
 
   <%# Plot Section %>
@@ -28,12 +28,18 @@
       </div>
     </div>
   </section>
-
-  <%# Context Section %>
-  <section id="dendro-context" class="my-5">
-    <h2><%= bs_icon "diagram-3" %> Context</h2>
-    <%= render "dendro_context", dendro: @dendro %>
+  
+  <%# Measurement Section %>
+  <section id="dendro-measurement" class="my-5">
+    <h2><%= bs_icon "rulers" %> Measurement</h2>
+    <%= render "dendro_measurement", dendro: @dendro %>
   </section>
+  
+<%# Chronology Section %>
+<section id="dendro-chronology" class="my-5">
+  <h2><%= bs_icon "clock" %> Chronology</h2>
+  <%= render "dendro_chronology", dendro: @dendro %>
+</section>
 
   <%# Measurements Table Section %>
   <section id="dendro-values" class="my-5">

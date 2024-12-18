@@ -24,6 +24,7 @@
 #  project_title      :string
 #  series_code        :string           not null
 #  start_year         :integer
+#  waney_edge         :boolean
 #  wood_completeness  :jsonb
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null

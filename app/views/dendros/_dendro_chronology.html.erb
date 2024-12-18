@@ -1,0 +1,26 @@
+<div class="mb-4">
+  <h5>Chronology Details</h5>
+  <% if dendro.chronology.present? %>
+    <dl class="row">
+      <dt class="col-sm-4">Chronology Name</dt>
+      <dd class="col-sm-8 font-monospace"><%= dendro.chronology.name %></dd>
+
+      <dt class="col-sm-4">Chronology Type</dt>
+      <dd class="col-sm-8 font-monospace"><%= dendro.chronology.chronology_type %></dd>
+
+      <dt class="col-sm-4">Method</dt>
+      <dd class="col-sm-8 font-monospace"><%= dendro.chronology.method %></dd>
+
+      <dt class="col-sm-4">Standardizing Method</dt>
+      <dd class="col-sm-8 font-monospace"><%= dendro.chronology.standardizing_method || 'N/A' %></dd>
+
+      <dt class="col-sm-4">Certainty</dt>
+      <dd class="col-sm-8 font-monospace"><%= dendro.chronology.certainty || 'N/A' %></dd>
+
+      <dt class="col-sm-4">Parameters</dt>
+      <dd class="col-sm-8"><%= dendro.chronology.parameters.present? ? dendro.chronology.parameters.to_json : 'N/A' %></dd>
+    </dl>
+  <% else %>
+    <p>No associated chronology available.</p>
+  <% end %>
+</div>

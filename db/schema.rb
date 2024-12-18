@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_12_16_093633) do
+ActiveRecord::Schema[7.2].define(version: 2024_12_18_102909) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -158,6 +158,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_16_093633) do
     t.jsonb "wood_completeness", default: {}
     t.bigint "chronology_id"
     t.jsonb "parameters", default: {}
+    t.boolean "waney_edge"
     t.index ["chronology_id"], name: "index_dendros_on_chronology_id"
     t.index ["measurements"], name: "index_dendros_on_measurements", using: :gin
     t.index ["sample_id"], name: "index_dendros_on_sample_id"

@@ -120,6 +120,7 @@ class DendrosController < ApplicationController
       :start_year,
       :end_year,
       :is_anchored,
+      :waney_edge,
       :offset,
       :measurements,
         {sample_attributes: [

@@ -1,21 +1,103 @@
-<dl class="row">
+<div class="container">
+  <!-- Group 1: Basic Details -->
+  <div class="mb-4">
+    <h5>Basic Details</h5>
+    <dl class="row">
+      <dt class="col-sm-4">Series Code</dt>
+      <dd class="col-sm-8 font-monospace"><%= dendro.series_code %></dd>
+      
+      <dt class="col-sm-4">Name</dt>
+      <dd class="col-sm-8 font-monospace"><%= dendro.name %></dd>
 
-  <dt>Start Year</dt>
-  <dd class="font-monospace"><%= dendro.start_year %></dd>
-  
-  <dt>End Year</dt>
-  <dd class="font-monospace"><%= dendro.end_year %></dd>
+      <dt class="col-sm-4">Description</dt>
+      <dd class="col-sm-8"><%= dendro.description.present? ? dendro.description : 'N/A' %></dd>
+    </dl>
+  </div>
 
-  <dt>Sample material</dt>
-  <dd><%= dendro.sample.material.present? ? dendro.sample.material.name : na_value %></dd>
+  <!-- Group 2: Temporal Details -->
+  <div class="mb-4">
+    <h5>Temporal Details</h5>
+    <dl class="row">
+      <dt class="col-sm-4">Start Year</dt>
+      <dd class="col-sm-8 font-monospace"><%= dendro.start_year %></dd>
 
-  <dt>Sample taxon</dt>
-  <dd>
-    <% if dendro.sample.taxon.present? %>
-      <%= render dendro.sample.taxon %>
-    <% else %>
-      <%= na_value %>
-    <% end %>
-  </dd>
+      <dt class="col-sm-4">End Year</dt>
+      <dd class="col-sm-8 font-monospace"><%= dendro.end_year %></dd>
 
-</dl>
+      <dt class="col-sm-4">Is Anchored</dt>
+      <dd class="col-sm-8 font-monospace"><%= dendro.is_anchored ? 'Yes' : 'No' %></dd>
+
+      <dt class="col-sm-4">Offset</dt>
+      <dd class="col-sm-8 font-monospace"><%= dendro.offset || 'N/A' %></dd>
+    </dl>
+  </div>
+
+  <!-- Group 3: Object Details -->
+  <div class="mb-4">
+    <h5>Object Details</h5>
+    <dl class="row">
+      <dt class="col-sm-4">Object Title</dt>
+      <dd class="col-sm-8 font-monospace"><%= dendro.object_title || 'N/A' %></dd>
+
+      <dt class="col-sm-4">Object Type</dt>
+      <dd class="col-sm-8 font-monospace"><%= dendro.object_type || 'N/A' %></dd>
+
+      <dt class="col-sm-4">Object Description</dt>
+      <dd class="col-sm-8"><%= dendro.object_description || 'N/A' %></dd>
+
+      <dt class="col-sm-4">Object Dimensions</dt>
+      <dd class="col-sm-8"><%= dendro.object_dimensions.present? ? dendro.object_dimensions.to_json : 'N/A' %></dd>
+    </dl>
+  </div>
+
+  <!-- Group 4: Project Details -->
+  <div class="mb-4">
+    <h5>Project Details</h5>
+    <dl class="row">
+      <dt class="col-sm-4">Project Title</dt>
+      <dd class="col-sm-8 font-monospace"><%= dendro.project_title || 'N/A' %></dd>
+
+      <dt class="col-sm-4">Project Objective</dt>
+      <dd class="col-sm-8"><%= dendro.project_objective || 'N/A' %></dd>
+
+      <dt class="col-sm-4">Project Start Date</dt>
+      <dd class="col-sm-8 font-monospace"><%= dendro.project_start_date ? dendro.project_start_date.strftime('%Y-%m-%d') : 'N/A' %></dd>
+
+      <dt class="col-sm-4">Project End Date</dt>
+      <dd class="col-sm-8 font-monospace"><%= dendro.project_end_date ? dendro.project_end_date.strftime('%Y-%m-%d') : 'N/A' %></dd>
+    </dl>
+  </div>
+
+  <!-- Group 5: Sample Details -->
+  <div class="mb-4">
+    <h5>Sample Details</h5>
+    <dl class="row">
+      <dt class="col-sm-4">Material</dt>
+      <dd class="col-sm-8"><%= dendro.sample.material.present? ? dendro.sample.material.name : 'N/A' %></dd>
+
+      <dt class="col-sm-4">Taxon</dt>
+      <dd class="col-sm-8">
+        <% if dendro.sample.taxon.present? %>
+          <%= render dendro.sample.taxon %>
+        <% else %>
+          N/A
+        <% end %>
+      </dd>
+    </dl>
+  </div>
+
+  <!-- Group 6: Completeness and Parameters -->
+  <div class="mb-4">
+    <h5>Completeness and Parameters</h5>
+    <dl class="row">
+      <dt class="col-sm-4">Wood Completeness</dt>
+      <dd class="col-sm-8"><%= dendro.wood_completeness.present? ? dendro.wood_completeness.to_json : 'N/A' %></dd>
+
+      <dt class="col-sm-4">Parameters</dt>
+      <dd class="col-sm-8"><%= dendro.parameters.present? ? dendro.parameters.to_json : 'N/A' %></dd>
+
+      <dt class="col-sm-4">Waney Edge</dt>
+      <dd class="col-sm-8"><%= dendro.waney_edge ? 'Present' : 'Absent' %></dd>
+    </dl>
+  </div>
+</div>

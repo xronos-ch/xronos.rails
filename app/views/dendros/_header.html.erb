@@ -1,31 +1,39 @@
 <header id="dendro-header">
 
-  <div class="d-flex">
+	<div class="d-flex">
 
-    <h1 class="display-3"><%= @dendro.name %></h1>
+		<h1 class="display-3"><%= @dendro.name %></h1>
 
-    <% if can? :edit, @dendro %>
-      <div class="ms-auto">
-        <%= link_to edit_icon,
-          edit_dendro_path(@dendro), 
-          title: "Edit dendrochronological series",
-          class: "btn btn-sm btn-outline-primary",
-          data: { turbo_frame: "remote_modal" } %>
-      </div>
-    <% end %>
+		<% if can? :edit, @dendro %>
+		<div class="ms-auto">
+			<%= link_to edit_icon,
+			edit_dendro_path(@dendro), 
+			title: "Edit dendrochronological series",
+			class: "btn btn-sm btn-outline-primary",
+				data: { turbo_frame: "remote_modal" } %>
+			</div>
+			<% end %>
 
-  </div>
+		</div>
 
-  <div class="h5">
-    <%= xr_icon Dendro, {}, { style: "width: auto; height: 1.25rem;" } %>
-	<% count = @dendro.measurements.length %>
-	<%= count > 0 ? "Dendrochronological series with #{count == 1 ? '1 ring' : "#{count} rings"}" : "No rings measured" %> from
-    <%= link_to @dendro.site.name, @dendro.site %>,
-    c. <%= @dendro.start_year %> to <%= @dendro.end_year %> <%= @dendro.is_anchored ? "cal BP" : "floating years"%>
-  </div>
+		<div class="h5">
+			<%= xr_icon Dendro, {}, { style: "width: auto; height: 1.25rem;" } %>
+			<% count = @dendro.measurements.length %>
+			<%= count > 0 ? "Dendrochronological series with #{count == 1 ? '1 ring' : "#{count} rings"}" : "No rings measured" %>
+  
+			<% if @dendro.waney_edge %>
+			<span class="text-success">(with waney edge)</span>
+			<% else %>
+			<span class="text-danger">(without waney edge)</span>
+			<% end %>
 
-  <div class="my-3">
-    <%= render "shared/record_metadata", record: @dendro %>
-  </div>
+			<br>from
+			<%= link_to @dendro.site.name, @dendro.site %>,
+			c. <%= @dendro.start_year %> to <%= @dendro.end_year %> <%= @dendro.is_anchored ? "cal BP" : "floating years" %>
+		</div>
 
-</header>
+		<div class="my-3">
+			<%= render "shared/record_metadata", record: @dendro %>
+		</div>
+
+	</header>
