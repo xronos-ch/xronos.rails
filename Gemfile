@@ -14,7 +14,7 @@ gem 'pg'
 # App server
 gem 'puma'
 
-# Data cache (required to run Action Cable in production)
+# In-memory cache (also required for Turbo broadcasts and ActionCable)
 gem 'redis', '~> 4.0'
 
 # Reduce boot times through caching (required in config/boot.rb)
@@ -94,13 +94,6 @@ gem 'countries'
 gem 'country_select'
 gem 'i18n_data'
 
-# Geocoding
-gem 'geocoder'
-
-# GBIF Backbone Taxonomy
-gem 'faraday', '~> 2.5', '>= 2.5.2'
-gem 'gbifrb'
-
 # Bibliographic data
 gem 'bibtex-ruby'
 gem 'citeproc-ruby'
@@ -109,6 +102,20 @@ gem 'csl-styles'
 # Session store backed by an Active Record class to avoid cookie overflow with 
 # lasso
 gem 'activerecord-session_store'
+
+# EXTERNAL APIS ---------------------------------------------------------------
+
+gem 'faraday', '>= 2.5.2'
+
+# Geocoding
+gem 'geocoder'
+
+# GBIF (Backbone Taxonomy)
+gem 'gbifrb'
+
+# Wikidata & Wikipedia
+gem 'wikidata-client', require: 'wikidata'
+gem 'wikipedia-client', require: 'wikipedia'
 
 # VIEW HELPERS ----------------------------------------------------------------
 

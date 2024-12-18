@@ -1,0 +1,13 @@
+<div class="my-3">
+  <%= bootstrap_form_with method: :get, layout: :inline, data: { turbo_action: :advance } do |f| %>
+    <%# Preserve GET params, e.g. ordering %>
+    <% request.query_parameters.each do |key, value| %>
+      <%= hidden_field_tag key, value %>
+    <% end %>
+    <%= f.text_field :search,
+      value: params.fetch(:search, nil),
+      label: "Filter", label_as_placeholder: true,
+      class: "form-control-sm",
+      append: f.button(bs_icon("filter"), class: "btn btn-sm btn-outline-primary") %>
+  <% end %>
+</div>

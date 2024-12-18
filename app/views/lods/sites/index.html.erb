@@ -1,0 +1,17 @@
+<% content_for :title, "LODs – Sites" %>
+
+<h2 class="border-bottom">Sites</h2>
+
+<%= render "lods/nav", model: Site, base_path: lods_sites_path %>
+
+<turbo-frame id="lods-sites-table">
+
+  <%= render "lods/filter_form" %>
+
+  <%=
+      render "table", sites: @sites
+  %>
+
+  <%== pagy_bootstrap_nav(@pagy) %>
+
+</turbo-frame>
