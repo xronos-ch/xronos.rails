@@ -5,8 +5,7 @@
 
   <%= render "header", site: @site %>
 
-  <section id="site-types my-5">
-
+  <section id="site-types" class="my-5">
     <dt><%= "Site type".pluralize(@site.site_types.count) %></dt>
     <dd>
       <% if @site.site_types.any? %>
@@ -15,8 +14,6 @@
         <%= na_value %>
       <% end %>
     </dd>
-    </div>
-
   </section>
 
   <section id="site-location" class="my-5">
@@ -24,7 +21,7 @@
     <div class="row">
 
       <div class="col-lg-8">
-        <% unless @site.lat.blank? or @site.lng.blank? %>
+        <% unless @site.lat.blank? || @site.lng.blank? %>
           <div style="height: 30rem; position: relative;"
                data-controller="map"
                data-map-style-value="show_site"
@@ -42,30 +39,54 @@
       </div>
 
       <div class="col-lg-4">
-        <div>
-          <dl>
+        <dl>
+          <dt>Coordinates (degrees)</dt>
+          <dd class="font-monospace">
+            <%= @site.coordinates.present? ? @site.coordinates.to_s("dd") : na_value %>
+          </dd>
 
-            <dt>Coordinates (degrees)</dt>
-            <dd class="font-monospace">
-              <%= @site.coordinates.present? ? @site.coordinates.to_s("dd") : na_value %>
-            </dd>
+          <dt>Coordinates (<abbr title="Degrees, minutes, seconds">DMS</abbr>)</dt>
+          <dd class="font-monospace">
+            <%= @site.coordinates.present? ? @site.coordinates.to_s("dms") : na_value %>
+          </dd>
 
-            <dt>Coordinates (<abbr title="Degrees, minutes, seconds">DMS</abbr>)</dt>
-            <dd class="font-monospace">
-              <%= @site.coordinates.present? ? @site.coordinates.to_s("dms") : na_value %>
-            </dd>
-
-            <dt>Country (<a href="https://www.iso.org/iso-3166-country-codes.html">ISO&nbsp;3166<a>)</a></dt>
-            <dd class="font-monospace">
-              <%= render "country", site: @site %>
-              (<%= @site.country_code.present? ? @site.country_code : na_value %>)
-            </dd>
-
-          </dl>
-        </div>
+          <dt>Country (<a href="https://www.iso.org/iso-3166-country-codes.html">ISO&nbsp;3166</a>)</dt>
+          <dd class="font-monospace">
+            <%= render "country", site: @site %>
+            (<%= @site.country_code.present? ? @site.country_code : na_value %>)
+          </dd>
+        </dl>
       </div>
 
     </div>
+  </section>
+
+  <section id="site-external-links" class="bg-white p-3 my-5 border rounded shadow-sm">
+    <h3 class="text-muted mb-3">
+      <i class="bi-link-45deg"></i> Linked Data
+    </h3>
+
+    <% if @site.wikidata_link.present? %>
+      <div class="d-flex align-items-center justify-content-between">
+        <%= turbo_frame_tag @site.wikidata_link, src: @site.wikidata_link %>
+        <% if can? :manage, LodLink %>
+          <%= floating_button edit_lod_link_path(@site.wikidata_link),
+                data: { turbo_frame: "remote_modal" } %>
+        <% end %>
+      </div>
+    <% else %>
+      <p>There is no linked data available for this record.</p>
+      <% if can? :manage, LodLink %>
+        <ul class="list-unstyled">
+          <li>
+            <%= link_to "Add Wikidata link", 
+                  new_lod_link_path(lod_link: { linkable_type: "Site", linkable_id: @site }),
+                  data: { turbo_frame: "remote_modal" },
+                  class: "text-primary" %>
+          </li>
+        </ul>
+      <% end %>
+    <% end %>
   </section>
 
   <% unless @c14s.nil? %>
@@ -78,9 +99,9 @@
         </h2>
         <div class="ms-auto">
           <%= link_to bs_icon("download"), 
-            c14s_path(format: :csv, c14: { sample: { contexts: { site_id: @site.id } } }), 
-            class: "btn btn-sm btn-outline-primary", 
-            title: "Download CSV" %>
+                c14s_path(format: :csv, c14: { sample: { contexts: { site_id: @site.id } } }), 
+                class: "btn btn-sm btn-outline-primary",
+                title: "Download CSV" %>
         </div>
       </div>
 
@@ -91,14 +112,13 @@
         <% end %>
         <% if can? :create, :c14 %>
           <%= link_to create_icon + "Add radiocarbon date", 
-            new_c14_path(site: @site),
-            class: "btn btn-outline-primary",
-            data: { turbo_frame: "remote_modal" } %>
+                new_c14_path(site: @site),
+                class: "btn btn-outline-primary",
+                data: { turbo_frame: "remote_modal" } %>
         <% end %>
       </turbo-frame>
-      </div>
     </section>
-  <%end%>
+  <% end %>
 
   <% unless @typos.nil? %>
     <section id="site-typos" class="my-5">
@@ -110,11 +130,12 @@
         </h2>
         <div class="ms-auto">
           <%= link_to bs_icon("download"), 
-            typos_path(format: :csv, typo: { sample: { contexts: { site_id: @site.id } } }), 
-            class: "btn btn-sm btn-outline-primary", 
-            title: "Download CSV" %>
+                typos_path(format: :csv, typo: { sample: { contexts: { site_id: @site.id } } }), 
+                class: "btn btn-sm btn-outline-primary",
+                title: "Download CSV" %>
         </div>
       </div>
+
       <turbo-frame id="site-typos-table">
         <%= render "typos/table", typos: @typos %>
         <% unless @pagy_typos.pages <= 1 %>
@@ -158,10 +179,8 @@
     <h2>
       <%= xr_icon Reference, {}, style: "width: auto; height: 2rem" %>
       <%= Reference.label.humanize.pluralize %>
-      <!-- <small class="text-muted">(<%# @site.recursive_references.count %>)</small>-->
     </h2>
-    <%= render "references/bibliography", 
-      references: @site.recursive_references %>
+    <%= render "references/bibliography", references: @site.recursive_references %>
   </section>
 
   <section id="changelog" class="my-5">

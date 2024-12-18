@@ -53,6 +53,9 @@ Rails.application.routes.draw do
   end
   resources :taxon_usages, only: :show
 
+  # External data resources
+  resources :lod_links, except: :index
+
   # User management
   devise_for :users, controllers: {
       registrations: 'registrations',
@@ -124,6 +127,16 @@ Rails.application.routes.draw do
       collection do
         get ":issue", action: :index,
           constraints: lambda { |req| Taxon.issues.include?(req.params[:issue].to_sym) }
+      end
+    end
+  end
+  
+  # LODs
+  namespace :lods do
+    resources :sites, only: :index do
+      collection do
+        get ":lod", action: :index,
+          constraints: lambda { |req| Site.lods.include?(req.params[:lod].to_sym) }
       end
     end
   end

@@ -1,0 +1,26 @@
+<nav class="d-flex my-3">
+  <ul class="nav nav-pills">
+
+    <li class="nav-item">
+      <a href="<%= base_path %>" 
+         class="nav-link <%= active_class(base_path) %>"
+         <%= active_aria(base_path) %>>
+         All
+         <span class="badge text-bg-info"><%= model.count %></span>
+      </a>
+    </li>
+
+    <% model.lods.each do |lod| %>
+      <li class="nav-item">
+        <% lod_path = base_path + "/" + lod.to_s %>
+        <a href="<%= lod_path %>" 
+           class="nav-link <%= active_class(lod_path) %>"
+           <%= active_aria(lod_path) %>
+           title="<%= lod_description(lod) %>">
+           <%= lod_label(lod) %>
+           <span class="badge text-bg-info"><%= model.send(lod).count %></span>
+        </a>
+      </li>
+    <% end %>
+  </ul>
+</nav>

@@ -1,0 +1,84 @@
+<% item = @wikidata_link.item %>
+
+<%= turbo_frame_tag @wikidata_link do %>
+<div class="card-body">
+      <div class="row">
+        <div class="col-lg">
+          <dl>
+            <div class="row my-2">
+              <dt class="col-sm">
+                <%= simple_icon "wikidata" %>
+                Wikidata
+              </dt>
+              <dd class="col-sm text-sm-end">
+                <%= link_to @wikidata_link.item.qcode, @wikidata_link.item.url, title: "#{@wikidata_link.title} - Wikidata" %>
+                <% if item.present? %>(<%= item.label("en") %>)<% end %>
+			    <% if @wikidata_link.status == "pending" %>
+			      <span class="text-muted">
+			        <%= bs_icon "exclamation-circle",
+			          class: "text-warning",
+			          data: { "bs-toggle": "tooltip", controller: "tooltips" },
+			          title: "Wikidata link inferred from site name."
+			        %>
+			      </span>
+			    <% end %>
+              </dd>
+            </div>
+
+            <% if item.present? %>
+              <% if item.sitelink_url("enwiki").present? && item.sitelink_title("enwiki").present? %>
+                <div class="row my-2">
+                  <dt class="col-sm">
+                    <%= simple_icon "wikipedia" %>
+                    Wikipedia
+                  </dt>
+                  <dd class="col-sm text-sm-end">
+                    <span class="badge text-bg-info">en</span>
+                    <%= link_to item.sitelink_title("enwiki"), item.sitelink_url("enwiki"), title: "#{item.sitelink_title('enwiki')} - Wikipedia" %>
+				    <% if @wikidata_link.status == "pending" %>
+				      <span class="text-muted">
+				        <%= bs_icon "exclamation-circle",
+				          class: "text-warning",
+				          data: { "bs-toggle": "tooltip", controller: "tooltips" },
+				          title: "Wikipedia link link inferred from site name."
+				        %>
+				      </span>
+				    <% end %>
+                  </dd>
+                </div>
+              <% end %>
+
+              <% if item.sitelink_url("commonswiki").present? && item.sitelink_title("commonswiki").present? %>
+                <div class="row my-2">
+                  <dt class="col-sm">
+                    <%= simple_icon "wikimediacommons" %>
+                    Wikimedia Commons
+                  </dt>
+                  <dd class="col-sm text-sm-end">
+                    <%= link_to item.sitelink_title("commonswiki"), item.sitelink_url("commonswiki"), title: "#{item.sitelink_title('commonswiki')} - Wikimedia Commons" %>
+				    <% if @wikidata_link.status == "pending" %>
+				      <span class="text-muted">
+				        <%= bs_icon "exclamation-circle",
+				          class: "text-warning",
+				          data: { "bs-toggle": "tooltip", controller: "tooltips" },
+				          title: "Wikicommons link inferred from site name."
+				        %>
+				      </span>
+				    <% end %>
+                  </dd>
+                </div>
+              <% end %>
+            <% end %>
+          </dl>
+        </div>
+
+        <% if item.wikipedia_extract.present? %>
+          <div class="col-lg">
+            <div class="alert alert-light shadow-sm">
+              <%= render item.wikipedia_extract %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+<% end %>
