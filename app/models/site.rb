@@ -227,17 +227,20 @@ class Site < ApplicationRecord
     "wikidata_match_batch/#{Digest::MD5.hexdigest(site_names.sort.join(','))}"
   end
 
-  # Extracts names from the sites
+  # Extracts names from the sites and escapes double quotes
   def self.extract_site_names(sites)
-    sites.pluck(:name).map { |name| "\"#{name}\"@en" }.join(" ")
+    sites.pluck(:name).compact.reject(&:blank?)
   end
 
-  # Builds the SPARQL query
+  # Builds the SPARQL query with proper escaping for double quotes
   def self.build_sparql_query(site_names)
+    escaped_site_names = site_names.map { |name| name.gsub('"', '\"') }
+    formatted_names = escaped_site_names.map { |name| "\"#{name}\"@en" }.join(" ")
+
     <<-SPARQL
       SELECT ?item ?itemLabel ?itemDescription ?name
              (CONCAT("https://www.wikidata.org/wiki/", SUBSTR(STR(?item), 32)) AS ?itemURL) WHERE {
-        VALUES ?name { #{site_names} }
+        VALUES ?name { #{formatted_names} }
         ?item wdt:P31 wd:Q839954.
         ?item rdfs:label ?name.
         SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
