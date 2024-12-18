@@ -1,102 +1,98 @@
 <div class="jumbotron jumbotron-fluid hero mt-0 position-relative hero py-5 shadow">
 
-  <div class="container h-100 d-flex flex-column" style="text-shadow: var(--bs-dark) 0 0 1rem;">
-    <p class="mt-auto mb-5 display-5 fw-bold">Open chronometric data for archaeology</h2>
-    <div class="me-auto mb-auto">
-      <%= render "searches/form" %>
-    </div>
-  </div>
+	<div class="container h-100 d-flex flex-column" style="text-shadow: var(--bs-dark) 0 0 1rem;">
+		<p class="mt-auto mb-5 display-5 fw-bold">Open chronometric data for archaeology</h2>
+			<div class="me-auto mb-auto">
+				<%= render "searches/form" %>
+			</div>
+		</div>
 
-  <span class="hero_caption position-absolute bottom-0 end-0"><small>Photo: <a class="link-light" href="https://unsplash.com/@sahinsezerdincer?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Şahin Sezer Dinçer</a> on <a class="link-light" href="https://unsplash.com/s/photos/hourglass?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></small></span>
+		<span class="hero_caption position-absolute bottom-0 end-0"><small>Photo: <a class="link-light" href="https://unsplash.com/@sahinsezerdincer?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Şahin Sezer Dinçer</a> on <a class="link-light" href="https://unsplash.com/s/photos/hourglass?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></small></span>
 
-</div>
-
-
-<section class="mb-5 py-5 bg-primary text-light shadow">
-  <div class="container my-2 text-center">
-
-    <div class="row">
-
-      <div class="col-sm-6 col-lg-3 my-3">
-        <%= xr_icon Site, { light: true }, { class: "d-block mx-auto mb-2", style: "width: 5rem;" } %>
-        <a href="/sites" class="display-5 link-secondary text-decoration-none" title="Browse sites">
-          <%= number_with_delimiter(Site.count)%>
-        </a>
-        <p class="h4"><%= Site.label.humanize.pluralize %></p>
-      </div>
-
-      <div class="col-sm-6 col-lg-3 my-3">
-        <%= xr_icon C14, { light: true }, { class: "d-block mx-auto mb-2", style: "width: 5rem;" } %>
-        <a href="/c14s" class="display-5 link-secondary text-decoration-none" title="Browse radiocarbon dates">
-          <%= number_with_delimiter(C14.count)%>
-        </a>
-        <p class="h4"><%= C14.label.humanize.pluralize %></p>
-      </div>
-
-      <div class="col-sm-6 col-lg-3 my-3">
-        <%= xr_icon Typo, { light: true }, { class: "d-block mx-auto mb-2", style: "width: 5rem;" } %>
-        <a href="/typos" class="display-5 link-secondary text-decoration-none" title="Browse typological dates">
-          <%= number_with_delimiter(Typo.count)%>
-        </a>
-        <p class="h4"><%= Typo.label.humanize.pluralize %></p>
-      </div>
-
-      <div class="col-sm-6 col-lg-3 my-3 text-dark position-relative">
-        <span class="position-absolute top-0 end-0 text-warning">
-          Coming soon!
-          <%= bs_icon "cone-striped" %>
-        </span>
-        <%= image_tag "icons/dendro.svg", { class: "d-block mx-auto mb-2", style: "width: 5rem;" } %>
-        <a href="#" class="display-5 link-dark text-decoration-none">
-          —
-        </a>
-        <p class="h4">Dendro dates</p>
-      </div>
-
-    </div>
-
-  </div>
-</section>
+	</div>
 
 
-<section class="mb-5">
-  <div class="container my-3">
-    <h3 class="visually-hidden">What is XRONOS?</h3>
-    <div class="row">
-      <div class="col-md">
-        <a href="/data" title="Browse XRONOS data">
-          <%= image_tag "xronos_mapviz.png", width: 640, height: 320, style: "max-width: 100%; height: auto;", alt: "Map showing the density of chronometric records in XRONOS" %>
-        </a>
-      </div>
-      <div class="col-md my-auto">
-        <p class="lead">XRONOS is an open data infrastructure for the backbone of the archaeological record – chronology. It provides open access to published radiocarbon dates and other chronometric data from any period, anywhere in the world.</p>
-        <ul class="nav">
-          <li class="nav-item"><a class="nav-link ps-0 me-3" href="/about">Learn more</a></li>
-          <li class="nav-item"><a class="nav-link" href="/about/contribute">Get involved</a></li>
-        </ul>
-      </div>
-    </div>
-</section>
+	<section class="mb-5 py-5 bg-primary text-light shadow">
+		<div class="container my-2 text-center">
 
-<section class="bg-light">
-  <% unless @news.blank? %>
-    <div class="container my-5">
-      <div class="row">
-        <div class="col col-lg-9 mx-auto">
-          <h3 class="display-5 mb-4">Latest news</h3>
+			<div class="row">
 
-          <% @news.each do |article| %>
-            <%= render "articles/card", article: article %>
-          <% end %>
+				<div class="col-sm-6 col-lg-3 my-3">
+					<%= xr_icon Site, { light: true }, { class: "d-block mx-auto mb-2", style: "width: 5rem;" } %>
+					<a href="/sites" class="display-5 link-secondary text-decoration-none" title="Browse sites">
+						<%= number_with_delimiter(Site.count)%>
+					</a>
+					<p class="h4"><%= Site.label.humanize.pluralize %></p>
+				</div>
 
-          <a href="/news" class="btn btn-lg btn-info">More news</a>
-        </div>
-      </div>
+				<div class="col-sm-6 col-lg-3 my-3">
+					<%= xr_icon C14, { light: true }, { class: "d-block mx-auto mb-2", style: "width: 5rem;" } %>
+					<a href="/c14s" class="display-5 link-secondary text-decoration-none" title="Browse radiocarbon dates">
+						<%= number_with_delimiter(C14.count)%>
+					</a>
+					<p class="h4"><%= C14.label.humanize.pluralize %></p>
+				</div>
 
-    </div>
-  <% end %>
-  </div>
-</section>
+				<div class="col-sm-6 col-lg-3 my-3">
+					<%= xr_icon Typo, { light: true }, { class: "d-block mx-auto mb-2", style: "width: 5rem;" } %>
+					<a href="/typos" class="display-5 link-secondary text-decoration-none" title="Browse typological dates">
+						<%= number_with_delimiter(Typo.count)%>
+					</a>
+					<p class="h4"><%= Typo.label.humanize.pluralize %></p>
+				</div>
+
+				<div class="col-sm-6 col-lg-3 my-3">
+					<%= xr_icon Dendro, { light: true }, { class: "d-block mx-auto mb-2", style: "width: 5rem;" } %>
+					<a href="/dendros" class="display-5 link-secondary text-decoration-none" title="Browse dendrochronological dates">
+						<%= number_with_delimiter(Dendro.count) %>
+					</a>
+					<p class="h4"><%= Dendro.label.humanize.pluralize %></p>
+				</div>
+
+			</div>
+
+		</div>
+	</section>
+
+
+	<section class="mb-5">
+		<div class="container my-3">
+			<h3 class="visually-hidden">What is XRONOS?</h3>
+			<div class="row">
+				<div class="col-md">
+					<a href="/data" title="Browse XRONOS data">
+						<%= image_tag "xronos_mapviz.png", width: 640, height: 320, style: "max-width: 100%; height: auto;", alt: "Map showing the density of chronometric records in XRONOS" %>
+					</a>
+				</div>
+				<div class="col-md my-auto">
+					<p class="lead">XRONOS is an open data infrastructure for the backbone of the archaeological record – chronology. It provides open access to published radiocarbon dates and other chronometric data from any period, anywhere in the world.</p>
+					<ul class="nav">
+						<li class="nav-item"><a class="nav-link ps-0 me-3" href="/about">Learn more</a></li>
+						<li class="nav-item"><a class="nav-link" href="/about/contribute">Get involved</a></li>
+					</ul>
+				</div>
+			</div>
+		</section>
+
+		<section class="bg-light">
+			<% unless @news.blank? %>
+			<div class="container my-5">
+				<div class="row">
+					<div class="col col-lg-9 mx-auto">
+						<h3 class="display-5 mb-4">Latest news</h3>
+
+						<% @news.each do |article| %>
+						<%= render "articles/card", article: article %>
+						<% end %>
+
+						<a href="/news" class="btn btn-lg btn-info">More news</a>
+					</div>
+				</div>
+
+			</div>
+			<% end %>
+		</div>
+	</section>
 
 
 

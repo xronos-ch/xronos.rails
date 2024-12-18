@@ -109,7 +109,8 @@ class XronosDataController < ApplicationController
   end
 
   def render_index_html
-    @pagy, @xrons = pagy(@data.xrons)
+    @c14_pagy, @c14_xrons = pagy(@c14_data.xrons)
+    @dendro_pagy, @dendro_xrons = pagy(@dendro_data.xrons)
     render layout: "full_page"
   end
 

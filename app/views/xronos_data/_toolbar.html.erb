@@ -1,138 +1,150 @@
 <div class="d-flex">
 
-  <h1 class="h5 my-0 me-3 px-3 py-2 text-primary fw-bold">
-    <%= bs_icon "hourglass-split" %>
-    Data browser
-  </h1>
+	<h1 class="h5 my-0 me-3 px-3 py-2 text-primary fw-bold">
+		<%= bs_icon "hourglass-split" %>
+		Data browser
+	</h1>
 
-  <button class="me-3 btn btn btn-outline-primary"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#dataFilters"
-          aria-expanded="true"
-          aria-controls="dataFilters">
-    <%= bs_icon "filter" %>
-    Filters
-    <span class="collapse-status-open"><%= bs_icon "chevron-left" %></span>
-    <span class="collapse-status-closed"><%= bs_icon "chevron-right" %></span>
-  </button>
+	<button class="me-3 btn btn btn-outline-primary"
+	type="button"
+	data-bs-toggle="collapse"
+	data-bs-target="#dataFilters"
+	aria-expanded="true"
+	aria-controls="dataFilters">
+	<%= bs_icon "filter" %>
+	Filters
+	<span class="collapse-status-open"><%= bs_icon "chevron-left" %></span>
+	<span class="collapse-status-closed"><%= bs_icon "chevron-right" %></span>
+</button>
 
-  <div class="px-3 py-2 text-muted">
-    View:
-  </div>
-  <ul class="me-3 nav nav-pills" role="tablist">
-    <li class="nav-item" role="presentation">
-      <a id="dataMapTab" 
-         class="nav-link active" 
-         data-bs-toggle="pill" 
-         href="#dataMap"
-         role="tab" 
-         aria-controls="dataMap"
-         aria-selected="true">
-        <%= bs_icon "pin-map-fill" %>
-        Sites
-      </a>
-    </li>
-    <li class="nav-item" role="presentation">
-      <a id="dataTableTab" 
-         class="nav-link" 
-         data-bs-toggle="pill" 
-         href="#dataTable"
-         role="tab" 
-         aria-controls="dataTable"
-         aria-selected="false">
-        <%= bs_icon "table" %>
-        Radiocarbon dates
-      </a>
-    </li>
-  </ul>
-
-  <span class="navbar-text me-3">
-    <%= render "filter_status" %>
-  </span>
-
-  <ul class="nav">
-  <!--
-    <li class="nav-item dropdown">
-      <a class="nav-link dropdown-toggle" 
-         id="dataTools"  
-         role="button" 
-         data-bs-toggle="dropdown" 
-         aria-expanded="false" href="#">
-        <%= bs_icon "clipboard-data-fill" %>
-        Analyse
-      </a>
-      <ul class="dropdown-menu" aria-labelledby="dataTools">
-        <li><a class="dropdown-item" href="#">Calibrate</a></li>
-        <li><a class="dropdown-item" href="#">Sum calibrate</a></li>
-      </ul>
-    </li>
-  -->
-<li class="nav-item dropdown">
-  <a class="nav-link dropdown-toggle" 
-     id="dataDownload"  
-     role="button" 
-     data-bs-toggle="dropdown" 
-     aria-expanded="false" 
-     href="#">
-    <%= bs_icon "download" %>
-    Download
-  </a>
-  <ul class="dropdown-menu" aria-labelledby="dataDownload" style="padding: 0px;">
-
-    <!-- C14 Download Options -->
-    <li class="dropdown-header">C14 Data</li>
-    <li>
-      <div class="row g-0 text-center">
-        <!-- C14 CSV -->
-        <div class="col">
-          <%= link_to data_path(format: :csv, filter: @c14_filter_params, type: :c14), 
-                      class: "nav-link", 
-                      title: "C14 CSV",
-                      download: "c14_data_#{Date.today}.csv" do %>
-            <%= bs_icon("bi bi-filetype-csv") %> CSV
-          <% end %>
-        </div>
-        <!-- C14 JSON -->
-        <div class="col">
-          <%= link_to data_path(format: :json, filter: @c14_filter_params, type: :c14), 
-                      class: "nav-link", 
-                      title: "C14 JSON",
-                      download: "c14_data_#{Date.today}.json" do %>
-            <%= bs_icon("bi bi-filetype-json") %> JSON
-          <% end %>
-        </div>
-      </div>
-    </li>
-
-    <hr class="dropdown-divider">
-
-    <!-- Dendro Download Options -->
-    <li class="dropdown-header">Dendro Data</li>
-    <li>
-      <div class="row g-0 text-center">
-        <!-- Dendro CSV -->
-        <div class="col">
-          <%= link_to data_path(format: :csv, filter: @dendro_filter_params, type: :dendro), 
-                      class: "nav-link", 
-                      title: "Dendro CSV",
-                      download: "dendro_data_#{Date.today}.csv" do %>
-            <%= bs_icon("bi bi-filetype-csv") %> CSV
-          <% end %>
-        </div>
-        <!-- Dendro JSON -->
-        <div class="col">
-          <%= link_to data_path(format: :json, filter: @dendro_filter_params, type: :dendro), 
-                      class: "nav-link", 
-                      title: "Dendro JSON",
-                      download: "dendro_data_#{Date.today}.json" do %>
-            <%= bs_icon("bi bi-filetype-json") %> JSON
-          <% end %>
-        </div>
-      </div>
-    </li>
-
-  </ul>
-</li>
-  </ul>
+<div class="px-3 py-2 text-muted">
+	View:
 </div>
+<ul class="me-3 nav nav-pills" role="tablist">
+	<li class="nav-item" role="presentation">
+		<a id="dataMapTab"
+		class="nav-link active"
+		data-bs-toggle="pill"
+		href="#dataMap"
+		role="tab"
+		aria-controls="dataMap"
+		aria-selected="true">
+		<%= bs_icon "pin-map-fill" %>
+		Sites
+	</a>
+</li>
+<li class="nav-item" role="presentation">
+	<a id="dataTableTab" 
+	class="nav-link" 
+	data-bs-toggle="pill" 
+	href="#dataTable"
+	role="tab" 
+	aria-controls="dataTable"
+	aria-selected="false">
+	<%= bs_icon "table" %>
+	Radiocarbon Dates
+</a>
+</li>
+<li class="nav-item" role="presentation">
+<a id="dendroTableTab" 
+class="nav-link" 
+data-bs-toggle="pill" 
+href="#dendroTable"
+role="tab" 
+aria-controls="dendroTable"
+aria-selected="false">
+<%= bs_icon "table" %>
+Dendro Data
+</a>
+</li>
+</ul>
+
+<span class="navbar-text me-3">
+<%= render "filter_status" %>
+</span>
+
+<ul class="nav">
+<!--
+<li class="nav-item dropdown">
+<a class="nav-link dropdown-toggle" 
+id="dataTools"  
+role="button" 
+data-bs-toggle="dropdown" 
+aria-expanded="false" href="#">
+<%= bs_icon "clipboard-data-fill" %>
+Analyse
+</a>
+<ul class="dropdown-menu" aria-labelledby="dataTools">
+<li><a class="dropdown-item" href="#">Calibrate</a></li>
+<li><a class="dropdown-item" href="#">Sum calibrate</a></li>
+</ul>
+</li>
+-->
+<li class="nav-item dropdown">
+<a class="nav-link dropdown-toggle" 
+id="dataDownload"  
+role="button" 
+data-bs-toggle="dropdown" 
+aria-expanded="false" 
+href="#">
+<%= bs_icon "download" %>
+Download
+</a>
+<ul class="dropdown-menu" aria-labelledby="dataDownload" style="padding: 0px;">
+
+<!-- C14 Download Options -->
+<li class="dropdown-header">C14 Data</li>
+<li>
+	<div class="row g-0 text-center">
+		<!-- C14 CSV -->
+		<div class="col">
+			<%= link_to data_path(format: :csv, filter: @c14_filter_params, type: :c14), 
+			class: "nav-link", 
+				title: "C14 CSV",
+				download: "c14_data_#{Date.today}.csv" do %>
+					<%= bs_icon("bi bi-filetype-csv") %> CSV
+					<% end %>
+				</div>
+				<!-- C14 JSON -->
+				<div class="col">
+					<%= link_to data_path(format: :json, filter: @c14_filter_params, type: :c14), 
+					class: "nav-link", 
+						title: "C14 JSON",
+						download: "c14_data_#{Date.today}.json" do %>
+							<%= bs_icon("bi bi-filetype-json") %> JSON
+							<% end %>
+						</div>
+					</div>
+				</li>
+
+				<hr class="dropdown-divider">
+
+				<!-- Dendro Download Options -->
+				<li class="dropdown-header">Dendro Data</li>
+				<li>
+					<div class="row g-0 text-center">
+						<!-- Dendro CSV -->
+						<div class="col">
+							<%= link_to data_path(format: :csv, filter: @dendro_filter_params, type: :dendro), 
+							class: "nav-link", 
+								title: "Dendro CSV",
+								download: "dendro_data_#{Date.today}.csv" do %>
+									<%= bs_icon("bi bi-filetype-csv") %> CSV
+									<% end %>
+								</div>
+								<!-- Dendro JSON -->
+								<div class="col">
+									<%= link_to data_path(format: :json, filter: @dendro_filter_params, type: :dendro), 
+									class: "nav-link", 
+										title: "Dendro JSON",
+										download: "dendro_data_#{Date.today}.json" do %>
+											<%= bs_icon("bi bi-filetype-json") %> JSON
+											<% end %>
+										</div>
+									</div>
+								</li>
+
+							</ul>
+						</li>
+					</ul>
+				</div>

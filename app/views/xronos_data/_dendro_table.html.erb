@@ -1,0 +1,29 @@
+<%= turbo_frame_tag "dendro_table" do %>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Site</th>
+        <th>Series</th>
+        <th>Start Year</th>
+        <th>End Year</th>
+        <th>Is Anchored?</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @dendro_xrons.each do |dendro| %>
+        <tr>
+          <% if dendro.site.present? %>
+            <td><%= link_to dendro.site.name, dendro.site, target: :_top %></td>
+          <% end %>
+          <td><%= link_to dendro.name, dendro, target: :_top %></td>
+          <td><%= dendro.start_year.present? ? dendro.start_year : na_value %></td>
+          <td><%= dendro.end_year.present? ? dendro.end_year : na_value %></td>
+          <td><%= dendro.is_anchored.present? ? dendro.is_anchored : na_value %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <%== pagy_bootstrap_nav(@dendro_pagy) %>
+<% end %>

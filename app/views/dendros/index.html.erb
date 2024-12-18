@@ -1,14 +1,24 @@
-<p style="color: green"><%= notice %></p>
+<% content_for :title, Dendro.label.humanize.pluralize %>
+<% content_for :meta_description do %>
+  List of <%= @pagy.count %> dendrochronological dates from archaeological sites around the world, including measurement, sample and contextual information, and bibliographic references.
+<% end %>
 
-<h1>Dendros</h1>
+<div class="container my-5">
 
-<div id="dendros">
-  <% @dendros.each do |dendro| %>
-    <%= render dendro %>
-    <p>
-      <%= link_to "Show this dendro", dendro %>
-    </p>
+  <h1><%= Dendro.label.pluralize.humanize %></h1>
+  <p>Showing <%= @pagy.count %> <%= Dendro.label.pluralize(@pagy.count) %>.</p>
+
+  <turbo-frame id="dendros-table">
+    <div id="dendros-toolbar" class="d-flex">
+      <div class="ms-auto">
+        <%= link_to bs_icon("download"), dendros_path(format: :csv, **request.query_parameters), class: "btn btn-sm btn-outline-primary", title: "Download CSV" %>
+      </div>
+    </div>
+    <%= render "table", dendros: @dendros %>
+    <%== pagy_bootstrap_nav(@pagy) %>
+  </turbo-frame>
+
+  <% if can? :create, Dendro %>
+    <%= link_to 'New Dendro measurement', new_dendro_path, class: 'btn btn-secondary' %>
   <% end %>
 </div>
-
-<%= link_to "New dendro", new_dendro_path %>

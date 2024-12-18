@@ -14,7 +14,7 @@
     </thead>
 
     <tbody>
-      <% @xrons.each do |x| %>
+      <% @c14_xrons.each do |x| %>
         <tr>
           <td><!-- <%= x.id %> --></td>
           <td><%= x.lab_identifier.present? ? (link_to x.lab_identifier, x, target: :_top) : na_value %></td>
@@ -34,6 +34,6 @@
 
   </table>
 
-  <%== pagy_bootstrap_nav(@pagy) %>
+  <%== pagy_bootstrap_nav(@c14_pagy) %>
 <% end %>
 
