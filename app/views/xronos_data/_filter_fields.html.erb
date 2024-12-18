@@ -5,6 +5,23 @@
   </div>
 </noscript>
 
+<div class="p-3 border rounded bg-white">
+  <h5>Data Filters</h5>
+
+  <!-- Data Types Filter -->
+  <div class="mb-3">
+    <% selected_types = params.dig(:filter, :type) || [] %>
+    <div class="d-flex gap-3">
+      <div class="form-check">
+        <%= check_box_tag 'filter[type][]', 'c14', selected_types.include?('c14'), class: 'form-check-input', id: 'type_c14' %>
+		<%= label_tag 'type_c14', 'Radiocarbon Data'.html_safe, class: 'form-check-label' %>      </div>
+      <div class="form-check">
+        <%= check_box_tag 'filter[type][]', 'dendro', selected_types.include?('dendro'), class: 'form-check-input', id: 'type_dendro' %>
+        <%= label_tag 'type_dendro', 'Dendro Data', class: 'form-check-label' %>
+      </div>
+    </div>
+  </div>
+
 <%= accordion_item "dataFilters-Site", "Sites", (@data.filters.dig("sites", "name") || @data.filters.dig("site_types", "name")) ? false : true do %>
 
   <%= f.fields_for :sites do |f| %>

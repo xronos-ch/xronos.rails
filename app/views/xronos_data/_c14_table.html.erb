@@ -34,6 +34,9 @@
 
   </table>
 
-  <%== pagy_bootstrap_nav(@c14_pagy) %>
+
+  <% if @c14_pagy %>
+    <%== pagy_bootstrap_nav(@c14_pagy) %>
+  <% end %>
 <% end %>
 

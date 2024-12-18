@@ -25,5 +25,8 @@
     </tbody>
   </table>
 
-  <%== pagy_bootstrap_nav(@dendro_pagy) %>
+
+  <% if @dendro_pagy %>
+    <%== pagy_bootstrap_nav(@dendro_pagy) %>
+  <% end %>
 <% end %>

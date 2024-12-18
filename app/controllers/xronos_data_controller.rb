@@ -33,34 +33,56 @@ class XronosDataController < ApplicationController
   private
 
   def set_data
-    # Initialize raw filter parameters for C14 and Dendro
-    @c14_filter_params = filter_params
-    @dendro_filter_params = filter_params.except(:c14s, :cals)
+    # Determine the requested type (C14 or Dendro) and adjust filters
+    type_filter = filter_params[:type]&.map(&:downcase) || %w[c14 dendro]
 
-    # Initialize data for C14 and Dendro
-    @c14_data = XronosData.new(@c14_filter_params, select_params, :c14)
-    @dendro_data = XronosData.new(@dendro_filter_params, select_params, :dendro)
-  
-    # Assign the default data view to @data (e.g., C14 by default) temporarily
-    @data = @c14_data
-    
-    @n_data = @c14_data.xrons.count + @dendro_data.xrons.count
-    @total_data = @c14_data.everything.count + @dendro_data.everything.count
-  
-    # Fetch site data from both C14 and Dendro queries
-    c14_sites = @c14_data.xrons
-                         .joins("LEFT JOIN sites ON sites.id = contexts.site_id")
-                         .select("sites.id AS site_id, sites.lng, sites.lat, sites.name AS site_name")
-                         .distinct
+    # Separate filters based on type
+    if type_filter.include?("c14")
+      @c14_filter_params = filter_params.except(:type)
+      @c14_data = XronosData.new(@c14_filter_params, select_params, :c14)
+    else
+      @c14_data = nil
+    end
 
-    dendro_sites = @dendro_data.xrons
-                               .joins("LEFT JOIN sites ON sites.id = contexts.site_id")
-                               .select("sites.id AS site_id, sites.lng, sites.lat, sites.name AS site_name")
-                               .distinct
-  
-    # Combine site queries and remove duplicates
-    combined_sites_query = "((#{c14_sites.to_sql}) UNION (#{dendro_sites.to_sql})) AS combined_sites"
-    @sites = Site.from(combined_sites_query).select("site_id, lng, lat, site_name").distinct
+    if type_filter.include?("dendro")
+      @dendro_filter_params = filter_params.except(:type, :c14s, :cals)
+      @dendro_data = XronosData.new(@dendro_filter_params, select_params, :dendro)
+    else
+      @dendro_data = nil
+    end
+
+    # Set @data to the primary dataset, or a placeholder with filters
+    if @c14_data
+      @data = @c14_data
+    elsif @dendro_data
+      @data = @dendro_data
+    else
+      @data = XronosData.new(filter_params, select_params)
+    end
+
+    # Calculate total records and initialize sites
+    @n_data = (@c14_data&.xrons&.count || 0) + (@dendro_data&.xrons&.count || 0)
+    @total_data = (@c14_data&.everything&.count || 0) + (@dendro_data&.everything&.count || 0)
+
+    # Fetch site data based on the type filter
+    c14_sites = @c14_data&.xrons&.joins("LEFT JOIN sites ON sites.id = contexts.site_id")
+                         &.select("sites.id AS site_id, sites.lng, sites.lat, sites.name AS site_name")
+                         &.distinct
+
+    dendro_sites = @dendro_data&.xrons&.joins("LEFT JOIN sites ON sites.id = contexts.site_id")
+                               &.select("sites.id AS site_id, sites.lng, sites.lat, sites.name AS site_name")
+                               &.distinct
+
+    if c14_sites && dendro_sites
+      combined_sites_query = "((#{c14_sites.to_sql}) UNION (#{dendro_sites.to_sql})) AS combined_sites"
+      @sites = Site.from(combined_sites_query).select("site_id, lng, lat, site_name").distinct
+    elsif c14_sites
+      @sites = c14_sites
+    elsif dendro_sites
+      @sites = dendro_sites
+    else
+      @sites = Site.none
+    end
   end
 
   def reset_session_key(key)
@@ -69,7 +91,10 @@ class XronosDataController < ApplicationController
   end
 
   def filter_params
+    return {} unless params[:filter].present? # Return an empty hash if :filter is nil or empty
+    
     params.fetch(:filter, {}).permit(
+    type: [],
       c14s: [
         :lab_identifier, { lab_identifier: [] }, { bp: [] }
       ],
@@ -101,7 +126,7 @@ class XronosDataController < ApplicationController
       site_types: [
         :name, { name: [] }
       ]
-    )
+    )    
   end
 
   def select_params
@@ -109,8 +134,18 @@ class XronosDataController < ApplicationController
   end
 
   def render_index_html
-    @c14_pagy, @c14_xrons = pagy(@c14_data.xrons)
-    @dendro_pagy, @dendro_xrons = pagy(@dendro_data.xrons)
+    if @c14_data
+      @c14_pagy, @c14_xrons = pagy(@c14_data.xrons)
+    else
+      @c14_pagy, @c14_xrons = nil, []
+    end
+
+    if @dendro_data
+      @dendro_pagy, @dendro_xrons = pagy(@dendro_data.xrons)
+    else
+      @dendro_pagy, @dendro_xrons = nil, []
+    end
+
     render layout: "full_page"
   end
 
