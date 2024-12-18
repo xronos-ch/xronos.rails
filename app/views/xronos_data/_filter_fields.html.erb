@@ -10,7 +10,7 @@
 
   <!-- Data Types Filter -->
   <div class="mb-3">
-    <% selected_types = params.dig(:filter, :type) || [] %>
+    <% selected_types = params.dig(:filter, :type) || ['dendro', 'c14'] %>
     <div class="d-flex gap-3">
       <div class="form-check">
         <%= check_box_tag 'filter[type][]', 'c14', selected_types.include?('c14'), class: 'form-check-input', id: 'type_c14' %>
