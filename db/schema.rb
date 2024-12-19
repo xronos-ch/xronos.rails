@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_12_15_102659) do
+ActiveRecord::Schema[7.2].define(version: 2024_12_19_092101) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -101,6 +101,17 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_15_102659) do
     t.index ["type", "c14_age", "c14_error", "c14_curve"], name: "index_cals_on_type_and_c14_age_and_c14_error_and_c14_curve", unique: true
   end
 
+  create_table "chronologies", force: :cascade do |t|
+    t.string "name"
+    t.string "chronology_type"
+    t.string "method"
+    t.string "standardizing_method"
+    t.string "certainty"
+    t.jsonb "parameters", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "citations", force: :cascade do |t|
     t.bigint "reference_id"
     t.string "citing_type"
@@ -118,6 +129,40 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_15_102659) do
     t.integer "site_id"
     t.index ["name"], name: "index_contexts_on_name"
     t.index ["site_id"], name: "index_contexts_on_site_id"
+  end
+
+  create_table "dendros", force: :cascade do |t|
+    t.bigint "sample_id", null: false
+    t.string "series_code", null: false
+    t.string "name", null: false
+    t.text "description"
+    t.integer "start_year"
+    t.integer "end_year"
+    t.boolean "is_anchored", default: false
+    t.integer "offset"
+    t.jsonb "measurements", default: [], null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "project_title"
+    t.text "project_objective"
+    t.datetime "project_start_date"
+    t.datetime "project_end_date"
+    t.string "object_title"
+    t.string "object_type"
+    t.text "object_description"
+    t.jsonb "object_dimensions", default: {}
+    t.integer "pith_year"
+    t.integer "death_year"
+    t.integer "first_year"
+    t.integer "last_year"
+    t.jsonb "wood_completeness", default: {}
+    t.bigint "chronology_id"
+    t.jsonb "parameters", default: {}
+    t.boolean "waney_edge"
+    t.index ["chronology_id"], name: "index_dendros_on_chronology_id"
+    t.index ["measurements"], name: "index_dendros_on_measurements", using: :gin
+    t.index ["sample_id"], name: "index_dendros_on_sample_id"
+    t.index ["series_code"], name: "index_dendros_on_series_code", unique: true
   end
 
   create_table "import_tables", force: :cascade do |t|
@@ -140,8 +185,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_15_102659) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "status", default: "pending", null: false
+    t.index ["linkable_type", "linkable_id", "source", "external_id"], name: "index_lod_links_on_polymorphic_source_and_external_id", unique: true
     t.index ["linkable_type", "linkable_id"], name: "index_lod_links_on_linkable_type_and_linkable_id"
-    t.index ["source", "external_id"], name: "index_lod_links_on_source_and_external_id", unique: true
   end
 
   create_table "materials", force: :cascade do |t|
@@ -366,6 +411,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_15_102659) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "dendros", "chronologies"
+  add_foreign_key "dendros", "samples"
   add_foreign_key "import_tables", "users"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_grants", "users", column: "resource_owner_id"

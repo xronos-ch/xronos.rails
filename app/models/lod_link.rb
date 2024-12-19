@@ -14,8 +14,8 @@
 #
 # Indexes
 #
-#  index_lod_links_on_linkable_type_and_linkable_id  (linkable_type,linkable_id)
-#  index_lod_links_on_source_and_external_id         (source,external_id) UNIQUE
+#  index_lod_links_on_linkable_type_and_linkable_id       (linkable_type,linkable_id)
+#  index_lod_links_on_polymorphic_source_and_external_id  (linkable_type,linkable_id,source,external_id) UNIQUE
 #
 class LodLink < ApplicationRecord
   include Turbo::Broadcastable
@@ -25,6 +25,8 @@ class LodLink < ApplicationRecord
 
   validates :external_id, presence: true, numericality: { only_integer: true }
   validates :source, presence: true
+  
+  validates :source, uniqueness: { scope: [:external_id, :linkable_type, :linkable_id] }
   
   enum status: { pending: "pending", approved: "approved"}
 

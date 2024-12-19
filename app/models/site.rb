@@ -139,8 +139,11 @@ class Site < ApplicationRecord
       next unless site
 
       matches.each do |match|
-        # Find or create the LOD link for this Wikidata match
-        site.lod_links.find_or_create_by(source: "Wikidata", external_id: match.qid) do |lod_link|
+        # Find or create the LOD link for this Wikidata match, scoped by linkable_id and linkable_type
+        lod_link = site.lod_links.find_or_initialize_by(source: "Wikidata", external_id: match.qid, linkable_type: "Site", linkable_id: site.id)
+      
+        # Only update and save if the record is new or has changes
+        if lod_link.new_record? || lod_link.data != { label: match.label, description: match.description }
           lod_link.data = {
             label: match.label,
             description: match.description
