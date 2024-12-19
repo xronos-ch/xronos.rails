@@ -24,6 +24,12 @@
   </div>
 </div
 
+<div class="row">
+  <div class="col">
+    <%= f.text_area :description, label: "Description" %>
+  </div>
+</div>
+
 <%# f.collection_select :sample_id, 
   Sample.joins(:context).where('contexts.site_id' => @dendro.site.id), 
   :id, :position_description,

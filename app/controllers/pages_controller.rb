@@ -9,5 +9,9 @@ class PagesController < ApplicationController
       .includes([splash_attachment: :blob])
       .includes(:user)
   end
+  
+  def unauthorized
+    render status: :forbidden, layout: false
+  end
 
 end

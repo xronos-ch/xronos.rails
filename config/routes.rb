@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   get '/home' => 'pages#home'
   get '/database' => 'pages#database'
   get '/api' => 'pages#api'
+  get "/unauthorized", to: "pages#unauthorized", as: :unauthorized
 
   # Articles (news posts and other pseudo-static pages)
   get '/news', to: 'articles#index', section: 'news'

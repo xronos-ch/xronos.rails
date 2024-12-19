@@ -54,10 +54,7 @@ class DendrosController < ApplicationController
   # GET /dendros/new
   def new
     @dendro = Dendro.new
-    @dendro.build_sample.build_context(site: @site) # Prebuild the nested structure
-#    @context = @site.contexts.build
-#    @sample = @context.samples.build
-#    @dendro = @sample.dendros.build
+    @dendro.build_sample.build_context(site: @site)
   end
 
   # GET /dendros/1/edit

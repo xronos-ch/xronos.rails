@@ -45,14 +45,15 @@
 #
 FactoryBot.define do
   factory :dendro do
-    sample { nil }
-    series_code { "MyString" }
-    name { "MyString" }
-    description { "MyText" }
-    start_year { 1 }
-    end_year { 1 }
-    is_anchored { false }
-    offset { 1 }
-    measurements { "" }
+    series_code { Faker::Alphanumeric.unique.alphanumeric(number: 10).upcase }
+    name { Faker::Science.element }
+    description { Faker::Lorem.paragraph }
+    start_year { Faker::Number.between(from: -5000, to: 1950) }
+    end_year { start_year + Faker::Number.between(from: 10, to: 300) }
+    is_anchored { [true, false].sample }
+    offset { Faker::Number.between(from: 0, to: 10) }
+    measurements { Array.new(10) { { year: Faker::Number.number(digits: 4), value: Faker::Number.decimal(l_digits: 1, r_digits: 2) } } }
+    
+    sample
   end
 end

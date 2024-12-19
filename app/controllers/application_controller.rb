@@ -13,8 +13,18 @@ class ApplicationController < ActionController::Base
   end
 
   # Return 404 for unauthorised resources
+  #rescue_from CanCan::AccessDenied do |exception|
+  #  raise ActionController::RoutingError.new('Not Found')
+  #end
+  
+
+  # Redirect to the custom unauthorized page for unauthorized access
   rescue_from CanCan::AccessDenied do |exception|
-    raise ActionController::RoutingError.new('Not Found')
+    respond_to do |format|
+      format.html { redirect_to unauthorized_path, alert: exception.message, status: :forbidden }
+      format.json { render json: { error: exception.message }, status: :forbidden }
+      format.any { head :forbidden }
+    end
   end
 
   def info_for_paper_trail
