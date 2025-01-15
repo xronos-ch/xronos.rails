@@ -3,6 +3,11 @@ class ApplicationController < ActionController::Base
   before_action :set_paper_trail_whodunnit
 
   before_action :http_basic_authenticate
+  
+  after_action lambda {
+    cookies.delete(Rails.application.config.session_options[:key]) unless user_signed_in?
+    request.session_options[:skip] = !(user_signed_in? || devise_controller?)
+  }
 
   protect_from_forgery with: :null_session, :if => Proc.new { |c| c.request.format == 'application/json' }
 
