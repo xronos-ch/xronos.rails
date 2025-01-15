@@ -1,0 +1,63 @@
+<%= content_for :title, @content['title'] %>
+
+<% if @content['splash'].present? %>
+  <% content_for :page_styles %>
+  <style>
+    .article-hero {
+      height: 20rem;
+      background: none !important;
+    }
+
+    .article-hero:before {
+      content: "";
+      display: block;
+      position: absolute;
+      height: 20rem;
+      width: 100%;
+      z-index: -1;
+      background-image: url('<%= asset_path(@content['splash']) %>');
+      background-size: cover;
+      background-position: center center;
+    }
+  </style>
+<% end %>
+
+<header class="bg-light article-hero d-flex flex-column justify-content-end position-relative">
+  <div class="container my-3">
+    <% if @content['splash'].present? %>
+      <h1 class="display-3 text-light" style="text-shadow: var(--bs-dark) 0 0 1rem;"><%=@content['title'] %></h1>
+    <% else %>
+      <h1 class="display-3 text-primary"><%= @content['title'] %></h1>
+    <% end %>
+  </div>
+</header>
+
+<div class="container my-5 ">
+  <% @content['sections'].each do |section| %>
+    <h2><%= section['heading'] %></h2>
+    <% if section['content'] %>
+      <p><%= Kramdown::Document.new(section['content']).to_html.html_safe %></p>
+    <% end %>
+	<% if section['items'] %>
+      <ul>
+        <% section['items'].each do |item| %>
+          <% if item.is_a?(String) %>
+            <li><%= item %></li>
+          <% elsif item.is_a?(Hash) %>
+            <li>
+              <a href="<%= item['link'] %>"><%= item['name'] %></a>
+              <% if item['description'] %> - <%= item['description'] %><% end %>
+            </li>
+          <% end %>
+        <% end %>
+      </ul>
+    <% end %>
+  <% end %>
+</div>
+
+<footer class="bg-light">
+  <div class="container my-5 text-muted small">
+      <p>Cover photo: Cover photo: Phil Aicken / Unsplash</p>
+      <p>Last updated Last updated 2024-12-16 15:46:17 UTC.</p>
+  </div>
+</footer>
