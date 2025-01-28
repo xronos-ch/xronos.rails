@@ -1,0 +1,49 @@
+<table class="responsive nowrap table table-hover align-middle">
+  <thead>
+    <tr>
+      <th scope="col">
+        <%= link_to_order_by "Name", :name, :sites %>
+        <% if ordered_by?(:name, :sites) %>
+          <span class="text-muted"><%= order_indicator :sites %></span>
+        <% end %>
+      </th>
+      <th scope="col">
+        <%= link_to_order_by "Country", :country_code, :sites %>
+        <% if ordered_by?(:country_code, :sites) %>
+          <span class="text-muted"><%= order_indicator :sites %></span>
+        <% end %>
+      </th>
+      <th scope="col">Coordinates</th>
+      <th scope="col" class="text-end">
+        <%= link_to_order_by C14.label.humanize.pluralize, :c14s_count, :sites %>
+        <% if ordered_by?(:c14s_count, :sites) %>
+          <span class="text-muted"><%= order_indicator :sites %></span>
+        <% end %>
+      </th>
+      <th scope="col" class="text-end">
+        <%= link_to_order_by Typo.label.humanize.pluralize, :typos_count, :sites %>
+        <% if ordered_by?(:typos_count, :sites) %>
+          <span class="text-muted"><%= order_indicator :sites %></span>
+        <% end %>
+      </th>
+      <% if can? :manage, Site %>
+        <th scope="col" class="text-end"><!-- Actions --></th>
+      <% end %>
+    </tr>
+  </thead>
+  
+  <tbody>
+    <% sites.each do |site| %>
+      <tr>
+        <td><%= link_to site.name, site, target: :_top %></td>
+        <td><%= site.country.present? ? render("country", site: site) : na_value %></td>
+        <td class="font-monospace"><%= site.coordinates.present? ? site.coordinates : na_value %></td>
+        <td class="text-end"><%= site.c14s_count %></td>
+        <td class="text-end"><%= site.typos_count %></td>
+        <% if can? :manage, Site %>
+          <td class="text-end"><%= render "application/actions", i: site %></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
