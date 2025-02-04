@@ -1,6 +1,8 @@
-# Changelog
+# XRONOS Changelog
 
-## 1.0.0.9000 [unreleased]
+## 1.1.0.9000 [unreleased]
+
+## 1.1.0 [2024-12-18]
 
 - Introduced the ability to manage and display external linked data (e.g., 
   Wikidata) within the application
@@ -10,7 +12,8 @@
   Wikidata entries)
 - Improved search interface; now shows more information and can be filtered by 
   record type
-- Added LONG_LABEL issue for references (#260)
+- Added `LONG_LABEL` issue for references (#260)
+- Updated to Ruby 3.3.6 and Rails 7.2
 
 ## 1.0.0 [2024-07-30]
 

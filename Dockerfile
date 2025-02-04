@@ -3,8 +3,8 @@ FROM ruby:3.3.6
 MAINTAINER Martin Hinz <martin.hinz@iaw.unibe.ch>
 
 # install node and yarn
-RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
-RUN apt-get install -y --no-install-recommends build-essential nodejs libboost-all-dev
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+RUN apt-get install -y --no-install-recommends build-essential nodejs libboost-all-dev libvips42
 RUN corepack enable
 
 # install additional system utilities
