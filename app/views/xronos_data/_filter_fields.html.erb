@@ -7,6 +7,45 @@
 
 <div class="p-3 border rounded bg-white">
   <h5>Data Filters</h5>
+  
+  <!-- Cal BP Filter-->
+  <div class="mb-3"
+       data-controller="slider" 
+       data-slider-formatter-value="calBP"
+       data-slider-step-value=10
+       data-slider-direction-value=rtl
+       data-slider-range-value='{ "min": [0, 20], "25%": [2000, 100], "50%": [10000, 250], "75%": [30000, 500], "max": 50000 }'
+       data-slider-density-value=2>
+
+    <%= f.fields_for :cals do |f| %>
+      <%= f.hidden_field :tpq, data: { slider_target: "minInput" },
+        min: 0, max: 50000,
+        value: @data.filter_value(:cals, :tpq).present? ? @data.filter_value(:cals, :tpq)[0].min : 0 %>
+      <%= f.hidden_field :taq, data: { slider_target: "maxInput" },
+        min: 0, max: 50000,
+        value: @data.filter_value(:cals, :taq).present? ? @data.filter_value(:cals, :taq)[0].max : 50000 %>
+    <% end %>
+
+    <label class="form-label" for="cal_bp_slider">Calendar age <span class="text-muted">(cal BP)</span></label>
+    <div class="mx-3 my-1" id="cal_bp_slider" data-slider-target="slider"></div>
+
+   <noscript data-slider-target="noscript">
+    <%# TODO: Switch to range fields if this is fixed:
+      https://github.com/bootstrap-ruby/bootstrap_form/issues/677 %>
+    <%= f.fields_for :cals do |f| %>
+      <%= f.number_field :tpq, label: "Minimum calendar age",
+        append: "cal BP",
+        min: 0,
+        max: 50000,
+        value: @data.filter_value(:cals, :tpq).present? ? @data.filter_value(:cals, :tpq)[0].min : 0 %>
+      <%= f.number_field :taq, label: "Maximum calendar age",
+        append: "cal BP",
+        min: 0,
+        max: 50000,
+        value: @data.filter_value(:cals, :taq).present? ? @data.filter_value(:cals, :taq)[0].max : 50000 %>
+    <% end %>
+  </noscript>
+  </div>
 
   <!-- Data Types Filter -->
   <div class="mb-3">
@@ -106,8 +145,9 @@
 
 <% end %>
 
-<%= accordion_item "dataFilters-C14", "Radiocarbon", (@data.filters.dig("c14_labs") || @data.filters.dig("c14s") || @data.filters.dig("cals")) ? false : true  do %>
-  <%= f.fields_for :c14_labs do |f| %>
+<% c14s_bp = @data.filters.dig("c14s", "bp")[0] %>
+<%= accordion_item "dataFilters-C14", "Radiocarbon",
+  (@data.filters.dig("c14_labs") || (c14s_bp.is_a?(Range) && (c14s_bp.begin != 0 || c14s_bp.end != 50000))) ? false : true do %>  <%= f.fields_for :c14_labs do |f| %>
     <%= f.collection_select :name, C14Lab.all, :name, :name,
       {
         label: "Labs",
@@ -176,45 +216,6 @@
     </div>    
 
   <% end %>
-  
-    <div class="mb-3"
-         data-controller="slider" 
-         data-slider-formatter-value="calBP"
-         data-slider-step-value=10
-         data-slider-direction-value=rtl
-         data-slider-range-value='{ "min": [0, 20], "25%": [2000, 100], "50%": [10000, 250], "75%": [30000, 500], "max": 50000 }'
-         data-slider-density-value=2>
-
-      <%= f.fields_for :cals do |f| %>
-        <%= f.hidden_field :tpq, data: { slider_target: "minInput" },
-          min: 0, max: 50000,
-          value: @data.filter_value(:cals, :tpq).present? ? @data.filter_value(:cals, :tpq)[0].min : 0 %>
-        <%= f.hidden_field :taq, data: { slider_target: "maxInput" },
-          min: 0, max: 50000,
-          value: @data.filter_value(:cals, :taq).present? ? @data.filter_value(:cals, :taq)[0].max : 50000 %>
-      <% end %>
-
-      <label class="form-label" for="cal_bp_slider">Calendar age <span class="text-muted">(cal BP)</span></label>
-      <div class="mx-3 my-1" id="cal_bp_slider" data-slider-target="slider"></div>
-
-
-     <noscript data-slider-target="noscript">
-      <%# TODO: Switch to range fields if this is fixed:
-        https://github.com/bootstrap-ruby/bootstrap_form/issues/677 %>
-      <%= f.fields_for :cals do |f| %>
-        <%= f.number_field :tpq, label: "Minimum calendar age",
-          append: "cal BP",
-          min: 0,
-          max: 50000,
-          value: @data.filter_value(:cals, :tpq).present? ? @data.filter_value(:cals, :tpq)[0].min : 0 %>
-        <%= f.number_field :taq, label: "Maximum calendar age",
-          append: "cal BP",
-          min: 0,
-          max: 50000,
-          value: @data.filter_value(:cals, :taq).present? ? @data.filter_value(:cals, :taq)[0].max : 50000 %>
-      <% end %>
-    </noscript>
-    </div>
 
 <% end %>
 
