@@ -1,0 +1,42 @@
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">
+        <%= link_to_order_by "ID", :id %>
+        <% if ordered_by?(:id) %>
+          <span class="text-muted"><%= order_indicator %></span>
+        <% end %>
+      </th>
+      <th scope="col">Name</th>
+			<th scope="col">Site</th>
+      <th scope="col">Start Year</th>
+      <th scope="col">End Year</th>
+      <th scope="col">Waney Edge?</th>
+      <th scope="col">Is Anchored?</th>
+      <th scope="col">Issues</th>
+      <% if can? :manage, Dendro %><th scope="col"><span class="visually-hidden">Actions</span></th><% end %>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% dendros.each do |dendro| %>
+      <tr>
+        <td class="text-muted"><%= link_to dendro.id, dendro %></td>
+        <td><%= dendro.name %></td>
+        <td><%= dendro.site.name %></td>
+        <td class="font-monospace"><%= dendro.start_year.present? ? dendro.start_year : na_value %></td>
+        <td class="font-monospace"><%= dendro.end_year.present? ? dendro.end_year : na_value %></td>
+        <td class="font-monospace"><%= dendro.waney_edge.nil? ? na_value : dendro.waney_edge %></td>
+        <td class="font-monospace"><%= dendro.is_anchored.nil? ? na_value : dendro.is_anchored %></td>
+        <td><% dendro.issues.each do |issue| %>
+          <%= issue_badge(issue) %>
+        <% end %></td>
+        <% if can? :manage, Dendro %>
+          <td class="text-end"><%= render "shared/action_buttons_compact", i: dendro %></td>
+        <% end %>
+      </tr>
+
+    </tr>
+  <% end %>
+  </tbody>
+</table>

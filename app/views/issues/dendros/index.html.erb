@@ -1,0 +1,13 @@
+<% content_for :title, "Issues – Dendro dates" %>
+<% content_for :help do %>
+<% end %>
+
+<h2 class="border-bottom">Dendro dates</h2>
+
+<%= render "issues/nav", model: Dendro, base_path: issues_dendros_path %>
+
+<turbo-frame id="issues-dendros-table">
+  <%= render "issues/filter_form" %>
+  <%= render "table", dendros: @dendros %>
+  <%== pagy_bootstrap_nav(@pagy) %>
+</turbo-frame>

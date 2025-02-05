@@ -12,10 +12,9 @@
   </div>
 </div>
 
-<!-- Tri-state for is_anchored -->
 <div class="row">
   <div class="col">
-    <%= tristate_radio_button_group(f, :is_anchored, overall_label: "Is anchored?") %>
+    <%= tristate_radio_button_group(f, :is_anchored, overall_label: "Is Anchored?") %>
   </div>
 </div>
 
@@ -31,13 +30,6 @@
   </div>
 </div>
 
-<%# f.collection_select :sample_id, 
-  Sample.joins(:context).where('contexts.site_id' => @dendro.site.id), 
-  :id, :position_description,
-  {},
-  { data: { controller: 'tom-select' } }
-%>
-
 <%= f.fields_for :sample, @dendro.sample do |ff| %>
   <%= render "samples/fields", f: ff %>
 <% end %>
@@ -45,11 +37,67 @@
 <h2 class="h5">Measurements</h2>
 
 <div class="row">
-  <div class="col"><%= f.number_field :start_year, label: "Start Year", append: "BP" %></div>
-  <div class="col"><%= f.number_field :end_year, label: "End Year", prepend: "BP" %></div>
+  <div class="col">
+    <%= f.number_field :start_year, label: "Start Year", append: "BP" %>
+  </div>
+  <div class="col">
+    <%= f.number_field :end_year, label: "End Year", prepend: "BP" %>
+  </div>
+  <div class="col">
+    <%= f.number_field :offset, label: "Offset" %>
+  </div>
 </div>
 
+<h2 class="h5">Object Details</h2>
 
-<!-- TODO: source database -->
-<!-- TODO: references? -->
+<div class="row">
+  <div class="col">
+    <%= f.text_field :object_title, label: "Object Title" %>
+  </div>
+  <div class="col">
+    <%= f.text_field :object_type, label: "Object Type" %>
+  </div>
+</div>
 
+<div class="row">
+  <div class="col">
+    <%= f.text_area :object_description, label: "Object Description" %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <%= f.text_area :object_dimensions, label: "Object Dimensions" %>
+  </div>
+</div>
+
+<h2 class="h5">Project Details</h2>
+
+<div class="row">
+  <div class="col">
+    <%= f.text_field :project_title, label: "Project Title" %>
+  </div>
+  <div class="col">
+    <%= f.text_area :project_objective, label: "Project Objective" %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <%= f.date_field :project_start_date, label: "Project Start Date" %>
+  </div>
+  <div class="col">
+    <%= f.date_field :project_end_date, label: "Project End Date" %>
+  </div>
+</div>
+
+<h2 class="h5">Completeness and Parameters</h2>
+
+<div class="row">
+  <div class="col">
+    <%= f.text_field :wood_completeness, label: "Wood Completeness" %>
+  </div>
+  <div class="col">
+    <%= f.text_area :parameters, label: "Parameters" %>
+  </div>
+</div>

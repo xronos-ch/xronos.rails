@@ -111,6 +111,12 @@ Rails.application.routes.draw do
           constraints: lambda { |req| C14.issues.include?(req.params[:issue].to_sym) }
       end
     end
+    resources :dendros, only: :index do
+      collection do
+        get ":issue", action: :index,
+          constraints: lambda { |req| Dendro.issues.include?(req.params[:issue].to_sym) }
+      end
+    end
     resources :references, only: :index do
       collection do
         get ":issue", action: :index,
