@@ -20,8 +20,8 @@
           <td><%= link_to dendro.name, dendro, target: :_top %></td>
           <td><%= dendro.start_year.present? ? dendro.start_year : na_value %></td>
           <td><%= dendro.end_year.present? ? dendro.end_year : na_value %></td>
-          <td><%= dendro.is_anchored.present? ? dendro.is_anchored : na_value %></td>
-		  <td><%= dendro.waney_edge.present? ? dendro.waney_edge : na_value %></td>
+					<td><%= dendro.waney_edge.nil? ? na_value : dendro.waney_edge %></td>
+					<td><%= dendro.is_anchored.nil? ? na_value : dendro.is_anchored %></td>
         </tr>
       <% end %>
     </tbody>

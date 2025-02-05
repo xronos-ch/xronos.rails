@@ -38,7 +38,7 @@ class XronosDataController < ApplicationController
 
     # Separate filters based on type
     if type_filter.include?("c14")
-      @c14_filter_params = filter_params.except(:type)
+      @c14_filter_params = filter_params.except(:type, :dendros)
       @c14_data = XronosData.new(@c14_filter_params, select_params, :c14)
     else
       @c14_data = nil
@@ -97,6 +97,9 @@ class XronosDataController < ApplicationController
     type: [],
       c14s: [
         :lab_identifier, { lab_identifier: [] }, { bp: [] }
+      ],
+      dendros: [
+        :waney_edge, :is_anchored
       ],
       cals: [
         :tpq, { tpq: [] }, :taq, { taq: [] }

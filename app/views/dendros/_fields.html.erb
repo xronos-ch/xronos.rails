@@ -12,15 +12,16 @@
   </div>
 </div>
 
+<!-- Tri-state for is_anchored -->
 <div class="row">
   <div class="col">
-    <%= f.check_box :is_anchored, label: "Is anchored?" %>
+    <%= tristate_radio_button_group(f, :is_anchored, overall_label: "Is anchored?") %>
   </div>
 </div>
 
 <div class="row">
   <div class="col">
-    <%= f.check_box :waney_edge, label: "Has Waney Edge?" %>
+    <%= tristate_radio_button_group(f, :waney_edge, overall_label: "Has Waney Edge?") %>
   </div>
 </div>
 

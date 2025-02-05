@@ -10,7 +10,7 @@
       <dd class="col-sm-8 font-monospace"><%= dendro.name %></dd>
 
       <dt class="col-sm-4">Description</dt>
-      <dd class="col-sm-8"><%= dendro.description.present? ? dendro.description : 'N/A' %></dd>
+      <dd class="col-sm-8"><%= dendro.description.present? ? dendro.description : na_value %></dd>
     </dl>
   </div>
 
@@ -25,10 +25,10 @@
       <dd class="col-sm-8 font-monospace"><%= dendro.end_year %></dd>
 
       <dt class="col-sm-4">Is Anchored</dt>
-      <dd class="col-sm-8 font-monospace"><%= dendro.is_anchored ? 'Yes' : 'No' %></dd>
+      <dd class="col-sm-8 font-monospace"><%= dendro.is_anchored.nil? ? na_value : dendro.is_anchored %></dd>
 
       <dt class="col-sm-4">Offset</dt>
-      <dd class="col-sm-8 font-monospace"><%= dendro.offset || 'N/A' %></dd>
+      <dd class="col-sm-8 font-monospace"><%= dendro.offset || na_value %></dd>
     </dl>
   </div>
 
@@ -37,16 +37,16 @@
     <h5>Object Details</h5>
     <dl class="row">
       <dt class="col-sm-4">Object Title</dt>
-      <dd class="col-sm-8 font-monospace"><%= dendro.object_title || 'N/A' %></dd>
+      <dd class="col-sm-8 font-monospace"><%= dendro.object_title || na_value %></dd>
 
       <dt class="col-sm-4">Object Type</dt>
-      <dd class="col-sm-8 font-monospace"><%= dendro.object_type || 'N/A' %></dd>
+      <dd class="col-sm-8 font-monospace"><%= dendro.object_type || na_value %></dd>
 
       <dt class="col-sm-4">Object Description</dt>
-      <dd class="col-sm-8"><%= dendro.object_description || 'N/A' %></dd>
+      <dd class="col-sm-8"><%= dendro.object_description || na_value %></dd>
 
       <dt class="col-sm-4">Object Dimensions</dt>
-      <dd class="col-sm-8"><%= dendro.object_dimensions.present? ? dendro.object_dimensions.to_json : 'N/A' %></dd>
+      <dd class="col-sm-8"><%= dendro.object_dimensions.present? ? dendro.object_dimensions.to_json : na_value %></dd>
     </dl>
   </div>
 
@@ -55,16 +55,16 @@
     <h5>Project Details</h5>
     <dl class="row">
       <dt class="col-sm-4">Project Title</dt>
-      <dd class="col-sm-8 font-monospace"><%= dendro.project_title || 'N/A' %></dd>
+      <dd class="col-sm-8 font-monospace"><%= dendro.project_title || na_value %></dd>
 
       <dt class="col-sm-4">Project Objective</dt>
-      <dd class="col-sm-8"><%= dendro.project_objective || 'N/A' %></dd>
+      <dd class="col-sm-8"><%= dendro.project_objective || na_value %></dd>
 
       <dt class="col-sm-4">Project Start Date</dt>
-      <dd class="col-sm-8 font-monospace"><%= dendro.project_start_date ? dendro.project_start_date.strftime('%Y-%m-%d') : 'N/A' %></dd>
+      <dd class="col-sm-8 font-monospace"><%= dendro.project_start_date ? dendro.project_start_date.strftime('%Y-%m-%d') : na_value %></dd>
 
       <dt class="col-sm-4">Project End Date</dt>
-      <dd class="col-sm-8 font-monospace"><%= dendro.project_end_date ? dendro.project_end_date.strftime('%Y-%m-%d') : 'N/A' %></dd>
+      <dd class="col-sm-8 font-monospace"><%= dendro.project_end_date ? dendro.project_end_date.strftime('%Y-%m-%d') : na_value %></dd>
     </dl>
   </div>
 
@@ -73,7 +73,7 @@
     <h5>Sample Details</h5>
     <dl class="row">
       <dt class="col-sm-4">Material</dt>
-      <dd class="col-sm-8"><%= dendro.sample.material.present? ? dendro.sample.material.name : 'N/A' %></dd>
+      <dd class="col-sm-8"><%= dendro.sample.material.present? ? dendro.sample.material.name : na_value %></dd>
 
       <dt class="col-sm-4">Taxon</dt>
       <dd class="col-sm-8">
@@ -91,13 +91,13 @@
     <h5>Completeness and Parameters</h5>
     <dl class="row">
       <dt class="col-sm-4">Wood Completeness</dt>
-      <dd class="col-sm-8"><%= dendro.wood_completeness.present? ? dendro.wood_completeness.to_json : 'N/A' %></dd>
+      <dd class="col-sm-8"><%= dendro.wood_completeness.present? ? dendro.wood_completeness.to_json : na_value %></dd>
 
       <dt class="col-sm-4">Parameters</dt>
-      <dd class="col-sm-8"><%= dendro.parameters.present? ? dendro.parameters.to_json : 'N/A' %></dd>
+      <dd class="col-sm-8"><%= dendro.parameters.present? ? dendro.parameters.to_json : na_value %></dd>
 
       <dt class="col-sm-4">Waney Edge</dt>
-      <dd class="col-sm-8"><%= dendro.waney_edge ? 'Present' : 'Absent' %></dd>
+      <dd class="col-sm-8"><%= dendro.waney_edge.nil? ? na_value : dendro.waney_edge %></dd>
     </dl>
   </div>
 </div>

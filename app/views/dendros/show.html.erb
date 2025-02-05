@@ -1,6 +1,6 @@
 <% content_for :title, "#{@dendro.name}, #{Dendro.label} from #{@dendro.site.name}" %>
 <% content_for :meta_description do %>
-  <%= "#{@dendro.site.name} (#{@dendro.site.country}) has tree ring information from #{@dendro.start_year} to #{@dendro.end_year}, total of #{@dendro.measurements.length} (anchored: #{@dendro.is_anchored}). This determination was made on a sample of #{(@dendro.sample.material&.name || 'material unknown')} (#{(@dendro.sample.taxon&.name || 'taxon unknown')}). XRONOS' record for this dendrochronological series may include further information on the laboratory measurement, archaeological context, and bibliographic references." %>
+  <%= "#{@dendro.site.name} (#{@dendro.site.country}) has tree ring information from #{@dendro.start_year} to #{@dendro.end_year}, total of #{@dendro.measurements.length} (anchored: #{@dendro.is_anchored.nil? ? na_value : @dendro.is_anchored}). This determination was made on a sample of #{(@dendro.sample.material&.name || 'material unknown')} (#{(@dendro.sample.taxon&.name || 'taxon unknown')}). XRONOS' record for this dendrochronological series may include further information on the laboratory measurement, archaeological context, and bibliographic references." %>
 <% end %>
 
 <main class="container my-5">

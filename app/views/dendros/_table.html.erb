@@ -45,8 +45,8 @@
         <td><%= link_to dendro.name, dendro, target: :_top %></td>
         <td class="font-monospace"><%= dendro.start_year.present? ? dendro.start_year : na_value %></td>
         <td class="font-monospace"><%= dendro.end_year.present? ? dendro.end_year : na_value %></td>
-        <td class="font-monospace"><%= dendro.waney_edge.present? ? dendro.waney_edge : na_value %></td>
-        <td class="font-monospace"><%= dendro.is_anchored.present? ? dendro.is_anchored : na_value %></td>
+        <td class="font-monospace"><%= dendro.waney_edge.nil? ? na_value : dendro.waney_edge %></td>
+        <td class="font-monospace"><%= dendro.is_anchored.nil? ? na_value : dendro.is_anchored %></td>
         <td class="small text-end"><%= render "references/citations", references: dendro.references %></td>
         <% if can? :manage, Dendro %>
           <td class="text-end"><%= render "application/actions", i: dendro %></td>

@@ -31,7 +31,7 @@
 
   <p>
     <strong>Is anchored:</strong>
-    <%= dendro.is_anchored %>
+    <%= dendro.is_anchored.nil? ? na_value : dendro.is_anchored %>
   </p>
 
   <p>

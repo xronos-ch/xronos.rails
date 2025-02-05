@@ -21,7 +21,9 @@
 			<% count = @dendro.measurements.length %>
 			<%= count > 0 ? "Dendrochronological series with #{count == 1 ? '1 ring' : "#{count} rings"}" : "No rings measured" %>
   
-			<% if @dendro.waney_edge %>
+			<% if @dendro.waney_edge.nil? %>
+			<span class="text-secondary">(no Information on waney edge)</span>
+			<% elsif @dendro.waney_edge %>
 			<span class="text-success">(with waney edge)</span>
 			<% else %>
 			<span class="text-danger">(without waney edge)</span>
