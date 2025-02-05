@@ -19,13 +19,13 @@
 #
 FactoryBot.define do
   factory :user do
-    email { "admin@xronos.ch" }
+    sequence(:email) { |n| "user#{n}@xronos.ch" }
     password { "Hubsch123123" }
     password_confirmation { "Hubsch123123" }
     admin { false }
     passphrase { ENV["REGISTRATION_PASSPHRASE"] }
     trait :admin do
-      email { "admin@xronos.ch" }
+      sequence(:email) { |n| "admin#{n}@xronos.ch" }
       admin { true }
     end    
     factory :admin, traits: [:admin]
