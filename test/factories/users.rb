@@ -19,14 +19,14 @@
 #
 FactoryBot.define do
   factory :user do
-    sequence(:email) { |n| "user#{n}@xronos.ch" }
+    sequence(:email) { Faker::Internet.unique.email }
     password { "Hubsch123123" }
     password_confirmation { "Hubsch123123" }
     admin { false }
     passphrase { ENV["REGISTRATION_PASSPHRASE"] }
     
     trait :admin do
-      sequence(:email) { |n| Faker::Internet.unique.email(name: "admin#{n}", domain: "xronos.ch") }
+      sequence(:email) { |n| Faker::Internet.unique.email}
       admin { true }
     end    
     
