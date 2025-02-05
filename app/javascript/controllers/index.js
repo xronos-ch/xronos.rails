@@ -7,6 +7,9 @@ import { application } from "./application"
 import ArticleEditorController from "./article_editor_controller"
 application.register("article-editor", ArticleEditorController)
 
+import FilterVisibilityController from "./filter_visibility_controller"
+application.register("filter-visibility", FilterVisibilityController)
+
 import FlashController from "./flash_controller"
 application.register("flash", FlashController)
 

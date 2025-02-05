@@ -5,9 +5,31 @@
   </div>
 </noscript>
 
-<div class="p-3 border rounded bg-white">
+<div class="p-3 border rounded bg-white" data-controller="filter-visibility">
   <h5>Data Filters</h5>
   
+<!-- Data Types Filter -->
+<div class="mb-3">
+  <% selected_types = Array(params.dig(:filter, :type)) %>
+
+  <div class="d-flex gap-3">
+    <div class="form-check">
+      <%= check_box_tag 'filter[type][]', 'c14', selected_types.include?('c14'), 
+            class: 'form-check-input', 
+            id: 'type_c14',
+            data: { "filter-visibility-target": "checkbox" } %>
+      <%= label_tag 'type_c14', 'Radiocarbon Data', class: 'form-check-label' %>
+    </div>
+    <div class="form-check">
+      <%= check_box_tag 'filter[type][]', 'dendro', selected_types.include?('dendro'), 
+            class: 'form-check-input', 
+            id: 'type_dendro',
+            data: { "filter-visibility-target": "checkbox" } %>
+      <%= label_tag 'type_dendro', 'Dendro Data', class: 'form-check-label' %>
+    </div>
+  </div>
+</div>
+	
   <!-- Cal BP Filter-->
   <div class="mb-3"
        data-controller="slider" 
@@ -45,20 +67,6 @@
         value: @data.filter_value(:cals, :taq).present? ? @data.filter_value(:cals, :taq)[0].max : 50000 %>
     <% end %>
   </noscript>
-  </div>
-
-  <!-- Data Types Filter -->
-  <div class="mb-3">
-    <% selected_types = params.dig(:filter, :type) || ['dendro', 'c14'] %>
-    <div class="d-flex gap-3">
-      <div class="form-check">
-        <%= check_box_tag 'filter[type][]', 'c14', selected_types.include?('c14'), class: 'form-check-input', id: 'type_c14' %>
-		<%= label_tag 'type_c14', 'Radiocarbon Data'.html_safe, class: 'form-check-label' %>      </div>
-      <div class="form-check">
-        <%= check_box_tag 'filter[type][]', 'dendro', selected_types.include?('dendro'), class: 'form-check-input', id: 'type_dendro' %>
-        <%= label_tag 'type_dendro', 'Dendro Data', class: 'form-check-label' %>
-      </div>
-    </div>
   </div>
 
 <%= accordion_item "dataFilters-Site", "Sites", (@data.filters.dig("sites", "name") || @data.filters.dig("site_types", "name")) ? false : true do %>
@@ -144,10 +152,12 @@
   <% end %>
 
 <% end %>
+  <div data-filter-visibility-target="accordion" data-filter-target="type_c14">
 
-<% c14s_bp = @data.filters.dig("c14s", "bp")[0] %>
+<% c14s_bp = (@data.filters.dig("c14s", "bp") || [0..50000])[0] %>
 <%= accordion_item "dataFilters-C14", "Radiocarbon",
-  (@data.filters.dig("c14_labs") || (c14s_bp.is_a?(Range) && (c14s_bp.begin != 0 || c14s_bp.end != 50000))) ? false : true do %>  <%= f.fields_for :c14_labs do |f| %>
+  (@data.filters.dig("c14_labs") || (c14s_bp.is_a?(Range) && (c14s_bp.begin != 0 || c14s_bp.end != 50000))) ? false : true do %>
+  <%= f.fields_for :c14_labs do |f| %>
     <%= f.collection_select :name, C14Lab.all, :name, :name,
       {
         label: "Labs",
@@ -218,6 +228,15 @@
   <% end %>
 
 <% end %>
+</div>
+
+<div data-filter-visibility-target="accordion" data-filter-target="type_dendro"
+     class="<%= selected_types.include?('dendro') ? '' : 'd-none' %>">
+  <%= accordion_item "dataFilters-Dendro", "Dendro", selected_types.include?('dendro') do %>
+  	<%# TODO: Fill with dendro-related filters %>
+    <div id="dendro-filters">Dendrochronology Specific Filters</div>
+  <% end %>
+</div>
 
 <%# The following don't have a straightforward association to C14s and are
     disabled pending a better solution to:
