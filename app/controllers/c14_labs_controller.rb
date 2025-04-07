@@ -10,7 +10,14 @@ class C14LabsController < ApplicationController
   # GET /c14_labs.json
   # GET /c14_labs.csv
   def index
-    @c14_labs = C14Lab.all
+    @c14_labs = C14Lab.all.with_c14s_count
+
+    # order
+    if params.has_key?(:c14_labs_order_by)
+      order = { params[:c14_labs_order_by] => params.fetch(:c14_labs_order, "asc") }
+      @c14_labs = @c14_labs.reorder(order)
+    end
+
     respond_to do |format|
       format.html {
         @pagy, @c14_labs = pagy(@c14_labs)

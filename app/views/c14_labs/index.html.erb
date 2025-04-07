@@ -5,8 +5,30 @@
   <table class="responsive nowrap table table-hover align-middle">
     <thead>
       <tr>
-        <th>Name</th>
-        <th class="text-end">Active?</th>
+        <th scope="col">
+          <%= link_to_order_by "Laboratory", :name, :c14_labs %>
+          <% if ordered_by?(:name, :c14_labs) %>
+            <span class="text-muted"><%= order_indicator :c14_labs %></span>
+          <% end %>
+        </th>
+        <th scope="col">
+          <%= link_to_order_by "Country", :country_code, :c14_labs %>
+          <% if ordered_by?(:country_code, :c14_labs) %>
+            <span class="text-muted"><%= order_indicator :c14_labs %></span>
+          <% end %>
+        </th>
+        <th scope="col">
+          <%= link_to_order_by "Status", :active, :c14_labs %>
+          <% if ordered_by?(:active, :c14_labs) %>
+            <span class="text-muted"><%= order_indicator :c14_labs %></span>
+          <% end %>
+        </th>
+        <th scope="col" class="text-end">
+          <%= link_to_order_by C14.label.humanize.pluralize, :c14s_count, :c14_labs %>
+          <% if ordered_by?(:c14s_count, :c14_labs) %>
+            <span class="text-muted"><%= order_indicator :c14_labs %></span>
+          <% end %>
+        </th>
         <% if can? :manage, C14Lab %><th><!--Actions--></th><% end %>
       </tr>
     </thead>
@@ -15,14 +37,16 @@
       <% @c14_labs.each do |c14_lab| %>
         <tr>
           <td><%= render c14_lab %></td>
-          <td class="text-end"><%= c14_lab.active %></td>
+          <td><%= na_or c14_lab.country %></td>
+          <td><%= c14_lab.active ? "Active" : "Inactive" %></td>
+          <td class="text-end"><%= c14_lab.c14s_count %></td>
           <% if can? :manage, C14Lab %><td class="text-end"><%= render 'shared/action_buttons_compact', i: c14_lab %></td><% end %>
         </tr>
       <% end %>
     </tbody>
   </table>
 
-  <%#= pagy_bootstrap_nav(@pagy) %>
+  <%== pagy_bootstrap_nav(@pagy) %>
 
   <% if can? :create, C14Lab %>
     <%= link_to 'New radiocarbon lab', new_c14_lab_path, class: 'btn btn-secondary', data: { "turbo_frame": "remote_modal" } %>
