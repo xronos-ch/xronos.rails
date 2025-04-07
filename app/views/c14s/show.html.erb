@@ -57,7 +57,7 @@
     <%= render "references/bibliography", references: (@c14.references + @c14.site.references).uniq %>
   </section>
 
-  <section id="c14-changelog" class="my-5">
+  <section id="changelog" class="my-5">
     <h2>Changelog</h2>
     <%= render "application/paper_trail/versions", item: @c14 %>
   </section>

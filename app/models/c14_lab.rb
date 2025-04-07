@@ -19,6 +19,7 @@ class C14Lab < ApplicationRecord
 
   validates :name, presence: true
 
+  has_many :c14_lab_codes
   has_many :c14s, inverse_of: :c14_lab
   has_paper_trail
 
@@ -26,6 +27,19 @@ class C14Lab < ApplicationRecord
 
   def self.label
     "radiocarbon lab"
+  end
+
+  def country
+    "an unknown land" # TODO
+  end
+
+  def lab_code
+    # TODO: There can only be one...
+    c14_lab_codes.select(canonical: true).first.lab_code
+  end
+
+  def c14s_count
+    c14s.count
   end
 
 end

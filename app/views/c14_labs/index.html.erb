@@ -14,7 +14,7 @@
     <tbody>
       <% @c14_labs.each do |c14_lab| %>
         <tr>
-          <td><%= link_to c14_lab.name, c14_lab %></td>
+          <td><%= render c14_lab %></td>
           <td class="text-end"><%= c14_lab.active %></td>
           <% if can? :manage, C14Lab %><td class="text-end"><%= render 'shared/action_buttons_compact', i: c14_lab %></td><% end %>
         </tr>

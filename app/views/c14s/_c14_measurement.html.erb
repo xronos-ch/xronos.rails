@@ -7,7 +7,7 @@
   <dd class="font-monospace"><%= c14.std %></dd>
 
   <dt>Lab</dt>
-  <dd><%= c14.c14_lab.present? ? c14.c14_lab.name : na_value %></dd>
+  <dd><%= c14.c14_lab.present? ? render(c14.c14_lab) : na_value %></dd>
 
   <dt>Method</dt>
   <dd><%= c14.method.present? ? c14.method : na_value %></dd>

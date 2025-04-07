@@ -18,6 +18,10 @@ FactoryBot.define do
   factory :c14_lab do
     name { Faker::Address.city }
     active { [true, false].sample }
+    after :create do |c14_lab|
+      create_list :c14_lab_code, 1, c14_lab: c14_lab, canonical: true
+      create_list :c14_lab_code, 2, c14_lab: c14_lab, canonical: false
+    end
   end
   
 end

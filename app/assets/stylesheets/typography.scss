@@ -8,6 +8,12 @@
 	display: inline;
 }
 
+.plain-list {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
 // Align embedded svg icons with text
 // Adapted from https://blog.prototypr.io/align-svg-icons-to-text-and-say-goodbye-to-font-icons-d44b3d7b26b4
 .svg-icon {

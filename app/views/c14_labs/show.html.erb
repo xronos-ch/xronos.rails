@@ -1,9 +1,101 @@
 <% content_for :title, @c14_lab.name %>
+<% content_for :meta_description do %>
+  <%= @c14_lab.name %> <%= @c14_lab.active ? "is" : "was" %> a radiocarbon laboratory in <%= @c14_lab.country %>.
+  Its standard abbreviation <%= @c14_lab.active ? "is" : "was" %> '<%= @c14_lab.lab_code %>'<% if @c14_lab.c14_lab_codes.count > 1 %>; variants include <%= @c14_lab.c14_lab_codes.where(canonical: false).pluck(:lab_code).to_sentence %><% end %>.
+  <% unless @c14_lab.active %>It is no longer operating.<% end %>
+  XRONOS includes information on <%= @c14_lab.c14s_count %> <%= "radiocarbon date".pluralize(@c14_lab.c14s_count) %> produced by <%= @c14_lab.name %>.
+<% end %>
 
-<header id="c14Lab-header" class="bg-primary text-light">
-  <div class="container my-5">
-    <h1 class="display-1"><%= @c14_lab.name %></h1>
-    <h2 class="display-6">Radiocarbon lab (<%= @c14_lab.active ? "active" : "defunct" %>)</h2>
-  </div>
-</header>
+<main class="container my-5">
 
+  <header id="c14-lab-header">
+
+    <div class="d-flex">
+
+      <h1 class="display-3"><%= @c14_lab.name %></h1>
+
+      <% if can? :edit, @c14_lab %>
+        <div class="ms-auto">
+          <%= link_to edit_icon,
+            edit_c14_lab_path(@c14_lab), 
+            title: "Edit radiocarbon lab",
+            class: "btn btn-sm btn-outline-primary",
+            data: { turbo_frame: "remote_modal" } %>
+        </div>
+      <% end %>
+
+    </div>
+
+    <div class="h5">
+      <%= xr_icon C14, {}, { style: "width: auto; height: 1.25rem;" } %>
+      Radiocarbon laboratory in <%= @c14_lab.country %>
+    </div>
+
+    <div class="my-3">
+      <%= render "shared/record_metadata", record: @c14_lab %>
+    </div>
+
+  </header>
+
+  <section id="c14-lab-metadata" class="my-5">
+    <h2><%= bs_icon "clipboard" %> Laboratory metadata</h2>
+    <dl>
+
+      <dt>Active</dt>
+      <dd class="font-monospace"><%= @c14_lab.active ? "Active" : "Inactive" %></dd>
+
+      <dt>Country</dt>
+      <dd class="font-monospace"><%= @c14_lab.country %></dd>
+
+      <dt>Canonical laboratory code</dt>
+      <dd class="font-monospace"><%= @c14_lab.lab_code %></dd>
+
+      <dt>Variant laboratory codes</dt>
+      <dd class="font-monospace">
+        <ul class="plain-list">
+          <% @c14_lab.c14_lab_codes.pluck(:lab_code).each do | lab_code | %>
+            <li><%= lab_code %></li>
+          <% end %>
+        </ul>
+      </dd>
+
+    </dl>
+  </section>
+
+  <% unless @c14s.nil? %>
+    <section id="c14-lab-c14s" class="my-5">
+      <div id="c14-labs-c14s-toolbar" class="d-flex">
+        <h2>
+          <%= xr_icon C14, {}, style: "width: auto; height: 2rem" %>
+          <%= C14.label.humanize.pluralize %>
+          <small class="text-muted">(<%= @pagy_c14s.count %>)</small>
+        </h2>
+        <div class="ms-auto">
+          <%= link_to bs_icon("download"), 
+                c14s_path(format: :csv, c14: { sample: { contexts: { c14_lab_id: @c14_lab.id } } }), 
+                class: "btn btn-sm btn-outline-primary",
+                title: "Download CSV" %>
+        </div>
+      </div>
+
+      <turbo-frame id="c14-lab-c14s-table">
+        <%= render "c14s/table", c14s: @c14s %>
+        <% unless @pagy_c14s.pages <= 1 %>
+          <%== pagy_bootstrap_nav(@pagy_c14s) %>
+        <% end %>
+        <% if can? :create, :c14 %>
+          <%= link_to create_icon + "Add radiocarbon date", 
+                new_c14_path(c14_lab: @c14_lab),
+                class: "btn btn-outline-primary",
+                data: { turbo_frame: "remote_modal" } %>
+        <% end %>
+      </turbo-frame>
+    </section>
+  <% end %>
+
+  <section id="changelog" class="my-5">
+    <h2>Changelog</h2>
+    <%= render "application/paper_trail/versions", item: @c14_lab %>
+  </section>
+
+</main>

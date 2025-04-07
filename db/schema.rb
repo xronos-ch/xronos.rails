@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_12_15_102659) do
+ActiveRecord::Schema[7.2].define(version: 2025_04_07_124024) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -58,6 +58,16 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_15_102659) do
     t.index ["section"], name: "index_articles_on_section"
     t.index ["slug"], name: "index_articles_on_slug", unique: true
     t.index ["user_id"], name: "index_articles_on_user_id"
+  end
+
+  create_table "c14_lab_codes", force: :cascade do |t|
+    t.bigint "c14_lab_id"
+    t.string "lab_code", null: false
+    t.boolean "canonical", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["c14_lab_id"], name: "index_c14_lab_codes_on_c14_lab_id"
+    t.index ["lab_code"], name: "index_c14_lab_codes_on_lab_code"
   end
 
   create_table "c14_labs", force: :cascade do |t|
@@ -366,6 +376,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_15_102659) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "c14_lab_codes", "c14_labs"
   add_foreign_key "import_tables", "users"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_grants", "users", column: "resource_owner_id"
