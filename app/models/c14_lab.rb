@@ -55,4 +55,8 @@ class C14Lab < ApplicationRecord
     c14s.count
   end
 
+  def distinct_methods
+    c14s.distinct(:method).pluck(:method)
+  end
+
 end
