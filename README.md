@@ -96,7 +96,7 @@ For development, you will need to run the XRONOS rails app directly (without doc
 5. Run `bundle && yarn` to install gem and javascript dependencies respectively
 6. Run `bin/rails db:setup` to set up and seed the database
 7. Start a dev server with `bin/dev`. This watches for changes in CSS and JS files.
-    * If you get an error about foreman being missing, try restarting your terminal.
+    * If you get an error about foreman being missing, try restarting your terminal or (if using rbenv) running `rbenv rehash`
 
 ### Using Calibrator
 
