@@ -1,6 +1,6 @@
 <% content_for :title, @c14_lab.name %>
 <% content_for :meta_description do %>
-  <%= @c14_lab.name %> <%= @c14_lab.active ? "is" : "was" %> a radiocarbon laboratory in <%= @c14_lab.country %>.
+  <%= @c14_lab.name %> <%= @c14_lab.active ? "is" : "was" %> a radiocarbon laboratory<% unless @c14_lab.country.blank? %> in <%= @c14_lab.country %><% end %>.
   Its standard abbreviation <%= @c14_lab.active ? "is" : "was" %> '<%= @c14_lab.lab_code %>'<% if @c14_lab.c14_lab_codes.count > 1 %>; variants include <%= @c14_lab.c14_lab_codes.where(canonical: false).pluck(:lab_code).to_sentence %><% end %>.
   <% unless @c14_lab.active %>It is no longer operating.<% end %>
   XRONOS includes information on <%= @c14_lab.c14s_count %> <%= "radiocarbon date".pluralize(@c14_lab.c14s_count) %> produced by <%= @c14_lab.name %>.
@@ -28,7 +28,8 @@
 
     <div class="h5">
       <%= xr_icon C14, {}, { style: "width: auto; height: 1.25rem;" } %>
-      Radiocarbon laboratory in <%= @c14_lab.country %>
+      Radiocarbon laboratory
+      <% unless @c14_lab.country.blank? %>in <%= @c14_lab.country %><% end %>
     </div>
 
     <div class="my-3">
@@ -41,11 +42,11 @@
     <h2><%= bs_icon "clipboard" %> Laboratory metadata</h2>
     <dl>
 
-      <dt>Active</dt>
+      <dt>Status</dt>
       <dd class="font-monospace"><%= @c14_lab.active ? "Active" : "Inactive" %></dd>
 
       <dt>Country</dt>
-      <dd class="font-monospace"><%= @c14_lab.country %></dd>
+      <dd class="font-monospace"><%= na_or @c14_lab.country %></dd>
 
       <dt>Canonical laboratory code</dt>
       <dd class="font-monospace"><%= @c14_lab.lab_code %></dd>

@@ -2,11 +2,12 @@
 #
 # Table name: c14_labs
 #
-#  id         :bigint           not null, primary key
-#  active     :boolean
-#  name       :string
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id           :bigint           not null, primary key
+#  active       :boolean
+#  country_code :string
+#  name         :string
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
 #
 # Indexes
 #
@@ -25,17 +26,29 @@ class C14Lab < ApplicationRecord
 
   acts_as_copy_target # enable CSV exports
 
+  scope :with_c14s_count, -> { select <<~SQL
+      "c14_labs".*,
+      (
+        SELECT COUNT(c14s.id) 
+        FROM c14s
+        WHERE c14_lab_id = "c14_labs".id
+      ) AS c14s_count
+    SQL
+  }
+
   def self.label
     "radiocarbon lab"
-  end
-
-  def country
-    "an unknown land" # TODO
   end
 
   def lab_code
     # TODO: There can only be one...
     c14_lab_codes.select(canonical: true).first.lab_code
+  end
+
+  def country
+    return nil if country_code.blank?
+    ISO3166::Country[country_code] || 
+      ISO3166::Country.find_country_by_any_name(country_code)
   end
 
   def c14s_count

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_04_07_124024) do
+ActiveRecord::Schema[7.2].define(version: 2025_04_07_150504) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -75,6 +75,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_07_124024) do
     t.boolean "active"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
+    t.string "country_code"
     t.index ["active"], name: "index_c14_labs_on_active"
     t.index ["name"], name: "index_c14_labs_on_name"
   end
@@ -212,8 +213,9 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_07_124024) do
   end
 
   create_table "periods_site_phases", id: false, force: :cascade do |t|
-    t.bigint "site_phase_id"
-    t.bigint "period_id"
+    t.bigint "site_phase_id", null: false
+    t.bigint "period_id", null: false
+    t.index ["site_phase_id", "period_id"], name: "index_spp"
   end
 
   create_table "pg_search_documents", force: :cascade do |t|
@@ -225,11 +227,13 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_07_124024) do
     t.index ["searchable_type", "searchable_id"], name: "index_pg_search_documents_on_searchable"
   end
 
-  create_table "physical_locations", id: false, force: :cascade do |t|
+  create_table "physical_locations", force: :cascade do |t|
     t.bigint "site_id"
     t.bigint "country_id"
-    t.text "created_at"
-    t.text "updated_at"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.index ["country_id"], name: "index_physical_locations_on_country_id"
+    t.index ["site_id"], name: "index_physical_locations_on_site_id"
   end
 
   create_table "references", force: :cascade do |t|
@@ -348,7 +352,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_07_124024) do
   end
 
   create_table "versions", force: :cascade do |t|
-    t.string "item_type", null: false
+    t.string "item_type"
+    t.string "{:null=>false}"
     t.bigint "item_id", null: false
     t.string "event", null: false
     t.string "whodunnit"

@@ -57,6 +57,10 @@ module ApplicationHelper
     '<abbr title="Unknown or missing value" class="initialism text-muted">NA</abbr>'.html_safe
   end
 
+  def na_or(value)
+    value.blank? ? na_value : value
+  end
+
   def tick_or_cross(bool)
     bool ? bs_icon("check") : bs_icon("x")
   end
