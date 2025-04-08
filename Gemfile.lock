@@ -79,6 +79,10 @@ GEM
       minitest (>= 5.1)
       securerandom (>= 0.3)
       tzinfo (~> 2.0, >= 2.0.5)
+    acts_as_recursive_tree (4.1.0)
+      activerecord (>= 7.0.0, < 9)
+      activesupport (>= 7.0.0, < 9)
+      zeitwerk (>= 2.4)
     addressable (2.8.7)
       public_suffix (>= 2.0.2, < 7.0)
     annotate (3.2.0)
@@ -388,6 +392,9 @@ GEM
       actionpack (>= 5.2)
       railties (>= 5.2)
     rexml (3.3.9)
+    roo (2.10.1)
+      nokogiri (~> 1)
+      rubyzip (>= 1.3.0, < 3.0.0)
     rspec (3.13.0)
       rspec-core (~> 3.13.0)
       rspec-expectations (~> 3.13.0)
@@ -515,6 +522,7 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord-session_store
+  acts_as_recursive_tree
   annotate
   bibtex-ruby
   bootstrap_form (~> 5.0)
@@ -561,6 +569,7 @@ DEPENDENCIES
   rack-brotli
   rails (~> 7.2)
   redis (~> 4.0)
+  roo
   rspec-rails (~> 7.0.0)
   rubocop
   rubocop-rails
