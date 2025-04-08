@@ -1,0 +1,301 @@
+lab_code	active	successor	name	short_name	city	country	url
+A	FALSE	AA	Carbon-14 Age Determination Laboratory, University of Arizona	Arizona		USA	https://ams.arizona.edu/ 
+AA	TRUE		Accelerator Mass Spectrometry Lab, University of Arizona	Arizona (AMS)		USA	https://ams.arizona.edu/ 
+AAR	TRUE		Aarhus AMS Centre, Aarhus University	Aarhus	Aarhus	Denmark	https://c14websub.au.dk/
+AC	TRUE		INGEIS, University of Buenos Aires	INGEIS	Buenos Aires	Argentina	http://www.ingeis.uba.ar/
+AECV	FALSE		Alberta Environmental Center of Vegreville			Canada	
+AERIK	FALSE		Atomic Energy Research Institute			Korea	
+ALG	FALSE		Algiers			Algeria	
+ANAS	FALSE		Applied Nuclear-Atomic South Science Lab			Korea	
+ANL	FALSE		Argonne National Laboratory			USA	
+ANTW	FALSE		Antwerp		Antwerp	Belgium	
+ANU	FALSE	ANUA	ANU Radiocarbon Laboratory, Australian National University	ANU	Canberra	Australia	https://earthsciences.anu.edu.au/research/facilities/anu-radiocarbon-laboratory
+ANUA	FALSE	SANU	ANU Radiocarbon Laboratory, Australian National University (AMS)	ANU (AMS)	Canberra	Australia	https://earthsciences.anu.edu.au/research/facilities/anu-radiocarbon-laboratory
+SANU	TRUE		ANU Radiocarbon Laboratory, Australian National University (SSAMS)	ANU (SSAMS)	Canberra	Australia	https://earthsciences.anu.edu.au/research/facilities/anu-radiocarbon-laboratory
+AU	FALSE		University of Alaska			USA	
+AURIS	TRUE		Ahmedabad			India	
+Aix	TRUE		Centre de Recherche et d'Enseignement de Geosciences de l'Environnement (CERAGE), Aix-en-Provence			France	
+BE	TRUE		Laboratory for the Analysis of Radiocarbon with AMS, University of Bern	LARA Bern	Bern	Switzerland	https://www.14c.unibe.ch/
+B	FALSE		Radiocarbon Lab, Climate and Environmental Physics, University of Bern	Bern	Bern	Switzerland	https://www.climate.unibe.ch/services/services_of_cep/radiocarbon_dating/index_eng.html
+BC	FALSE		Brooklyn College			USA	
+BGS	FALSE		Brock University			Canada	
+BIOCAMS	FALSE		Miami		Miami	USA	
+BM	FALSE		British Museum		London	England	
+BONN	FALSE		Universität Bonn		Bonn	Germany	
+BRAMS	TRUE		University of Bristol		Bristol	UK	
+BS	TRUE		Birbal Sahni Institute			India	
+Ba	TRUE		Bratislava		Bratislava	Slovakia	
+Beta	TRUE		Beta Analytic			USA	
+Birm	FALSE		Birmingham		Birmingham	UK	
+Bln	FALSE		Berlin		Berlin	Germany	
+C	FALSE		Chicago		Chicago	USA	
+CAMS	TRUE		Lawrence Livermore National Laboratory			USA	
+CAR	FALSE		University College, Cardiff			Wales	
+CENA	TRUE		Centro Energia Nuclear na Agricultura, Universidade de São Paulo	São Paulo	São Paulo	Brazil	
+CG	TRUE		Institute of Geology			China	
+CH	FALSE		Chemistry Laboratory			India	
+CIRAM	TRUE		CIRAM, Martillac			France	
+CN-XX	TRUE		Chinese Academy of Sciences			China	
+CNA	TRUE		Centro Nacional de Aceleradores			Spain	
+CNL	NA		Institute of Geology and Geophysics, Chinese Academy of Sciences			China	
+COL	TRUE		Köln AMS			Germany	
+CRCA	FALSE		Cairo		Cairo	Egypt	
+CRL	TRUE		Czech Radiocarbon Laboratory, Czech Academy of Sciences		Řež	Czechia	https://www.ujf.cas.cz/en/our-services/Radiocarbon_laboratory/About_us/
+CSIC	TRUE		Geochronology Lab, IQFR-CSIC, Madrid			Spain	
+CSM	FALSE		Cosmochem. Lab., USSR Acad. of Sci.			USSR	
+CT	FALSE		Caltech, Calif. Inst. Tech.			USA	
+CU	TRUE		Department of Hydrology and Geology, Charles University		Prague	Czechia	
+D	FALSE		Dublin, Trinity College			Ireland	
+D-AMS	TRUE		Direct AMS			USA	
+DAL	FALSE	DGC	Radiocarbon Dating Laboratory, Dalhousie University	Dalhousie	Halifax	Canada	
+DE	FALSE		USGS, Denver  			USA	
+DEM	TRUE		NCSR Demokritos			Greece	
+DGC	TRUE		Dalhousie Geochronology Centre, Dalhousie University	Dalhousie (DGC)	Halifax	Canada	
+DIC	FALSE		Dicar Corp and Dicarb			USA	
+DK	TRUE		Univ. de Dakar			Sénégal	
+DRI	FALSE		Desert Research Institute			USA	
+DSA	TRUE		CIRCE, Caserta			Italy	
+Dak	FALSE		Univ. of Dakar			Sénégal	
+Deb	TRUE		Debrecen			Hungary	
+DebA	TRUE		Debrecen (AMS)			Hungary	
+ENEA	TRUE		ENEA, Bologna			Italy	
+ETH	TRUE		Laboratory of Ion Beam Physics, ETH Zürich	ETH Zürich	Zürich	Switzerland	https://ams.ethz.ch/LIPServices/c14.html
+Erl	FALSE		Erlangen AMS Facility			Germany	
+F	FALSE		Florence			Italy	
+FSU	FALSE		Florida State University			USA	
+FTMC	TRUE		Vilnius AMS Lab			Lithuania	
+FZ	TRUE		Department of Physics, University of Fortaleza	Fortaleza	Fortaleza	Brazil	
+Fi	TRUE		Florence INFN			Italy	
+Fr	FALSE		Freiberg			Germany	
+Fra	FALSE		Frankfurt			Germany	
+G	FALSE		Göteborg			Sweden	
+GAK	FALSE		Gakushuin University			Japan	
+GC	NA		Guiyang Institute of Geochemistry			China	
+GD	FALSE		Gdansk		Gdansk	Poland	
+GIN	TRUE		Geological Institute			Russia	
+GL	FALSE		Geochronological Lab			England	
+GSC	TRUE		Geological Survey			Canada	
+GU	FALSE		Scottish Universities Research & Reactor Centre			Scotland	
+GV	TRUE		AMS Golden Valley, Novosibirsk			Russia	
+GX	TRUE		Geochron Laboratories			USA	
+GXNUAMS	TRUE		Guangxi Normal Univ. AMS Lab			China	
+GZ	NA		Key Laboratory of Isotope Geochronology and Geochemistry (Guangzhou)			China	
+Gd	FALSE		Gliwice			Poland	
+GdA	TRUE		Gliwice			Poland	
+GdS	TRUE		Gliwice			Poland	
+Gif	TRUE		Gif-sur-Yvette			France	
+Gif A	TRUE		Gif-sur-Yvette and Orsay			France	
+GrA	FALSE		Groningen AMS			Netherlands	
+GrM	TRUE		Groningen AMS			Netherlands	
+GrN	FALSE		Groningen			Netherlands	
+GrO	FALSE		Groningen			Netherlands	
+H	FALSE		Heidelberg			Germany	
+HAM	FALSE		Hamburg			Germany	
+HAR	FALSE		Harwell			England	
+HIG	FALSE		Hawaii Inst. of Geophys.			USA	
+HL	TRUE		Second Inst. of Oceanography			China	
+HNS	FALSE		Hasleton-Nuclear, Palo Alto			USA	
+Hd	TRUE		Heidelberg			Germany	
+Hel	FALSE	HelA	Laboratory of Chronology, University of Helsinki	Helsinki	Helsinki	Finland	https://www.helsinki.fi/en/luomus/analytical-services/radiocarbon-analyses
+HelA	TRUE		Laboratory of Chronology, University of Helsinki (AMS)	Helsinki (AMS)	Helsinki	Finland	https://www.helsinki.fi/en/luomus/analytical-services/radiocarbon-analyses
+Hv	FALSE		Hannover			Germany	
+I	FALSE		Teledyne Isotopes			USA	
+IAA	TRUE		Institute of Accelerator Analysis (beta counting)			Japan	
+IAAA	TRUE		Institute of Accelerator Analysis (AMS)			Japan	
+IAEA	FALSE		International Atomic Energy Agency  			Austria	
+IAEA-MEL	TRUE		Marine Environmental Lab.			Monaco	
+ICA	TRUE		International Chemical Analysis			USA	
+ICEN	FALSE		Instituto Tecnológico e Nuclear			Portugal	
+IEMAE	TRUE		Institute of Evolutionary Morphology & Animal Ecology			Russia	
+IFAO	TRUE		Laboratoire de Datation par le Radiocarbone, Institut français d’archéologie orientale	IFAO	Cairo	Egypt	
+IGAN	TRUE		Institute of Geography			Russia	
+IGS	FALSE		Institute of Geological Sciences (UK)		London	UK	
+IGSB	TRUE		Institute of Geochemistry and Geophysics, National Academy of Sciences of Belarus		Minsk	Belarus	
+IHME	TRUE		Marzeev Inst. of Hygiene Med. Ecol.			Ukraine	
+II	FALSE		Isotopes, Inc., Palo Alto			USA	
+IMTA	TRUE		Inst. Mexicano de Tecnología del Agua			Mexico	
+IOAN	FALSE		Inst. of Oceanography			Russia	
+IOP	TRUE		Ionplus AG	Ionplus	Dietikon	Switzerland	https://www.ionplus.ch/
+IORAN	FALSE		Institute of Oceanology			Russia	
+IRPA	FALSE		Royal Institute for Cultural Heritage			Belgium	
+ISGS	TRUE		Illinois State Geological Survey			USA	
+IUACD	TRUE		Inter University Accelerator Centre			India	
+IVAN	FALSE		Institute of Volcanology			Ukraine	
+IVIC	FALSE		Caracas			Venezuela	
+IWP	FALSE		Institute of Water Problems			Russia	
+JAT	TRUE		Tono Geoscience Center (JAEA)			Japan	
+K	FALSE		Copenhagen			Denmark	
+KATRI	TRUE		Korea Apparel Testing			Korea	
+KEEA	TRUE		Kyushu Environ. Eval. Assoc. Property Research Inst.			Japan	
+KF	NA		State Key Laboratory of Lake Science and Environment, Chinese Academy of Sciences			China	
+KGM	TRUE		Korea Institute of Geoscience & Mineral Resources (KIGAM)			Korea	
+KI	FALSE		Kiel		Kiel	Germany	
+KIA	TRUE		Kiel (AMS)		Kiel	Germany	
+KIK	FALSE		Royal Institute for Cultural Heritage			Belgium	
+KN	FALSE		Köln		Cologne	Germany	
+KR	TRUE		Kraków		Kraków	Poland	
+KRIL	FALSE		Krasnoyarsk Institute			Russia	
+KSU	FALSE		Kyoto Sangyo University			Japan	
+Ki(KIEV)	TRUE		(KIEV) Institute of Radio-Geochemistry of the Environment		Kyiv	Ukraine	
+L	FALSE		Lamont-Doherty			USA	
+LACUFF	TRUE		Radiocarbon Laboratory, Fluminense Federal University	Fluminense	Rio de Janeiro	Brazil	https://lac.uff.br/eng/home/
+LAEC	TRUE		Lebanese Atomic Energy Commission (LAEC)			Lebanon	
+LAR	FALSE		Liège State University			Belgium	
+LE	TRUE		St. Petersburg			Russia	
+LEMA	TRUE		Lab. de Espectrometría de Masas con Aceleradores			Mexico	
+LIH	TRUE		NCSR Demokritos			Greece	
+LJ	FALSE		Scripps (UCSD) La Jolla			USA	
+LP	TRUE		Laboratorio de Tritio y Radiocarbono,  National University of La Plata			Argentina	
+LTL	TRUE		University of Lecce			Italy	
+LU	TRUE		St. Petersburg State University			Russia	
+LZ	TRUE		Umweltforschungszentrum  Leipzig-Halle			Germany	
+LZU	TRUE		Lanzhou University			China	
+Lu	FALSE	LuA	Radiocarbon Dating Laboratory, Lund University		Lund	Sweden	
+LuA	FALSE	LuS	Radiocarbon Dating Laboratory, Lund University (AMS)		Lund (AMS)	Sweden	
+LuS	TRUE		Radiocarbon Dating Laboratory, Lund University (SSAMS)		Lund (SSAMS)	Sweden	https://www.geology.lu.se/research/laboratories-equipment/radiocarbon-dating-laboratory
+Lv	FALSE		Louvain-la-Neuve			Belgium	
+Ly	TRUE		University of Lyon			France	
+M	FALSE		University of Michigan			USA	
+MAG	TRUE		Quaternary Geology			Russia	
+MAMS	TRUE		Curt-Engelhorn-Zentrum Archaeom.			Germany	
+MC	FALSE		Centre Scientifique			Monaco	
+METU	FALSE		Middle East Technical Univ.			Turkey	
+MKL	TRUE		Lab. of Absolute Dating			Poland	
+MTC	TRUE		University of Tokyo			Japan	
+Ma	FALSE		University of Winnepeg			Canada	
+N	FALSE		Nishina Memorial			Japan	
+NB	NA		Nanjing Museum			China	
+NIST	TRUE		National Institute of Standards and Technology			USA	
+NPL	FALSE		National Physical Laboratory, Middlesex			England	
+NS	FALSE		Nova Scotia Research Foundation			Canada	
+NSRL	TRUE		INSTAAR, University of Colorado			USA	
+NSTF	FALSE		Nuclear Science and Technology Facility, State University of New York			USA	
+UNSW	FALSE		Chronos Radiocarbon Laboratory, University of New South Wales	New South Wales	Sydney	Australia	https://www.analytical.unsw.edu.au/facilities/x-ray-facilities/radiocarbon-laboratory
+NTU	TRUE		National Taiwan University			Taiwan	
+NU	FALSE		Nihon University			Japan	
+NUTA	TRUE		Tandetron AMS Lab			Japan	
+NZ	FALSE		Rafter Radiocarbon Lab			New Zealand	
+NZA	TRUE		Rafter Radiocarbon Lab (AMS)			New Zealand	
+Ny	FALSE		Nancy, Centre de Recherches  Radiogéologiques			France	
+O	FALSE		Humble Oil & Refining			USA	
+OBDY	FALSE		ORSTOM Bondy			France	
+OR	TRUE		Research Center of Radioisotopes			Japan	
+ORINS	FALSE		Oak Ridge Institute of Nuclear Studies			USA	
+OS	TRUE		National Ocean Sciences, AMS Facility Woods Hole Oceanographic Inst.			USA	
+OWU	FALSE		Ohio Wesleyan Univ.			USA	
+OX	FALSE		USDA (Oxford, Missouri)			USA	
+OZ	TRUE		Centre for Accelerator Science, Australian Nuclear Science and Technology Organisation 	ANSTO	Canberra	Australia	https://www.ansto.gov.au/our-facilities/centre-for-accelerator-science
+OxA	TRUE		Oxford Radiocarbon Accelerator Unit		Oxford	England	
+P	FALSE		University of Pennsylvania			USA	
+P	TRUE		Max-Planck-Institut Geochronology Lab			Germany	
+PAL	TRUE		Palynosurvery Co.			Japan	
+PI	FALSE		Permafrost Institute			Russia	
+PIC	FALSE		Packard			USA	
+PITT	FALSE		University of Pittsburgh			USA	
+PKU	TRUE		Peking University			China	
+PKUAMS	TRUE		Peking Univ. AMS lab			China	
+PL	TRUE		Purdue Rare Isotope Measurement Lab			USA	
+PLD	TRUE		Paleo Labo. Co., Ltd.			Japan	
+PRI	TRUE		PaleoResearch Institute			USA	
+PRL	TRUE		Radiocarbon Dating Research Unit			India	
+PRLCH	FALSE		Physical Research Lab			India	
+PSU	FALSE		Penn State University			USA	
+PSUAMS	TRUE		Penn State University (AMS)			USA	
+Pi	FALSE		Pisa			Italy	
+Poz	TRUE		Poznan			Poland	
+Pr	FALSE		Prague Czech			Republic	
+Pta	TRUE		Pretoria South			Africa	
+PV	NA		Institute of Vertebrate Paleontology and Paleoanthropology			China	
+Q	FALSE		Cambridge  			England	
+QC	FALSE		Queens College			USA	
+QL	FALSE		Quaternary Isotope Lab.			USA	
+QU	FALSE		Centre de Recherches Canada Minérales,			Québec	
+R	TRUE		Rome			Italy	
+RCD	FALSE		Radiocarbon Dating			England	
+RCMib	TRUE		Milano Bicocca University			Italy	
+RI	FALSE		Radiochemistry Inc.			USA	
+RICH	TRUE		Royal Institute for Cultural Heritage	KIK-IRPA	Brussels	Belgium	https://www.kikirpa.be/en/
+RIDDL	FALSE		Simon Fraser University			Canada	
+RL	FALSE		Radiocarbon, Ltd.			USA	
+RT	TRUE		Rehovot			Israel	
+RTK	TRUE		Rehovot			Israel	
+RU	FALSE		Rice University			USA	
+Riga	FALSE		Institute of Science			Latvia	
+RoAMS	TRUE		National Institute for Physics and Nuclear Engineering			Romania	
+Rome	TRUE		Dept. of Earth Sciences, Rome			Italy	
+S	FALSE		Saskatchewan			Canada	
+SFU	FALSE		Simon Fraser Univ.			Canada	
+SH	NA		State Key Laboratory of Estuarine and Coastal Research			China	
+SI	FALSE		Smithsonian Institution			USA	
+SL	FALSE		Sharp Laboratories			USA	
+SM	FALSE		Mobil Oil Corp., Dallas			USA	
+SMU	FALSE		Southern Methodist Univ.			USA	
+SNU	FALSE		Seoul National University South			Korea	
+SPb	TRUE		Herzen State University			Russia	
+SUERC	TRUE		Scottish Universities Environmental Research Centre			United Kingdom	
+Sa	FALSE		Saclay, Gif-sur-Yvette			France	
+Sac	TRUE		Instituto Tecnológico Portugal e			Nuclear	
+SacA	TRUE		Gif sur Yvette (Saclay)			France	
+Sh	FALSE		Shell Development Company			USA	
+T	TRUE		Trondheim			Norway	
+Ta	FALSE		University of Tartu	Tartu	Tartu	Estonia	
+TB	TRUE		Tblisi			Georgia	
+TBNC	FALSE		Kaman Instruments			USA	
+TEM	FALSE		Temple University			USA	
+TF	FALSE		Tata Institute of Fundamental Research			India	
+TK	TRUE		University of Tokyo			Japan	
+TKA	TRUE		University Museum, Univ. of Tokyo			Japan	
+TKU	TRUE		Turku			Finland	
+TKa	TRUE		University of Tokyo (AMS)			Japan	
+TO	FALSE	UOC	Isotrace Radiocarbon Facility, University of Toronto	Isotrace	Toronto	Canada	
+TRa	TRUE		Trondheim (AMS)			Norway	
+TUBITAK	TRUE		National 1MV Accelerator Mass Spectrometry Laboratory, Scientific and Technological Research Council of Turkey	TÜBİTAK	Marmara	Turkey	https://mam.tubitak.gov.tr/en/teknoloji-transfer-ofisi/national-1mv-accelerated-mass-spectroscopy-ams-laboratory
+TUNC	FALSE		Tehran Univ. Nuclear Centre			Iran	
+TUa	TRUE		Trondheim (AMS)			Norway	
+Tln	TRUE		Radiocarbon Laboratory, Tallinn University of Technology	Talinn	Talinn	Estonia	
+Tx	FALSE		Texas  			USA	
+U	FALSE	Ua	Uppsala University	Uppsala	Uppsala	Sweden	
+Ua	TRUE		Tandem Laboratory, Uppsala University	Uppsala (AMS)	Uppsala	Sweden	https://www.uu.se/en/centre/tandemlab 
+UB	FALSE		Belfast Northern			Ireland	
+UBA	TRUE		Belfast Northern (AMS)			Ireland	
+UBAR	TRUE		University of Barcelona			Spain	
+UCD	TRUE		University College, Dublin			Ireland	
+UCI	TRUE		Univ. of California, Irvine			USA	
+UCLA	FALSE		Univ. of California, Los Angeles			USA	
+UCR	FALSE		Univ. of California, Riverside			USA	
+UD	FALSE		Udine			Italy	
+UGRA	TRUE		University of Granada			Spain	
+UGa	TRUE		University of Georgia			USA	
+UL	FALSE	ULA	Radiochronology Laboratory, Université Laval	Laval	Quebec	Canada	https://www.cen.ulaval.ca/en/infrastructures/radiocarbon/
+ULA	TRUE		Radiochronology Laboratory, Université Laval (AMS)	Laval (AMS)	Quebec	Canada	https://www.cen.ulaval.ca/en/infrastructures/radiocarbon/
+UM	FALSE		University of Miami			USA	
+UNAM	TRUE		National Autonomous Univ. of Mexico			Mexico	
+UOC	TRUE		André E. Lalonde National Facility in Accelerator Mass Spectrometry, University of Ottawa	Ottawa	Ottawa	Canada	https://ams.uottawa.ca/
+UQ	FALSE		Univ. of Quebec at Montréal			Canada	
+URCRM	FALSE		Ukrainian Research Ctr. for Radiation Medicine			Ukraine	
+URU	TRUE		University of Uruguay			Uruguay	
+USGS	FALSE		USGS, Menlo Park			USA	
+UTCAG	TRUE		University of Tennessee			USA	
+UW	FALSE		University of Washington			USA	
+UZH	TRUE		Geochronology Group, University of Zurich	Zurich	Zurich	Switzerland	https://www.geo.uzh.ch/en/units/gch.html
+UtC	FALSE		Utrecht van de Graaff			Netherlands	
+V	FALSE		Melbourne, Victoria			Australia	
+VERA	TRUE		Vienna Environmental Research Accelerator, University of Vienna	VERA	Vienna	Austria	https://isotopenphysik.univie.ac.at/en/
+VIE	TRUE		Higham Lab, University of Vienna	Higham Lab	Vienna	Austria	https://highamlab.univie.ac.at/
+VRI	FALSE	VERA	Vienna Radium Institute, University of Vienna	Vienna Radium Institute	Vienna	Austria	
+Vs	TRUE		Vilnius, Nat. Res. Ctr.		Vilnius	Lithuania	
+W	FALSE		USGS, National Center			USA	
+WAT	FALSE		University of Waterloo			Canada	
+WB	NA		Institute for Preservation Technology of Cultural Relics			China	
+WIS	FALSE		University of Wisconsin			USA	
+WRD	FALSE		USGS Washington, D.C.			USA	
+WSU	FALSE		Washington State Univ.			USA	
+Wk	TRUE		University of Waikato			New Zealand	
+X	FALSE		Whitworth College			USA	
+XZ	NA		Xinjiang Institute of Disaster Prevention and Relief			China	
+XLLQ	TRUE		Xi’an Lab. of China Loess & Quat. Geol.			China	
+Y	FALSE		Yale University			USA	
+YU	TRUE		Yamagata University			Japan	
+Ya	FALSE		Yale University			USA	
+Z	TRUE		Laboratory for Low-level Radioactivities, Ruđer Bošković Institute	Zagreb	Zagreb	Croatia	https://www.irb.hr/eng/Divisions/Division-of-Experimental-Physics/Laboratory-for-Low-level-Radioactivities
+ZK	NA		Institute of Archaeology, Chinese Academy of Social Sciences			China	
