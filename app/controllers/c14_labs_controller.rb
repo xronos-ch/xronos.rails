@@ -33,6 +33,7 @@ class C14LabsController < ApplicationController
   # GET /c14_labs/1.json
   def show
     @c14s = @c14_lab.c14s
+
     respond_to do |format|
       format.html {
         @pagy_c14s, @c14s = pagy(@c14s, page_param: :c14s_page)

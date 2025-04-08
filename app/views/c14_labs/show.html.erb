@@ -1,6 +1,6 @@
 <% content_for :title, @c14_lab.name %>
 <% content_for :meta_description do %>
-  <%= @c14_lab.name %> <%= @c14_lab.active ? "is" : "was" %> a radiocarbon laboratory<% unless @c14_lab.country.blank? %> in <%= @c14_lab.country %><% end %>.
+  The <%= @c14_lab.name %> <%= @c14_lab.active ? "is" : "was" %> a radiocarbon laboratory<% unless @c14_lab.country.blank? %> in <%= @c14_lab.country %><% end %>.
   Its standard abbreviation <%= @c14_lab.active ? "is" : "was" %> '<%= @c14_lab.lab_code %>'<% if @c14_lab.c14_lab_codes.count > 1 %>; variants include <%= @c14_lab.c14_lab_codes.where(canonical: false).pluck(:lab_code).to_sentence %><% end %>.
   <% unless @c14_lab.active %>It is no longer operating.<% end %>
   XRONOS includes information on <%= @c14_lab.c14s_count %> <%= "radiocarbon date".pluralize(@c14_lab.c14s_count) %> produced by <%= @c14_lab.name %>.
@@ -43,10 +43,33 @@
     <dl>
 
       <dt>Status</dt>
-      <dd class="font-monospace"><%= @c14_lab.active ? "Active" : "Inactive" %></dd>
+      <dd><%= @c14_lab.active ? "Active" : "Inactive" %></dd>
 
-      <dt>Country</dt>
-      <dd class="font-monospace"><%= na_or @c14_lab.country %></dd>
+      <% if @c14_lab.active %>
+        <% if @c14_lab.predecessors.any? and false %>
+          <dt><%= "Predecessor".pluralize(@c14_lab.descendants.count) %></dt>
+          <dd><ul class="plain-list">
+            <% @c14_lab.descendants.each do |predecessor| %>
+              <%= link_to predecessor.name, predecessor %>
+            <% end %>
+          </ul></dd>
+        <% end %>
+      <% else %>
+        <dt>Successor</dt>
+        <dd>
+          <% if @c14_lab.successor.present? %>
+            <%= link_to(@c14_lab.successor.name, @c14_lab.successor) %>
+          <% else %>
+            <%= na_value %>
+          <% end %>
+        </dd>
+      <% end %>
+
+      <dt>Location</dt>
+      <dd><%= na_or @c14_lab.location %></dd>
+
+      <dt>Homepage</dt>
+      <dd><%= @c14_lab.url.present? ? link_to(@c14_lab.url) : na_value %></dd>
 
       <dt>Canonical laboratory code</dt>
       <dd class="font-monospace"><%= @c14_lab.lab_code %></dd>
@@ -61,7 +84,7 @@
       </dd>
 
       <dt>Methods</dt>
-      <dd class="font-monospace">
+      <dd>
         <ul class="plain-list">
           <% @c14_lab.distinct_methods.each do |method| %>
             <li><%= method %></li>

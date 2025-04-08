@@ -21,7 +21,7 @@
 FactoryBot.define do
   
   factory :c14_lab_code do
-    lab_code { c14_lab.name.delete(" -").chars.sample(3).join.humanize }
+    lab_code { c14_lab.city.delete(" -").chars.sample(3).join.humanize }
     canonical { false }
   end
   

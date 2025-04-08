@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_04_07_150504) do
+ActiveRecord::Schema[7.2].define(version: 2025_04_08_093114) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -76,8 +76,14 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_07_150504) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.string "country_code"
+    t.string "short_name"
+    t.string "city"
+    t.string "url"
+    t.bigint "successor_id"
     t.index ["active"], name: "index_c14_labs_on_active"
     t.index ["name"], name: "index_c14_labs_on_name"
+    t.index ["short_name"], name: "index_c14_labs_on_short_name", unique: true
+    t.index ["successor_id"], name: "index_c14_labs_on_successor_id"
   end
 
   create_table "c14s", force: :cascade do |t|
@@ -382,6 +388,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_07_150504) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "c14_lab_codes", "c14_labs"
+  add_foreign_key "c14_labs", "c14_labs", column: "successor_id"
   add_foreign_key "import_tables", "users"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_grants", "users", column: "resource_owner_id"

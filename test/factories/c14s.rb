@@ -33,7 +33,7 @@ FactoryBot.define do
     delta_c13  { Faker::Number.decimal(l_digits: 2, r_digits: 2) }
     delta_c13_std { Faker::Number.decimal(l_digits: 2, r_digits: 1) }
     lab_identifier { "#{ Faker::Address.country_code_long }-#{ Faker::Address.building_number }" }
-    add_attribute(:method) {Faker::Hacker.noun}
+    add_attribute(:method) { ["conventional", "AMS"].sample } # different syntax because method is a keyword
     
     c14_lab
     sample
