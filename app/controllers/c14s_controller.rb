@@ -106,7 +106,7 @@ class C14sController < ApplicationController
     respond_to do |format|
       if @c14.update(c14_params)
         format.html { redirect_to @c14, notice: 'Radiocarbon date saved.' }
-        format.json { render :show, status: :ok, location: @c14 }
+        format.json { render json: @c14, status: :ok }
       else
         format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @c14.errors, status: :unprocessable_entity }
