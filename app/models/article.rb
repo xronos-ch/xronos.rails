@@ -21,7 +21,7 @@
 #  index_articles_on_user_id  (user_id)
 #
 class Article < ApplicationRecord
-  enum :section, %i[news about docs], _suffix: true
+  enum :section, %i[news about docs], suffix: true
 
   belongs_to :user
   has_one_attached :splash
