@@ -53,32 +53,52 @@ class SitesController < ApplicationController
   # GET /sites/1
   # GET /sites/1.json
   def show
-      @c14s = @site.c14s.includes(
-        :references,
-        sample: [
-          :material,
-          :taxon,
-          { context: :site }   # <- this is the important bit
-        ]
-      )
-    
-    if params.has_key?(:c14s_order_by)
-      order = { params[:c14s_order_by] => params.fetch(:c14s_order, "asc") }
-      @c14s = @c14s.reorder(order)
+    # Base relation for C14s
+    c14s_scope = @site.c14s.includes(
+      :references,                     # used in c14s/_table.html.erb
+      sample: [
+        :material,
+        :taxon,
+        { context: :site }             # needed for site / context columns
+      ]
+    )
+
+    # Optional ordering for C14s
+    if params.key?(:c14s_order_by)
+      order = {
+        params[:c14s_order_by] => params.fetch(:c14s_order, "asc")
+      }
+      c14s_scope = c14s_scope.reorder(order)
     end
 
-    @typos = @site.typos.includes([:references])
-    if params.has_key?(:typos_order_by)
-      order = { params[:typos_order_by] => params.fetch(:typos_order, "asc") }
-      @typos = @typos.reorder(order)
+    # Base relation for Typos
+    typos_scope = @site.typos.includes(
+      :references,
+      sample: [
+        :material,
+        :taxon,
+        { context: :site }
+      ]
+    )
+
+    # Optional ordering for Typos
+    if params.key?(:typos_order_by)
+      order = {
+        params[:typos_order_by] => params.fetch(:typos_order, "asc")
+      }
+      typos_scope = typos_scope.reorder(order)
     end
 
     respond_to do |format|
-      format.html {
-        @pagy_c14s, @c14s = pagy(@c14s, page_param: :c14s_page)
-        @pagy_typos, @typos = pagy(@typos, page_param: :typos_page)
-      }
-      format.json
+      format.html do
+        @pagy_c14s, @c14s = pagy(c14s_scope,  page_param: :c14s_page)
+        @pagy_typos, @typos = pagy(typos_scope, page_param: :typos_page)
+      end
+
+      format.json do
+        @c14s  = c14s_scope
+        @typos = typos_scope
+      end
     end
   end
 
