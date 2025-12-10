@@ -141,6 +141,8 @@ gem 'vega'
 gem 'feedjira'
 gem 'httparty'
 
+gem "msgpack", ">= 1.7.0"
+
 # DATABASE --------------------------------------------------------------------
 
 gem 'scenic' 

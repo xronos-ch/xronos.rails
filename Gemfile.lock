@@ -269,6 +269,7 @@ GEM
     mini_magick (4.13.2)
     mini_mime (1.1.5)
     minitest (5.25.4)
+    msgpack (1.8.0)
     multi_json (1.15.0)
     multi_xml (0.6.0)
     namae (1.2.0)
@@ -551,6 +552,7 @@ DEPENDENCIES
   leaflet-rails
   listen
   minitest
+  msgpack (>= 1.7.0)
   oj
   pagy
   paper_trail
