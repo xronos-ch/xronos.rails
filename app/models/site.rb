@@ -247,7 +247,23 @@ class Site < ApplicationRecord
     request['User-Agent'] = 'XRONOS/1.0 (martin.hinz@unibe.ch)'
 
     Net::HTTP.start(url.hostname, url.port, use_ssl: true) do |http|
+      # 🔓 Dev only: disable SSL verification so local OpenSSL/CA weirdness
+      # does not block you. Production remains unchanged.
+      if Rails.env.development?
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      end
+
       http.request(request)
+    end
+
+  rescue OpenSSL::SSL::SSLError => e
+    if Rails.env.development?
+      Rails.logger.warn("Wikidata SSL error in dev: #{e.class} - #{e.message}")
+      # Return an empty-result-like object so parse_wikidata_response doesn't blow up
+      OpenStruct.new(body: '{"results":{"bindings":[]}}')
+    else
+      # In prod, behave exactly as before
+      raise
     end
   end
 
