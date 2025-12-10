@@ -19,6 +19,9 @@ class C14LabsController < ApplicationController
         @c14_labs = @c14_labs.select(index_csv_template)
         render csv: @c14_labs
       }
+      format.json {
+        render json: @c14_labs
+      }
     end
   end
 
@@ -44,7 +47,7 @@ class C14LabsController < ApplicationController
     respond_to do |format|
       if @c14_lab.save
         format.html { redirect_back(fallback_location: @c14_lab, notice: "Created #{@c14_lab.name}.") }
-        format.json { render :show, status: :created, location: @c14_lab }
+        format.json { render json: @c14_lab, status: :created }
       else
         format.html { render :new }
         format.json { render json: @c14_lab.errors, status: :unprocessable_entity }
