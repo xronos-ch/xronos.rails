@@ -182,6 +182,8 @@ group :development do
 
   # Watch for N+1 queries and unused eager loading
   gem 'bullet'
+  
+  gem 'xmpp4r'
 
 end
 
