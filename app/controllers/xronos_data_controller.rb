@@ -39,6 +39,27 @@ class XronosDataController < ApplicationController
       # HTML (/data)
       # ---------------------------
       format.html do
+        if unfiltered_request?
+          # Unfiltered case: we only need one count,
+          # and filtered == total. Cache it.
+          base_relation = @data.everything.except(:select, :includes, :order)
+
+          @total_count = @filtered_count =
+            Rails.cache.fetch(cache_key_for("total_count"), expires_in: 10.minutes) do
+              base_relation.distinct.count(:id)
+            end
+        else
+          # Filtered case: we need both numbers
+          filtered_relation = @data.xrons.except(:select, :includes, :order)
+          total_relation    = @data.everything.except(:select, :includes, :order)
+
+          @filtered_count = filtered_relation.distinct.count(:id)
+          @total_count    = Rails.cache.fetch(cache_key_for("total_count"), expires_in: 10.minutes) do
+            total_relation.distinct.count(:id)
+          end
+        end
+
+        # your existing includes + pagination
         xrons_relation = @data.xrons.includes(
           sample: [
             :material,
