@@ -26,7 +26,7 @@ class LodLink < ApplicationRecord
   validates :external_id, presence: true, numericality: { only_integer: true }
   validates :source, presence: true
   
-  enum status: { pending: "pending", approved: "approved"}
+  enum :status, { pending: "pending", approved: "approved" }
 
   belongs_to :linkable, polymorphic: true
   
