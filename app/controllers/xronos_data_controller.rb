@@ -12,69 +12,103 @@ class XronosDataController < ApplicationController
   end
 
   def index
-    @data             = XronosData.new(filter_params, select_params)
+    @data              = XronosData.new(filter_params, select_params)
     @raw_filter_params = filter_params
     logger.debug { "Parsed filters: #{@data.filters.inspect}" }
 
-    # used for the map / GEOJSON
-    @sites = @data.xrons
-                 .select("sites.id", "sites.lng", "sites.lat", "sites.name")
-                 .distinct
-    
+    # Base relation for sites (used in map + geojson)
+    sites_relation = @data.xrons
+                          .select("sites.id", "sites.lng", "sites.lat", "sites.name")
+                          .distinct
+
+    # For the HTML map we want a collection to iterate on.
+    # For unfiltered requests, cache that list for 10 minutes.
+    @sites = if unfiltered_request?
+      Rails.cache.fetch(cache_key_for("sites_collection"), expires_in: 10.minutes) do
+        sites_relation.to_a
+      end
+    else
+      sites_relation
+    end
+
+    # Keep SQL for geojson builder (always from relation, not from @sites)
+    sites_sql = sites_relation.to_sql
+
     respond_to do |format|
+      # ---------------------------
+      # HTML (/data)
+      # ---------------------------
       format.html do
-        # Eager loading to kill N+1:
-        # - sample
-        # - material, taxon
-        # - context.site
-        @pagy, @xrons = pagy(
-          @data.xrons.includes(
-            sample: [
-              :material,
-              :taxon,
-              { context: :site }
-            ]
-          )
+        xrons_relation = @data.xrons.includes(
+          sample: [
+            :material,
+            :taxon,
+            { context: :site }
+          ]
         )
+
+        if unfiltered_request?
+          @pagy, @xrons = Rails.cache.fetch(
+            cache_key_for("html_page_#{params[:page] || 1}"),
+            expires_in: 10.minutes
+          ) do
+            pagy(xrons_relation)
+          end
+        else
+          @pagy, @xrons = pagy(xrons_relation)
+        end
 
         render layout: "full_page"
       end
 
-      format.json   { render json: @data }
-
-      format.geojson do
-        render json: Site.connection.exec_query(
-          Site
-            .select("json_agg(geojson) AS measurements")
-            .from("(select jsonb_build_object(
-              'type', 'Feature',
-              'geometry', jsonb_build_object(
-                  'type', 'Point',
-                  'coordinates', jsonb_build_array(lng, lat)
-              ),
-              'properties', jsonb_build_object(
-                  'name', name,
-                  'id', id
-              )
-            ) AS geojson from (" + @sites.to_sql + ") AS subquery1) AS subquery2")
-            .to_sql
-        )[0]["measurements"],
-        adapter: nil,
-        serializer: nil
+      # ---------------------------
+      # JSON (/data.json)
+      # ---------------------------
+      format.json do
+        if unfiltered_request?
+          json_payload = Rails.cache.fetch(
+            cache_key_for("json"),
+            expires_in: 10.minutes
+          ) do
+            @data.as_json
+          end
+          render json: json_payload
+        else
+          render json: @data
+        end
       end
 
-      format.csv do
-        query = "COPY (SELECT * FROM data_views WHERE id IN (" +
-                @data.xrons.pluck(:id).join(", ").to_s +
-                ") ) TO STDOUT WITH CSV HEADER"
-
-        connection = ActiveRecord::Base.connection.raw_connection
-        csv_data   = +""
-
-        connection.copy_data(query) do
-          while (row = connection.get_copy_data)
-            csv_data << row
+      # ---------------------------
+      # GEOJSON (/data.geojson)
+      # ---------------------------
+      format.geojson do
+        geojson = if unfiltered_request?
+          Rails.cache.fetch(
+            cache_key_for("geojson"),
+            expires_in: 10.minutes
+          ) do
+            build_geojson_from_sql(sites_sql)
           end
+        else
+          build_geojson_from_sql(sites_sql)
+        end
+
+        render json: geojson, adapter: nil, serializer: nil
+      end
+
+      # ---------------------------
+      # CSV (/data.csv)
+      # ---------------------------
+      format.csv do
+        csv_data = if unfiltered_request?
+          Rails.cache.fetch(
+            cache_key_for("csv"),
+            expires_in: 10.minutes
+          ) do
+            build_csv(@data.xrons)
+          end
+        else
+          build_csv(@data.xrons)
         end
 
         render plain: csv_data,
@@ -85,6 +119,62 @@ class XronosDataController < ApplicationController
   end
 
   private
+
+  # ---------------------------
+  # Helpers for caching
+  # ---------------------------
+
+  def unfiltered_request?
+    filter_params.blank? && select_params.blank?
+  end
+
+  def cache_key_for(suffix)
+    # bump this version if you change SQL / structure
+    "xronos_data/unfiltered/v1/#{suffix}"
+  end
+
+  def build_geojson_from_sql(sites_sql)
+    Site.connection.exec_query(
+      Site
+        .select("json_agg(geojson) AS measurements")
+        .from("(select jsonb_build_object(
+          'type', 'Feature',
+          'geometry', jsonb_build_object(
+              'type', 'Point',
+              'coordinates', jsonb_build_array(lng, lat)
+          ),
+          'properties', jsonb_build_object(
+              'name', name,
+              'id', id
+          )
+        ) AS geojson from (#{sites_sql}) AS subquery1) AS subquery2")
+        .to_sql
+    )[0]["measurements"]
+  end
+
+  def build_csv(xrons_relation)
+    ids = xrons_relation.pluck(:id)
+    return +"id\n" if ids.empty? # avoid invalid COPY
+
+    query = "COPY (SELECT * FROM data_views WHERE id IN (" +
+            ids.join(", ") +
+            ") ) TO STDOUT WITH CSV HEADER"
+
+    connection = ActiveRecord::Base.connection.raw_connection
+    csv_data   = +""
+
+    connection.copy_data(query) do
+      while (row = connection.get_copy_data)
+        csv_data << row
+      end
+    end
+
+    csv_data
+  end
+
+  # ---------------------------
+  # Strong params
+  # ---------------------------
 
   def filter_params
     params.fetch(:filter, {}).permit(
