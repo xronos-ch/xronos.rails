@@ -53,9 +53,15 @@ class SitesController < ApplicationController
   # GET /sites/1
   # GET /sites/1.json
   def show
-    @site = Site.find(params[:id])
-
-    @c14s = @site.c14s.includes([:references, sample: [ :material, :taxon, :context ]])
+      @c14s = @site.c14s.includes(
+        :references,
+        sample: [
+          :material,
+          :taxon,
+          { context: :site }   # <- this is the important bit
+        ]
+      )
+    
     if params.has_key?(:c14s_order_by)
       order = { params[:c14s_order_by] => params.fetch(:c14s_order, "asc") }
       @c14s = @c14s.reorder(order)
