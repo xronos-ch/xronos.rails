@@ -33,8 +33,17 @@ class Site < ApplicationRecord
 
   has_and_belongs_to_many :site_types, optional: true
 
-  composed_of :coordinates, mapping: [%w(lng longitude), %w(lat latitude)], 
-    allow_nil: true
+  composed_of :coordinates,
+    mapping: [%w(lng longitude), %w(lat latitude)],
+    allow_nil: true,
+    constructor: ->(lng, lat) do
+      # only build Coordinates if we have both values
+      if lng.present? && lat.present?
+        Coordinates.new(lng, lat)
+      else
+        nil
+      end
+    end
 
   validates :name, presence: true
 
