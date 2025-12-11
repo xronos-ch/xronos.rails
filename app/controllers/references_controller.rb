@@ -60,15 +60,17 @@ class ReferencesController < ApplicationController
   # GET /references/1
   # GET /references/1.json
   def show
-    @reference = Reference.find(params[:id])
+    # @reference is already set by load_and_authorize_resource + set_reference
+
+    @citations_count = @reference.citations.count
 
     @sites = @reference.sites.distinct
     @pagy_sites, @sites = pagy(@sites, page_param: :sites_page)
 
-    @c14s = @reference.c14s.includes([:references, sample: [:material, :taxon, context: [:site] ]])
+    @c14s = @reference.c14s.includes([:references, sample: [:material, :taxon, context: [:site]]])
     @pagy_c14s, @c14s = pagy(@c14s, page_param: :c14s_page)
 
-    @typos = @reference.typos.includes([:references, sample: [ context: [:site] ]])
+    @typos = @reference.typos.includes([:references, sample: [context: [:site]]])
     @pagy_typos, @typos = pagy(@typos, page_param: :typos_page)
   end
 
