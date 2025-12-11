@@ -3,63 +3,65 @@
 
 <main class="container my-5">
 
-  <%= render "header", site: @site %>
+  <% cache [@site, "site_header_v1"] do %>
+    <%= render "header", site: @site %>
 
-  <section id="site-types" class="my-5">
-    <dt><%= "Site type".pluralize(@site.site_types.count) %></dt>
-    <dd>
-      <% if @site.site_types.any? %>
-        <%= @site.site_types.collect(&:name).to_sentence.humanize %>
-      <% else %>
-        <%= na_value %>
-      <% end %>
-    </dd>
-  </section>
-
-  <section id="site-location" class="my-5">
-    <h2><%= bs_icon "pin-map" %> Location</h2>
-    <div class="row">
-
-      <div class="col-lg-8">
-        <% unless @site.lat.blank? || @site.lng.blank? %>
-          <div style="height: 30rem; position: relative;"
-               data-controller="map"
-               data-map-style-value="show_site"
-               data-map-target="container"
-               data-map-base-map-value="Imagery"
-               data-map-markers-data-value='<%= [@site].to_json.html_safe %>'>
-          </div>
+    <section id="site-types" class="my-5">
+      <dt><%= "Site type".pluralize(@site.site_types.count) %></dt>
+      <dd>
+        <% if @site.site_types.any? %>
+          <%= @site.site_types.collect(&:name).to_sentence.humanize %>
         <% else %>
-          <div style="height: 30rem; position: relative;"
-               class="bg-light d-flex align-items-center justify-content-center"
-               title="Location data missing or incomplete">
-            <%= bs_icon "question-circle", class: "display-1 text-info" %>
-          </div>
+          <%= na_value %>
         <% end %>
+      </dd>
+    </section>
+
+    <section id="site-location" class="my-5">
+      <h2><%= bs_icon "pin-map" %> Location</h2>
+      <div class="row">
+
+        <div class="col-lg-8">
+          <% unless @site.lat.blank? || @site.lng.blank? %>
+            <div style="height: 30rem; position: relative;"
+                 data-controller="map"
+                 data-map-style-value="show_site"
+                 data-map-target="container"
+                 data-map-base-map-value="Imagery"
+                 data-map-markers-data-value='<%= [@site].to_json.html_safe %>'>
+            </div>
+          <% else %>
+            <div style="height: 30rem; position: relative;"
+                 class="bg-light d-flex align-items-center justify-content-center"
+                 title="Location data missing or incomplete">
+              <%= bs_icon "question-circle", class: "display-1 text-info" %>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="col-lg-4">
+          <dl>
+            <dt>Coordinates (degrees)</dt>
+            <dd class="font-monospace">
+              <%= @site.coordinates.present? ? @site.coordinates.to_s("dd") : na_value %>
+            </dd>
+
+            <dt>Coordinates (<abbr title="Degrees, minutes, seconds">DMS</abbr>)</dt>
+            <dd class="font-monospace">
+              <%= @site.coordinates.present? ? @site.coordinates.to_s("dms") : na_value %>
+            </dd>
+
+            <dt>Country (<a href="https://www.iso.org/iso-3166-country-codes.html">ISO&nbsp;3166</a>)</dt>
+            <dd class="font-monospace">
+              <%= render "country", site: @site %>
+              (<%= @site.country_code.present? ? @site.country_code : na_value %>)
+            </dd>
+          </dl>
+        </div>
+
       </div>
-
-      <div class="col-lg-4">
-        <dl>
-          <dt>Coordinates (degrees)</dt>
-          <dd class="font-monospace">
-            <%= @site.coordinates.present? ? @site.coordinates.to_s("dd") : na_value %>
-          </dd>
-
-          <dt>Coordinates (<abbr title="Degrees, minutes, seconds">DMS</abbr>)</dt>
-          <dd class="font-monospace">
-            <%= @site.coordinates.present? ? @site.coordinates.to_s("dms") : na_value %>
-          </dd>
-
-          <dt>Country (<a href="https://www.iso.org/iso-3166-country-codes.html">ISO&nbsp;3166</a>)</dt>
-          <dd class="font-monospace">
-            <%= render "country", site: @site %>
-            (<%= @site.country_code.present? ? @site.country_code : na_value %>)
-          </dd>
-        </dl>
-      </div>
-
-    </div>
-  </section>
+    </section>
+  <% end %>
 
   <section id="site-external-links" class="bg-white p-3 my-5 border rounded shadow-sm">
     <h3 class="text-muted mb-3">
@@ -150,7 +152,9 @@
       <%= xr_icon Reference, {}, style: "width: auto; height: 2rem" %>
       <%= Reference.label.humanize.pluralize %>
     </h2>
-    <%= render "references/bibliography", references: @site.recursive_references %>
+    <% cache [@site, "references_v1"] do %>
+      <%= render "references/bibliography", references: @site.recursive_references %>
+    <% end %>
   </section>
 
   <section id="changelog" class="my-5">

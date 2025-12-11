@@ -20,7 +20,7 @@
       <div class="col-sm-6 col-lg-3 my-3">
         <%= xr_icon Site, { light: true }, { class: "d-block mx-auto mb-2", style: "width: 5rem;" } %>
         <a href="/sites" class="display-5 link-secondary text-decoration-none" title="Browse sites">
-          <%= number_with_delimiter(Site.count)%>
+          <%= number_with_delimiter(cached_site_count)%>
         </a>
         <p class="h4"><%= Site.label.humanize.pluralize %></p>
       </div>
@@ -28,7 +28,7 @@
       <div class="col-sm-6 col-lg-3 my-3">
         <%= xr_icon C14, { light: true }, { class: "d-block mx-auto mb-2", style: "width: 5rem;" } %>
         <a href="/c14s" class="display-5 link-secondary text-decoration-none" title="Browse radiocarbon dates">
-          <%= number_with_delimiter(C14.count)%>
+          <%= number_with_delimiter(cached_c14_count)%>
         </a>
         <p class="h4"><%= C14.label.humanize.pluralize %></p>
       </div>
@@ -36,7 +36,7 @@
       <div class="col-sm-6 col-lg-3 my-3">
         <%= xr_icon Typo, { light: true }, { class: "d-block mx-auto mb-2", style: "width: 5rem;" } %>
         <a href="/typos" class="display-5 link-secondary text-decoration-none" title="Browse typological dates">
-          <%= number_with_delimiter(Typo.count)%>
+          <%= number_with_delimiter(cached_typo_count)%>
         </a>
         <p class="h4"><%= Typo.label.humanize.pluralize %></p>
       </div>

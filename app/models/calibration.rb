@@ -53,7 +53,6 @@ class Calibration < Cal
     def recalibrate
         return set_no_calibration unless c14_age.present? && c14_error.present? && c14_curve.present?
 
-        logger.info "Calibrating #{{ c14_age: c14_age, c14_error: c14_error, c14_curve: c14_curve}}"
         calibration = Calibrator::Calibration.new(c14_age, c14_error, c14_curve)
         
         if calibration.hd_intervals.present?

@@ -1,6 +1,8 @@
 <div class="accordion" id="versionHistory">
 
-  <% item.versions.reverse.each do |version| %>
+  <% versions = local_assigns[:versions] || item.versions.includes(:item) %>
+
+  <% versions.reverse_each do |version| %>
     <div class="accordion-item">
       <div id="version<%= version.id %>" class="accordion-header">
         <button class="accordion-button collapsed" 
@@ -12,16 +14,16 @@
                 data-bs-target="#changeset<%= version.id %>" 
                 aria-expanded="true" 
                 aria-controls="changeset<%= version.id %>">
-                <div>
-                  <h3 class="h6">
-                    <%= render "application/paper_trail/event", event: version.event %>
-                    <%= version.revision_comment.blank? ? "Updated." : md(version.revision_comment) %>
-                  </h3>
-                  <p class="small text-muted">
-                  <%= render "application/paper_trail/whodunnit", version: version %>
-                  <%= version.created_at.to_formatted_s %>
-                  </p>
-                </div>
+          <div>
+            <h3 class="h6">
+              <%= render "application/paper_trail/event", event: version.event %>
+              <%= version.revision_comment.blank? ? "Updated." : md(version.revision_comment) %>
+            </h3>
+            <p class="small text-muted">
+              <%= render "application/paper_trail/whodunnit", version: version %>
+              <%= version.created_at.to_formatted_s %>
+            </p>
+          </div>
         </button>
       </div>
       <div id="changeset<%= version.id %>" class="accordion-collapse collapse" aria-labelledby="version<%= version.id %>" data-bs-parent="#versionHistory">

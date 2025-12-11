@@ -33,8 +33,17 @@ class Site < ApplicationRecord
 
   has_and_belongs_to_many :site_types, optional: true
 
-  composed_of :coordinates, mapping: [%w(lng longitude), %w(lat latitude)], 
-    allow_nil: true
+  composed_of :coordinates,
+    mapping: [%w(lng longitude), %w(lat latitude)],
+    allow_nil: true,
+    constructor: ->(lng, lat) do
+      # only build Coordinates if we have both values
+      if lng.present? && lat.present?
+        Coordinates.new(lng, lat)
+      else
+        nil
+      end
+    end
 
   validates :name, presence: true
 
@@ -246,9 +255,26 @@ class Site < ApplicationRecord
     request = Net::HTTP::Get.new(url)
     request['User-Agent'] = 'XRONOS/1.0 (martin.hinz@unibe.ch)'
 
-    Net::HTTP.start(url.hostname, url.port, use_ssl: true) do |http|
+    Net::HTTP.start(url.hostname, url.port, use_ssl: true, open_timeout: 2, read_timeout: 3) do |http|
+      if Rails.env.development?
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      end
       http.request(request)
     end
+
+  rescue OpenSSL::SSL::SSLError => e
+    if Rails.env.development?
+      Rails.logger.warn("Wikidata SSL error in dev: #{e.class} - #{e.message}")
+      OpenStruct.new(body: '{"results":{"bindings":[]}}')
+    else
+      raise
+    end
+
+  # ▶ Your new catch-all rescue for typical connectivity problems
+  rescue Net::OpenTimeout, Net::ReadTimeout, SocketError => e
+    Rails.logger.warn "Wikidata lookup failed: #{e.class} – #{e.message}"
+    # Return an empty result so parse_wikidata_response does not explode
+    OpenStruct.new(body: '{"results":{"bindings":[]}}')
   end
 
   # Parses the response from Wikidata

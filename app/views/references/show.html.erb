@@ -1,5 +1,6 @@
 <% content_for :title, "#{@reference.render_citation}, #{Reference.label.downcase}" %>
-<% content_for :meta_description, "#{@reference.render_citation} is cited by #{@reference.citations.count} records of archaeological sites, radiocarbon dates, and/or other chronometric determinations in the XRONOS repository." %>
+<% content_for :meta_description,
+   "#{@reference.render_citation} is cited by #{@citations_count} records of archaeological sites, radiocarbon dates, and/or other chronometric determinations in the XRONOS repository." %>
 
 <header id="reference-header" class="bg-light text-primary">
   <div class="container my-5">
@@ -20,11 +21,11 @@
 <section id="reference-citations" class="bg-body">
   <div class="container my-5">
     <h2>Citing records</h2>
-    <% c = @reference.citations.count %>
+    <% c = @citations_count %>
     <p>There <%= c > 1 ? 'are' : 'is' %> <%= c %> <%= 'record'.pluralize(c) %>
         in XRONOS that <%= c > 1 ? 'cite' : 'cites' %> this reference.</p>
 
-    <% unless @sites.blank? %>
+    <% if @sites.present? %>
       <div class="my-5">
         <h3>
           <%= xr_icon Site, {}, style: "height: 1.75rem; vertical-align: top;" %>
@@ -44,23 +45,25 @@
       </div>
     <% end %>
 
-    <% unless @c14s.blank? %>
+    <% if @c14s.present? %>
       <div class="my-5">
         <h3>
           <%= xr_icon C14, {}, style: "height: 1.75rem; vertical-align: top;" %>
           <%= C14.label.humanize.pluralize %>
           <small class="text-muted">(<%= @pagy_c14s.count %>)</small>
         </h3>
-        <turbo-frame id="reference-c14s-table">
-          <%= render "c14s/table", c14s: @c14s %>
-          <% unless @pagy_c14s.pages <= 1 %>
-            <%== pagy_bootstrap_nav(@pagy_c14s) %>
-          <% end %>
-        </turbo-frame>
+				<turbo-frame id="reference-c14s-table">
+				  <% cache [@reference, :c14s, @pagy_c14s.page] do %>
+					    <%= render "c14s/table", c14s: @c14s %>
+				  <% end %>
+				  <% unless @pagy_c14s.pages <= 1 %>
+					  <%== pagy_bootstrap_nav(@pagy_c14s) %>
+					<% end %>
+			  </turbo-frame>
       </div>
     <% end %>
 
-    <% unless @typos.blank? %>
+    <% if @typos.present? %>
       <div class="my-5">
         <h3>
           <%= xr_icon Typo, {}, style: "height: 1.75rem; vertical-align: top;" %>
@@ -69,7 +72,7 @@
         </h3>
         <turbo-frame id="reference-typos-table">
           <%= render "typos/table", typos: @typos %>
-          <% unless @pagy_c14s.pages <= 1 %>
+          <% unless @pagy_typos.pages <= 1 %>
             <%== pagy_bootstrap_nav(@pagy_typos) %>
           <% end %>
         </turbo-frame>

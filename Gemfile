@@ -141,6 +141,8 @@ gem 'vega'
 gem 'feedjira'
 gem 'httparty'
 
+gem "msgpack", ">= 1.7.0"
+
 # DATABASE --------------------------------------------------------------------
 
 gem 'scenic' 
@@ -182,6 +184,8 @@ group :development do
 
   # Watch for N+1 queries and unused eager loading
   gem 'bullet'
+  
+  gem 'xmpp4r'
 
 end
 
