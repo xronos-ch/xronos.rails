@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
+message: "If you use this software, please cite the paper describing it as below."
 authors:
 - family-names: "Roe"
   given-names: "Joe"
@@ -11,7 +11,33 @@ authors:
   given-names: "Martin"
   orcid: "https://orcid.org/0000-0002-9904-6548"
 title: "XRONOS Web Application"
-version: 1.1.0
+version: 1.1.1
 doi: 10.5281/zenodo.1234
-date-released: 2024-12-18
+date-released: 2025-12-11
 url: "https://github.com/xronos-ch/xronos.rails"
+preferred-citation:
+  type: article
+  authors:
+  - family-names: "Roe"
+    given-names: "Joe"
+    orcid: "https://orcid.org/0000-0002-1011-1244"
+  - family-names: "Schmid"
+    given-names: "Clemens"
+    orcid: "https://orcid.org/0000-0003-3448-5715"
+  - family-names: "Ebrahimiabareghi"
+    given-names: "Setareh"
+    orcid: "https://orcid.org/0000-0003-3749-3147"
+  - family-names: "Heitz"
+    given-names: "Caroline"
+    orcid: "https://orcid.org/0000-0001-7188-6775"
+  - family-names: "Hinz"
+    given-names: "Martin"
+    orcid: "https://orcid.org/0000-0002-9904-6548"
+  doi: "10.5334/jcaa.191"
+  journal: "Journal Title"
+  date: 2025-10-30
+  start: 242
+  end: 263 # Last page number
+  title: "XRONOS: An Open Data Infrastructure for Archaeological Chronology"
+  issue: 1
+  volume: 8
