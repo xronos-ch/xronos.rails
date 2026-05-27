@@ -45,6 +45,7 @@ Rails.application.routes.draw do
   resources :typos do
     get 'search', on: :collection
   end
+  resources :functional_classifications, only: [:create, :update, :destroy]
 
   # Secondary data resources (no independent show/index views)
   resources :taxons, except: [:index, :show] do
@@ -126,6 +127,12 @@ Rails.application.routes.draw do
       collection do
         get ":issue", action: :index,
           constraints: lambda { |req| Taxon.issues.include?(req.params[:issue].to_sym) }
+      end
+    end
+    resources :contexts, only: :index do
+      collection do
+        get ":issue", action: :index,
+            constraints: lambda { |req| Context.issues.include?(req.params[:issue].to_sym) }
       end
     end
   end
