@@ -1,0 +1,26 @@
+<% content_for :title, "Issues – Contexts" %>
+<% content_for :help do %>
+<% end %>
+
+<h2 class="border-bottom">Contexts</h2>
+
+<%= render "issues/nav", model: ::Context, base_path: issues_contexts_path %>
+
+<turbo-frame id="issues-contexts-table">
+  <%= render "issues/filter_form" %>
+
+  <div class="mb-2 d-flex gap-2 align-items-center">
+    <%= link_to "All contexts",
+                issues_contexts_path,
+                class: "btn btn-sm #{params[:suggestions].present? ? 'btn-outline-secondary' : 'btn-secondary'}",
+                data: { turbo_frame: "issues-contexts-table" } %>
+
+    <%= link_to "With suggestions",
+                issues_contexts_path(suggestions: 1),
+                class: "btn btn-sm #{params[:suggestions].present? ? 'btn-secondary' : 'btn-outline-secondary'}",
+                data: { turbo_frame: "issues-contexts-table" } %>
+  </div>
+
+  <%= render "table", contexts: @contexts %>
+  <%== pagy_bootstrap_nav(@pagy) %>
+</turbo-frame>
