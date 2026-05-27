@@ -17,6 +17,15 @@
 #
 class Context < ApplicationRecord
 
+  FUNCTIONAL_CLASSIFICATION_SUGGESTION_PATTERN =
+    "settlement|habitation|occupation|dwelling|village|house|domestic|" \
+      "burial|cemetery|grave|funerary|tomb|necropolis|" \
+      "hoard|depot|deposit|" \
+      "production|workshop|kiln|craft|industrial|metallurgy|mine|mining|" \
+      "ritual|ceremonial|cult|sanctuary|temple|shrine|" \
+      "palaeoenvironmental|paleoenvironmental|environmental|off.?site|core|peat|lake|sediment|" \
+      "natural|geological"
+
   validates :name, presence: true
 
   belongs_to :site
@@ -26,12 +35,84 @@ class Context < ApplicationRecord
   has_many :samples
   has_many :c14s, through: :samples
   has_many :typos, through: :samples
+
+  has_many :functional_classifications,
+           as: :assignable,
+           dependent: :destroy
+
   has_paper_trail
 
   acts_as_copy_target # enable CSV exports
 
+  include HasIssues
+  @issues = [ :missing_functional_classification ]
+
+  scope :with_functional_classification_suggestions, -> {
+    joins(site: :site_types)
+      .left_outer_joins(:functional_classifications)
+      .where(functional_classifications: { id: nil })
+      .where(
+        "LOWER(site_types.name) ~ ?",
+        FUNCTIONAL_CLASSIFICATION_SUGGESTION_PATTERN
+      )
+      .distinct
+  }
+
   def self.label
     "context"
+  end
+
+  def suggested_functional_classification_category
+    return nil if site.blank? || !site.respond_to?(:site_types)
+
+    site_type_names = site.site_types
+                          .map { |site_type| site_type.name.to_s.downcase }
+                          .join(" ")
+
+    category_name =
+      case site_type_names
+      when /settlement|habitation|occupation|dwelling|village|house|domestic/
+        "settlement"
+      when /burial|cemetery|grave|funerary|tomb|necropolis/
+        "burial"
+      when /hoard|depot|deposit/
+        "hoard"
+      when /production|workshop|kiln|craft|industrial|metallurgy|mine|mining/
+        "production"
+      when /ritual|ceremonial|cult|sanctuary|temple|shrine/
+        "ritual_ceremonial"
+      when /palaeoenvironmental|paleoenvironmental|environmental|off.?site|core|peat|lake|sediment/
+        "palaeoenvironmental"
+      when /natural|geological/
+        "natural"
+      else
+        nil
+      end
+
+    FunctionalClassificationCategory.find_by(name: category_name)
+  end
+
+  def suggested_functional_classification_confidence
+    FunctionalClassificationConfidence.find_by(name: "possible")
+  end
+
+  def functional_classification_suggestion_available?
+    functional_classifications.blank? &&
+      suggested_functional_classification_category.present? &&
+      suggested_functional_classification_confidence.present?
+  end
+
+  # Issues
+
+  scope :missing_functional_classification, -> {
+    joins(:c14s)
+      .left_outer_joins(:functional_classifications)
+      .where(functional_classifications: { id: nil })
+      .distinct
+  }
+
+  def missing_functional_classification?
+    c14s.exists? && functional_classifications.blank?
   end
 
 end
