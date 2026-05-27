@@ -6,6 +6,17 @@
       <dt>Context</dt>
       <dd><%= c14.context.name %></dd>
 
+        <dt>Functional classification</dt>
+        <dd>
+          <% if c14.context&.functional_classifications&.any? %>
+            <% c14.context.functional_classifications.each do |classification| %>
+              <%= classification.functional_classification_category.name.humanize %>, <%= classification.functional_classification_confidence.name %>
+            <% end %>
+          <% else %>
+            <%= na_value %>
+          <% end %>
+        </dd>
+
       <dt>Sample position</dt>
       <dd>
         <%= c14.sample.position_description.present? ? c14.sample.position_description : na_value %>
