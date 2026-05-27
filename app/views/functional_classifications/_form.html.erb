@@ -1,0 +1,30 @@
+<%= form_with model: functional_classification, local: true, class: "d-flex gap-1 align-items-center" do |f| %>
+  <%= f.hidden_field :assignable_type, value: assignable.class.name %>
+  <%= f.hidden_field :assignable_id, value: assignable.id %>
+
+  <%= hidden_field_tag :return_to, request.fullpath %>
+
+  <%= f.collection_select(
+        :functional_classification_category_id,
+        FunctionalClassificationCategory.order(:name),
+        :id,
+        :name,
+        { prompt: "Category" },
+        class: "form-select form-select-sm"
+      ) %>
+
+  <%= f.collection_select(
+        :functional_classification_confidence_id,
+        FunctionalClassificationConfidence.order(rank: :desc),
+        :id,
+        :name,
+        { prompt: "Confidence" },
+        class: "form-select form-select-sm"
+      ) %>
+
+  <%= f.text_field :source,
+                   placeholder: "source",
+                   class: "form-control form-control-sm" %>
+
+  <%= f.submit "Save", class: "btn btn-sm btn-primary" %>
+<% end %>
