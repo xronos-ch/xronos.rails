@@ -2,11 +2,8 @@ class SitesController < ApplicationController
   include Tabulatable
   include Pagy::Backend
 
-  SITE_TABLE_PREVIEW_LIMIT = 20
-
   load_and_authorize_resource
 
-  before_action :reject_table_params_on_show!, only: [:show]
   before_action :set_site, only: [:show, :edit, :update, :destroy]
 
   # GET /sites
@@ -63,6 +60,7 @@ class SitesController < ApplicationController
   # GET /sites/1
   # GET /sites/1.json
   def show
+    # Base relation for C14s
     c14s_scope = @site.c14s.includes(
       :references,
       sample: [
@@ -72,20 +70,38 @@ class SitesController < ApplicationController
       ]
     )
 
-    typos_scope = @site.typos.includes(:references)
+    # Optional ordering for C14s
+    if params.key?(:c14s_order_by)
+      order = {
+        params[:c14s_order_by] => params.fetch(:c14s_order, "asc")
+      }
+      c14s_scope = c14s_scope.reorder(order)
+    end
+
+    # Base relation for Typos
+    typos_scope = @site.typos.includes(
+      :references,
+      sample: [
+        { context: :site }
+      ]
+    )
+
+    # Optional ordering for Typos
+    if params.key?(:typos_order_by)
+      order = {
+        params[:typos_order_by] => params.fetch(:typos_order, "asc")
+      }
+      typos_scope = typos_scope.reorder(order)
+    end
 
     respond_to do |format|
       format.html do
-        @c14s_count = @site.c14s.count
-        @typos_count = @site.typos.count
-
-        @c14s = c14s_scope
-                  .reorder(:id)
-                  .limit(SITE_TABLE_PREVIEW_LIMIT)
-
-        @typos = typos_scope
-                   .reorder(:id)
-                   .limit(SITE_TABLE_PREVIEW_LIMIT)
+        begin
+          @pagy_c14s, @c14s = pagy(c14s_scope, page_param: :c14s_page)
+          @pagy_typos, @typos = pagy(typos_scope, page_param: :typos_page)
+        rescue Pagy::OverflowError
+          head :not_found
+        end
       end
 
       format.json do
@@ -151,21 +167,6 @@ class SitesController < ApplicationController
   def set_site
     @site = Site.find(params[:id])
     @wikidata_matches = Site.wikidata_match_candidates_batch([@site]) || {}
-  end
-
-  def reject_table_params_on_show!
-    forbidden = %i[
-      c14s_page
-      typos_page
-      c14s_order
-      typos_order
-      c14s_order_by
-      typos_order_by
-    ]
-
-    return unless forbidden.any? { |key| params.key?(key) }
-
-    redirect_to site_path(params[:id]), status: :moved_permanently
   end
 
   def site_params

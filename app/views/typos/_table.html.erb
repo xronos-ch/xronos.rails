@@ -1,49 +1,35 @@
-<% sortable = local_assigns.fetch(:sortable, true) %>
-
 <table class="table table-hover">
   <thead>
-  <tr>
-    <% unless controller_name == "sites" %>
-      <th scope="col">Site</th>
-    <% end %>
-
-    <th scope="col">
-      <% if sortable %>
+    <tr>
+      <% unless controller_name == "sites" %>
+        <th scope="col">Site</th>
+      <% end %>
+      <th scope="col">
         <%= link_to_order_by "Classification", :name, :typos %>
         <% if ordered_by?(:name, :typos) %>
           <span class="text-muted"><%= order_indicator :typos %></span>
         <% end %>
-      <% else %>
-        Classification
-      <% end %>
-    </th>
-
-    <th scope="col">
-      <% if sortable %>
+      </th>
+      <th scope="col">
         <%= link_to_order_by "Estimated age", :approx_start_time, :typos %>
         <% if ordered_by?(:approx_start_time, :typos) %>
           <span class="text-muted"><%= order_indicator :typos %></span>
         <% end %>
-      <% else %>
-        Estimated age
-      <% end %>
-    </th>
-
-    <th scope="col" class="text-end">References</th>
-  </tr>
+      </th>
+      <th scope="col" class="text-end">References</th>
+    </tr>
   </thead>
 
   <tbody>
-  <% typos.each do |typo| %>
-    <tr>
-      <% unless controller_name == "sites" %>
-        <td><%= link_to typo.site.name, typo.site, target: :_top %></td>
-      <% end %>
-
-      <td><%= link_to typo.name, typo, target: :_top %></td>
-      <td class="font-monospace"><%= typo.age.present? ? typo.age : na_value %></td>
-      <td class="small text-end"><%= render "references/citations", references: typo.references %></td>
-    </tr>
-  <% end %>
+    <% typos.each do |typo| %>
+      <tr>
+        <% unless controller_name == "sites" %>
+          <td><%= link_to typo.site.name, typo.site, target: :_top %></td>
+        <% end %>
+        <td><%= link_to typo.name, typo, target: :_top %></td>
+        <td class="font-monospace"><%= typo.age.present? ? typo.age : na_value %></td>
+        <td class="small text-end"><%= render "references/citations", references: typo.references %></td>
+      </tr>
+    <% end %>
   </tbody>
 </table>
