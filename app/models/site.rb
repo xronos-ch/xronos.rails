@@ -171,12 +171,15 @@ class Site < ApplicationRecord
   end
 
   def recursive_references
-    c14_references = c14s.map(&:references).reduce(:+)
-    unless c14_references.nil?
-      (references + c14_references).uniq
-    else
-      references
-    end
+    site_reference_scope = Reference
+                             .joins(:citations)
+                             .where(citations: { citing_type: "Site", citing_id: id })
+
+    c14_reference_scope = Reference
+                            .joins(:citations)
+                            .where(citations: { citing_type: "C14", citing_id: c14s.select(:id) })
+
+    site_reference_scope.or(c14_reference_scope).distinct.to_a
   end
 
   def default_c14_curve

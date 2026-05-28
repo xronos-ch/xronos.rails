@@ -1,58 +1,84 @@
+<% sortable = local_assigns.fetch(:sortable, true) %>
+
 <table class="responsive nowrap table table-hover align-middle">
   <thead>
-    <tr>
-      <% unless controller_name == "sites" %>
-        <th scope="col">Site</th>
-      <% end %>
-      <th scope="col">
+  <tr>
+    <% unless controller_name == "sites" %>
+      <th scope="col">Site</th>
+    <% end %>
+
+    <th scope="col">
+      <% if sortable %>
         <%= link_to_order_by "Lab ID", :lab_identifier, :c14s %>
         <% if ordered_by?(:lab_identifier, :c14s) %>
           <span class="text-muted"><%= order_indicator :c14s %></span>
         <% end %>
-      </th>
-      <th scope="col">Context</th>
-      <th scope="col">Material</th>
-      <th scope="col">Taxon</th>
-      <th scope="col">
+      <% else %>
+        Lab ID
+      <% end %>
+    </th>
+
+    <th scope="col">Context</th>
+    <th scope="col">Material</th>
+    <th scope="col">Taxon</th>
+
+    <th scope="col">
+      <% if sortable %>
         <%= link_to_order_by "Method", :method, :c14s %>
         <% if ordered_by?(:method, :c14s) %>
           <span class="text-muted"><%= order_indicator :c14s %></span>
         <% end %>
-      </th>
-      <th scope="col" class="text-end">
+      <% else %>
+        Method
+      <% end %>
+    </th>
+
+    <th scope="col" class="text-end">
+      <% if sortable %>
         <%= link_to_order_by "Uncalibrated age", :bp, :c14s %>
         <% if ordered_by?(:bp, :c14s) %>
           <span class="text-muted"><%= order_indicator :c14s %></span>
         <% end %>
-      </th>
-      <th scope="col" class="text-end">Calibrated age</th>
-      <th scope="col" class="text-end">References</th>
-      <% if can? :manage, C14 %>
-        <th scope="col" class="text-end"><!-- Actions --></th>
+      <% else %>
+        Uncalibrated age
       <% end %>
-    </tr>
+    </th>
+
+    <th scope="col" class="text-end">Calibrated age</th>
+    <th scope="col" class="text-end">References</th>
+
+    <% if can? :manage, C14 %>
+      <th scope="col" class="text-end"><!-- Actions --></th>
+    <% end %>
+  </tr>
   </thead>
 
   <tbody>
-    <% c14s.each do |c14| %>
-      <tr>
-        <% unless controller_name == "sites" %>
-          <td><%= link_to c14.site.name, c14.site, target: :_top %></td>
-        <% end %>
-        <td><%= link_to c14.lab_identifier, c14, target: :_top %></td>
-        <td><%= c14.sample.context.name %></td>
-        <td><%= c14.sample.material.present? ? c14.sample.material.name : na_value %></td>
-        <td><%= render "taxons/taxon_abbreviated", taxon: c14.sample.taxon %></td>
-        <td><%= c14.method.present? ? c14.method : na_value %></td>
-        <td class="text-end font-monospace"><%= c14.uncal_age ? c14.uncal_age : na_value %></td>
-		<td class="text-end font-monospace">
-			<%= c14.calibration&.range&.join("–") ? "#{c14.calibration.range.join("–")} cal BP" : na_value %>
-		</td>
-		<td class="text-end small"><%= render "references/citations", references: c14.references %></td>
-        <% if can? :manage, C14 %>
-          <td class="text-end"><%= render "application/actions", i: c14 %></td>
-        <% end %>
-      </tr>
-    <% end %>
+  <% c14s.each do |c14| %>
+    <tr>
+      <% unless controller_name == "sites" %>
+        <td><%= link_to c14.site.name, c14.site, target: :_top %></td>
+      <% end %>
+
+      <td><%= link_to c14.lab_identifier, c14, target: :_top %></td>
+      <td><%= c14.sample.context.name %></td>
+      <td><%= c14.sample.material.present? ? c14.sample.material.name : na_value %></td>
+      <td><%= render "taxons/taxon_abbreviated", taxon: c14.sample.taxon %></td>
+      <td><%= c14.method.present? ? c14.method : na_value %></td>
+      <td class="text-end font-monospace"><%= c14.uncal_age ? c14.uncal_age : na_value %></td>
+
+      <td class="text-end font-monospace">
+        <%= c14.calibration&.range&.join("–") ? "#{c14.calibration.range.join("–")} cal BP" : na_value %>
+      </td>
+
+      <td class="text-end small">
+        <%= render "references/citations", references: c14.references %>
+      </td>
+
+      <% if can? :manage, C14 %>
+        <td class="text-end"><%= render "application/actions", i: c14 %></td>
+      <% end %>
+    </tr>
+  <% end %>
   </tbody>
 </table>

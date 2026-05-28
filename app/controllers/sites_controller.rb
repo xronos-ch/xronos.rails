@@ -2,12 +2,16 @@ class SitesController < ApplicationController
   include Tabulatable
   include Pagy::Backend
 
+  SITE_TABLE_PREVIEW_LIMIT = 20
+
   load_and_authorize_resource
 
+  before_action :reject_table_params_on_show!, only: [:show]
   before_action :set_site, only: [:show, :edit, :update, :destroy]
 
   # GET /sites
   # GET /sites.json
+  # GET /sites.csv
   def index
     @sites = Site.with_counts
 
@@ -16,21 +20,26 @@ class SitesController < ApplicationController
       @sites = @sites.where(site_params)
     end
 
-    # order
-    if params.has_key?(:sites_order_by)
-      order = { params[:sites_order_by] => params.fetch(:sites_order, "asc") }
-      @sites = @sites.reorder(order)
-    end
-
     respond_to do |format|
-      format.html { 
+      format.html do
+        # Sorting is only applied to the interactive HTML table.
+        # CSV exports deliberately ignore arbitrary ordering parameters.
+        if params.has_key?(:sites_order_by)
+          order = { params[:sites_order_by] => params.fetch(:sites_order, "asc") }
+          @sites = @sites.reorder(order)
+        end
+
         @pagy, @sites = pagy(@sites)
-      }
+      end
+
       format.json
-      format.csv {
-        @sites = @sites.select(index_csv_template)
+
+      format.csv do
+        # Public CSV export remains available, but does not honour pagination
+        # or arbitrary sorting parameters from crawlers/bots.
+        @sites = @sites.reorder(:id).select(index_csv_template)
         render csv: @sites
-      }
+      end
     end
   end
 
@@ -40,39 +49,21 @@ class SitesController < ApplicationController
     @sites = Site.search(params[:q])
 
     respond_to do |format|
-      format.html { 
+      format.html do
         @pagy, @sites = pagy(@sites.order(:name))
         render :index
-      }
-      format.json  {
+      end
+
+      format.json do
         render :index
-      }
+      end
     end
   end
 
   # GET /sites/1
   # GET /sites/1.json
   def show
-    # Base relation for C14s
     c14s_scope = @site.c14s.includes(
-      :references,                     # used in c14s/_table.html.erb
-      sample: [
-        :material,
-        :taxon,
-        { context: :site }             # needed for site / context columns
-      ]
-    )
-
-    # Optional ordering for C14s
-    if params.key?(:c14s_order_by)
-      order = {
-        params[:c14s_order_by] => params.fetch(:c14s_order, "asc")
-      }
-      c14s_scope = c14s_scope.reorder(order)
-    end
-
-    # Base relation for Typos
-    typos_scope = @site.typos.includes(
       :references,
       sample: [
         :material,
@@ -81,22 +72,24 @@ class SitesController < ApplicationController
       ]
     )
 
-    # Optional ordering for Typos
-    if params.key?(:typos_order_by)
-      order = {
-        params[:typos_order_by] => params.fetch(:typos_order, "asc")
-      }
-      typos_scope = typos_scope.reorder(order)
-    end
+    typos_scope = @site.typos.includes(:references)
 
     respond_to do |format|
       format.html do
-        @pagy_c14s, @c14s = pagy(c14s_scope,  page_param: :c14s_page)
-        @pagy_typos, @typos = pagy(typos_scope, page_param: :typos_page)
+        @c14s_count = @site.c14s.count
+        @typos_count = @site.typos.count
+
+        @c14s = c14s_scope
+                  .reorder(:id)
+                  .limit(SITE_TABLE_PREVIEW_LIMIT)
+
+        @typos = typos_scope
+                   .reorder(:id)
+                   .limit(SITE_TABLE_PREVIEW_LIMIT)
       end
 
       format.json do
-        @c14s  = c14s_scope
+        @c14s = c14s_scope
         @typos = typos_scope
       end
     end
@@ -118,7 +111,7 @@ class SitesController < ApplicationController
 
     respond_to do |format|
       if @site.save
-        format.html { redirect_to site_path(@site), notice: 'Site created.' }
+        format.html { redirect_to site_path(@site), notice: "Site created." }
         format.json { render :show, status: :created, location: @site }
       else
         format.html { render :new }
@@ -146,31 +139,46 @@ class SitesController < ApplicationController
   # DELETE /sites/1.json
   def destroy
     @site.destroy
+
     respond_to do |format|
-      format.html { redirect_back fallback_location: root_path, notice: 'Site was successfully destroyed.' }
+      format.html { redirect_back fallback_location: root_path, notice: "Site was successfully destroyed." }
       format.json { head :no_content }
     end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_site
-      @site = Site.find(params[:id])
-      @wikidata_matches = Site.wikidata_match_candidates_batch([@site]) || {}
-    end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def site_params
-      params.fetch(:site, {}).permit(
-        :id,
-        :name,
-        :lat,
-        :lng,
-        {site_type_ids: []},
-        :country_code,
-        :revision_comment,
-        :_destroy,
-        wikidata_link_attributes: [:qid]
-      )
-    end
+  def set_site
+    @site = Site.find(params[:id])
+    @wikidata_matches = Site.wikidata_match_candidates_batch([@site]) || {}
+  end
+
+  def reject_table_params_on_show!
+    forbidden = %i[
+      c14s_page
+      typos_page
+      c14s_order
+      typos_order
+      c14s_order_by
+      typos_order_by
+    ]
+
+    return unless forbidden.any? { |key| params.key?(key) }
+
+    redirect_to site_path(params[:id]), status: :moved_permanently
+  end
+
+  def site_params
+    params.fetch(:site, {}).permit(
+      :id,
+      :name,
+      :lat,
+      :lng,
+      { site_type_ids: [] },
+      :country_code,
+      :revision_comment,
+      :_destroy,
+      wikidata_link_attributes: [:qid]
+    )
+  end
 end

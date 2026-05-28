@@ -10,35 +10,42 @@ class TyposController < ApplicationController
   # GET /typos.json
   # GET /typos.csv
   def index
-    @typos = Typo.includes([
-      :references, 
-      sample: [ 
-        context: [ 
-          :site 
-        ] 
-      ] 
-    ])
+    @typos = Typo.includes(
+      :references,
+      sample: [
+        { context: :site }
+      ]
+    )
 
     # filter
     unless typo_params.blank?
       @typos = @typos.where(typo_params)
     end
 
-    # order
-    if params.has_key?(:typos_order_by)
-      order = { params[:typos_order_by] => params.fetch(:typos_order, "asc") }
-      @typos = @typos.reorder(order)
-    end
-
     respond_to do |format|
-      format.html { 
-        @pagy, @typos = pagy(@typos)
-      }
+      format.html do
+        # Sorting is only applied to the interactive HTML table.
+        # CSV exports deliberately ignore arbitrary ordering parameters.
+        if params.has_key?(:typos_order_by)
+          order = { params[:typos_order_by] => params.fetch(:typos_order, "asc") }
+          @typos = @typos.reorder(order)
+        end
+
+        begin
+          @pagy, @typos = pagy(@typos)
+        rescue Pagy::OverflowError
+          head :not_found
+        end
+      end
+
       format.json
-      format.csv {
-        @typos = @typos.select(index_csv_template)
+
+      format.csv do
+        # Public CSV export remains available, but does not honour pagination
+        # or arbitrary sorting parameters from crawlers/bots.
+        @typos = @typos.reorder(:id).select(index_csv_template)
         render csv: @typos
-      }
+      end
     end
   end
 
@@ -48,13 +55,19 @@ class TyposController < ApplicationController
     @typos = Typo.search(params[:q])
 
     respond_to do |format|
-      format.html { 
-        @pagy, @typos = pagy(@typos)
+      format.html do
+        begin
+          @pagy, @typos = pagy(@typos)
+        rescue Pagy::OverflowError
+          head :not_found
+        end
+
+        render :index unless performed?
+      end
+
+      format.json do
         render :index
-      }
-      format.json  {
-        render :index
-      }
+      end
     end
   end
 
@@ -79,7 +92,7 @@ class TyposController < ApplicationController
 
     respond_to do |format|
       if @typo.save
-        format.html { redirect_to @typo, notice: 'Typo was successfully created.' }
+        format.html { redirect_to @typo, notice: "Typo was successfully created." }
         format.json { render :show, status: :created, location: @typo }
       else
         format.html { render :new }
@@ -93,7 +106,7 @@ class TyposController < ApplicationController
   def update
     respond_to do |format|
       if @typo.update(typo_params)
-        format.html { redirect_to @typo, notice: 'Typo was successfully updated.' }
+        format.html { redirect_to @typo, notice: "Typo was successfully updated." }
         format.json { render :show, status: :ok, location: @typo }
       else
         format.html { render :edit }
@@ -106,31 +119,31 @@ class TyposController < ApplicationController
   # DELETE /typos/1.json
   def destroy
     @typo.destroy
+
     respond_to do |format|
-      format.html { redirect_to typos_url, notice: 'Typo was successfully destroyed.' }
+      format.html { redirect_to typos_url, notice: "Typo was successfully destroyed." }
       format.json { head :no_content }
     end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_typo
-      @typo = Typo.find(params[:id])
-    end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def typo_params
-      params.fetch(:typo, {}).permit(
-        :name, 
-        :approx_start_time, 
-        :approx_end_time, 
-        :sample_id,
-        sample: [
-          :context_id,
-          contexts: [
-            :site_id
-          ]
+  def set_typo
+    @typo = Typo.find(params[:id])
+  end
+
+  def typo_params
+    params.fetch(:typo, {}).permit(
+      :name,
+      :approx_start_time,
+      :approx_end_time,
+      :sample_id,
+      sample: [
+        :context_id,
+        contexts: [
+          :site_id
         ]
-      )
-    end
+      ]
+    )
+  end
 end
