@@ -1,8 +1,10 @@
 class Rack::Attack
+  self.enabled = !Rails.env.test?
+
   if Rails.env.development?
-    Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
+    self.cache.store = ActiveSupport::Cache::MemoryStore.new
   else
-    Rack::Attack.cache.store = Rails.cache
+    self.cache.store = Rails.cache
   end
 
   Rack::Attack.throttled_responder = lambda do |request|

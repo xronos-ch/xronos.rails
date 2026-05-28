@@ -235,6 +235,6 @@ class XronosDataController < ApplicationController
   end
 
   def select_params
-    params.fetch(:select, {}).permit!
+    params.fetch(:select, {})
   end
 end
