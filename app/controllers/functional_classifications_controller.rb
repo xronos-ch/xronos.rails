@@ -1,6 +1,29 @@
 class FunctionalClassificationsController < ApplicationController
   load_and_authorize_resource
 
+  def index
+    @functional_classifications = FunctionalClassification.includes(
+      :functional_classification_category,
+      :functional_classification_confidence
+    )
+
+    if params[:assignable_type].present?
+      @functional_classifications = @functional_classifications.where(
+        assignable_type: params[:assignable_type]
+      )
+    end
+
+    if params[:assignable_id].present?
+      @functional_classifications = @functional_classifications.where(
+        assignable_id: params[:assignable_id]
+      )
+    end
+
+    respond_to do |format|
+      format.json
+    end
+  end
+
   def create
     @functional_classification = FunctionalClassification.new(functional_classification_params)
 
