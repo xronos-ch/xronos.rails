@@ -26,6 +26,9 @@ gem "rack-brotli"
 # Write cron jobs
 gem "whenever", require: false
 
+# Request throttling / rate limiting
+gem "rack-attack"
+
 # ASSET PIPELINE --------------------------------------------------------------
 
 gem 'propshaft', '>= 0.6.2'

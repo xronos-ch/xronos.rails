@@ -23,5 +23,8 @@ module Xronos
     # Compress text responses
     config.middleware.use Rack::Deflater
     config.middleware.use Rack::Brotli
+
+    # Request throttling / rate limiting
+    config.middleware.use Rack::Attack
   end
 end
