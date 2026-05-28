@@ -45,9 +45,10 @@ Rails.application.routes.draw do
   resources :typos do
     get 'search', on: :collection
   end
-  resources :functional_classifications, only: [:create, :update, :destroy]
+  resources :functional_classifications, only: [:index, :create, :update, :destroy]
 
   # Secondary data resources (no independent show/index views)
+  resources :samples, only: [:index, :show]
   resources :taxons, except: [:index, :show] do
     get 'search', on: :collection
   end
