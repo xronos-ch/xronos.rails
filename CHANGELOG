@@ -1,6 +1,6 @@
 # XRONOS Changelog
 
-## 1.1.2 [2026-05-29]
+## 1.1.1.9000 [unreleased]
 
 - Removed pagination and sorting from public CSV exports
 - Hardened CSV exports against costly crawler/bot requests
