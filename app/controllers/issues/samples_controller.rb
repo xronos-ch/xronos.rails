@@ -3,11 +3,7 @@ class Issues::SamplesController < IssuesController
 
   # GET /issues/samples/:issue
   def index
-    if issue_param.present?
-      @samples = Sample.send(issue_param)
-    else
-      @samples = Sample.all
-    end
+    @samples = issue_relation_for(Sample)
 
     if params.has_key?(:search)
       @samples = @samples.search params[:search]

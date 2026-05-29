@@ -3,11 +3,7 @@ class Issues::C14sController < IssuesController
 
   # GET /issues/c14s/:issue
   def index
-    if issue_param.present?
-      @c14s = C14.send(issue_param)
-    else
-      @c14s = C14.all
-    end
+    @c14s = issue_relation_for(C14)
 
     if params.has_key?(:search)
       @c14s = @c14s.search params[:search]
