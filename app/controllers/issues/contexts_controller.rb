@@ -3,11 +3,7 @@ class Issues::ContextsController < IssuesController
 
   # GET /issues/contexts/:issue
   def index
-    @contexts = if issue_param.present?
-                  ::Context.send(issue_param)
-                else
-                  ::Context.all
-                end
+    @contexts = issue_relation_for(::Context)
 
     if params.has_key?(:search)
       @contexts = @contexts.search(params[:search])
