@@ -2,7 +2,7 @@
 cd vendor/calibrator
 make clean
 make
-rm bin/calibrator_linux
+rm -f bin/calibrator_linux
 mv bin/calibrator bin/calibrator_linux
 cd ../..
 
