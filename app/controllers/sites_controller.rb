@@ -14,6 +14,7 @@ class SitesController < ApplicationController
 
     # filter
     unless site_params.blank?
+      @site_params = site_params
       @sites = @sites.where(site_params)
     end
 

@@ -25,6 +25,7 @@ class C14sController < ApplicationController
 
     # filter
     unless c14_params.blank?
+      @c14_params = c14_params
       @c14s = @c14s.where(c14_params)
     end
 

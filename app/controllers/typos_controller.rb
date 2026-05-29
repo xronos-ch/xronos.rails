@@ -19,6 +19,7 @@ class TyposController < ApplicationController
 
     # filter
     unless typo_params.blank?
+      @typo_params = typo_params
       @typos = @typos.where(typo_params)
     end
 
