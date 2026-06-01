@@ -13,8 +13,6 @@ Content-Signal: search=yes,ai-input=no,ai-train=no
 Allow: /
 Disallow: /*order=
 Disallow: /*order_by=
-Disallow: /*page=
-Disallow: /*_page=
 
 # AI training / AI assistant / large-scale extraction crawlers
 
@@ -43,6 +41,14 @@ User-agent: GPTBot
 Disallow: /
 
 User-agent: meta-externalagent
+Disallow: /
+
+# SEO / security / non-beneficial crawlers observed in logs
+
+User-agent: AliyunSecBot
+Disallow: /
+
+User-agent: SemrushBot
 Disallow: /
 
 Sitemap: https://xronos.ch/sitemap.xml.gz
