@@ -23,7 +23,7 @@ class Issues::SitesController < IssuesController
     @sites = @sites.with_counts
 
     respond_to do |format|
-      format.html { @pagy, @sites = pagy(@sites) }
+      format.html { @pagy, @sites = pagy(:offset, @sites) }
     end
   end
 

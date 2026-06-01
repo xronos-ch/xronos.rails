@@ -3,8 +3,6 @@ class UserProfilesController < ApplicationController
   #layout "admin"
   before_action :set_user_profile, only: %i[ show edit update destroy ]
 
-  include Pagy::Backend
-
   # GET /user_profiles or /user_profiles.json
   def index
     @user_profiles = UserProfile.all
@@ -19,7 +17,7 @@ class UserProfilesController < ApplicationController
 
     respond_to do |format|
       format.html {
-        @pagy, @contribs = pagy(@contribs)
+        @pagy, @contribs = pagy(:offset, @contribs)
       }
       format.json
     end

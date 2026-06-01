@@ -1,6 +1,5 @@
 class ReferencesController < ApplicationController
   include Tabulatable
-  include Pagy::Backend
 
   load_and_authorize_resource
 
@@ -24,8 +23,8 @@ class ReferencesController < ApplicationController
     end
 
     respond_to do |format|
-      format.html { 
-        @pagy, @references = pagy(@references)
+      format.html {
+        @pagy, @references = pagy(:countish, @references, ttl: 300)
       }
       format.json
       format.csv {
@@ -47,8 +46,8 @@ class ReferencesController < ApplicationController
     end
 
     respond_to do |format|
-      format.html { 
-        @pagy, @references = pagy(@references)
+      format.html {
+        @pagy, @references = pagy(:countish, @references, ttl: 300)
         render :index
       }
       format.json  {
@@ -65,13 +64,13 @@ class ReferencesController < ApplicationController
     @citations_count = @reference.citations.count
 
     @sites = @reference.sites.distinct
-    @pagy_sites, @sites = pagy(@sites, page_param: :sites_page)
+    @pagy_sites, @sites = pagy(:countish, @sites, page_param: :sites_page, ttl: 300)
 
     @c14s = @reference.c14s.includes([:references, sample: [:material, :taxon, context: [:site]]])
-    @pagy_c14s, @c14s = pagy(@c14s, page_param: :c14s_page)
+    @pagy_c14s, @c14s = pagy(:countish, @c14s, page_param: :c14s_page, ttl: 300)
 
     @typos = @reference.typos.includes([:references, sample: [context: [:site]]])
-    @pagy_typos, @typos = pagy(@typos, page_param: :typos_page)
+    @pagy_typos, @typos = pagy(:countish, @typos, page_param: :typos_page, ttl: 300)
   end
 
   # GET /references/new

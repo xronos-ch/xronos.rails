@@ -1,6 +1,5 @@
 class SitesController < ApplicationController
   include Tabulatable
-  include Pagy::Backend
 
   load_and_authorize_resource
 
@@ -27,7 +26,7 @@ class SitesController < ApplicationController
           @sites = @sites.reorder(order)
         end
 
-        @pagy, @sites = pagy(@sites)
+        @pagy, @sites = pagy(:countish, @sites, ttl: 300)
       end
 
       format.json
@@ -48,7 +47,7 @@ class SitesController < ApplicationController
 
     respond_to do |format|
       format.html do
-        @pagy, @sites = pagy(@sites.order(:name))
+        @pagy, @sites = pagy(:countish, @sites.order(:name), ttl: 300)
         render :index
       end
 
@@ -98,8 +97,8 @@ class SitesController < ApplicationController
     respond_to do |format|
       format.html do
         begin
-          @pagy_c14s, @c14s = pagy(c14s_scope, page_param: :c14s_page)
-          @pagy_typos, @typos = pagy(typos_scope, page_param: :typos_page)
+          @pagy_c14s, @c14s = pagy(:countish, c14s_scope, page_param: :c14s_page, ttl: 300)
+          @pagy_typos, @typos = pagy(:countish, typos_scope, page_param: :typos_page, ttl: 300)
         rescue Pagy::OverflowError
           head :not_found
         end

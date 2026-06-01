@@ -1,6 +1,5 @@
 class TyposController < ApplicationController
   include Tabulatable
-  include Pagy::Backend
 
   load_and_authorize_resource
 
@@ -33,7 +32,7 @@ class TyposController < ApplicationController
         end
 
         begin
-          @pagy, @typos = pagy(@typos)
+          @pagy, @typos = pagy(:countish, @typos, ttl: 300)
         rescue Pagy::OverflowError
           head :not_found
         end
@@ -58,7 +57,7 @@ class TyposController < ApplicationController
     respond_to do |format|
       format.html do
         begin
-          @pagy, @typos = pagy(@typos)
+          @pagy, @typos = pagy(:countish, @typos, ttl: 300)
         rescue Pagy::OverflowError
           head :not_found
         end
