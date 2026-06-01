@@ -15,10 +15,22 @@
                 class: "btn btn-sm #{params[:suggestions].present? ? 'btn-outline-secondary' : 'btn-secondary'}",
                 data: { turbo_frame: "issues-contexts-table" } %>
 
-    <%= link_to "With suggestions",
-                issues_contexts_path(suggestions: 1),
-                class: "btn btn-sm #{params[:suggestions].present? ? 'btn-secondary' : 'btn-outline-secondary'}",
-                data: { turbo_frame: "issues-contexts-table" } %>
+    <% suggestions_button_class =
+         if @suggestions_count.zero?
+           "btn btn-sm btn-outline-secondary disabled"
+         elsif params[:suggestions].present?
+           "btn btn-sm btn-secondary"
+         else
+           "btn btn-sm btn-outline-secondary"
+         end %>
+
+    <%= link_to "With suggestions (#{@suggestions_count})",
+                @suggestions_count.zero? ? "#" : issues_contexts_path(suggestions: 1),
+                class: suggestions_button_class,
+                aria: { disabled: @suggestions_count.zero? },
+                data: {
+                  turbo_frame: @suggestions_count.zero? ? nil : "issues-contexts-table"
+                } %>
   </div>
 
   <%= render "table", contexts: @contexts %>

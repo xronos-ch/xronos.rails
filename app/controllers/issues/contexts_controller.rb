@@ -9,6 +9,10 @@ class Issues::ContextsController < IssuesController
       @contexts = @contexts.search(params[:search])
     end
 
+    @suggestions_count = @contexts
+                           .merge(::Context.with_functional_classification_suggestions)
+                           .count
+
     if params[:suggestions].present?
       @contexts = @contexts.merge(::Context.with_functional_classification_suggestions)
     end
