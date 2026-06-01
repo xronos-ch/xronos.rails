@@ -35,15 +35,24 @@
     <% classification = context.functional_classifications.first %>
 
     <tr>
-      <td class="text-muted"><%= link_to context.id, context %></td>
+      <td class="text-muted">
+        <%= link_to context.id,
+                    context,
+                    data: { turbo_frame: "_top" } %>
+      </td>
+
       <td><%= context.name.present? ? context.name : na_value %></td>
+
       <td>
         <% if context.site.present? %>
-          <%= link_to context.site.name, context.site %>
+          <%= link_to context.site.name,
+                      context.site,
+                      data: { turbo_frame: "_top" } %>
         <% else %>
           <%= na_value %>
         <% end %>
       </td>
+
       <td><%= context.approx_start_time.present? ? context.approx_start_time : na_value %></td>
       <td><%= context.approx_end_time.present? ? context.approx_end_time : na_value %></td>
       <td><%= context.c14s.count %></td>
