@@ -34,8 +34,8 @@ class ReferencesController < ApplicationController
     end
   end
 
-  # GET /c14s/search
-  # GET /c14s/search.json
+  # GET /references/search
+  # GET /references/search.json
   def search
     @references = Reference.with_citations_count.search(params[:q])
 
@@ -63,14 +63,8 @@ class ReferencesController < ApplicationController
 
     @citations_count = @reference.citations.count
 
-    @sites = @reference.sites.distinct
+    @sites = @reference.sites.distinct.with_counts
     @pagy_sites, @sites = pagy(:countish, @sites, page_param: :sites_page)
-
-    @c14s = @reference.c14s.includes([:references, sample: [:material, :taxon, context: [:site]]])
-    @pagy_c14s, @c14s = pagy(:countish, @c14s, page_param: :c14s_page)
-
-    @typos = @reference.typos.includes([:references, sample: [context: [:site]]])
-    @pagy_typos, @typos = pagy(:countish, @typos, page_param: :typos_page)
   end
 
   # GET /references/new
