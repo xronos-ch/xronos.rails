@@ -9,7 +9,7 @@ Bundler.require(*Rails.groups)
 module Xronos
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 7.0
+    config.load_defaults 8.0
 
     # Autoload lib, but ignore non-Ruby support directories.
     config.autoload_lib(ignore: %w[assets tasks])
