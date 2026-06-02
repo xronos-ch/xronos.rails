@@ -10,10 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_05_27_100301) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_27_100301) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
-  enable_extension "plpgsql"
   enable_extension "unaccent"
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -101,17 +101,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_27_100301) do
     t.index ["type", "c14_age", "c14_error", "c14_curve"], name: "index_cals_on_type_and_c14_age_and_c14_error_and_c14_curve", unique: true
   end
 
-  create_table "chronologies", force: :cascade do |t|
-    t.string "name"
-    t.string "chronology_type"
-    t.string "method"
-    t.string "standardizing_method"
-    t.string "certainty"
-    t.jsonb "parameters", default: {}
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "citations", force: :cascade do |t|
     t.bigint "reference_id"
     t.string "citing_type"
@@ -131,50 +120,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_27_100301) do
     t.index ["site_id"], name: "index_contexts_on_site_id"
   end
 
-  create_table "dendros", force: :cascade do |t|
-    t.bigint "sample_id", null: false
-    t.string "series_code", null: false
-    t.string "name", null: false
-    t.text "description"
-    t.integer "start_year"
-    t.integer "end_year"
-    t.boolean "is_anchored", default: false
-    t.integer "offset"
-    t.jsonb "measurements", default: [], null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "project_title"
-    t.text "project_objective"
-    t.datetime "project_start_date"
-    t.datetime "project_end_date"
-    t.string "object_title"
-    t.string "object_type"
-    t.text "object_description"
-    t.jsonb "object_dimensions", default: {}
-    t.integer "pith_year"
-    t.integer "death_year"
-    t.integer "first_year"
-    t.integer "last_year"
-    t.jsonb "wood_completeness", default: {}
-    t.bigint "chronology_id"
-    t.jsonb "parameters", default: {}
-    t.boolean "waney_edge"
-    t.index ["chronology_id"], name: "index_dendros_on_chronology_id"
-    t.index ["measurements"], name: "index_dendros_on_measurements", using: :gin
-    t.index ["sample_id"], name: "index_dendros_on_sample_id"
-    t.index ["series_code"], name: "index_dendros_on_series_code", unique: true
-  end
-
   create_table "functional_classification_categories", force: :cascade do |t|
     t.string "name"
-    t.text "description"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "functional_classification_confidences", force: :cascade do |t|
-    t.string "name"
-    t.integer "rank"
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -184,7 +131,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_27_100301) do
     t.string "assignable_type", null: false
     t.bigint "assignable_id", null: false
     t.bigint "functional_classification_category_id", null: false
-    t.bigint "functional_classification_confidence_id", null: false
+    t.integer "confidence", default: 1, null: false
     t.string "source"
     t.text "note"
     t.datetime "created_at", null: false
@@ -192,7 +139,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_27_100301) do
     t.index ["assignable_type", "assignable_id", "functional_classification_category_id"], name: "idx_functional_classifications_unique_category", unique: true
     t.index ["assignable_type", "assignable_id"], name: "index_functional_classifications_on_assignable"
     t.index ["functional_classification_category_id"], name: "idx_on_functional_classification_category_id_0cc23f287f"
-    t.index ["functional_classification_confidence_id"], name: "idx_on_functional_classification_confidence_id_882617d1c0"
   end
 
   create_table "import_tables", force: :cascade do |t|
@@ -215,8 +161,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_27_100301) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "status", default: "pending", null: false
-    t.index ["linkable_type", "linkable_id", "source", "external_id"], name: "index_lod_links_on_polymorphic_source_and_external_id", unique: true
     t.index ["linkable_type", "linkable_id"], name: "index_lod_links_on_linkable_type_and_linkable_id"
+    t.index ["source", "external_id"], name: "index_lod_links_on_source_and_external_id", unique: true
   end
 
   create_table "materials", force: :cascade do |t|
@@ -277,8 +223,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_27_100301) do
   end
 
   create_table "periods_site_phases", id: false, force: :cascade do |t|
-    t.bigint "site_phase_id"
-    t.bigint "period_id"
+    t.bigint "site_phase_id", null: false
+    t.bigint "period_id", null: false
+    t.index ["site_phase_id", "period_id"], name: "index_spp"
   end
 
   create_table "pg_search_documents", force: :cascade do |t|
@@ -290,11 +237,13 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_27_100301) do
     t.index ["searchable_type", "searchable_id"], name: "index_pg_search_documents_on_searchable"
   end
 
-  create_table "physical_locations", id: false, force: :cascade do |t|
+  create_table "physical_locations", force: :cascade do |t|
     t.bigint "site_id"
     t.bigint "country_id"
-    t.text "created_at"
-    t.text "updated_at"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.index ["country_id"], name: "index_physical_locations_on_country_id"
+    t.index ["site_id"], name: "index_physical_locations_on_site_id"
   end
 
   create_table "references", force: :cascade do |t|
@@ -413,7 +362,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_27_100301) do
   end
 
   create_table "versions", force: :cascade do |t|
-    t.string "item_type", null: false
+    t.string "item_type"
+    t.string "{:null=>false}"
     t.bigint "item_id", null: false
     t.string "event", null: false
     t.string "whodunnit"
@@ -441,10 +391,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_27_100301) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "dendros", "chronologies"
-  add_foreign_key "dendros", "samples"
   add_foreign_key "functional_classifications", "functional_classification_categories"
-  add_foreign_key "functional_classifications", "functional_classification_confidences"
   add_foreign_key "import_tables", "users"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_grants", "users", column: "resource_owner_id"

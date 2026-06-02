@@ -2,9 +2,9 @@
 #
 # Table name: measurement_states
 #
-#  id          :bigint           not null, primary key
-#  description :text
+#  id          :integer          not null, primary key
 #  name        :string
+#  description :text
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #
@@ -12,6 +12,7 @@
 #
 #  index_measurement_states_on_name  (name)
 #
+
 class MeasurementState < ApplicationRecord
 
     has_many :measurements

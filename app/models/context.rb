@@ -2,10 +2,10 @@
 #
 # Table name: contexts
 #
-#  id                :bigint           not null, primary key
-#  approx_end_time   :integer
-#  approx_start_time :integer
+#  id                :integer          not null, primary key
 #  name              :string
+#  approx_start_time :integer
+#  approx_end_time   :integer
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #  site_id           :integer
@@ -15,6 +15,7 @@
 #  index_contexts_on_name     (name)
 #  index_contexts_on_site_id  (site_id)
 #
+
 class Context < ApplicationRecord
 
   FUNCTIONAL_CLASSIFICATION_SUGGESTION_PATTERN =
@@ -92,14 +93,14 @@ class Context < ApplicationRecord
     FunctionalClassificationCategory.find_by(name: category_name)
   end
 
-  def suggested_functional_classification_confidence
-    FunctionalClassificationConfidence.find_by(name: "possible")
+  def suggested_confidence
+    "possible"
   end
 
   def functional_classification_suggestion_available?
     functional_classifications.blank? &&
       suggested_functional_classification_category.present? &&
-      suggested_functional_classification_confidence.present?
+      suggested_confidence.present?
   end
 
   # Issues

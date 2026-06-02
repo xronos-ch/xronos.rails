@@ -3,8 +3,7 @@ class FunctionalClassificationsController < ApplicationController
 
   def index
     @functional_classifications = FunctionalClassification.includes(
-      :functional_classification_category,
-      :functional_classification_confidence
+      :functional_classification_category
     )
 
     if params[:assignable_type].present?
@@ -63,7 +62,7 @@ class FunctionalClassificationsController < ApplicationController
       :assignable_type,
       :assignable_id,
       :functional_classification_category_id,
-      :functional_classification_confidence_id,
+      :confidence,
       :source,
       :note
     )

@@ -61,9 +61,9 @@
         <% if classification.present? %>
           <div class="mb-1">
             <span class="badge bg-secondary"
-                  title="Curated functional classification; confidence: <%= classification.functional_classification_confidence.name %>">
-              <%= classification.functional_classification_category.name.humanize %>
-              · <%= classification.functional_classification_confidence.name %>
+                  title="Curated functional classification; confidence: <%= classification.confidence.humanize %>"
+                  <%= classification.functional_classification_category.name.humanize %>
+                  · <%= classification.confidence.humanize %>
             </span>
           </div>
 
@@ -75,11 +75,11 @@
         <% else %>
           <% if can? :manage, FunctionalClassification %>
             <% suggested_category = context.suggested_functional_classification_category %>
-            <% suggested_confidence = context.suggested_functional_classification_confidence %>
+            <% suggested_confidence = context.suggested_confidence %>
 
             <% functional_classification = FunctionalClassification.new(
               functional_classification_category: suggested_category,
-              functional_classification_confidence: suggested_confidence,
+              confidence: suggested_confidence,
               source: suggested_category.present? ? "suggested from site type" : nil
             ) %>
 
@@ -90,7 +90,7 @@
                   Suggested:
                   <%= suggested_category.name.humanize %>
                   ·
-                  <%= suggested_confidence&.name || "unknown" %>
+                  <%= suggested_confidence.present? ? suggested_confidence.humanize : "Unknown" %>
                 </span>
               </div>
             <% end %>

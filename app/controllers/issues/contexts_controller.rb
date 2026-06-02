@@ -20,8 +20,7 @@ class Issues::ContextsController < IssuesController
     @contexts = @contexts.includes(
       site: :site_types,
       functional_classifications: [
-        :functional_classification_category,
-        :functional_classification_confidence
+        :functional_classification_category
       ]
     )
 

@@ -2,28 +2,28 @@
 #
 # Table name: data_views
 #
-#  id                      :bigint
+#  id                      :integer
+#  labnr                   :string
 #  bp                      :integer
+#  std                     :integer
 #  cal_bp                  :integer
 #  cal_std                 :integer
-#  country                 :string
 #  delta_c13               :float
-#  ecochronological_units  :jsonb
+#  source_database         :text
+#  lab_name                :text
+#  material                :string
+#  species                 :string
 #  feature                 :string
 #  feature_type            :string
-#  lab_name                :text
-#  labnr                   :string
+#  site                    :string
+#  country                 :string
 #  lat                     :text
 #  lng                     :text
-#  material                :string
-#  periods                 :jsonb
-#  reference               :jsonb
-#  site                    :string
 #  site_type               :string
-#  source_database         :text
-#  species                 :string
-#  std                     :integer
+#  periods                 :jsonb
 #  typochronological_units :jsonb
+#  ecochronological_units  :jsonb
+#  reference               :jsonb
 #
 # Indexes
 #
@@ -36,6 +36,7 @@
 #  index_data_views_on_site_type  (site_type)
 #  index_data_views_on_species    (species)
 #
+
 class DataView < ApplicationRecord
   def self.refresh
     Scenic.database.refresh_materialized_view(table_name, concurrently: false, cascade: false)

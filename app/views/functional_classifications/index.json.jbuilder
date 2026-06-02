@@ -3,11 +3,10 @@ json.array! @functional_classifications do |classification|
   json.assignable_type classification.assignable_type
   json.assignable_id classification.assignable_id
 
-  json.functional_classification_category_id classification.functional_classification_category_id
-  json.functional_classification_confidence_id classification.functional_classification_confidence_id
+  json.confidence classification.confidence
 
   json.category classification.functional_classification_category&.name
-  json.confidence classification.functional_classification_confidence&.name
+  json.confidence_rank FunctionalClassification.confidences[classification.confidence]
   json.source classification.source
   json.note classification.note
 

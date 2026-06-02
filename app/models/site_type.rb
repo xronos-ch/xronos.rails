@@ -2,9 +2,9 @@
 #
 # Table name: site_types
 #
-#  id          :bigint           not null, primary key
-#  description :text
+#  id          :integer          not null, primary key
 #  name        :string
+#  description :text
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #
@@ -12,6 +12,7 @@
 #
 #  index_site_types_on_name  (name)
 #
+
 class SiteType < ApplicationRecord
   default_scope { order(name: :asc) }
 

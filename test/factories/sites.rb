@@ -2,20 +2,21 @@
 #
 # Table name: sites
 #
-#  id            :bigint           not null, primary key
-#  country_code  :string
+#  id            :integer          not null, primary key
+#  name          :string
 #  lat           :decimal(, )
 #  lng           :decimal(, )
-#  name          :string
-#  superseded_by :integer
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#  country_code  :string
+#  superseded_by :integer
 #
 # Indexes
 #
 #  index_sites_on_country_code  (country_code)
 #  index_sites_on_name          (name)
 #
+
 FactoryBot.define do
   
   factory :site do

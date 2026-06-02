@@ -2,23 +2,20 @@
 #
 # Table name: import_tables
 #
-#  id           :bigint           not null, primary key
+#  id           :integer          not null, primary key
 #  file         :string
 #  imported_at  :datetime
-#  mapping      :jsonb
-#  read_options :jsonb
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
-#  user_id      :bigint
+#  user_id      :integer
+#  read_options :jsonb
+#  mapping      :jsonb
 #
 # Indexes
 #
 #  index_import_tables_on_user_id  (user_id)
 #
-# Foreign Keys
-#
-#  fk_rails_...  (user_id => users.id)
-#
+
 class Curate::ImportTable < ApplicationRecord
   before_create :default_values
   before_destroy :delete_file

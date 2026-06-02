@@ -3,7 +3,7 @@ class CreateFunctionalClassifications < ActiveRecord::Migration[7.2]
     create_table :functional_classifications do |t|
       t.references :assignable, polymorphic: true, null: false
       t.references :functional_classification_category, null: false, foreign_key: true
-      t.references :functional_classification_confidence, null: false, foreign_key: true
+      t.integer :confidence, null: false, default: 1
       t.string :source
       t.text :note
 

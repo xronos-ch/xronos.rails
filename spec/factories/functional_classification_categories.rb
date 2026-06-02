@@ -2,12 +2,13 @@
 #
 # Table name: functional_classification_categories
 #
-#  id          :bigint           not null, primary key
-#  description :text
+#  id          :integer          not null, primary key
 #  name        :string
+#  description :text
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #
+
 FactoryBot.define do
   factory :functional_classification_category do
     name { "MyString" }

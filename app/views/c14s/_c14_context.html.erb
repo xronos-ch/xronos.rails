@@ -10,7 +10,7 @@
         <dd>
           <% if c14.context&.functional_classifications&.any? %>
             <% c14.context.functional_classifications.each do |classification| %>
-              <%= classification.functional_classification_category.name.humanize %>, <%= classification.functional_classification_confidence.name %>
+              <%= classification.functional_classification_category.name.humanize %>, <%= classification.confidence.humanize %>
             <% end %>
           <% else %>
             <%= na_value %>

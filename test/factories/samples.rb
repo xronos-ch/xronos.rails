@@ -2,17 +2,17 @@
 #
 # Table name: samples
 #
-#  id                   :bigint           not null, primary key
-#  position_crs         :text
+#  id                   :integer          not null, primary key
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
+#  material_id          :integer
+#  taxon_id             :integer
+#  context_id           :integer
 #  position_description :text
 #  position_x           :decimal(, )
 #  position_y           :decimal(, )
 #  position_z           :decimal(, )
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
-#  context_id           :integer
-#  material_id          :integer
-#  taxon_id             :integer
+#  position_crs         :text
 #
 # Indexes
 #
@@ -21,6 +21,7 @@
 #  index_samples_on_position_crs  (position_crs)
 #  index_samples_on_taxon_id      (taxon_id)
 #
+
 FactoryBot.define do
   
   factory :sample do

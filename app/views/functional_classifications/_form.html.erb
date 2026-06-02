@@ -13,11 +13,9 @@
         class: "form-select form-select-sm"
       ) %>
 
-  <%= f.collection_select(
-        :functional_classification_confidence_id,
-        FunctionalClassificationConfidence.order(rank: :desc),
-        :id,
-        :name,
+  <%= f.select(
+        :confidence,
+        FunctionalClassification.confidences.keys.map { |confidence| [confidence.humanize, confidence] },
         { prompt: "Confidence" },
         class: "form-select form-select-sm"
       ) %>

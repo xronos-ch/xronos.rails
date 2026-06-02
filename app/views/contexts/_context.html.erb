@@ -13,9 +13,9 @@
     <span class="ms-1">
       <% context.functional_classifications.each do |classification| %>
         <span class="badge bg-secondary"
-              title="Functional classification: <%= classification.functional_classification_confidence.name %>">
+              title="Functional classification: <%= classification.confidence.humanize %>"
           <%= classification.functional_classification_category.name.humanize %>
-          (<%= classification.functional_classification_confidence.name %>)
+              (<%= classification.confidence.humanize %>)
         </span>
       <% end %>
     </span>

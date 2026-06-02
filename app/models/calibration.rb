@@ -5,21 +5,22 @@
 #
 # Table name: cals
 #
-#  id         :bigint           not null, primary key
+#  id         :integer          not null, primary key
 #  c14_age    :integer
-#  c14_curve  :integer
 #  c14_error  :integer
-#  centre     :integer
+#  c14_curve  :integer
 #  taq        :integer
+#  centre     :integer
 #  tpq        :integer
-#  type       :string           not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  type       :string           not null
 #
 # Indexes
 #
 #  index_cals_on_type_and_c14_age_and_c14_error_and_c14_curve  (type,c14_age,c14_error,c14_curve) UNIQUE
 #
+
 class Calibration < Cal
     enum :c14_curve, { IntCal20: 0, SHCal20: 1, Marine20: 2 }
     

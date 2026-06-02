@@ -1,16 +1,16 @@
 
 
-
 # == Schema Information
 #
 # Table name: functional_classification_categories
 #
-#  id          :bigint           not null, primary key
-#  description :text
+#  id          :integer          not null, primary key
 #  name        :string
+#  description :text
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #
+
 class FunctionalClassificationCategory < ApplicationRecord
   has_many :functional_classifications, dependent: :restrict_with_error
 
