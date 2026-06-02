@@ -28,7 +28,7 @@
     </tbody>
   </table>
 
-  <%== @pagy.series_nav(:bootstrap) %>
+  <%== pagy_bootstrap_nav_tag(@pagy) %>
 
   <% if can? :create, Site %>
     <%= link_to 'New site', new_site_path, class: 'btn btn-secondary' %>

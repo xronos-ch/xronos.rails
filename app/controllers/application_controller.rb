@@ -33,6 +33,10 @@ class ApplicationController < ActionController::Base
 
   private
 
+  def pagy_countish(collection, **options)
+    pagy(:countish, collection, ttl: 300, **options)
+  end
+
   def storable_location?
     request.get? && is_navigational_format? && !devise_controller? && !request.xhr?
   end

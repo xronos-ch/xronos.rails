@@ -38,7 +38,7 @@ class C14sController < ApplicationController
         end
 
         begin
-          @pagy, @c14s = pagy(:countish, @c14s, ttl: 300)
+          @pagy, @c14s = pagy_countish(@c14s)
         rescue Pagy::OverflowError
           head :not_found
         end
@@ -63,7 +63,7 @@ class C14sController < ApplicationController
     respond_to do |format|
       format.html do
         begin
-          @pagy, @c14s = pagy(:countish, @c14s, ttl: 300)
+          @pagy, @c14s = pagy_countish(@c14s)
         rescue Pagy::OverflowError
           head :not_found
         end

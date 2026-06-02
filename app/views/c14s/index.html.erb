@@ -13,7 +13,7 @@
       </div>
     </div>
     <%= render "table", c14s: @c14s %>
-    <%== @pagy.series_nav(:bootstrap) %>
+    <%== pagy_bootstrap_nav_tag(@pagy) %>
   </turbo-frame>
 
   <% if can? :create, C14 %>

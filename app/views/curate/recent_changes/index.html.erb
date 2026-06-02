@@ -7,4 +7,4 @@
 
 <%= render "application/paper_trail/version_table", versions: @versions %>
 
-<%== @pagy.series_nav(:bootstrap) %>
+<%== pagy_bootstrap_nav_tag(@pagy) %>

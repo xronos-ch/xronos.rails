@@ -52,7 +52,7 @@
   <div class="d-flex mt-3">
 
     <% unless @pagy.pages == 1 %>
-      <%== @pagy.series_nav(:bootstrap) %>
+      <%== pagy_bootstrap_nav_tag(@pagy) %>
     <% end %>
   </div>
 
