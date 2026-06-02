@@ -2,11 +2,6 @@
 
 ## 1.1.2.9000 [unreleased]
 
-<<<<<<< HEAD
-=======
-## 1.1.2 [unreleased]
-
->>>>>>> 5baedfc (updated changelog)
 - Added curation workflow for functional classifications of contexts
 - Added issue view for contexts missing functional classifications
 - Added functional classification suggestions based on site type labels
