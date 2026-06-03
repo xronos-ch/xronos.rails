@@ -2,14 +2,14 @@
 #
 # Table name: typos
 #
-#  id                :integer          not null, primary key
-#  name              :string
-#  approx_start_time :integer
+#  id                :bigint           not null, primary key
 #  approx_end_time   :integer
+#  approx_start_time :integer
+#  name              :string
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #  parent_id         :integer
-#  sample_id         :integer
+#  sample_id         :bigint
 #
 # Indexes
 #

@@ -2,10 +2,10 @@
 #
 # Table name: citations
 #
-#  id           :integer          not null, primary key
-#  reference_id :integer
+#  id           :bigint           not null, primary key
 #  citing_type  :string
-#  citing_id    :integer
+#  citing_id    :bigint
+#  reference_id :bigint
 #
 # Indexes
 #

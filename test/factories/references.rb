@@ -2,11 +2,11 @@
 #
 # Table name: references
 #
-#  id         :integer          not null, primary key
+#  id         :bigint           not null, primary key
 #  bibtex     :text
+#  short_ref  :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#  short_ref  :string
 #
 # Indexes
 #

@@ -2,9 +2,9 @@
 #
 # Table name: functional_classification_categories
 #
-#  id          :integer          not null, primary key
-#  name        :string
+#  id          :bigint           not null, primary key
 #  description :text
+#  name        :string
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #

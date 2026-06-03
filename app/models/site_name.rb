@@ -2,16 +2,20 @@
 #
 # Table name: site_names
 #
-#  id         :integer          not null, primary key
+#  id         :bigint           not null, primary key
 #  language   :string
 #  name       :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#  site_id    :integer
+#  site_id    :bigint
 #
 # Indexes
 #
 #  index_site_names_on_site_id  (site_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (site_id => sites.id)
 #
 
 class SiteName < ApplicationRecord

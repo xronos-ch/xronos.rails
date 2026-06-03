@@ -2,28 +2,28 @@
 #
 # Table name: data_views
 #
-#  id                      :integer
-#  labnr                   :string
+#  id                      :bigint
 #  bp                      :integer
-#  std                     :integer
 #  cal_bp                  :integer
 #  cal_std                 :integer
+#  country                 :string
 #  delta_c13               :float
-#  source_database         :text
-#  lab_name                :text
-#  material                :string
-#  species                 :string
+#  ecochronological_units  :jsonb
 #  feature                 :string
 #  feature_type            :string
-#  site                    :string
-#  country                 :string
+#  lab_name                :text
+#  labnr                   :string
 #  lat                     :text
 #  lng                     :text
-#  site_type               :string
+#  material                :string
 #  periods                 :jsonb
-#  typochronological_units :jsonb
-#  ecochronological_units  :jsonb
 #  reference               :jsonb
+#  site                    :string
+#  site_type               :string
+#  source_database         :text
+#  species                 :string
+#  std                     :integer
+#  typochronological_units :jsonb
 #
 # Indexes
 #

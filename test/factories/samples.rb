@@ -2,17 +2,17 @@
 #
 # Table name: samples
 #
-#  id                   :integer          not null, primary key
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
-#  material_id          :integer
-#  taxon_id             :integer
-#  context_id           :integer
+#  id                   :bigint           not null, primary key
+#  position_crs         :text
 #  position_description :text
 #  position_x           :decimal(, )
 #  position_y           :decimal(, )
 #  position_z           :decimal(, )
-#  position_crs         :text
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
+#  context_id           :integer
+#  material_id          :integer
+#  taxon_id             :integer
 #
 # Indexes
 #

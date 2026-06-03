@@ -2,10 +2,10 @@
 #
 # Table name: contexts
 #
-#  id                :integer          not null, primary key
-#  name              :string
-#  approx_start_time :integer
+#  id                :bigint           not null, primary key
 #  approx_end_time   :integer
+#  approx_start_time :integer
+#  name              :string
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #  site_id           :integer

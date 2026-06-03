@@ -2,14 +2,14 @@
 #
 # Table name: sites
 #
-#  id            :integer          not null, primary key
-#  name          :string
+#  id            :bigint           not null, primary key
+#  country_code  :string
 #  lat           :decimal(, )
 #  lng           :decimal(, )
+#  name          :string
+#  superseded_by :integer
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
-#  country_code  :string
-#  superseded_by :integer
 #
 # Indexes
 #

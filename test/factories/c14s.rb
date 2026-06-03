@@ -2,19 +2,19 @@
 #
 # Table name: c14s
 #
-#  id             :integer          not null, primary key
+#  id             :bigint           not null, primary key
 #  bp             :integer
-#  std            :integer
 #  cal_bp         :integer
 #  cal_std        :integer
 #  delta_c13      :float
 #  delta_c13_std  :float
+#  lab_identifier :string
 #  method         :string
+#  std            :integer
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
-#  c14_lab_id     :integer
-#  sample_id      :integer
-#  lab_identifier :string
+#  c14_lab_id     :bigint
+#  sample_id      :bigint
 #
 # Indexes
 #

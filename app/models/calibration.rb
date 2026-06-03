@@ -5,16 +5,16 @@
 #
 # Table name: cals
 #
-#  id         :integer          not null, primary key
+#  id         :bigint           not null, primary key
 #  c14_age    :integer
-#  c14_error  :integer
 #  c14_curve  :integer
-#  taq        :integer
+#  c14_error  :integer
 #  centre     :integer
+#  taq        :integer
 #  tpq        :integer
+#  type       :string           not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#  type       :string           not null
 #
 # Indexes
 #
