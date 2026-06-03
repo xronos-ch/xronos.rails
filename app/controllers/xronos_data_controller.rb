@@ -1,6 +1,4 @@
 class XronosDataController < ApplicationController
-  include Pagy::Backend
-
   def turn_off_lasso
     session[:spatial_lasso_selection] = nil
     redirect_to request.env["HTTP_REFERER"]
@@ -48,10 +46,10 @@ class XronosDataController < ApplicationController
                               cache_key_for("html_page_#{params[:page] || 1}"),
                               expires_in: 10.minutes
                             ) do
-                              pagy(xrons_relation)
+                              pagy(:countish, xrons_relation)
                             end
                           else
-                            pagy(xrons_relation)
+                            pagy(:countish, xrons_relation)
                           end
         rescue Pagy::OverflowError
           head :not_found and return

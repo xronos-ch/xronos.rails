@@ -25,7 +25,7 @@ class Lods::SitesController < LodsController
 
     respond_to do |format|
       format.html do
-        @pagy, @sites = pagy(@sites)
+        @pagy, @sites = pagy(:offset, @sites)
 
         # Fetch and cache Wikidata matches for the current page
         @wikidata_matches = fetch_wikidata_matches(@sites)
