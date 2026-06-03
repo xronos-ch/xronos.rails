@@ -8,9 +8,10 @@ namespace :citations do
     puts
 
     duplicates = Citation
-      .select("MIN(id) AS keep_id, citing_type, citing_id, reference_id, COUNT(*) AS count")
+      .select("MIN(id) AS keep_id, citing_type, citing_id, reference_id, COUNT(*) AS duplicate_count")
       .group(:citing_type, :citing_id, :reference_id)
       .having("COUNT(*) > 1")
+      .to_a
 
     total_groups = duplicates.size
     total_rows   = duplicates.sum { |d| d.count - 1 }
