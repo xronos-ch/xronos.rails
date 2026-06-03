@@ -32,7 +32,7 @@ class TyposController < ApplicationController
         end
 
         begin
-          @pagy, @typos = pagy_countish(@typos)
+          @pagy, @typos = pagy(:countish, @typos)
         rescue Pagy::OverflowError
           head :not_found
         end
@@ -57,7 +57,7 @@ class TyposController < ApplicationController
     respond_to do |format|
       format.html do
         begin
-          @pagy, @typos = pagy_countish(@typos)
+          @pagy, @typos = pagy(:countish, @typos)
         rescue Pagy::OverflowError
           head :not_found
         end

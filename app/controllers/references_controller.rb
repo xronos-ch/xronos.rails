@@ -24,7 +24,7 @@ class ReferencesController < ApplicationController
 
     respond_to do |format|
       format.html {
-        @pagy, @references = pagy_countish(@references)
+        @pagy, @references = pagy(:countish, @references)
       }
       format.json
       format.csv {
@@ -47,7 +47,7 @@ class ReferencesController < ApplicationController
 
     respond_to do |format|
       format.html {
-        @pagy, @references = pagy_countish(@references)
+        @pagy, @references = pagy(:countish, @references)
         render :index
       }
       format.json  {
@@ -64,13 +64,13 @@ class ReferencesController < ApplicationController
     @citations_count = @reference.citations.count
 
     @sites = @reference.sites.distinct
-    @pagy_sites, @sites = pagy_countish(@sites, page_param: :sites_page)
+    @pagy_sites, @sites = pagy(:countish, @sites, page_param: :sites_page)
 
     @c14s = @reference.c14s.includes([:references, sample: [:material, :taxon, context: [:site]]])
-    @pagy_c14s, @c14s = pagy_countish(@c14s, page_param: :c14s_page)
+    @pagy_c14s, @c14s = pagy(:countish, @c14s, page_param: :c14s_page)
 
     @typos = @reference.typos.includes([:references, sample: [context: [:site]]])
-    @pagy_typos, @typos = pagy_countish(@typos, page_param: :typos_page)
+    @pagy_typos, @typos = pagy(:countish, @typos, page_param: :typos_page)
   end
 
   # GET /references/new

@@ -22,7 +22,7 @@
     </tbody>
   </table>
 
-  <%#= pagy_bootstrap_nav_tag(@pagy) %>
+  <%#= @pagy.series_nav(:bootstrap) %>
 
   <% if can? :create, C14Lab %>
     <%= link_to 'New radiocarbon lab', new_c14_lab_path, class: 'btn btn-secondary', data: { "turbo_frame": "remote_modal" } %>

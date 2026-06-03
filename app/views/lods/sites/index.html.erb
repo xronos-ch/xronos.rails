@@ -12,6 +12,6 @@
       render "table", sites: @sites
   %>
 
-  <%== pagy_bootstrap_nav_tag(@pagy) %>
+  <%== @pagy.series_nav(:bootstrap) %>
 
 </turbo-frame>

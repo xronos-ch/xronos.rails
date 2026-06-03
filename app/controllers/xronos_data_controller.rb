@@ -46,10 +46,10 @@ class XronosDataController < ApplicationController
                               cache_key_for("html_page_#{params[:page] || 1}"),
                               expires_in: 10.minutes
                             ) do
-                              pagy_countish(xrons_relation)
+                              pagy(:countish, xrons_relation)
                             end
                           else
-                            pagy_countish(xrons_relation)
+                            pagy(:countish, xrons_relation)
                           end
         rescue Pagy::OverflowError
           head :not_found and return

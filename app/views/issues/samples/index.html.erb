@@ -9,5 +9,5 @@
 <turbo-frame id="issues-samples-table">
   <%= render "issues/filter_form" %>
   <%= render "table", samples: @samples %>
-  <%== pagy_bootstrap_nav_tag(@pagy) %>
+  <%== @pagy.series_nav(:bootstrap) %>
 </turbo-frame>
