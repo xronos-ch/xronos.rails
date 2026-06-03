@@ -4,6 +4,11 @@
 
 - Upgraded Rails from 7.2.3 to 8.0.5 and enabled Rails 8.0 framework defaults.
 - Prevented duplicate citations from being created
+  - Migration may fail if there are existing duplicates in the database. If so:
+      DRY_RUN=1 bin/rails citations:deduplicate 
+    checks for existing duplicates that would block this migration. And:
+      bin/rails citations:deduplicate 
+    deletes them.
 
 ## 1.1.2 [2026-05-29]
 
