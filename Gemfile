@@ -152,6 +152,9 @@ gem "msgpack", ">= 1.7.0"
 
 gem 'scenic' 
 
+# Job dashboard
+gem "mission_control-jobs"
+
 # DEVELOPMENT -----------------------------------------------------------------
 
 # Syntax checking/linting

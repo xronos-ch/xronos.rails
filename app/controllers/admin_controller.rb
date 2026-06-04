@@ -10,6 +10,8 @@ class AdminController < ApplicationController
   private
 
   def add_admin_breadcrumb
-    breadcrumbs.add "Admin", admin_path
+    unless request.controller_class.name.split('::').first == "MissionControl" then
+      breadcrumbs.add "Admin", admin_path 
+    end
   end
 end
