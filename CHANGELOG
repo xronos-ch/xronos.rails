@@ -2,6 +2,7 @@
 
 ## 1.1.2.9000 [unreleased]
 
+- New admin dashboard for monitoring asynchronous jobs (/admin/jobs)
 - XRONOS rake tasks are now prepended with xronos and can be listed with
     bin/rails -T xronos
 - Unused references, taxons, and materials are now automatically deleted
