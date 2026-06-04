@@ -125,6 +125,13 @@ class Reference < ApplicationRecord
     short_ref.length > MAX_SHORT_REF_LENGTH
   end
 
+  # Tidy up unused references when citations are deleted
+  def destroy_if_orphaned
+    if citations.count == 0
+      self.destroy
+    end
+  end
+
   private
 
   def parse

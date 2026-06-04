@@ -36,7 +36,7 @@ class C14 < ApplicationRecord
   belongs_to :c14_lab, optional: true
   belongs_to :source_database, optional: true
 
-  has_many :citations, as: :citing
+  has_many :citations, as: :citing, dependent: :destroy
   has_many :references, :through => :citations
 
   delegate :context, to: :sample

@@ -30,4 +30,11 @@ class Material < ApplicationRecord
     "material"
   end
 
+  # Tidy up unused materials when samples are deleted
+  def destroy_if_orphaned
+    if samples.count == 0
+      self.destroy
+    end
+  end
+
 end

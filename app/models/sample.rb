@@ -39,8 +39,12 @@ class Sample < ApplicationRecord
   validates_associated :taxon
   delegate :name, to: :taxon, prefix: true, allow_nil: true
 
-  has_many :c14s
-  has_many :typos
+  after_destroy :destroy_material_if_orphaned
+  after_destroy :destroy_taxon_if_orphaned
+
+  # Children
+  has_many :c14s, dependent: :destroy
+  has_many :typos, dependent: :destroy
 
   include Versioned
 
@@ -55,6 +59,14 @@ class Sample < ApplicationRecord
 
   def self.label
     "sample"
+  end
+
+  def destroy_material_if_orphaned
+    material.destroy_if_orphaned
+  end
+
+  def destroy_taxon_if_orphaned
+    taxon.destroy_if_orphaned
   end
 
   # Issues

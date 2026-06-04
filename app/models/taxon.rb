@@ -95,6 +95,13 @@ class Taxon < ApplicationRecord
     "taxon"
   end
 
+  # Tidy up unused taxa when samples are deleted
+  def destroy_if_orphaned
+    if samples.count == 0
+      self.destroy
+    end
+  end
+
   # Issues
 
   scope :unknown_taxon, -> { where(gbif_id: nil) }

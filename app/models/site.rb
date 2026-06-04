@@ -22,15 +22,19 @@ class Site < ApplicationRecord
   require 'json'
   require 'uri'
     
-  has_many :site_names
-  has_many :contexts
+  # Children
+  has_many :site_names, dependent: :destroy
+  has_many :contexts, dependent: :destroy
+  has_many :citations, as: :citing, dependent: :destroy
+  has_many :lod_links, as: :linkable, dependent: :destroy
+
+  # Grandchildren
   has_many :samples, through: :contexts
   has_many :c14s, through: :contexts
   has_many :typos, through: :contexts
-  has_many :citations, as: :citing
   has_many :references, through: :citations
-  has_many :lod_links, as: :linkable, dependent: :destroy
 
+  # Cousins
   has_and_belongs_to_many :site_types, optional: true
 
   composed_of :coordinates,

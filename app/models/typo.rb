@@ -28,7 +28,7 @@ class Typo < ApplicationRecord
   delegate :context, to: :sample
   delegate :site, to: :context
 
-  has_many :citations, as: :citing
+  has_many :citations, as: :citing, dependent: :destroy
   has_many :references, through: :citations
 
   # Internal heirarchy
