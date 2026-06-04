@@ -3,6 +3,7 @@
 ## 1.1.2.9000 [unreleased]
 
 - Unused references, taxons, and materials are now automatically deleted
+  - Added rake tasks to cleanup unused
 - Ensured dependent records are properly cleaned up after site deletion
 - Upgraded Rails from 7.2.3 to 8.0.5 and enabled Rails 8.0 framework defaults.
 - Upgraded Pagy from 6.5.0 to 43.5.5 and migrated pagination helpers to the Pagy 43 API.
