@@ -19,7 +19,6 @@
 #
 class LodLink < ApplicationRecord
   include Turbo::Broadcastable
-  include Versioned
 
   attr_reader :item
 

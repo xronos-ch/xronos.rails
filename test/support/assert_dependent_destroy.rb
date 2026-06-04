@@ -3,11 +3,6 @@ def assert_dependent_destroy(parent, association, count:)
   reflection = parent.class.reflect_on_association(association)
   raise ArgumentError, "Unknown association #{association}" unless reflection
 
-  # Ensure association is declared dependent: destroy
-  unless reflection.options[:dependent].in? [:destroy, :destroy_async]
-    flunk "#{parent.class}##{association} is not declared dependent: :destroy"
-  end
-
   # Ensure children exist via the association
   assert_equal count, parent.public_send(association).count,
     "Expected #{count} #{association} before destroy"

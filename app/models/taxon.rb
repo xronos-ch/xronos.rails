@@ -19,8 +19,6 @@ class Taxon < ApplicationRecord
 
   validates :name, presence: true
 
-  include Versioned
-
   #before_save :set_gbif_id_from_match, unless: :gbif_id?
   #before_save :set_name_from_usage
 

@@ -38,7 +38,6 @@ FactoryBot.define do
     c14_lab
     sample
 
-
     trait :with_citations do
       transient do
         citations_count { 2 }

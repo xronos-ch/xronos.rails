@@ -17,6 +17,8 @@
 #  index_sites_on_name          (name)
 #
 class Site < ApplicationRecord
+  include Versioned
+  include Supersedable
 
   require 'net/http'
   require 'json'
@@ -24,7 +26,8 @@ class Site < ApplicationRecord
     
   # Children
   has_many :site_names, dependent: :destroy
-  has_many :contexts, dependent: :destroy_async
+  has_many :contexts
+  destroy_async_with_paper_trail :contexts
   has_many :citations, as: :citing, dependent: :destroy_async
   has_many :lod_links, as: :linkable, dependent: :destroy
 
@@ -53,9 +56,6 @@ class Site < ApplicationRecord
 
   accepts_nested_attributes_for :site_names, 
     reject_if: :all_blank, allow_destroy: true
-
-  include Versioned
-  include Supersedable
 
   include Duplicable
   duplicable :name, :lat, :lng, :country_code

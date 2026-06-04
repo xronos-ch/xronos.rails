@@ -29,12 +29,12 @@
 #  index_c14s_on_sample_id       (sample_id)
 #
 class C14 < ApplicationRecord
+  include Versioned
 
   belongs_to :sample
   accepts_nested_attributes_for :sample, reject_if: :all_blank
 
   belongs_to :c14_lab, optional: true
-  belongs_to :source_database, optional: true
 
   has_many :citations, as: :citing, dependent: :destroy
   has_many :references, :through => :citations
@@ -46,8 +46,6 @@ class C14 < ApplicationRecord
   validates_associated :sample
 
   composed_of :lab_id, mapping: %w(lab_identifier), allow_nil: true
-
-  include Versioned
 
   include HasIssues
   @issues = [ :missing_c14_age, :very_old_c14, :missing_c14_error, 
