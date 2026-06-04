@@ -31,6 +31,9 @@ jobs:
       POSTGRES_DB: xronos
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/xronos_test
       COVERAGE: true
+      REGISTRATION_PASSPHRASE: xronos
+      ADMIN_USER_ID: 1
+      ADMIN_USER_EMAIL: admin@xronos.ch
 
     steps:
       - name: Checkout code
