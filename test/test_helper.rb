@@ -5,6 +5,10 @@ require 'rails/test_help'
 require 'capybara/rails'
 require 'capybara/minitest'
 
+
+# Load all files in test/support
+Dir[Rails.root.join("test/support/**/*.rb")].sort.each { |f| require f }
+
 class ActionDispatch::IntegrationTest
   
   # Make the Capybara DSL available in all integration tests
