@@ -10,14 +10,19 @@ default: &default
   timeout: 5000
 
 development:
-  <<: *default
-  adapter: postgresql
-  host: 127.0.0.1
-  encoding: unicode
-  port: 5432
-  username: <%= ENV.fetch('POSTGRES_USER') { |key| puts "env var #{key} not found"} %>
-  password: <%= ENV.fetch('POSTGRES_PASSWORD') { |key| puts "env var #{key} not found"} %>
-  database: <%= ENV.fetch('POSTGRES_DB') { |key| puts "env var #{key} not found"} %>
+  primary: &primary_development
+    <<: *default
+    adapter: postgresql
+    host: 127.0.0.1
+    encoding: unicode
+    port: 5432
+    username: <%= ENV.fetch('POSTGRES_USER') { |key| puts "env var #{key} not found"} %>
+    password: <%= ENV.fetch('POSTGRES_PASSWORD') { |key| puts "env var #{key} not found"} %>
+    database: <%= ENV.fetch('POSTGRES_DB') { |key| puts "env var #{key} not found"} %>
+  queue: 
+    <<: *primary_development
+    database: <%= ENV.fetch('POSTGRES_DB') { |key| puts "env var #{key} not found" } + "_queue" %>
+    migrations_paths: db/queue_migrate
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -32,14 +37,23 @@ test:
   database: myapp_test
 
 production:
-  <<: *default
-  adapter: postgresql
-  host: db
-  encoding: unicode
-  port: 5432
-  username: <%= ENV.fetch('POSTGRES_USER') { |key| puts "env var #{key} not found"} %>
-  password: <%= ENV.fetch('POSTGRES_PASSWORD') { |key| puts "env var #{key} not found"} %>
-  database: <%= ENV.fetch('POSTGRES_DB') { |key| puts "env var #{key} not found"} %>
+  primary: &primary_production
+    <<: *default
+    adapter: postgresql
+    host: db
+    encoding: unicode
+    port: 5432
+    username: <%= ENV.fetch('POSTGRES_USER') { |key| puts "env var #{key} not found"} %>
+    password: <%= ENV.fetch('POSTGRES_PASSWORD') { |key| puts "env var #{key} not found"} %>
+    database: <%= ENV.fetch('POSTGRES_DB') { |key| puts "env var #{key} not found"} %>
+  cable:
+    <<: *primary_production
+    database: <%= ENV.fetch('POSTGRES_DB') { |key| puts "env var #{key} not found" } + "_cable" %>
+    migrations_paths: db/cable_migrate
+  queue: 
+    <<: *primary_production
+    database: <%= ENV.fetch('POSTGRES_DB') { |key| puts "env var #{key} not found" } + "_queue" %>
+    migrations_paths: db/queue_migrate
   
 staging:
   <<: *default

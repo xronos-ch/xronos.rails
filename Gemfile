@@ -14,8 +14,10 @@ gem 'pg'
 # App server
 gem 'puma'
 
-# In-memory cache (also required for Turbo broadcasts and ActionCable)
-gem 'redis', '~> 4.0'
+# Use the database-backed adapters for Rails.cache, Active Job, and Action Cable
+gem "solid_cache"
+gem "solid_queue"
+gem "solid_cable"
 
 # Reduce boot times through caching (required in config/boot.rb)
 # gem 'bootsnap', '>= 1.1.0', require: false
