@@ -34,7 +34,7 @@ test:
   encoding: unicode
   username: postgres
   password: "postgres"
-  database: myapp_test
+  database: <%= ENV.fetch('POSTGRES_DB') { |key| puts "env var #{key} not found"} + "_test" %>
 
 production:
   primary: &primary_production

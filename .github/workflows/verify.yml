@@ -70,7 +70,7 @@ jobs:
           PGHOST: localhost
           PGUSER: postgres
           POSTGRES_USER: postgres
-          POSTGRES_DB: myapp_test
+          POSTGRES_DB: xronos
           POSTGRES_PASSWORD: "postgres"
           REGISTRATION_PASSPHRASE: ""
         run: |
@@ -83,7 +83,7 @@ jobs:
           PGHOST: localhost
           PGUSER: postgres
           POSTGRES_USER: postgres
-          POSTGRES_DB: myapp_test
+          POSTGRES_DB: xronos
           POSTGRES_PASSWORD: "postgres"
           REGISTRATION_PASSPHRASE: ""
       - name: Upload coverage to Codecov
