@@ -129,6 +129,7 @@ class Reference < ApplicationRecord
   # N.B. Incompatible with destroy_async
   def destroy_if_orphaned
     if citations.count == 0
+      self.revision_comment = "Deleted uncited reference"
       self.destroy
     end
   end
