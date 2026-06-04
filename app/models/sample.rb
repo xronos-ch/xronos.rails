@@ -43,8 +43,8 @@ class Sample < ApplicationRecord
   after_destroy :destroy_taxon_if_orphaned
 
   # Children
-  has_many :c14s, dependent: :destroy
-  has_many :typos, dependent: :destroy
+  has_many :c14s, dependent: :destroy_async
+  has_many :typos, dependent: :destroy_async
 
   include Versioned
 

@@ -4,7 +4,7 @@ def assert_dependent_destroy(parent, association, count:)
   raise ArgumentError, "Unknown association #{association}" unless reflection
 
   # Ensure association is declared dependent: destroy
-  unless reflection.options[:dependent] == :destroy
+  unless reflection.options[:dependent].in? [:destroy, :destroy_async]
     flunk "#{parent.class}##{association} is not declared dependent: :destroy"
   end
 
@@ -12,8 +12,13 @@ def assert_dependent_destroy(parent, association, count:)
   assert_equal count, parent.public_send(association).count,
     "Expected #{count} #{association} before destroy"
 
-  # Destroy parent
-  parent.destroy
+  # Destroy parent (immediately if executed asynchronously)
+  perform_enqueued_jobs do
+    parent.destroy
+  end
+
+  # Reload to avoid cached associations
+  parent.reload if parent.persisted?
 
   # Assert that children were destroyed
   assert_equal 0, parent.public_send(association).count,

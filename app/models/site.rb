@@ -24,8 +24,8 @@ class Site < ApplicationRecord
     
   # Children
   has_many :site_names, dependent: :destroy
-  has_many :contexts, dependent: :destroy
-  has_many :citations, as: :citing, dependent: :destroy
+  has_many :contexts, dependent: :destroy_async
+  has_many :citations, as: :citing, dependent: :destroy_async
   has_many :lod_links, as: :linkable, dependent: :destroy
 
   # Grandchildren

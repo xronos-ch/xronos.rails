@@ -19,6 +19,7 @@ require 'rails/test_help'
 #require "minitest/rails/capybara"
 require 'capybara/rails'
 require 'capybara/minitest'
+require "active_job/test_helper"
 
 # Load all files in test/support
 Dir[Rails.root.join("test/support/**/*.rb")].sort.each { |f| require f }
@@ -63,6 +64,7 @@ class ActiveSupport::TestCase
   # Add more helper methods to be used by all tests here...
 
   include FactoryBot::Syntax::Methods
+  include ActiveJob::TestHelper
 
   def with_versioning
     was_enabled = PaperTrail.enabled?
