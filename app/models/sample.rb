@@ -61,10 +61,12 @@ class Sample < ApplicationRecord
   end
 
   def destroy_material_if_orphaned
+    return if material.nil?
     material.destroy_if_orphaned
   end
 
   def destroy_taxon_if_orphaned
+    return if taxon.nil?
     taxon.destroy_if_orphaned
   end
 

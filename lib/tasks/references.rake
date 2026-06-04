@@ -1,5 +1,13 @@
 namespace :xronos do
   namespace :references do
+
+    desc "Destroy reference by ID"
+    task destroy: :environment do
+      abort "ID must be set" unless ENV["ID"]
+      ENV["MODEL"] ||= "Reference"
+      Rake::Task["xronos:destroy"].invoke
+    end
+
     desc "Destroy references with no citations"
     task destroy_orphans: :environment do
       dry_run = ENV["DRY_RUN"] != "false"

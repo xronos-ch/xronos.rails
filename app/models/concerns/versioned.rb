@@ -12,6 +12,8 @@ module Versioned
     # instead
     before_destroy :propagate_revision_comment_to_dependents
 
+    # Keep track of async associations for metaprogramming
+    class_attribute :async_destroy_associations, default: []
   end
 
   class_methods do
@@ -19,6 +21,8 @@ module Versioned
     # Replicates `dependent: destroy_async` but preserving PaperTrail metadata
     # 
     def destroy_async_with_paper_trail(association, job: DestroyAsyncWithPaperTrailJob, batch_size: 500)
+      self.async_destroy_associations += [association.to_sym]
+
       after_destroy_commit do
         Versioned.enqueue(
           parent: self,
