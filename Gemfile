@@ -223,9 +223,9 @@ group :test do
   gem 'capybara-selenium'
   gem 'launchy'
 
-  # Measure test coverage
-  gem 'simplecov', require: false
-  gem 'simplecov-cobertura'
+  # Test coverage
+  gem "simplecov", require: false
+  gem "simplecov-cobertura", require: false
 
 end
 

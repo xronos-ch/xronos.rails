@@ -1,10 +1,24 @@
+# Calculate coverage if required (i.e. in CI, but not locally)
+if ENV["COVERAGE"]
+  require "simplecov"
+  require "simplecov-cobertura"
+
+  SimpleCov.formatters = [
+    SimpleCov::Formatter::HTMLFormatter,
+    SimpleCov::Formatter::CoberturaFormatter
+  ]
+
+  SimpleCov.start "rails" do
+    enable_coverage :branch
+  end
+end
+
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
 require 'rails/test_help'
 #require "minitest/rails/capybara"
 require 'capybara/rails'
 require 'capybara/minitest'
-
 
 # Load all files in test/support
 Dir[Rails.root.join("test/support/**/*.rb")].sort.each { |f| require f }
