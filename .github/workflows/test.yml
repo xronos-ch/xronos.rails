@@ -26,6 +26,9 @@ jobs:
 
     env:
       RAILS_ENV: test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: xronos
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/xronos_test
       COVERAGE: true
 
