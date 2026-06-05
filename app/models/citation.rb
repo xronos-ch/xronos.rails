@@ -26,6 +26,12 @@ class Citation < ApplicationRecord
 
   acts_as_copy_target # enable CSV exports
 
+  after_destroy :destroy_reference_if_orphaned
+
+  def destroy_reference_if_orphaned
+    reference.destroy_if_orphaned
+  end
+
   def self.label
     "citation"
   end

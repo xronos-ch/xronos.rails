@@ -42,3 +42,6 @@ workers 3
 
 # Allow puma to be restarted by `rails restart` command.
 plugin :tmp_restart
+
+# Run Solid Queue
+plugin :solid_queue

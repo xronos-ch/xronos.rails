@@ -26,6 +26,36 @@ FactoryBot.define do
     
     after(:create) {|site| site.site_types = [create(:site_type)]}
 
+    trait :with_site_names do
+      transient do
+        site_names_count { 2 }
+      end
+
+      after(:create) do |site, evaluator|
+        create_list(:site_name, evaluator.site_names_count, site: site)
+      end
+    end
+
+    trait :with_lod_links do
+      transient do
+        lod_links_count { 2 }
+      end
+
+      after(:create) do |site, evaluator|
+        create_list(:lod_link, evaluator.lod_links_count, linkable: site)
+      end
+    end
+
+    trait :with_citations do
+      transient do
+        citations_count { 2 }
+      end
+
+      after(:create) do |c14, evaluator|
+        create_list(:citation, evaluator.citations_count, citing: c14)
+      end
+    end
+
   end
   
 end

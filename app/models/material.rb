@@ -20,7 +20,6 @@ class Material < ApplicationRecord
     using: { tsearch: { prefix: true } } # match partial words
 
   has_many :samples, inverse_of: :material
-  has_paper_trail
 
   validates :name, presence: true
 
@@ -28,6 +27,13 @@ class Material < ApplicationRecord
 
   def self.label
     "material"
+  end
+
+  # Tidy up unused materials when samples are deleted
+  def destroy_if_orphaned
+    if samples.count == 0
+      self.destroy
+    end
   end
 
 end

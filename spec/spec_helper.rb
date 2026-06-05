@@ -93,12 +93,3 @@ RSpec.configure do |config|
 =end
 end
 
-require 'simplecov'
-require 'simplecov-cobertura'
-
-SimpleCov.formatters = SimpleCov::Formatter::MultiFormatter.new([
-  SimpleCov::Formatter::HTMLFormatter,
-  SimpleCov::Formatter::CoberturaFormatter,
-])
-
-SimpleCov.start 'rails'

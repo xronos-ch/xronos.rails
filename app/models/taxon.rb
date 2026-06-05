@@ -19,10 +19,8 @@ class Taxon < ApplicationRecord
 
   validates :name, presence: true
 
-  include Versioned
-
-  before_save :set_gbif_id_from_match, unless: :gbif_id?
-  before_save :set_name_from_usage
+  #before_save :set_gbif_id_from_match, unless: :gbif_id?
+  #before_save :set_name_from_usage
 
   include HasIssues
   @issues = [ :unknown_taxon, :long_taxon ]
@@ -93,6 +91,13 @@ class Taxon < ApplicationRecord
 
   def self.label
     "taxon"
+  end
+
+  # Tidy up unused taxa when samples are deleted
+  def destroy_if_orphaned
+    if samples.count == 0
+      self.destroy
+    end
   end
 
   # Issues
