@@ -23,6 +23,7 @@
     checks for existing duplicates that would block this migration. And:
       bin/rails xronos:citations:deduplicate 
     deletes them.
+- Fixed data browser map display for records with missing coordinates.
 
 ## 1.1.2 [2026-05-29]
 

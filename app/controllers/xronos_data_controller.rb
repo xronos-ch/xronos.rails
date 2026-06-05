@@ -138,20 +138,29 @@ class XronosDataController < ApplicationController
   end
 
   def build_geojson_from_sql(sites_sql)
+    geojson_sql = <<~SQL.squish
+    (
+      SELECT jsonb_build_object(
+        'type', 'Feature',
+        'geometry', jsonb_build_object(
+          'type', 'Point',
+          'coordinates', jsonb_build_array(lng, lat)
+        ),
+        'properties', jsonb_build_object(
+          'name', name,
+          'id', id
+        )
+      ) AS geojson
+      FROM (#{sites_sql}) AS subquery1
+      WHERE lat IS NOT NULL
+        AND lng IS NOT NULL
+    ) AS subquery2
+  SQL
+
     Site.connection.exec_query(
       Site
-        .select("json_agg(geojson) AS measurements")
-        .from("(select jsonb_build_object(
-          'type', 'Feature',
-          'geometry', jsonb_build_object(
-              'type', 'Point',
-              'coordinates', jsonb_build_array(lng, lat)
-          ),
-          'properties', jsonb_build_object(
-              'name', name,
-              'id', id
-          )
-        ) AS geojson from (#{sites_sql}) AS subquery1) AS subquery2")
+        .select("COALESCE(json_agg(geojson), '[]'::json) AS measurements")
+        .from(geojson_sql)
         .to_sql
     )[0]["measurements"]
   end
