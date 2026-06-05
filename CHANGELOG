@@ -25,6 +25,7 @@
     deletes them.
 - Fixed data browser map display for records with missing coordinates.
 - Fixed Leaflet marker initialisation on site pages with quotation marks or apostrophes in site names.
+- Added article-specific page titles and meta descriptions for news, about, and documentation articles.
 
 ## 1.1.2 [2026-05-29]
 

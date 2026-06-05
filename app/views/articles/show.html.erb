@@ -1,3 +1,7 @@
+<% article_description = truncate(strip_tags(@article.body_html).squish.presence || @article.title, length: 160) %>
+<% content_for :title, @article.title %>
+<% content_for :meta_description, article_description %>
+
 <% if @article.splash.present? %>
   <% content_for :page_styles %>
   <style>
