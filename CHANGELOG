@@ -25,6 +25,7 @@
     deletes them.
 - Fixed data browser map display for records with missing coordinates.
 - Documented expectations for responsible API and automated data access (#405).
+- Added article-specific page titles and meta descriptions for news, about, and documentation articles.
 
 ## 1.1.2 [2026-05-29]
 
