@@ -23,12 +23,13 @@
 
         <div class="col-lg-8">
           <% unless @site.lat.blank? || @site.lng.blank? %>
+            <% site_markers_data = json_escape([@site].to_json) %>
             <div style="height: 30rem; position: relative;"
                  data-controller="map"
                  data-map-style-value="show_site"
                  data-map-target="container"
                  data-map-base-map-value="Imagery"
-                 data-map-markers-data-value='<%= [@site].to_json.html_safe %>'>
+                 data-map-markers-data-value="<%= site_markers_data %>">
             </div>
           <% else %>
             <div style="height: 30rem; position: relative;"
