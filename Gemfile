@@ -14,8 +14,10 @@ gem 'pg'
 # App server
 gem 'puma'
 
-# In-memory cache (also required for Turbo broadcasts and ActionCable)
-gem 'redis', '~> 4.0'
+# Use the database-backed adapters for Rails.cache, Active Job, and Action Cable
+gem "solid_cache"
+gem "solid_queue"
+gem "solid_cable"
 
 # Reduce boot times through caching (required in config/boot.rb)
 # gem 'bootsnap', '>= 1.1.0', require: false
@@ -150,6 +152,9 @@ gem "msgpack", ">= 1.7.0"
 
 gem 'scenic' 
 
+# Job dashboard
+gem "mission_control-jobs"
+
 # DEVELOPMENT -----------------------------------------------------------------
 
 # Syntax checking/linting
@@ -221,9 +226,9 @@ group :test do
   gem 'capybara-selenium'
   gem 'launchy'
 
-  # Measure test coverage
-  gem 'simplecov', require: false
-  gem 'simplecov-cobertura'
+  # Test coverage
+  gem "simplecov", require: false
+  gem "simplecov-cobertura", require: false
 
 end
 

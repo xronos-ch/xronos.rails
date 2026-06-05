@@ -127,7 +127,7 @@ GEM
       marcel (~> 1.0.0)
       mini_mime (>= 0.1.3)
       ssrf_filter (~> 1.0)
-    cgi (0.5.1)
+    cgi (0.4.1)
     childprocess (5.1.0)
       logger (~> 1.5)
     chronic (0.10.2)
@@ -138,7 +138,7 @@ GEM
       csl (~> 2.0)
       observer (< 1.0)
     coderay (1.1.3)
-    concurrent-ruby (1.3.6)
+    concurrent-ruby (1.3.5)
     connection_pool (3.0.2)
     countries (6.0.1)
       unaccent (~> 0.3)
@@ -169,8 +169,10 @@ GEM
       dotenv (= 3.1.6)
       railties (>= 6.1)
     drb (2.2.3)
-    erb (6.0.4)
+    erb (6.0.0)
     erubi (1.13.1)
+    et-orbi (1.4.0)
+      tzinfo
     excon (0.112.0)
     execjs (2.10.0)
     factory_bot (6.5.0)
@@ -196,6 +198,9 @@ GEM
     ffi (1.17.0-x86_64-darwin)
     ffi (1.17.0-x86_64-linux-gnu)
     formatador (1.1.0)
+    fugit (1.12.2)
+      et-orbi (~> 1.4)
+      raabro (~> 1.4)
     gbifrb (0.2.0)
     geocoder (1.8.4)
       base64 (>= 0.1.0)
@@ -221,17 +226,20 @@ GEM
       csv
       mini_mime (>= 1.0.0)
       multi_xml (>= 0.5.2)
-    i18n (1.14.8)
+    i18n (1.14.7)
       concurrent-ruby (~> 1.0)
     i18n_data (1.1.0)
       simple_po_parser (~> 1.1)
     image_processing (1.13.0)
       mini_magick (>= 4.9.5, < 5)
       ruby-vips (>= 2.0.17, < 3)
-    io-console (0.8.2)
-    irb (1.18.0)
+    importmap-rails (2.2.3)
+      actionpack (>= 6.0.0)
+      activesupport (>= 6.0.0)
+      railties (>= 6.0.0)
+    io-console (0.8.1)
+    irb (1.15.3)
       pp (>= 0.6.0)
-      prism (>= 1.3.0)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     jbuilder (2.13.0)
@@ -239,7 +247,7 @@ GEM
       activesupport (>= 5.0.0)
     jsbundling-rails (1.3.1)
       railties (>= 6.0.0)
-    json (2.19.7)
+    json (2.9.0)
     json-schema (5.1.1)
       addressable (~> 2.8)
       bigdecimal (~> 3.1)
@@ -257,7 +265,7 @@ GEM
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
     logger (1.7.0)
-    loofah (2.25.1)
+    loofah (2.24.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
     lumberjack (1.2.10)
@@ -272,9 +280,17 @@ GEM
     method_source (1.1.0)
     mini_magick (4.13.2)
     mini_mime (1.1.5)
-    minitest (6.0.6)
-      drb (~> 2.0)
-      prism (~> 1.5)
+    minitest (5.26.2)
+    mission_control-jobs (1.1.0)
+      actioncable (>= 7.1)
+      actionpack (>= 7.1)
+      activejob (>= 7.1)
+      activerecord (>= 7.1)
+      importmap-rails (>= 1.2.1)
+      irb (~> 1.13)
+      railties (>= 7.1)
+      stimulus-rails
+      turbo-rails
     msgpack (1.8.0)
     multi_json (1.15.0)
     multi_xml (0.6.0)
@@ -293,11 +309,11 @@ GEM
     net-smtp (0.5.1)
       net-protocol
     nio4r (2.7.5)
-    nokogiri (1.19.3-arm64-darwin)
+    nokogiri (1.18.10-arm64-darwin)
       racc (~> 1.4)
-    nokogiri (1.19.3-x86_64-darwin)
+    nokogiri (1.18.10-x86_64-darwin)
       racc (~> 1.4)
-    nokogiri (1.19.3-x86_64-linux-gnu)
+    nokogiri (1.18.10-x86_64-linux-gnu)
       racc (~> 1.4)
     notiffany (0.1.3)
       nenv (~> 0.1)
@@ -308,7 +324,10 @@ GEM
       ostruct (>= 0.2)
     orm_adapter (0.5.0)
     ostruct (0.6.1)
-    pagy (6.5.0)
+    pagy (43.5.5)
+      json
+      uri
+      yaml
     paper_trail (16.0.0)
       activerecord (>= 6.1)
       request_store (~> 1.4)
@@ -327,7 +346,6 @@ GEM
     pp (0.6.3)
       prettyprint
     prettyprint (0.2.0)
-    prism (1.9.0)
     propshaft (1.1.0)
       actionpack (>= 7.0.0)
       activesupport (>= 7.0.0)
@@ -336,20 +354,21 @@ GEM
     pry (0.15.0)
       coderay (~> 1.1)
       method_source (~> 1.0)
-    psych (5.3.1)
+    psych (5.3.0)
       date
       stringio
     public_suffix (6.0.1)
     puma (6.5.0)
       nio4r (~> 2.0)
+    raabro (1.4.0)
     racc (1.8.1)
-    rack (3.2.6)
+    rack (3.2.4)
     rack-attack (6.8.0)
       rack (>= 1.0, < 4)
     rack-brotli (2.0.0)
       brotli (>= 0.3)
       rack (>= 3)
-    rack-session (2.1.2)
+    rack-session (2.1.1)
       base64 (>= 0.1.0)
       rack (>= 3.0.0)
     rack-test (2.2.0)
@@ -374,8 +393,8 @@ GEM
       activesupport (>= 5.0.0)
       minitest
       nokogiri (>= 1.6)
-    rails-html-sanitizer (1.7.0)
-      loofah (~> 2.25)
+    rails-html-sanitizer (1.6.2)
+      loofah (~> 2.21)
       nokogiri (>= 1.15.7, != 1.16.7, != 1.16.6, != 1.16.5, != 1.16.4, != 1.16.3, != 1.16.2, != 1.16.1, != 1.16.0.rc1, != 1.16.0)
     railties (8.0.5)
       actionpack (= 8.0.5)
@@ -387,15 +406,14 @@ GEM
       tsort (>= 0.2)
       zeitwerk (~> 2.6)
     rainbow (3.1.1)
-    rake (13.4.2)
+    rake (13.3.1)
     rb-fsevent (0.11.2)
     rb-inotify (0.11.1)
       ffi (~> 1.0)
-    rdoc (7.2.0)
+    rdoc (6.17.0)
       erb
       psych (>= 4.0.0)
       tsort
-    redis (4.8.1)
     regexp_parser (2.9.3)
     reline (0.6.3)
       io-console (~> 0.5)
@@ -472,6 +490,22 @@ GEM
     simplecov_json_formatter (0.1.4)
     sitemap_generator (6.3.0)
       builder (~> 3.0)
+    solid_cable (4.0.0)
+      actioncable (>= 7.2)
+      activejob (>= 7.2)
+      activerecord (>= 7.2)
+      railties (>= 7.2)
+    solid_cache (1.0.10)
+      activejob (>= 7.2)
+      activerecord (>= 7.2)
+      railties (>= 7.2)
+    solid_queue (1.4.0)
+      activejob (>= 7.1)
+      activerecord (>= 7.1)
+      concurrent-ruby (>= 1.3.1)
+      fugit (~> 1.11)
+      railties (>= 7.1)
+      thor (>= 1.3.1)
     spring (4.2.1)
     spring-watcher-listen (2.1.0)
       listen (>= 2.7, < 4.0)
@@ -479,9 +513,9 @@ GEM
     ssrf_filter (1.2.0)
     stimulus-rails (1.3.4)
       railties (>= 6.0.0)
-    stringio (3.2.0)
-    thor (1.5.0)
-    timeout (0.6.1)
+    stringio (3.1.9)
+    thor (1.4.0)
+    timeout (0.5.0)
     tsort (0.2.0)
     turbo-rails (2.0.11)
       actionpack (>= 6.0.0)
@@ -495,7 +529,7 @@ GEM
       unicode-emoji (~> 4.0, >= 4.0.4)
     unicode-emoji (4.0.4)
     uniform_notifier (1.16.0)
-    uri (1.1.1)
+    uri (1.0.2)
     useragent (0.16.11)
     validate_url (1.0.15)
       activemodel (>= 3.0.0)
@@ -525,7 +559,8 @@ GEM
     xmpp4r (0.5.6)
     xpath (3.2.0)
       nokogiri (~> 1.8)
-    zeitwerk (2.8.2)
+    yaml (0.4.0)
+    zeitwerk (2.7.3)
 
 PLATFORMS
   arm64-darwin-23
@@ -570,6 +605,7 @@ DEPENDENCIES
   leaflet-rails
   listen
   minitest
+  mission_control-jobs
   msgpack (>= 1.7.0)
   oj
   pagy
@@ -582,7 +618,6 @@ DEPENDENCIES
   rack-attack
   rack-brotli
   rails (~> 8.0.0)
-  redis (~> 4.0)
   rspec-rails (~> 7.0.0)
   rubocop
   rubocop-rails
@@ -592,6 +627,9 @@ DEPENDENCIES
   simplecov
   simplecov-cobertura
   sitemap_generator
+  solid_cable
+  solid_cache
+  solid_queue
   spring
   spring-watcher-listen
   stimulus-rails

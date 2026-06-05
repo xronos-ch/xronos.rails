@@ -1,5 +1,4 @@
 class SearchesController < ApplicationController
-  include Pagy::Backend
 
   def index
     @results = PgSearch.multisearch(search_params[:q])
@@ -18,7 +17,7 @@ class SearchesController < ApplicationController
     respond_to do |format|
       format.html {
         @results = @results.includes(:searchable)
-        @pagy, @results = pagy(@results)
+        @pagy, @results = pagy(:offset, @results)
       }
       format.json { 
         render json: @results.limit(500) 

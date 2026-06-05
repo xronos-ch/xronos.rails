@@ -73,6 +73,7 @@ Rails.application.routes.draw do
     resources :articles, except: :show
     resources :users
   end
+  mount MissionControl::Jobs::Engine, at: "/admin/jobs"
 
   # Data browser
   get 'data/index'

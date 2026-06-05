@@ -17,7 +17,7 @@ class Issues::SamplesController < IssuesController
     @samples = @samples.reorder(order)
 
     respond_to do |format|
-      format.html { @pagy, @samples = pagy(@samples) }
+      format.html { @pagy, @samples = pagy(:offset, @samples) }
     end
   end
 

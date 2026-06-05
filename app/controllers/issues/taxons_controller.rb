@@ -19,7 +19,7 @@ class Issues::TaxonsController < IssuesController
     @taxons = @taxons.reorder(order)
 
     respond_to do |format|
-      format.html { @pagy, @taxons = pagy(@taxons) }
+      format.html { @pagy, @taxons = pagy(:offset, @taxons) }
     end
   end
 

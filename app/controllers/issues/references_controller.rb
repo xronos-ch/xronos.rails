@@ -19,7 +19,7 @@ class Issues::ReferencesController < IssuesController
     @references = @references.with_citations_count
 
     respond_to do |format|
-      format.html { @pagy, @references = pagy(@references) }
+      format.html { @pagy, @references = pagy(:offset, @references) }
     end
   end
 

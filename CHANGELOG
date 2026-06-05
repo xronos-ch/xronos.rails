@@ -7,7 +7,22 @@
 - Added functional classification suggestions based on site type labels
 - Added JSON builder for functional classification data
 - Improved issue filtering to avoid dynamic method calls from request parameters
+- New admin dashboard for monitoring asynchronous jobs (/admin/jobs)
+- XRONOS rake tasks are now prepended with xronos and can be listed with
+    bin/rails -T xronos
+- Unused references, taxons, and materials are now automatically deleted
+  - Added rake tasks to cleanup unused
+- Ensured dependent records are properly cleaned up after site deletion
+  - Added rake task for safe cascading destruction
 - Upgraded Rails from 7.2.3 to 8.0.5 and enabled Rails 8.0 framework defaults.
+- Upgraded Pagy from 6.5.0 to 43.5.5 and migrated pagination helpers to the Pagy 43 API.
+- Added countish pagination for large public listings to reduce expensive repeated count queries.
+- Prevented duplicate citations from being created
+  - Migration may fail if there are existing duplicates in the database. If so:
+      DRY_RUN=1 bin/rails xronos:citations:deduplicate 
+    checks for existing duplicates that would block this migration. And:
+      bin/rails xronos:citations:deduplicate 
+    deletes them.
 
 ## 1.1.2 [2026-05-29]
 

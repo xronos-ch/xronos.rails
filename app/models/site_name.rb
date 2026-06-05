@@ -23,6 +23,4 @@ class SiteName < ApplicationRecord
 
   validates :name, presence: true
 
-  include Versioned
-
 end

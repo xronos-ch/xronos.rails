@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_27_100301) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_01_093343) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -105,6 +105,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_27_100301) do
     t.bigint "reference_id"
     t.string "citing_type"
     t.bigint "citing_id"
+    t.index ["citing_type", "citing_id", "reference_id"], name: "index_citations_on_citing_and_reference", unique: true
     t.index ["citing_type", "citing_id"], name: "index_citations_on_citing"
     t.index ["reference_id"], name: "index_citations_on_reference_id"
   end

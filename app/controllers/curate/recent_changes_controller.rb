@@ -1,5 +1,4 @@
 class Curate::RecentChangesController < CurateController
-  include Pagy::Backend
 
   def index
     @versions = PaperTrail::Version
@@ -7,8 +6,8 @@ class Curate::RecentChangesController < CurateController
     @versions = @versions.reorder(created_at: :desc)
 
     respond_to do |format|
-      format.html { 
-        @pagy, @versions = pagy(@versions)
+      format.html {
+        @pagy, @versions = pagy(:offset, @versions)
       }
       format.json
     end

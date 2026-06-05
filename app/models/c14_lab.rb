@@ -21,7 +21,8 @@ class C14Lab < ApplicationRecord
   validates :name, presence: true
 
   has_many :c14s, inverse_of: :c14_lab
-  has_paper_trail
+
+  include Versioned
 
   acts_as_copy_target # enable CSV exports
 

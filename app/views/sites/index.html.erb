@@ -14,7 +14,7 @@
       </div>
     </div>
     <%= render "table", sites: @sites %>
-    <%== pagy_bootstrap_nav(@pagy) %>
+    <%== @pagy.series_nav(:bootstrap) %>
   </turbo-frame>
 
   <% if can? :create, Site %>

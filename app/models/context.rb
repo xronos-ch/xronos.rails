@@ -17,6 +17,7 @@
 #
 
 class Context < ApplicationRecord
+  include Versioned
 
   FUNCTIONAL_CLASSIFICATION_SUGGESTION_PATTERN =
     "settlement|habitation|occupation|dwelling|village|house|domestic|" \
@@ -33,15 +34,14 @@ class Context < ApplicationRecord
   accepts_nested_attributes_for :site, :reject_if => proc { |attributes| attributes.all? { |key, value| key == "_destroy" || value.blank? || (value.is_a?(Hash) && value.values.all?(&:blank?)) } }
   validates_associated :site
 
-  has_many :samples
+  has_many :samples, dependent: :destroy
+
   has_many :c14s, through: :samples
   has_many :typos, through: :samples
 
   has_many :functional_classifications,
            as: :assignable,
            dependent: :destroy
-
-  has_paper_trail
 
   acts_as_copy_target # enable CSV exports
 

@@ -29,5 +29,9 @@ module Xronos
 
     # Request throttling / rate limiting
     config.middleware.use Rack::Attack
+
+    # Use internal authentication for job dashboard
+    config.mission_control.jobs.base_controller_class = "AdminController"
+    config.mission_control.jobs.http_basic_auth_enabled = false
   end
 end

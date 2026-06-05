@@ -17,7 +17,7 @@ class Issues::C14sController < IssuesController
     @c14s = @c14s.reorder(order)
 
     respond_to do |format|
-      format.html { @pagy, @c14s = pagy(@c14s) }
+      format.html { @pagy, @c14s = pagy(:offset, @c14s) }
     end
   end
 

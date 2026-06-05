@@ -18,20 +18,27 @@
 #
 
 class Site < ApplicationRecord
+  include Versioned
+  include Supersedable
 
   require 'net/http'
   require 'json'
   require 'uri'
     
-  has_many :site_names
+  # Children
+  has_many :site_names, dependent: :destroy
   has_many :contexts
+  destroy_async_with_paper_trail :contexts
+  has_many :citations, as: :citing, dependent: :destroy_async
+  has_many :lod_links, as: :linkable, dependent: :destroy
+
+  # Grandchildren
   has_many :samples, through: :contexts
   has_many :c14s, through: :contexts
   has_many :typos, through: :contexts
-  has_many :citations, as: :citing
   has_many :references, through: :citations
-  has_many :lod_links, as: :linkable, dependent: :destroy
 
+  # Cousins
   has_and_belongs_to_many :site_types, optional: true
 
   composed_of :coordinates,
@@ -50,9 +57,6 @@ class Site < ApplicationRecord
 
   accepts_nested_attributes_for :site_names, 
     reject_if: :all_blank, allow_destroy: true
-
-  include Versioned
-  include Supersedable
 
   include Duplicable
   duplicable :name, :lat, :lng, :country_code
