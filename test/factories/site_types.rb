@@ -12,6 +12,7 @@
 #
 #  index_site_types_on_name  (name)
 #
+
 FactoryBot.define do
   
   factory :site_type do

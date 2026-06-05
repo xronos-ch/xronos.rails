@@ -12,6 +12,7 @@
 #
 #  index_site_types_on_name  (name)
 #
+
 class SiteType < ApplicationRecord
   default_scope { order(name: :asc) }
 

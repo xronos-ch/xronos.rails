@@ -20,6 +20,7 @@
 #
 #  index_cals_on_type_and_c14_age_and_c14_error_and_c14_curve  (type,c14_age,c14_error,c14_curve) UNIQUE
 #
+
 class Calibration < Cal
     enum :c14_curve, { IntCal20: 0, SHCal20: 1, Marine20: 2 }
     

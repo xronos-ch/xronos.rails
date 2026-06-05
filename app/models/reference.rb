@@ -12,6 +12,7 @@
 #
 #  index_references_on_short_ref  (short_ref)
 #
+
 class Reference < ApplicationRecord
   DELIM_PATTERN = '[;,]'
   MAX_SHORT_REF_LENGTH = 30

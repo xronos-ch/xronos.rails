@@ -36,6 +36,7 @@
 #  index_data_views_on_site_type  (site_type)
 #  index_data_views_on_species    (species)
 #
+
 require 'rails_helper'
 
 RSpec.describe DataView, type: :model do

@@ -11,6 +11,7 @@
 #
 #  index_materials_on_name  (name)
 #
+
 FactoryBot.define do
   
   factory :material do

@@ -10,4 +10,6 @@ require 'csv'
 
 FactoryBot.create(:user, :admin)
 
+load Rails.root.join("db/seeds/functional_classifications.rb")
+
 FactoryBot.create_list(:c14, 100)

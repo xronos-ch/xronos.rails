@@ -19,6 +19,7 @@
 #
 #  fk_rails_...  (user_id => users.id)
 #
+
 class Curate::ImportTable < ApplicationRecord
   before_create :default_values
   before_destroy :delete_file

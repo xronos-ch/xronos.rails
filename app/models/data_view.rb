@@ -36,6 +36,7 @@
 #  index_data_views_on_site_type  (site_type)
 #  index_data_views_on_species    (species)
 #
+
 class DataView < ApplicationRecord
   def self.refresh
     Scenic.database.refresh_materialized_view(table_name, concurrently: false, cascade: false)

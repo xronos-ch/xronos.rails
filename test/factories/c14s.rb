@@ -23,6 +23,7 @@
 #  index_c14s_on_method          (method)
 #  index_c14s_on_sample_id       (sample_id)
 #
+
 FactoryBot.define do
   
   factory :c14 do

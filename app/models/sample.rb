@@ -21,6 +21,7 @@
 #  index_samples_on_position_crs  (position_crs)
 #  index_samples_on_taxon_id      (taxon_id)
 #
+
 class Sample < ApplicationRecord
   include Versioned
 

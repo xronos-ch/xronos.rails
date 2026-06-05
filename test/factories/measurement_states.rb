@@ -12,6 +12,7 @@
 #
 #  index_measurement_states_on_name  (name)
 #
+
 FactoryBot.define do
   
   factory :measurement_state do

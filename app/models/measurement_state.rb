@@ -12,6 +12,7 @@
 #
 #  index_measurement_states_on_name  (name)
 #
+
 class MeasurementState < ApplicationRecord
 
     has_many :measurements

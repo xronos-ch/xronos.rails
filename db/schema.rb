@@ -121,6 +121,27 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_01_093343) do
     t.index ["site_id"], name: "index_contexts_on_site_id"
   end
 
+  create_table "functional_classification_categories", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "functional_classifications", force: :cascade do |t|
+    t.string "assignable_type", null: false
+    t.bigint "assignable_id", null: false
+    t.bigint "functional_classification_category_id", null: false
+    t.integer "confidence", default: 1, null: false
+    t.string "source"
+    t.text "note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assignable_type", "assignable_id", "functional_classification_category_id"], name: "idx_functional_classifications_unique_category", unique: true
+    t.index ["assignable_type", "assignable_id"], name: "index_functional_classifications_on_assignable"
+    t.index ["functional_classification_category_id"], name: "idx_on_functional_classification_category_id_0cc23f287f"
+  end
+
   create_table "import_tables", force: :cascade do |t|
     t.string "file"
     t.datetime "imported_at", precision: nil
@@ -367,6 +388,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_01_093343) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "functional_classifications", "functional_classification_categories"
   add_foreign_key "import_tables", "users"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_grants", "users", column: "resource_owner_id"

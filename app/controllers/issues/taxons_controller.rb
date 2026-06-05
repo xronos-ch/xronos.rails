@@ -3,11 +3,7 @@ class Issues::TaxonsController < IssuesController
 
   # GET /issues/taxons/:issue
   def index
-    if issue_param.present?
-      @taxons = Taxon.send(issue_param)
-    else
-      @taxons = Taxon.all
-    end
+    @taxons = issue_relation_for(Taxon)
 
     @taxons = @taxons.with_samples_count
 

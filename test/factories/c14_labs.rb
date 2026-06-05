@@ -13,6 +13,7 @@
 #  index_c14_labs_on_active  (active)
 #  index_c14_labs_on_name    (name)
 #
+
 FactoryBot.define do
   
   factory :c14_lab do

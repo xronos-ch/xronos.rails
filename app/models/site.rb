@@ -16,6 +16,7 @@
 #  index_sites_on_country_code  (country_code)
 #  index_sites_on_name          (name)
 #
+
 class Site < ApplicationRecord
   include Versioned
   include Supersedable

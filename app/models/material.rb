@@ -11,6 +11,7 @@
 #
 #  index_materials_on_name  (name)
 #
+
 class Material < ApplicationRecord
   default_scope { order(name: :asc) }
 

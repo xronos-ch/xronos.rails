@@ -3,11 +3,7 @@ class Issues::ReferencesController < IssuesController
 
   # GET /issues/references/:issue
   def index
-    if issue_param.present?
-      @references = Reference.send(issue_param)
-    else
-      @references = Reference.all
-    end
+    @references = issue_relation_for(Reference)
 
     if params.has_key?(:search)
       @references = @references.search params[:search]

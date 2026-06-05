@@ -188,7 +188,7 @@ group :development do
   gem 'spring-watcher-listen'
 
   # Annotate models etc. with current schema
-  gem 'annotate'
+  gem 'annotaterb'
 
   # Watch for N+1 queries and unused eager loading
   gem 'bullet'

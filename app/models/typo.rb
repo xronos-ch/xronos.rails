@@ -16,6 +16,7 @@
 #  index_typos_on_name       (name)
 #  index_typos_on_sample_id  (sample_id)
 #
+
 class Typo < ApplicationRecord
   include XronosDataHelper
   

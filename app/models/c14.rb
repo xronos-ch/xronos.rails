@@ -28,6 +28,7 @@
 #  index_c14s_on_method          (method)
 #  index_c14s_on_sample_id       (sample_id)
 #
+
 class C14 < ApplicationRecord
   include Versioned
 

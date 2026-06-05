@@ -19,6 +19,7 @@
 #
 #  fk_rails_...  (user_id => users.id)
 #
+
 FactoryBot.define do
   factory :user_profile do
     full_name { Faker::Name.name }

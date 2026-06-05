@@ -19,6 +19,7 @@
 #
 #  fk_rails_...  (user_id => users.id)
 #
+
 class UserProfile < ApplicationRecord
   belongs_to :user, required: true
 

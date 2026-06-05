@@ -17,6 +17,7 @@
 #
 #  fk_rails_...  (site_id => sites.id)
 #
+
 class SiteName < ApplicationRecord
   belongs_to :site
 

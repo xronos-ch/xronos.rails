@@ -13,6 +13,7 @@
 #  index_citations_on_citing_and_reference  (citing_type,citing_id,reference_id) UNIQUE
 #  index_citations_on_reference_id          (reference_id)
 #
+
 class Citation < ApplicationRecord
 
   belongs_to :citing, polymorphic: true

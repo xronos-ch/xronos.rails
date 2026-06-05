@@ -2,6 +2,11 @@
 
 ## 1.1.2.9000 [unreleased]
 
+- Added curation workflow for functional classifications of contexts
+- Added issue view for contexts missing functional classifications
+- Added functional classification suggestions based on site type labels
+- Added JSON builder for functional classification data
+- Improved issue filtering to avoid dynamic method calls from request parameters
 - New admin dashboard for monitoring asynchronous jobs (/admin/jobs)
 - XRONOS rake tasks are now prepended with xronos and can be listed with
     bin/rails -T xronos

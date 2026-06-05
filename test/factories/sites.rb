@@ -16,6 +16,7 @@
 #  index_sites_on_country_code  (country_code)
 #  index_sites_on_name          (name)
 #
+
 FactoryBot.define do
   
   factory :site do

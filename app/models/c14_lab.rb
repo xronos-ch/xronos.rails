@@ -13,6 +13,7 @@
 #  index_c14_labs_on_active  (active)
 #  index_c14_labs_on_name    (name)
 #
+
 class C14Lab < ApplicationRecord
 
   default_scope { order(active: :desc, name: :asc) }

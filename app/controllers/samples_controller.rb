@@ -10,7 +10,14 @@ class SamplesController < ApplicationController
   # GET /samples.csv
   def index
     @samples = Sample.all
+
+    if params[:ids].present?
+      ids = params[:ids].to_s.split(",").map(&:strip)
+      @samples = @samples.where(id: ids)
+    end
+
     respond_to do |format|
+      format.json
       format.csv {
         @samples = @samples.select(index_csv_template)
         render csv: @samples

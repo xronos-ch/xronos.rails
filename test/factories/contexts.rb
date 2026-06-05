@@ -15,6 +15,7 @@
 #  index_contexts_on_name     (name)
 #  index_contexts_on_site_id  (site_id)
 #
+
 FactoryBot.define do
   
   factory :context do

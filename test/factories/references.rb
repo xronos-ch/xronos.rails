@@ -12,6 +12,7 @@
 #
 #  index_references_on_short_ref  (short_ref)
 #
+
 FactoryBot.define do
   
   factory :reference do

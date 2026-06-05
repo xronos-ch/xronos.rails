@@ -13,6 +13,7 @@
 #  index_taxons_on_gbif_id  (gbif_id)
 #  index_taxons_on_name     (name)
 #
+
 class Taxon < ApplicationRecord
 
   has_many :samples
