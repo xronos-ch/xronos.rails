@@ -14,9 +14,9 @@
 - Added countish pagination for large public listings to reduce expensive repeated count queries.
 - Prevented duplicate citations from being created
   - Migration may fail if there are existing duplicates in the database. If so:
-      DRY_RUN=1 bin/rails citations:deduplicate 
+      DRY_RUN=1 bin/rails xronos:citations:deduplicate 
     checks for existing duplicates that would block this migration. And:
-      bin/rails citations:deduplicate 
+      bin/rails xronos:citations:deduplicate 
     deletes them.
 
 ## 1.1.2 [2026-05-29]
