@@ -50,6 +50,10 @@ production:
     <<: *primary_production
     database: <%= ENV.fetch('POSTGRES_DB') { |key| puts "env var #{key} not found" } + "_cable" %>
     migrations_paths: db/cable_migrate
+  cache:
+    <<: *primary_production
+    database: <%= ENV.fetch('POSTGRES_DB') { |key| puts "env var #{key} not found" } + "_cache" %>
+    migrations_paths: db/cache_migrate
   queue: 
     <<: *primary_production
     database: <%= ENV.fetch('POSTGRES_DB') { |key| puts "env var #{key} not found" } + "_queue" %>
