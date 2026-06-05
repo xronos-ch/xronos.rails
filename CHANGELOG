@@ -24,6 +24,7 @@
       bin/rails xronos:citations:deduplicate 
     deletes them.
 - Fixed data browser map display for records with missing coordinates.
+- Documented expectations for responsible API and automated data access (#405).
 
 ## 1.1.2 [2026-05-29]
 

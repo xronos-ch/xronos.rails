@@ -56,6 +56,50 @@
         <li>query_material</li>
         <li>query_species</li>
       </ul>
+
+      <hr>
+
+      <h2>Usage expectations</h2>
+
+      <p>
+        XRONOS is an open resource, and we welcome responsible reuse of its data.
+        When accessing the API or harvesting pages programmatically, please follow
+        basic principles of polite web access: identify yourself, respect the site
+        policy, make requests slowly, and avoid asking for the same resource repeatedly.
+      </p>
+
+      <ul>
+        <li>
+          Set an informative <code>User-Agent</code> string that identifies your
+          project or application and provides a contact email or URL.
+        </li>
+        <li>
+          Respect <code>robots.txt</code> and avoid crawling paths that are excluded
+          there.
+        </li>
+        <li>
+          Avoid unnecessary repeated requests. Cache responses locally where possible.
+        </li>
+        <li>
+          Keep request rates moderate and avoid parallel scraping or deep pagination
+          loops.
+        </li>
+        <li>
+          Prefer documented API endpoints or flat-file data exports over scraping
+          HTML pages.
+        </li>
+        <li>
+          If you need a substantial part of the database, use the data dump or contact
+          us before starting large-scale automated harvesting.
+        </li>
+      </ul>
+
+      <p>
+        These expectations follow the general principles of
+        <a href="https://dmi3kno.github.io/polite/">polite web access</a>.
+        Automated traffic that causes excessive load or does not identify itself may
+        be rate-limited or blocked.
+      </p>
     </div>
   </div>
 </div>
