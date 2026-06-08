@@ -63,6 +63,9 @@ jobs:
       - name: Run test suite
         run: bin/rails test
 
+      - name: Run system test suite
+        run: bin/rails test:system
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
