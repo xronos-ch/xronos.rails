@@ -1,10 +1,5 @@
 # make calibrator
-cd vendor/calibrator
-make clean
-make
-rm -f bin/calibrator_linux
-mv bin/calibrator bin/calibrator_linux
-cd ../..
+bin/build_calibrator
 
 # update cron jobs
 bundle exec whenever --update-crontab
