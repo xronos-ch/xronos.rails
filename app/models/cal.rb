@@ -6,6 +6,7 @@
 # == Schema Information
 #
 # Table name: cals
+# Database name: primary
 #
 #  id         :bigint           not null, primary key
 #  c14_age    :integer

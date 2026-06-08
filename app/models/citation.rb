@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: citations
+# Database name: primary
 #
 #  id           :bigint           not null, primary key
 #  citing_type  :string

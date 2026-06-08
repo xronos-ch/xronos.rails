@@ -1,3 +1,14 @@
+# == Schema Information
+#
+# Table name: functional_classification_categories
+# Database name: primary
+#
+#  id          :bigint           not null, primary key
+#  description :text
+#  name        :string
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#
 require "test_helper"
 
 class FunctionalClassificationCategoryTest < ActiveSupport::TestCase

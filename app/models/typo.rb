@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: typos
+# Database name: primary
 #
 #  id                :bigint           not null, primary key
 #  approx_end_time   :integer

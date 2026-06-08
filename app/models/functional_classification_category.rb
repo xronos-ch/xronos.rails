@@ -3,6 +3,7 @@
 # == Schema Information
 #
 # Table name: functional_classification_categories
+# Database name: primary
 #
 #  id          :bigint           not null, primary key
 #  description :text

@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: data_views
+# Database name: primary
 #
 #  id                      :bigint
 #  bp                      :integer

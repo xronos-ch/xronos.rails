@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: import_tables
+# Database name: primary
 #
 #  id           :bigint           not null, primary key
 #  file         :string

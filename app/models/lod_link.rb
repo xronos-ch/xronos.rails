@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: lod_links
+# Database name: primary
 #
 #  id            :bigint           not null, primary key
 #  data          :jsonb

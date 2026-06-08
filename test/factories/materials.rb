@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: materials
+# Database name: primary
 #
 #  id         :bigint           not null, primary key
 #  name       :string

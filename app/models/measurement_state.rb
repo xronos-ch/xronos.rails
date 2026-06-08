@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: measurement_states
+# Database name: primary
 #
 #  id          :bigint           not null, primary key
 #  description :text

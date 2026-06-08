@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: c14_labs
+# Database name: primary
 #
 #  id         :bigint           not null, primary key
 #  active     :boolean
