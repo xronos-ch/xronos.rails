@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_01_093343) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_08_130101) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -118,7 +118,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_01_093343) do
     t.datetime "updated_at", precision: nil, null: false
     t.integer "site_id"
     t.index ["name"], name: "index_contexts_on_name"
+    t.index ["site_id", "name"], name: "index_contexts_unique_name_per_site", unique: true, where: "(name IS NOT NULL)"
     t.index ["site_id"], name: "index_contexts_on_site_id"
+    t.index ["site_id"], name: "index_contexts_one_null_name_per_site", unique: true, where: "(name IS NULL)"
   end
 
   create_table "functional_classification_categories", force: :cascade do |t|
