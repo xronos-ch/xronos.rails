@@ -98,6 +98,10 @@ For development, you will need to run the XRONOS rails app directly (without doc
 7. Start a dev server with `bin/dev`. This watches for changes in CSS and JS files.
     * If you get an error about foreman being missing, try restarting your terminal or (if using rbenv) running `rbenv rehash`
 
+### Administrative tasks
+
+Administrative command-line tasks for maintenance, cleanup, cache updates, and controlled record deletion are documented in [`docs/admin-cli.md`](docs/admin-cli.md).
+
 ### Using Calibrator
 
 The [calibrator](https://github.com/ISAAKiel/calibrator) is a small command-line tool written in C++ used in XRONOS to calibrate the 14C data live. To use it in your test environment, you need to compile it for your system. This process varies depending on the system, but we provide a brief description for Linux and MacOS below.
