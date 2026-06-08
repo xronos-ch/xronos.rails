@@ -57,11 +57,22 @@ jobs:
       - name: Install JavaScript dependencies
         run: yarn install --frozen-lockfile
 
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libboost-all-dev
+
+      - name: Build calibrator
+        run: bin/build_calibrator
+
       - name: Prepare database
         run: bin/rails db:prepare
 
       - name: Run test suite
         run: bin/rails test
+
+      - name: Run system test suite
+        run: bin/rails test:system
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
