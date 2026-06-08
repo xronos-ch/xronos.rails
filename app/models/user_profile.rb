@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: user_profiles
+# Database name: primary
 #
 #  id           :bigint           not null, primary key
 #  full_name    :string

@@ -6,6 +6,7 @@
 # == Schema Information
 #
 # Table name: c14s
+# Database name: primary
 #
 #  id             :bigint           not null, primary key
 #  bp             :integer

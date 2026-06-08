@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: site_types
+# Database name: primary
 #
 #  id          :bigint           not null, primary key
 #  description :text

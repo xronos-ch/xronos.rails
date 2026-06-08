@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: functional_classifications
+# Database name: primary
 #
 #  id                                    :bigint           not null, primary key
 #  assignable_type                       :string           not null

@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: sites
+# Database name: primary
 #
 #  id            :bigint           not null, primary key
 #  country_code  :string

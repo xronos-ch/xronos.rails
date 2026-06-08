@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: references
+# Database name: primary
 #
 #  id         :bigint           not null, primary key
 #  bibtex     :text

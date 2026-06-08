@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: samples
+# Database name: primary
 #
 #  id                   :bigint           not null, primary key
 #  position_crs         :text

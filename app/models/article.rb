@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: articles
+# Database name: primary
 #
 #  id                 :bigint           not null, primary key
 #  body               :text
