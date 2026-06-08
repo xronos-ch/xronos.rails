@@ -25,7 +25,9 @@ require "active_job/test_helper"
 Dir[Rails.root.join("test/support/**/*.rb")].sort.each { |f| require f }
 
 class ActionDispatch::IntegrationTest
-  
+
+  include ApiAssertions
+
   # Make the Capybara DSL available in all integration tests
   include Capybara::DSL
   # Make `assert_*` methods behave like Minitest assertions
