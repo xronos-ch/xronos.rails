@@ -29,6 +29,8 @@
 - Added article-specific page titles and meta descriptions for news, about, and documentation articles.
 - Updated footer logos to reflect current affiliations, funding, and previous support (#404).
 - Standardised the test suite on Minitest and migrated existing RSpec coverage (#422).
+- Added bundled acknowledgements page rendered from version-controlled Markdown (#359).
+- Added acknowledgements links to the About navigation and footer.
 
 ## 1.1.2 [2026-05-29]
 
