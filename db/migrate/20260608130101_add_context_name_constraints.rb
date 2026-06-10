@@ -14,18 +14,16 @@ class AddContextNameConstraints < ActiveRecord::Migration[8.0]
     end
 
     say_with_time "Merging duplicate contexts per site and name" do
-      rows = execute <<~SQL
-        SELECT
-          site_id,
-          name,
-          array_agg(id ORDER BY id) AS context_ids
-        FROM contexts
-        GROUP BY site_id, name
-        HAVING COUNT(*) > 1;
-      SQL
+      rows = Context.select(
+        :site_id, :name, 
+        "array_agg(id ORDER BY id) AS context_ids"
+      )
+        .group(:site_id, :name)
+        .having("COUNT(*) > 1")
 
       rows.each do |row|
         context_ids = row["context_ids"]
+        
         canonical_id = context_ids.first
         redundant_ids = context_ids.drop(1)
 
