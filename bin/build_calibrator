@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd vendor/calibrator
+
+make clean
+make
+
+case "$(uname -s)" in
+  Darwin)
+    rm -f bin/calibrator_mac
+    mv bin/calibrator bin/calibrator_mac
+    ;;
+  Linux)
+    rm -f bin/calibrator_linux
+    mv bin/calibrator bin/calibrator_linux
+    ;;
+  *)
+    echo "Unsupported platform: $(uname -s)" >&2
+    exit 1
+    ;;
+esac

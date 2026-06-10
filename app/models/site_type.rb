@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: site_types
+# Database name: primary
 #
 #  id          :bigint           not null, primary key
 #  description :text
@@ -12,6 +13,7 @@
 #
 #  index_site_types_on_name  (name)
 #
+
 class SiteType < ApplicationRecord
   default_scope { order(name: :asc) }
 
@@ -21,7 +23,6 @@ class SiteType < ApplicationRecord
     using: { tsearch: { prefix: true } } # match partial words
 
   acts_as_copy_target # enable CSV exports
-  has_paper_trail
 
   has_many :sites, inverse_of: :site_type
 

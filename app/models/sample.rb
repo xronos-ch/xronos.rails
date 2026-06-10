@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: samples
+# Database name: primary
 #
 #  id                   :bigint           not null, primary key
 #  position_crs         :text
@@ -21,7 +22,9 @@
 #  index_samples_on_position_crs  (position_crs)
 #  index_samples_on_taxon_id      (taxon_id)
 #
+
 class Sample < ApplicationRecord
+  include Versioned
 
   delegate :site, to: :context
   
@@ -39,10 +42,12 @@ class Sample < ApplicationRecord
   validates_associated :taxon
   delegate :name, to: :taxon, prefix: true, allow_nil: true
 
-  has_many :c14s
-  has_many :typos
+  after_destroy :destroy_material_if_orphaned
+  after_destroy :destroy_taxon_if_orphaned
 
-  include Versioned
+  # Children
+  has_many :c14s, dependent: :destroy
+  has_many :typos, dependent: :destroy
 
   include PgSearch::Model
   pg_search_scope :search, 
@@ -55,6 +60,16 @@ class Sample < ApplicationRecord
 
   def self.label
     "sample"
+  end
+
+  def destroy_material_if_orphaned
+    return if material.nil?
+    material.destroy_if_orphaned
+  end
+
+  def destroy_taxon_if_orphaned
+    return if taxon.nil?
+    taxon.destroy_if_orphaned
   end
 
   # Issues

@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: measurement_states
+# Database name: primary
 #
 #  id          :bigint           not null, primary key
 #  description :text
@@ -12,6 +13,7 @@
 #
 #  index_measurement_states_on_name  (name)
 #
+
 class MeasurementState < ApplicationRecord
 
     has_many :measurements

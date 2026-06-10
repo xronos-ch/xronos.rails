@@ -1,5 +1,4 @@
 class ArticlesController < ApplicationController
-  include Pagy::Backend
 
   load_and_authorize_resource
 
@@ -9,7 +8,7 @@ class ArticlesController < ApplicationController
       .published
       .where(section: params[:section])
       .order(published_at: :desc)
-    @pagy, @articles = pagy(@articles)
+    @pagy, @articles = pagy(:offset, @articles)
   end
 
   # GET /:section/:slug

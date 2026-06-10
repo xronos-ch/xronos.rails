@@ -1,8 +1,11 @@
 <% if @data.filters.any? %>
-  <span class="<%= @data.xrons.any? ? "text-success" : "text-danger" %>">
-    Showing <%= @data.xrons.count %> of <%= @data.everything.count %> records
+  <span class="<%= @xrons.any? ? "text-success" : "text-danger" %>">
+    Showing <%= number_with_delimiter(@filtered_count) %>
+    of <%= number_with_delimiter(@total_count) %> records
     (<%= link_to "clear filters", :data %>)
   </span>
 <% else %>
-  <span class="text-dark">Showing <%= @data.everything.count %> records</span>
+  <span class="text-dark">
+    Showing <%= number_with_delimiter(@total_count) %> records
+  </span>
 <% end %>

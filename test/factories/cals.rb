@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: cals
+# Database name: primary
 #
 #  id         :bigint           not null, primary key
 #  c14_age    :integer
@@ -17,6 +18,7 @@
 #
 #  index_cals_on_type_and_c14_age_and_c14_error_and_c14_curve  (type,c14_age,c14_error,c14_curve) UNIQUE
 #
+
 FactoryBot.define do
   factory :cal do
     type { 0 }

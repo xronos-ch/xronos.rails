@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: site_names
+# Database name: primary
 #
 #  id         :bigint           not null, primary key
 #  language   :string
@@ -17,11 +18,10 @@
 #
 #  fk_rails_...  (site_id => sites.id)
 #
+
 class SiteName < ApplicationRecord
   belongs_to :site
 
   validates :name, presence: true
-
-  include Versioned
 
 end

@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: materials
+# Database name: primary
 #
 #  id         :bigint           not null, primary key
 #  name       :string
@@ -11,6 +12,7 @@
 #
 #  index_materials_on_name  (name)
 #
+
 class Material < ApplicationRecord
   default_scope { order(name: :asc) }
 
@@ -20,7 +22,6 @@ class Material < ApplicationRecord
     using: { tsearch: { prefix: true } } # match partial words
 
   has_many :samples, inverse_of: :material
-  has_paper_trail
 
   validates :name, presence: true
 
@@ -28,6 +29,13 @@ class Material < ApplicationRecord
 
   def self.label
     "material"
+  end
+
+  # Tidy up unused materials when samples are deleted
+  def destroy_if_orphaned
+    if samples.count == 0
+      self.destroy
+    end
   end
 
 end

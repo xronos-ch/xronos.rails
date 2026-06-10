@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: references
+# Database name: primary
 #
 #  id         :bigint           not null, primary key
 #  bibtex     :text
@@ -12,6 +13,7 @@
 #
 #  index_references_on_short_ref  (short_ref)
 #
+
 FactoryBot.define do
   
   factory :reference do

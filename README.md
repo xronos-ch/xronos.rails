@@ -1,6 +1,6 @@
 # XRONOS web app
 ![Website](https://img.shields.io/website?url=https%3A%2F%2Fxronos.ch)
-![Tests](https://github.com/xronos-ch/xronos.rails/actions/workflows/verify.yml/badge.svg)
+![Tests](https://github.com/xronos-ch/xronos.rails/actions/workflows/test.yml/badge.svg)
 [![Test coverage](https://codecov.io/gh/xronos-ch/xronos.rails/branch/master/graph/badge.svg?token=0E7SVSFTVI)](https://codecov.io/gh/xronos-ch/xronos.rails)
 [![Docker pulls](https://img.shields.io/docker/pulls/xronos/xronos.rails)](https://hub.docker.com/r/xronos/xronos.rails/)
 ![GitHub issues](https://img.shields.io/github/issues/xronos-ch/xronos.rails)
@@ -96,7 +96,7 @@ For development, you will need to run the XRONOS rails app directly (without doc
 5. Run `bundle && yarn` to install gem and javascript dependencies respectively
 6. Run `bin/rails db:setup` to set up and seed the database
 7. Start a dev server with `bin/dev`. This watches for changes in CSS and JS files.
-    * If you get an error about foreman being missing, try restarting your terminal.
+    * If you get an error about foreman being missing, try restarting your terminal or (if using rbenv) running `rbenv rehash`
 
 ### Using Calibrator
 

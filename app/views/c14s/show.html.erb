@@ -17,7 +17,7 @@
     <div class="row">
 
       <div class="col-lg-8" style="margin-bottom: -31px" data-controller="vega">
-        <%=  @calibration.tpq.present? ? calibration_plot(@calibration) : "Can not be calculated" %>
+        <%= @calibration.tpq.present? ? calibration_plot(@calibration) : "Can not be calculated" %>
       </div>
 
       <div class="col-lg-4">
@@ -31,9 +31,9 @@
           <dt>Calibrated age <small>(2&sigma;, cal BP)</small></dt>
           <dd class="font-monospace">
             <ul class="list-unstyled">
-            <% @calibration.hd_intervals.each do |hdi| %>
-              <li><%= format_hd_interval(hdi) %></li>
-            <% end %>
+              <% @calibration.hd_intervals.each do |hdi| %>
+                <li><%= format_hd_interval(hdi) %></li>
+              <% end %>
             </ul>
           </dd>
         </dl>
@@ -47,19 +47,19 @@
     <%= render "c14_context", c14: @c14 %>
   </section>
 
+  <% references = (@c14.references + @c14.site.references).uniq %>
   <section id="c14-references" class="my-5">
-    <% references = (@c14.references + @c14.site.references).uniq %>
     <h2>
       <%= xr_icon Reference, {}, style: "width: auto; height: 2rem" %>
       <%= Reference.label.humanize.pluralize %>
       <small class="text-muted">(<%= references.count %>)</small>
     </h2>
-    <%= render "references/bibliography", references: (@c14.references + @c14.site.references).uniq %>
+    <%= render "references/bibliography", references: references %>
   </section>
 
   <section id="c14-changelog" class="my-5">
     <h2>Changelog</h2>
-    <%= render "application/paper_trail/versions", item: @c14 %>
+    <%= render "application/paper_trail/versions", item: @c14, versions: @versions %>
   </section>
 
 </main>

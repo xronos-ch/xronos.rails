@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: references
+# Database name: primary
 #
 #  id         :bigint           not null, primary key
 #  bibtex     :text
@@ -12,6 +13,7 @@
 #
 #  index_references_on_short_ref  (short_ref)
 #
+
 class Reference < ApplicationRecord
   DELIM_PATTERN = '[;,]'
   MAX_SHORT_REF_LENGTH = 30
@@ -123,6 +125,15 @@ class Reference < ApplicationRecord
   def long_label?
     return false if short_ref.blank?
     short_ref.length > MAX_SHORT_REF_LENGTH
+  end
+
+  # Tidy up unused references when citations are deleted.
+  # N.B. Incompatible with destroy_async
+  def destroy_if_orphaned
+    if citations.count == 0
+      self.revision_comment = "Deleted uncited reference"
+      self.destroy
+    end
   end
 
   private

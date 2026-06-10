@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: c14_labs
+# Database name: primary
 #
 #  id         :bigint           not null, primary key
 #  active     :boolean
@@ -13,6 +14,7 @@
 #  index_c14_labs_on_active  (active)
 #  index_c14_labs_on_name    (name)
 #
+
 class C14Lab < ApplicationRecord
 
   default_scope { order(active: :desc, name: :asc) }
@@ -20,7 +22,8 @@ class C14Lab < ApplicationRecord
   validates :name, presence: true
 
   has_many :c14s, inverse_of: :c14_lab
-  has_paper_trail
+
+  include Versioned
 
   acts_as_copy_target # enable CSV exports
 

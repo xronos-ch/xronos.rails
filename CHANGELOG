@@ -1,21 +1,75 @@
 # XRONOS Changelog
 
-## 1.1.0.9000 [unreleased]
+## 1.1.2.9000 [unreleased]
+
+- Added curation workflow for functional classifications of contexts
+- Added issue view for contexts missing functional classifications
+- Added functional classification suggestions based on site type labels
+- Added JSON builder for functional classification data
+- Improved issue filtering to avoid dynamic method calls from request parameters
+- New admin dashboard for monitoring asynchronous jobs (/admin/jobs)
+- XRONOS rake tasks are now prepended with xronos and can be listed with
+    bin/rails -T xronos
+- Unused references, taxons, and materials are now automatically deleted
+  - Added rake tasks to cleanup unused
+- Ensured dependent records are properly cleaned up after site deletion
+  - Added rake task for safe cascading destruction
+- Upgraded Rails from 7.2.3 to 8.0.5 and enabled Rails 8.0 framework defaults.
+- Upgraded Pagy from 6.5.0 to 43.5.5 and migrated pagination helpers to the Pagy 43 API.
+- Added countish pagination for large public listings to reduce expensive repeated count queries.
+- Prevented duplicate citations from being created
+  - Migration may fail if there are existing duplicates in the database. If so:
+      DRY_RUN=1 bin/rails xronos:citations:deduplicate 
+    checks for existing duplicates that would block this migration. And:
+      bin/rails xronos:citations:deduplicate 
+    deletes them.
+- Fixed data browser map display for records with missing coordinates.
+- Documented expectations for responsible API and automated data access (#405).
+- Fixed Leaflet marker initialisation on site pages with quotation marks or apostrophes in site names.
+- Added article-specific page titles and meta descriptions for news, about, and documentation articles.
+- Updated footer logos to reflect current affiliations, funding, and previous support (#404).
+- Standardised the test suite on Minitest and migrated existing RSpec coverage (#422).
+
+## 1.1.2 [2026-05-29]
+
+- Removed pagination and sorting from public CSV exports
+- Hardened CSV exports against costly crawler/bot requests
+- Added request throttling with `rack-attack`
+- Added Cloudflare-aware client IP handling for rate limiting
+- Improved handling of pagination overflow by returning `404`
+- Improved performance of recursive site reference loading
+- Refactored XRONOS data response helpers
+
+## 1.1.1 [2025-12-11]
+
+- Opened lean JSON endpoints for C14 labs and C14 dates, returning JSON directly
+  from the controller and trimming unnecessary associations from samples
+- Optimised eager loading for sites, C14s and references pages, solving several
+  N+1 query issues and preloading PaperTrail versions where needed
+- Added fragment caching to the site view and a 10-minute cache for XRONOS data
+  responses, significantly reducing load times for heavy data pages
+- Cached item counts on the home page and re-used Pagy's count values instead of
+  recounting, further reducing database load
+- Improved map performance by streamlining the JavaScript and optimising how
+  counts are calculated for the map view
+- Adjusted C14 calibration handling by removing noisy calibration logging and
+  only joining cals when a calibration filter is actually applied
+- Added MessagePack support and updated Rails to the latest 7.2 release
 
 ## 1.1.0 [2024-12-18]
 
-- Introduced the ability to manage and display external linked data (e.g., 
+- Introduced the ability to manage and display external linked data (e.g.,
   Wikidata) within the application
 - Added a new Linked Data section to the site view, providing clear and user-
   friendly access to external resources
-- Added options for authorized users to add external resource links (e.g. 
+- Added options for authorized users to add external resource links (e.g.
   Wikidata entries)
-- Improved search interface; now shows more information and can be filtered by 
+- Improved search interface; now shows more information and can be filtered by
   record type
 - Added `LONG_LABEL` issue for references (#260)
 - Updated to Ruby 3.3.6 and Rails 7.2
 
 ## 1.0.0 [2024-07-30]
 
-First named release. See [the commit log](https://github.com/xronos-ch/xronos.rails/commits/v1.0.0) 
+First named release. See [the commit log](https://github.com/xronos-ch/xronos.rails/commits/v1.0.0)
 for changes before this point.

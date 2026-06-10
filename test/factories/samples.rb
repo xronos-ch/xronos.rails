@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: samples
+# Database name: primary
 #
 #  id                   :bigint           not null, primary key
 #  position_crs         :text
@@ -21,6 +22,7 @@
 #  index_samples_on_position_crs  (position_crs)
 #  index_samples_on_taxon_id      (taxon_id)
 #
+
 FactoryBot.define do
   
   factory :sample do

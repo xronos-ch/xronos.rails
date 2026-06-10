@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: c14s
+# Database name: primary
 #
 #  id             :bigint           not null, primary key
 #  bp             :integer
@@ -23,6 +24,7 @@
 #  index_c14s_on_method          (method)
 #  index_c14s_on_sample_id       (sample_id)
 #
+
 FactoryBot.define do
   
   factory :c14 do
@@ -37,6 +39,17 @@ FactoryBot.define do
     
     c14_lab
     sample
+
+    trait :with_citations do
+      transient do
+        citations_count { 2 }
+      end
+
+      after(:create) do |c14, evaluator|
+        create_list(:citation, evaluator.citations_count, citing: c14)
+      end
+    end
+
   end
   
 end

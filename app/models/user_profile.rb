@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: user_profiles
+# Database name: primary
 #
 #  id           :bigint           not null, primary key
 #  full_name    :string
@@ -19,6 +20,7 @@
 #
 #  fk_rails_...  (user_id => users.id)
 #
+
 class UserProfile < ApplicationRecord
   belongs_to :user, required: true
 

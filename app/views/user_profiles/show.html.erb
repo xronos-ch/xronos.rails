@@ -70,7 +70,7 @@
     </h2>
 
     <%= render "application/paper_trail/version_table", versions: @contribs %>
-    <%== pagy_bootstrap_nav(@pagy) %>
+    <%== @pagy.series_nav(:bootstrap) %>
 
   </section>
 

@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: lod_links
+# Database name: primary
 #
 #  id            :bigint           not null, primary key
 #  data          :jsonb
@@ -19,14 +20,13 @@
 #
 class LodLink < ApplicationRecord
   include Turbo::Broadcastable
-  include Versioned
 
   attr_reader :item
 
   validates :external_id, presence: true, numericality: { only_integer: true }
   validates :source, presence: true
   
-  enum status: { pending: "pending", approved: "approved"}
+  enum :status, { pending: "pending", approved: "approved" }
 
   belongs_to :linkable, polymorphic: true
   

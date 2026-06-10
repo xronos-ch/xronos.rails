@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: import_tables
+# Database name: primary
 #
 #  id           :bigint           not null, primary key
 #  file         :string
@@ -19,6 +20,7 @@
 #
 #  fk_rails_...  (user_id => users.id)
 #
+
 class Curate::ImportTable < ApplicationRecord
   before_create :default_values
   before_destroy :delete_file

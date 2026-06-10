@@ -1,2 +1,54 @@
-# See http://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
+# XRONOS robots.txt
+#
+# General policy:
+# - Allow ordinary search indexing.
+# - Reserve rights against AI training and AI-input / generative retrieval use.
+# - Prevent crawlers from wasting resources on expensive sorted and paginated result variants.
+#
+# Restrictions expressed via Content-Signal are express reservations of rights
+# under Article 4 of Directive (EU) 2019/790.
+
+User-agent: *
+Content-Signal: search=yes,ai-input=no,ai-train=no
+Allow: /
+Disallow: /*order=
+Disallow: /*order_by=
+
+# AI training / AI assistant / large-scale extraction crawlers
+
+User-agent: Amazonbot
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: CloudflareBrowserRenderingCrawler
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: meta-externalagent
+Disallow: /
+
+# SEO / security / non-beneficial crawlers observed in logs
+
+User-agent: AliyunSecBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
 Sitemap: https://xronos.ch/sitemap.xml.gz

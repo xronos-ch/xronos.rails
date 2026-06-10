@@ -1,12 +1,33 @@
+# Calculate coverage if required (i.e. in CI, but not locally)
+if ENV["COVERAGE"]
+  require "simplecov"
+  require "simplecov-cobertura"
+
+  SimpleCov.formatters = [
+    SimpleCov::Formatter::HTMLFormatter,
+    SimpleCov::Formatter::CoberturaFormatter
+  ]
+
+  SimpleCov.start "rails" do
+    enable_coverage :branch
+  end
+end
+
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
 require 'rails/test_help'
 #require "minitest/rails/capybara"
 require 'capybara/rails'
 require 'capybara/minitest'
+require "active_job/test_helper"
+
+# Load all files in test/support
+Dir[Rails.root.join("test/support/**/*.rb")].sort.each { |f| require f }
 
 class ActionDispatch::IntegrationTest
-  
+
+  include ApiAssertions
+
   # Make the Capybara DSL available in all integration tests
   include Capybara::DSL
   # Make `assert_*` methods behave like Minitest assertions
@@ -45,6 +66,7 @@ class ActiveSupport::TestCase
   # Add more helper methods to be used by all tests here...
 
   include FactoryBot::Syntax::Methods
+  include ActiveJob::TestHelper
 
   def with_versioning
     was_enabled = PaperTrail.enabled?

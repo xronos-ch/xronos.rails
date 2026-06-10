@@ -4,6 +4,7 @@
 # == Schema Information
 #
 # Table name: cals
+# Database name: primary
 #
 #  id         :bigint           not null, primary key
 #  c14_age    :integer
@@ -20,6 +21,7 @@
 #
 #  index_cals_on_type_and_c14_age_and_c14_error_and_c14_curve  (type,c14_age,c14_error,c14_curve) UNIQUE
 #
+
 class Calibration < Cal
     enum :c14_curve, { IntCal20: 0, SHCal20: 1, Marine20: 2 }
     
@@ -53,7 +55,6 @@ class Calibration < Cal
     def recalibrate
         return set_no_calibration unless c14_age.present? && c14_error.present? && c14_curve.present?
 
-        logger.info "Calibrating #{{ c14_age: c14_age, c14_error: c14_error, c14_curve: c14_curve}}"
         calibration = Calibrator::Calibration.new(c14_age, c14_error, c14_curve)
         
         if calibration.hd_intervals.present?

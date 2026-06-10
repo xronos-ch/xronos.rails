@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: c14_labs
+# Database name: primary
 #
 #  id         :bigint           not null, primary key
 #  active     :boolean
@@ -13,6 +14,7 @@
 #  index_c14_labs_on_active  (active)
 #  index_c14_labs_on_name    (name)
 #
+
 FactoryBot.define do
   
   factory :c14_lab do

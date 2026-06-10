@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: articles
+# Database name: primary
 #
 #  id                 :bigint           not null, primary key
 #  body               :text
@@ -21,7 +22,7 @@
 #  index_articles_on_user_id  (user_id)
 #
 class Article < ApplicationRecord
-  enum section: [ :news, :about, :docs ], _suffix: true
+  enum :section, %i[news about docs], suffix: true
 
   belongs_to :user
   has_one_attached :splash

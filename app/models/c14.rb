@@ -6,6 +6,7 @@
 # == Schema Information
 #
 # Table name: c14s
+# Database name: primary
 #
 #  id             :bigint           not null, primary key
 #  bp             :integer
@@ -28,15 +29,16 @@
 #  index_c14s_on_method          (method)
 #  index_c14s_on_sample_id       (sample_id)
 #
+
 class C14 < ApplicationRecord
+  include Versioned
 
   belongs_to :sample
   accepts_nested_attributes_for :sample, reject_if: :all_blank
 
   belongs_to :c14_lab, optional: true
-  belongs_to :source_database, optional: true
 
-  has_many :citations, as: :citing
+  has_many :citations, as: :citing, dependent: :destroy
   has_many :references, :through => :citations
 
   delegate :context, to: :sample
@@ -46,8 +48,6 @@ class C14 < ApplicationRecord
   validates_associated :sample
 
   composed_of :lab_id, mapping: %w(lab_identifier), allow_nil: true
-
-  include Versioned
 
   include HasIssues
   @issues = [ :missing_c14_age, :very_old_c14, :missing_c14_error, 
@@ -79,7 +79,7 @@ class C14 < ApplicationRecord
   end
 
   def calibration(curve: site.default_c14_curve)
-    Calibration.find_or_create_by c14_age: bp, c14_error: std, c14_curve: curve
+    @calibration ||= Calibration.find_or_create_by c14_age: bp, c14_error: std, c14_curve: curve
   end
 
   # Issues

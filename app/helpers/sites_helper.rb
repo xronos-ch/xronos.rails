@@ -1,5 +1,4 @@
 module SitesHelper
-  include Pagy::Frontend
   include DataTableHelper
   
   def wikidata_matches_for(site)

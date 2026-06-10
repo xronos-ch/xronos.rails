@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: typos
+# Database name: primary
 #
 #  id                :bigint           not null, primary key
 #  approx_end_time   :integer
@@ -16,10 +17,10 @@
 #  index_typos_on_name       (name)
 #  index_typos_on_sample_id  (sample_id)
 #
+
 class Typo < ApplicationRecord
   include XronosDataHelper
   
-  has_paper_trail
   acts_as_copy_target # enable CSV exports
 
   validates :name, presence: true
@@ -28,12 +29,14 @@ class Typo < ApplicationRecord
   delegate :context, to: :sample
   delegate :site, to: :context
 
-  has_many :citations, as: :citing
+  has_many :citations, as: :citing, dependent: :destroy
   has_many :references, through: :citations
 
   # Internal heirarchy
   belongs_to :parent, class_name: "Typo", optional: true
   has_many :children, class_name: "Typo", foreign_key: "typo_id"
+
+  include Versioned
 
   include PgSearch::Model
   pg_search_scope :search, 

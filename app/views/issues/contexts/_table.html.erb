@@ -1,0 +1,115 @@
+<table class="table table-hover">
+  <thead>
+  <tr>
+    <th scope="col">
+      <%= link_to_order_by "ID", :id %>
+      <% if ordered_by?(:id) %>
+        <span class="text-muted"><%= order_indicator %></span>
+      <% end %>
+    </th>
+
+    <th scope="col">
+      <%= link_to_order_by "Name", :name %>
+      <% if ordered_by?(:name) %>
+        <span class="text-muted"><%= order_indicator %></span>
+      <% end %>
+    </th>
+
+    <th scope="col">
+      <%= link_to_order_by "Site", :site_id %>
+      <% if ordered_by?(:site_id) %>
+        <span class="text-muted"><%= order_indicator %></span>
+      <% end %>
+    </th>
+
+    <th scope="col">Approx. start</th>
+    <th scope="col">Approx. end</th>
+    <th scope="col">C14 dates</th>
+    <th scope="col">Functional classification</th>
+    <th scope="col">Issues</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% contexts.each do |context| %>
+    <% classification = context.functional_classifications.first %>
+
+    <tr>
+      <td class="text-muted">
+        <%= link_to context.id,
+                    context,
+                    data: { turbo_frame: "_top" } %>
+      </td>
+
+      <td><%= context.name.present? ? context.name : na_value %></td>
+
+      <td>
+        <% if context.site.present? %>
+          <%= link_to context.site.name,
+                      context.site,
+                      data: { turbo_frame: "_top" } %>
+        <% else %>
+          <%= na_value %>
+        <% end %>
+      </td>
+
+      <td><%= context.approx_start_time.present? ? context.approx_start_time : na_value %></td>
+      <td><%= context.approx_end_time.present? ? context.approx_end_time : na_value %></td>
+      <td><%= context.c14s.count %></td>
+
+      <td>
+        <% if classification.present? %>
+          <div class="mb-1">
+            <span class="badge bg-secondary"
+                  title="Curated functional classification; confidence: <%= classification.confidence.humanize %>"
+                  <%= classification.functional_classification_category.name.humanize %>
+                  · <%= classification.confidence.humanize %>
+            </span>
+          </div>
+
+          <% if can? :manage, FunctionalClassification %>
+            <%= render "functional_classifications/form",
+                       functional_classification: classification,
+                       assignable: context %>
+          <% end %>
+        <% else %>
+          <% if can? :manage, FunctionalClassification %>
+            <% suggested_category = context.suggested_functional_classification_category %>
+            <% suggested_confidence = context.suggested_confidence %>
+
+            <% functional_classification = FunctionalClassification.new(
+              functional_classification_category: suggested_category,
+              confidence: suggested_confidence,
+              source: suggested_category.present? ? "suggested from site type" : nil
+            ) %>
+
+            <% if suggested_category.present? %>
+              <div class="mb-1">
+                <span class="badge bg-light text-dark border"
+                      title="Suggestion derived from site type; please verify before saving.">
+                  Suggested:
+                  <%= suggested_category.name.humanize %>
+                  ·
+                  <%= suggested_confidence.present? ? suggested_confidence.humanize : "Unknown" %>
+                </span>
+              </div>
+            <% end %>
+
+            <%= render "functional_classifications/form",
+                       functional_classification: functional_classification,
+                       assignable: context %>
+          <% else %>
+            <%= na_value %>
+          <% end %>
+        <% end %>
+      </td>
+
+      <td>
+        <% context.issues.each do |issue| %>
+          <%= issue_badge(issue) %>
+        <% end %>
+      </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
