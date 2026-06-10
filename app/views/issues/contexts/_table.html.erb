@@ -61,7 +61,7 @@
         <% if classification.present? %>
           <div class="mb-1">
             <span class="badge bg-secondary"
-                  title="Curated functional classification; confidence: <%= classification.confidence.humanize %>"
+                  title="Curated functional classification; confidence: <%= classification.confidence.humanize %>">
                   <%= classification.functional_classification_category.name.humanize %>
                   · <%= classification.confidence.humanize %>
             </span>
