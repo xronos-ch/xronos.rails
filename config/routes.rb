@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'about/acknowledgements', to: 'static_pages#acknowledgements', as: :acknowledgements
   use_doorkeeper
 
   # Static pages
