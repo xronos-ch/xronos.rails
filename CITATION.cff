@@ -11,9 +11,9 @@ authors:
   given-names: "Martin"
   orcid: "https://orcid.org/0000-0002-9904-6548"
 title: "XRONOS Web Application"
-version: 1.2.0
+version: 1.2.1
 doi: 10.5281/zenodo.13138531 # latest version, no need to manually update
-date-released: 2026-05-29
+date-released: 2026-06-10
 url: "https://github.com/xronos-ch/xronos.rails"
 preferred-citation:
   type: article

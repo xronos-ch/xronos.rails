@@ -2,6 +2,11 @@
 
 ## 1.2.0.9000 [unreleased]
 
+## 1.2.1
+
+* Fixed pagination in context issue show view
+* Fixed bug in context issue show view
+
 ## 1.2.0
 
 New features & API changes:
