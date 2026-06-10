@@ -2,37 +2,46 @@
 
 ## 1.1.2.9000 [unreleased]
 
+New features & API changes:
+
 - Added unique and "one blank per site" constraints on context names (#432)
-- Sign-in cookie is now deleted on sign out (#379)
-- Added curation workflow for functional classifications of contexts
-- Added issue view for contexts missing functional classifications
-- Added functional classification suggestions based on site type labels
-- Added JSON builder for functional classification data
-- Improved issue filtering to avoid dynamic method calls from request parameters
+- Added functional classifications of contexts (#407)
+  - Added curation workflow for functional classifications of contexts
+  - Added issue view for contexts missing functional classifications
+  - Added functional classification suggestions based on site type labels
+  - Added JSON builder for functional classification data
 - New admin dashboard for monitoring asynchronous jobs (/admin/jobs)
-- XRONOS rake tasks are now prepended with xronos and can be listed with
-    bin/rails -T xronos
-- Unused references, taxons, and materials are now automatically deleted
-  - Added rake tasks to cleanup unused
-- Ensured dependent records are properly cleaned up after site deletion
-  - Added rake task for safe cascading destruction
+- Improved workflows for record deletion
+  - Unused references, taxons, and materials are now automatically deleted
+    - Added rake tasks to cleanup unused
+  - Ensured dependent records are properly cleaned up after site deletion
+    - Added rake task for safe cascading destruction
+  - Prevented duplicate citations from being created
+    - Migration may fail if there are existing duplicates in the database. If so:
+        DRY_RUN=1 bin/rails xronos:citations:deduplicate 
+      checks for existing duplicates that would block this migration. And:
+        bin/rails xronos:citations:deduplicate 
+      deletes them.
+- Added bundled acknowledgements page rendered from version-controlled Markdown (#359).
+- Added article-specific page titles and meta descriptions for news, about, and documentation articles.
+
+Bug fixes:
+
+- Sign-in cookie is now deleted on sign out (#379)
+- Fixed Leaflet marker initialisation on site pages with quotation marks or apostrophes in site names.
+- Fixed data browser map display for records with missing coordinates.
+- Added countish pagination for large public listings to reduce expensive repeated count queries.
+- Fixed potential code injection vulnerability in issues (#407)
+
+Maintenance & documentation:
+
+- Standardised the test suite on Minitest and migrated existing RSpec coverage (#422).
+- Documented expectations for responsible API and automated data access (#405).
+- Updated footer logos to reflect current affiliations, funding, and previous support (#404).
 - Upgraded Rails from 7.2.3 to 8.0.5 and enabled Rails 8.0 framework defaults.
 - Upgraded Pagy from 6.5.0 to 43.5.5 and migrated pagination helpers to the Pagy 43 API.
-- Added countish pagination for large public listings to reduce expensive repeated count queries.
-- Prevented duplicate citations from being created
-  - Migration may fail if there are existing duplicates in the database. If so:
-      DRY_RUN=1 bin/rails xronos:citations:deduplicate 
-    checks for existing duplicates that would block this migration. And:
-      bin/rails xronos:citations:deduplicate 
-    deletes them.
-- Fixed data browser map display for records with missing coordinates.
-- Documented expectations for responsible API and automated data access (#405).
-- Fixed Leaflet marker initialisation on site pages with quotation marks or apostrophes in site names.
-- Added article-specific page titles and meta descriptions for news, about, and documentation articles.
-- Updated footer logos to reflect current affiliations, funding, and previous support (#404).
-- Standardised the test suite on Minitest and migrated existing RSpec coverage (#422).
-- Added bundled acknowledgements page rendered from version-controlled Markdown (#359).
-- Added acknowledgements links to the About navigation and footer.
+- XRONOS rake tasks are now prepended with xronos and can be listed with
+    bin/rails -T xronos
 
 ## 1.1.2 [2026-05-29]
 
