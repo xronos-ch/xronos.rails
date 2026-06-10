@@ -41,8 +41,9 @@ class AddContextNameConstraints < ActiveRecord::Migration[8.0]
         # Move functional classifications
         execute <<~SQL
           UPDATE functional_classifications
-          SET context_id = #{canonical_id}
-          WHERE context_id IN (#{redundant_ids.join(",")});
+          SET assignable_id = #{canonical_id}
+            WHERE assignable_type = 'Context'
+          AND assignable_id IN (#{redundant_ids.join(",")});
         SQL
 
         # Delete redundant contexts

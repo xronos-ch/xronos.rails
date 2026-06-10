@@ -5,7 +5,7 @@ require Rails.root.join(
 
 class MergeDuplicateContextsTest < ActiveSupport::TestCase
   setup do
-    @migration = MergeDuplicateContextsAndAddConstraints.new
+    @migration = AddContextNameConstraints.new
     @site = create(:site)
   end
 
@@ -14,8 +14,7 @@ class MergeDuplicateContextsTest < ActiveSupport::TestCase
     c2 = create(:context, site: @site, name: "")
 
     sample = create(:sample, context: c2)
-    classification =
-      create(:functional_classification, context: c2)
+    classification = create(:functional_classification, assignable: c2)
 
     @migration.up
 
