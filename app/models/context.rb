@@ -124,7 +124,7 @@ class Context < ApplicationRecord
   private
 
   def normalise_name
-    self.name = name.presence # normalise blanks to nil
+    self.name = name.to_s.strip.presence # normalise blanks to nil
   end
 
   def only_one_nil_name_per_site
