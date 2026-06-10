@@ -45,6 +45,13 @@
              </a>
              <ul class="dropdown-menu" aria-labelledby="aboutDropdown">
                <%= render "articles/nav", section: "about", itemclass: "nav-item", linkclass: "dropdown-item nav-link" %>
+               <li class="nav-item">
+                 <a class="dropdown-item nav-link <%= active_class acknowledgements_path %>"
+                    href="<%= acknowledgements_path %>"
+                    <%= active_aria acknowledgements_path %>>
+                   Acknowledgements
+                 </a>
+               </li>
              </ul>
            </li>
            <li class="nav-item dropdown">

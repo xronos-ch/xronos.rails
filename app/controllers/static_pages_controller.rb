@@ -1,5 +1,6 @@
 class StaticPagesController < ApplicationController
   def acknowledgements
-    @content = YAML.load_file(Rails.root.join('config/static/acknowledgements.yml'))
+    markdown = Rails.root.join("config/static/acknowledgements.md").read
+    @acknowledgements_html = Kramdown::Document.new(markdown).to_html
   end
 end
