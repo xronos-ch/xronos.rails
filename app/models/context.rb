@@ -13,8 +13,10 @@
 #
 # Indexes
 #
-#  index_contexts_on_name     (name)
-#  index_contexts_on_site_id  (site_id)
+#  index_contexts_on_name                 (name)
+#  index_contexts_on_site_id              (site_id)
+#  index_contexts_one_null_name_per_site  (site_id) UNIQUE WHERE (name IS NULL)
+#  index_contexts_unique_name_per_site    (site_id,name) UNIQUE WHERE (name IS NOT NULL)
 #
 
 class Context < ApplicationRecord
@@ -29,7 +31,9 @@ class Context < ApplicationRecord
       "palaeoenvironmental|paleoenvironmental|environmental|off.?site|core|peat|lake|sediment|" \
       "natural|geological"
 
-  validates :name, presence: true
+  before_validation :normalise_name
+  validates :name, uniqueness: { scope: :site_id, allow_nil: true }
+  validate :only_one_nil_name_per_site
 
   belongs_to :site
   accepts_nested_attributes_for :site, :reject_if => proc { |attributes| attributes.all? { |key, value| key == "_destroy" || value.blank? || (value.is_a?(Hash) && value.values.all?(&:blank?)) } }
@@ -115,6 +119,23 @@ class Context < ApplicationRecord
 
   def missing_functional_classification?
     c14s.exists? && functional_classifications.blank?
+  end
+
+  private
+
+  def normalise_name
+    self.name = name.to_s.strip.presence # normalise blanks to nil
+  end
+
+  def only_one_nil_name_per_site
+    return unless name.nil?
+
+    scope = Context.where(site_id: site_id, name: nil)
+    scope = scope.where.not(id: id) if persisted?
+
+    if scope.exists?
+      errors.add(:name, "can only be blank once per site")
+    end
   end
 
 end
