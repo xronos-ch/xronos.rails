@@ -63,11 +63,11 @@ class Article < ApplicationRecord
   }
 
   def published?
-    publish and published_at <= DateTime.now
+    publish and published_at <= Time.zone.now
   end
 
   def scheduled?
-    publish and published_at > DateTime.now
+    publish and published_at > Time.zone.now
   end
 
   def draft?
