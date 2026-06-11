@@ -36,6 +36,7 @@ jobs:
       REGISTRATION_PASSPHRASE: xronos
       ADMIN_USER_ID: 1
       ADMIN_USER_EMAIL: admin@xronos.ch
+      ADMIN_USER_PASSWORD: xronos
 
     steps:
       - name: Checkout code
