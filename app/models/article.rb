@@ -78,8 +78,17 @@ class Article < ApplicationRecord
     section + '/' + slug
   end
 
+  def document
+    Kramdown::Document.new body
+  end
+
   def body_html
-    Kramdown::Document.new(body).to_html
+    document.to_html
+  end
+
+  def toc
+    toc = Kramdown::Converter::Toc.convert document.root
+    toc.size > 1 ? toc.first : toc
   end
 
   def author_name

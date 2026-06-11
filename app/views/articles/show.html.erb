@@ -65,8 +65,19 @@
     <div class="col-lg-3">
       <%= render "users/card", user: @article.user if @article.news_section? %>
 
-      <div class="small text-muted">
-        <p class="mb-5">
+      <hr>
+
+      <% if @article.about_section? and @article.toc.children.present? %>
+        <nav id="toc">
+          <h2 class="text-body-secondary text-uppercase small">On this page</h2>
+          <ul class="nav flex-column mb-3">
+            <%= render partial: "toc_node", collection: @article.toc.children %>
+          </ul>
+        </nav>
+      <% end %>
+
+      <div class="small text-body-secondary">
+        <p class="mb-3">
           <% if @article.news_section? %>
             Published <%= @article.published_at.present? ? @article.published_at.strftime("%F") : "draft" %>
           <% else %>
@@ -75,7 +86,7 @@
         </p>
 
         <% if @article.splash_attribution? %>
-          <p class="mb-5">Cover image: <%= @article.splash_attribution.html_safe %></p>
+          <p class="mb-3">Cover image: <%= @article.splash_attribution.html_safe %></p>
         <% end %>
 
         <p>
