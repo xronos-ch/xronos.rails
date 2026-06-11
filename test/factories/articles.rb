@@ -23,7 +23,7 @@
 #
 FactoryBot.define do
   factory :article do
-    section { "news" }
+    section { :news }
 
     title { Faker::Lorem.sentence(word_count: 5) }
 
@@ -39,7 +39,7 @@ FactoryBot.define do
     published_at { nil }
 
     trait :about do
-      section { "about" }
+      section { :about }
       title { "About #{Faker::Lorem.unique.word.capitalize}" }
       body do
         Faker::Lorem.paragraphs(number: 4).join("\n\n")
@@ -49,7 +49,7 @@ FactoryBot.define do
     end
 
     trait :news do
-      section { "news" }
+      section { :news }
     end
 
     trait :draft do

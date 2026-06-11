@@ -10,9 +10,10 @@ Rails.application.routes.draw do
 
   # Articles (news posts and other pseudo-static pages)
   get '/news', to: 'articles#index', section: 'news'
-  get 'news/:slug', to: 'articles#show'
-  get 'about/:slug', to: 'articles#show'
-  get 'docs/:slug', to: 'articles#show'
+  get "/news.atom", to: "articles#index", format: :atom, section: "news"
+  get "/news.rss",  to: "articles#index", format: :rss, section: "news"
+  get "/:section/:slug", to: "articles#show", as: :article,
+    constraints: { section: /(news|about|docs)/ }
 
   # Redirects for backwards compatibility
   get '/about', to: redirect('/about/xronos')
