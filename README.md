@@ -30,7 +30,7 @@ your_directory
 
 **db**: An empty directory that will contain the database.  
 **docker-compose.yml**: A `docker-compose.yml` file ([example](https://github.com/xronos-ch/xronos.rails/blob/f4049a7eb0ee2a6311a72ef5616e4692aa2cad52/docker-compose.yml))  
-**env_variables.env**: A file with environment variables.
+**env_variables.env**: A file with environment variables. Example:
 
 ```
 # Database credentials
@@ -39,6 +39,10 @@ POSTGRES_USER=...
 POSTGRES_PASSWORD=...
 # Passphrase the users must know to register
 REGISTRATION_PASSPHRASE=...
+# Default admin user (for bulk changes etc.)
+ADMIN_USER_ID=1
+ADMIN_USER_EMAIL=
+ADMIN_USER_PASSWORD=
 ```
 
 Inside of this directory you can then run

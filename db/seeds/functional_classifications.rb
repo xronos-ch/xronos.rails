@@ -16,3 +16,5 @@ functional_categories.each do |name, description|
     category.save!
   end
 end
+
+puts "Seeded functional classification categories: #{functional_categories.map do |c| c.first end}"
