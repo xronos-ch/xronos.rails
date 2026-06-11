@@ -82,6 +82,23 @@ class Article < ApplicationRecord
     Kramdown::Document.new(body).to_html
   end
 
+  def author_name
+    if about_section? or user.user_profile.blank? or user.user_profile.full_name.blank?
+      "XRONOS development team"
+    else
+      user.user_profile.full_name
+    end
+  end
+
+  def publication_date
+    return "nd." unless published?
+    if news_section?
+      published_at.strftime("%F")
+    else
+      updated_at.strftime("%F")
+    end
+  end
+
   private
 
   def set_published_at

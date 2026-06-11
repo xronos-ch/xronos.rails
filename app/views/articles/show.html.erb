@@ -54,23 +54,39 @@
 </header>
 
 <div class="container my-5">
-  <% if @article.news_section? %>
-    <p class="text-muted">
-      By <%= render @article.user %>, 
-      <%= @article.published_at.present? ? @article.published_at.to_formatted_s : "draft" %>
-    </p>
-  <% end %>
+  <div class="row">
 
-  <%= @article.body_html.html_safe %>
+    <div class="col-lg-9">
+      <div style="max-width: 720px;">
+        <%= @article.body_html.html_safe %>
+      </div>
+    </div>
+
+    <div class="col-lg-3">
+      <%= render "users/card", user: @article.user if @article.news_section? %>
+
+      <div class="small text-muted">
+        <p class="mb-5">
+          <% if @article.news_section? %>
+            Published <%= @article.published_at.present? ? @article.published_at.strftime("%F") : "draft" %>
+          <% else %>
+            Last updated <%= @article.updated_at.strftime("%F") %>
+          <% end %>
+        </p>
+
+        <% if @article.splash_attribution? %>
+          <p class="mb-5">Cover image: <%= @article.splash_attribution.html_safe %></p>
+        <% end %>
+
+        <p>
+          Cite this <%= @article.news_section? ? "article" : "page" %> as:<br>
+          <%= article_citation(@article).html_safe %><br><br>
+          <a href="/about/citation">More information about citing XRONOS</a>
+        </p>
+
+      </div>
+    </div>
+
+  </div>
 </div>
 
-<footer class="bg-light">
-  <div class="container my-5 text-muted small">
-    <% if @article.splash_attribution? %>
-      <p>Cover photo: <%= @article.splash_attribution.html_safe %></span>
-    <% end %>
-    <% unless @article.news_section? %>
-      <p>Last updated <%= @article.updated_at.to_formatted_s %>.</p>
-    <% end %>
-  </div>
-</footer>
