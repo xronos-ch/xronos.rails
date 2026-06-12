@@ -1,7 +1,7 @@
 <article class="card mb-5 border-0 rounded-0">
   <% if article.splash.present? %>
     <a href="/<%= article.path %>">
-      <img class="card-img-top rounded-0" style="height: 10rem; object-fit: none;" src="<%= url_for(article.splash_variant(:card)) %>" />
+      <img class="card-img-top rounded-0" style="height: 10rem; object-fit: none;" src="<%= url_for(article.splash.variant(:card)) %>" />
     </a>
   <% end %>
   <div class="card-body">

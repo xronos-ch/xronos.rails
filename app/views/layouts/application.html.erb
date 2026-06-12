@@ -13,12 +13,15 @@
   <meta name="description" content="<%= meta :meta_description, 'An open repository and curation platform for chronometric data from archaeological contexts worldwide.' %>">
 
   <!-- OpenGraph metadata https://ogp.me/ -->
-  <meta property="og:type" content="website">
+  <meta property="og:type" content="<%= meta(:og_type, "website") %>">
   <meta property="og:site_name" content="XRONOS">
   <meta property="og:title" content="<%= meta :og_title, base_title %>">
   <meta property="og:description" content="<%= meta :og_description, 'XRONOS is an open data infrastructure for the backbone of the archaeological record – chronology. It provides open access to published radiocarbon dates and other chronometric data from any period, anywhere in the world.' %>">
   <meta property="og:url" content="<%= meta :og_url, request.original_url %>">
   <meta property="og:image" content="<%= meta :og_image, image_url('og/default.png') %>">
+  <% if content_for?(:article_meta) %>
+    <%= yield :article_meta %>
+  <% end %>
   <meta name="twitter:card" content="summary_large_image">
 
   <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
