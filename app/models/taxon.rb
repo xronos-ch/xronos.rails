@@ -62,22 +62,6 @@ class Taxon < ApplicationRecord
     SyncTaxonWithGbifJob.perform_later(id)
   end
 
-  def gbif_match(strict = false)
-    Rails.cache.fetch("gbif_match/#{name.parameterize}/#{strict}", 
-                      expires_in: 24.hours) do
-      logger.debug "GBIF API request: https://api.gbif.org/v1/species/match?name=#{name}"
-      OpenStruct.new(Gbif::Species.name_backbone(name: name, strict: strict))
-    end
-  end
-
-  def gbif_id_from_match(match = gbif_match)
-    if match.synonym
-      match.acceptedUsageKey
-    else
-      match.usageKey
-    end
-  end
-
   def self.label
     "taxon"
   end

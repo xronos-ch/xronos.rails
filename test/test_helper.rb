@@ -16,6 +16,7 @@ end
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
 require 'rails/test_help'
+require 'webmock/minitest'
 #require "minitest/rails/capybara"
 require 'capybara/rails'
 require 'capybara/minitest'

@@ -20,19 +20,32 @@ class SyncTaxonWithGbifJob < ApplicationJob
   end
 
   def ensure_gbif_id!(taxon)
-    return unless taxon.gbif_id?
+    return if taxon.gbif_id?
 
-    match = taxon.gbif_match(strict: false)
-    return unless match.matchType == "EXACT"
+    match = GBIF::Species.match(scientificName: taxon.name, strict: true)
+
+    return unless match
+    return unless match["matchType"] == "EXACT"
+
+    gbif_id = match["acceptedUsageKey"] || match["usageKey"]
+    return unless gbif_id.present?
+
+    # Temporarily store match for reuse in step 2
+    taxon.instance_variable_set(:@gbif_match, match)
 
     # Use update_columns to skip callbacks that would create another job
-    taxon.update_columns(gbif_id: taxon.gbif_id_from_match(match))
+    taxon.update_columns(gbif_id: gbif_id)
   end
 
   def enforce_canonical_name!(taxon)
     return unless taxon.gbif_id?
 
-    canonical = taxon.usage&.canonical_name
+    # Reuse match if available
+    match = taxon.instance_variable_get(:@gbif_match) ||
+            GBIF::Species.match(usageKey: taxon.gbif_id)
+    return unless match
+
+    canonical = match["canonicalName"]
     return if canonical.blank? || canonical == taxon.name
 
     # Use update_columns to skip callbacks that would create another job
