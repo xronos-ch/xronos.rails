@@ -1,0 +1,20 @@
+<%= turbo_frame_tag frame_id do %>
+  <% diagnostics = taxon_match["diagnostics"] %>
+  <% if diagnostics["matchType"] == "NONE" %>
+    <span class="text-body-secondary">
+      <% if diagnostics["note"].present? %>
+        <%= diagnostics["note"] %>
+      <% else %>
+        No match
+      <% end %>
+    </span>
+  <% else %>
+    <% usage = taxon_match["usage"] %>
+    <%# render TaxonUsage.new(id: taxon_match["usage"]["key"]) %>
+    <span class="badge text-bg-info"><%= usage["rank"] %></span>
+    <a href="<%= TaxonUsage.url usage["key"] %>" title="gbif:<%= usage["key"] %>">
+      <i><%= usage["canonicalName"] %></i> <%= usage["authorship"] %>
+    </a>
+    <span class="text-body-secondary small">(<%= diagnostics["matchType"] %>)</span>
+  <% end %>
+<% end %>

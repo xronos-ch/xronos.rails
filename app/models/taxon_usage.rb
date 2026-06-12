@@ -27,11 +27,19 @@ class TaxonUsage
   end
 
   def url
-    "https://www.gbif.org/species/#{@id}"
+    TaxonUsage.url @id
   end
 
   def api_url
-    "https://api.gbif.org/v1/species/#{@id}"
+    TaxonUsage.api_url @id
+  end
+
+  def self.url(id)
+    "https://www.gbif.org/species/#{id}"
+  end
+
+  def self.api_url(id)
+    "https://api.gbif.org/v1/species/#{id}"
   end
 
   def rank

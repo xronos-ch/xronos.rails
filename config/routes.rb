@@ -54,7 +54,7 @@ Rails.application.routes.draw do
   resources :taxons, except: [:index, :show] do
     get 'search', on: :collection
   end
-  resources :taxon_usages, only: :show
+  resources :taxon_usages, only: [:index, :show]
 
   # External data resources
   resources :lod_links, except: :index

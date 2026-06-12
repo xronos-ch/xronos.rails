@@ -40,7 +40,7 @@
             <%= turbo_frame_tag taxon.usage, 
               src: taxon_usage_path(taxon.usage.id),
               loading: :lazy do %>
-              <%= render "taxon_usages/taxon_usage_placeholder" %>
+              <%= render "taxon_usages/placeholder" %>
             <% end %>
           <% else %>
             <%= na_value %>

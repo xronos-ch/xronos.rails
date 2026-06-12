@@ -15,7 +15,6 @@
         <% end %>
       </th>
       <th scope="col">Suggested GBIF match</th>
-      <th scope="col">Match type</th>
       <th scope="col" class="text-end">
         <%= link_to_order_by "Samples", :samples_count %>
         <% if ordered_by?(:samples_count) %>
@@ -32,20 +31,11 @@
         <td class="text-muted"><%= taxon.id %></td>
         <td><%= taxon.name %></td>
         <td>
-          <% if taxon.gbif_match.matchType == "NONE" %>
-            <% if taxon.gbif_match.note.present? %>
-              <%= taxon.gbif_match.note %>
-            <% else %>
-              None
-            <% end %>
-          <% else %>
-            <%= render "taxon_usages/taxon_usage", taxon_usage: taxon.gbif_usage_from_match %>
+          <%= turbo_frame_tag dom_id(taxon, :match),
+            src: taxon_usages_path(name: taxon.name, frame_id: dom_id(taxon, :match)),
+            loading: :lazy do %>
+            <%= render "taxon_usages/placeholder" %>
           <% end %>
-        </td>
-        <td>
-          <span class="badge text-bg-<%= colour_from_gbif_match_type(taxon.gbif_match.matchType) %>">
-            <%= taxon.gbif_match.matchType %>
-          </span>
         </td>
         <td class="text-end"><%= taxon.samples_count %></td>
         <% if can? :manage, Taxon %>
@@ -53,7 +43,7 @@
             <div class="btn-toolbar justify-content-end">
                 <div class="btn-group me-2">
                   <%= bootstrap_form_for taxon do |f| %>
-                    <% if taxon.gbif_match.usageKey.present? %>
+                    <% if taxon.usage.present? %>
                       <%= f.hidden_field :gbif_id, value: taxon.gbif_match.usageKey %>
                       <%= f.hidden_field :revision_comment, value: "Matched to GBIF Backbone Taxonomy" %>
                       <%= f.primary class: "btn btn-sm btn-primary", title: "Use suggested GBIF match" do %>
