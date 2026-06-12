@@ -17,22 +17,29 @@
 #
 #  index_users_on_email                 (email) UNIQUE
 #  index_users_on_reset_password_token  (reset_password_token) UNIQUE
-#
 FactoryBot.define do
   factory :user do
-    email { "admin@xronos.ch" }
-    password { "Hubsch123123" }
-    password_confirmation { "Hubsch123123" }
+    sequence(:email) { |n| "user#{n}@xronos.ch" }
+
+    password { "password" }
+    password_confirmation { "password" }
+
     admin { false }
+
+    # Only include if validation requires it
     passphrase { ENV["REGISTRATION_PASSPHRASE"] }
+
+    # --- Traits ---
+
     trait :admin do
-      email { "admin@xronos.ch" }
       admin { true }
-    end    
-    factory :admin, traits: [:admin]
+    end
+
+    # --- Associations ---
 
     after(:build) do |user|
-      user.user_profile = build(:user_profile, user: user)
+      user.user_profile ||= build(:user_profile, user: user)
     end
   end
 end
+

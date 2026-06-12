@@ -59,15 +59,15 @@ class Article < ApplicationRecord
 
   scope :published, -> { 
     where(publish: true)
-      .where("published_at <= ?", DateTime.now)
+      .where("published_at <= ?", Time.zone.now)
   }
 
   def published?
-    publish and published_at <= DateTime.now
+    publish and published_at <= Time.zone.now
   end
 
   def scheduled?
-    publish and published_at > DateTime.now
+    publish and published_at > Time.zone.now
   end
 
   def draft?

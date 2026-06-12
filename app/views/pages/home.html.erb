@@ -1,3 +1,9 @@
+<%= content_for :head do %>
+  <!-- News feeds -->
+  <%= tag.link rel: "alternate", type: "application/atom+xml", href: news_url(format: :atom) %>
+  <%= tag.link rel: "alternate", type: "application/rss+xml", href: news_url(format: :rss) %>
+<% end %>
+
 <div class="jumbotron jumbotron-fluid hero mt-0 position-relative hero py-5 shadow">
 
   <div class="container h-100 d-flex flex-column" style="text-shadow: var(--bs-dark) 0 0 1rem;">
