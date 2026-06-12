@@ -29,7 +29,7 @@ FactoryBot.define do
 
     sequence(:orcid) { |n| format("0000-0000-0000-%04d", n) }
 
-    public_email { user.email }
+    sequence(:public_email) { |n| "user#{n}@xronos.ch" }
 
     url { "https://example.com/profile" }
 
