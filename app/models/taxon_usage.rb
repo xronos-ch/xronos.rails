@@ -9,7 +9,7 @@ class TaxonUsage
   attr_accessor :id
 
   def gbif
-    GBIF::Species.usage(id)
+    GBIF::Species.usage(id) || {}
   end
 
   def url
