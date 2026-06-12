@@ -21,8 +21,7 @@ class Taxon < ApplicationRecord
 
   validates :name, presence: true
 
-  #before_save :set_gbif_id_from_match, unless: :gbif_id?
-  #before_save :set_name_from_usage
+  after_commit :enqueue_gbif_sync
 
   include HasIssues
   @issues = [ :unknown_taxon, :long_taxon ]
@@ -58,8 +57,14 @@ class Taxon < ApplicationRecord
     gbif_id.present?
   end
 
+  def enqueue_gbif_sync
+    return if name.blank? and gbif_id.blank?
+    SyncTaxonWithGbifJob.perform_later(id)
+  end
+
   def gbif_match(strict = false)
-    Rails.cache.fetch("gbif_match/#{name}", expires_in: 24.hours) do
+    Rails.cache.fetch("gbif_match/#{name.parameterize}/#{strict}", 
+                      expires_in: 24.hours) do
       logger.debug "GBIF API request: https://api.gbif.org/v1/species/match?name=#{name}"
       OpenStruct.new(Gbif::Species.name_backbone(name: name, strict: strict))
     end
@@ -71,24 +76,6 @@ class Taxon < ApplicationRecord
     else
       match.usageKey
     end
-  end
-
-  def gbif_usage_from_match(match = gbif_match)
-    TaxonUsage.new(id: gbif_id_from_match(match))
-  end
-
-  def set_gbif_id_from_match(strict = true)
-    match = gbif_match(strict = strict)
-    fuzzy_matches = ["AGGREGATE", "FUZZY", "HIGHERRANK"]
-    if match.matchType == "EXACT" or (!strict and match.matchType.in?(fuzzy_matches))
-      self.gbif_id = gbif_id_from_match(match)
-    else
-      self.gbif_id = nil
-    end
-  end
-
-  def set_name_from_usage
-    self.name = usage.canonical_name unless gbif_id.blank?
   end
 
   def self.label
