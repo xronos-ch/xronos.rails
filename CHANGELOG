@@ -2,10 +2,21 @@
 
 ## 1.2.0.9000 [unreleased]
 
+- **Migration required:** Added affiliations to user profiles
+- Added second column to article show views (news and about pages)
+  - Showing extended author metadata on news articles
+  - Showing table of contents on about pages
+  - Added suggested citation for articles
+- Added OpenGraph metadata with additional metadata for articles (#117)
+- Added Atom and RSS feeds of news articles (#395)
+- **Breaking change:** Environment variable `ADMIN_USER_PASSWORD` is now 
+  required when seeding a new database
+- Improved test coverage
+
 ## 1.2.1
 
-* Fixed pagination in context issue show view
-* Fixed bug in context issue show view
+- Fixed pagination in context issue show view
+- Fixed bug in context issue show view
 
 ## 1.2.0
 
