@@ -9,7 +9,21 @@ class TaxonUsage
   attr_accessor :id
 
   def gbif
-    GBIF::Species.usage(id) || {}
+    return @gbif if defined?(@gbif)
+
+    result = GBIF::Species.usage(id)
+
+    @failed = result.nil?
+    @gbif = result || {}
+  end
+
+  def failed?
+    gbif
+    @failed
+  end
+
+  def present?
+    canonical_name.present?
   end
 
   def url
