@@ -3,10 +3,10 @@ atom_feed do |feed|
   feed.updated @articles.first&.published_at || Time.current
 
   # Pagination (atom only)
-  feed.link href: url_for(page: nil, format: :atom), rel: "alternate"
-  feed.link href: url_for(page: @pagy.page, format: :atom), rel: "self"
-  feed.link href: url_for(page: @pagy.next, format: :atom), rel: "next" if @pagy.next
-  feed.link href: url_for(page: @pagy.previous, format: :atom), rel: "prev" if @pagy.previous
+  feed.link href: news_url(page: nil, format: :atom), rel: "alternate"
+  feed.link href: news_url(page: @pagy.page, format: :atom), rel: "self"
+  feed.link href: news_url(page: @pagy.next, format: :atom), rel: "next" if @pagy.next
+  feed.link href: news_url(page: @pagy.previous, format: :atom), rel: "prev" if @pagy.previous
 
   @articles.first(@pagy.limit).each do |article|
     article_url = article_url section: article.section, slug: article.slug
@@ -24,12 +24,6 @@ atom_feed do |feed|
           author.uri(root_url)
         end
       end
-
-      entry.updated article.updated_at
-      entry.published article.published_at
-
-      entry.url article_url
-      entry.id article_url
     end
   end
 end
