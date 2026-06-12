@@ -2,6 +2,10 @@
 
 ## 1.2.0.9000 [unreleased]
 
+- Fixed synchronisation of taxons with GBIF (#417)
+  - Replacing use of GBIF's deprecated V1 species match API
+  - Requests to GBIF are now made asynchronously and do not block page rendering
+  - Tests no longer required on requests to GBIF
 - **Migration required:** Added affiliations to user profiles
 - Added second column to article show views (news and about pages)
   - Showing extended author metadata on news articles
