@@ -13,11 +13,14 @@ class TaxonUsagesController < ApplicationController
         scientificName: params[:name],
         strict: false
       )
-      render partial: "taxon_usages/taxon_match", locals: { 
-        taxon_match: @taxon_match,
-        frame_id: params.fetch(:frame_id)
-      }
     end
+
+    @taxon = Taxon.find(params[:taxon_id])
+
+    render partial: "taxon_usages/taxon_match", locals: { 
+      taxon: @taxon,
+      taxon_match: @taxon_match
+    }
   end
 
 end

@@ -14,13 +14,13 @@
           <span class="text-muted"><%= order_indicator %></span>
         <% end %>
       </th>
-      <th scope="col">Suggested GBIF match</th>
-      <th scope="col" class="text-end">
+      <th scope="col">
         <%= link_to_order_by "Samples", :samples_count %>
         <% if ordered_by?(:samples_count) %>
           <span class="text-muted"><%= order_indicator %></span>
         <% end %>
       </th>
+      <th scope="col">Suggested GBIF match</th>
       <% if can? :manage, Taxon %><th scope="col"><span class="visually-hidden">Actions</span></th><% end %>
     </tr>
   </thead>
@@ -30,36 +30,26 @@
       <tr>
         <td class="text-muted"><%= taxon.id %></td>
         <td><%= taxon.name %></td>
+        <td><%= taxon.samples_count %></td>
         <td>
           <%= turbo_frame_tag dom_id(taxon, :match),
-            src: taxon_usages_path(name: taxon.name, frame_id: dom_id(taxon, :match)),
-            loading: :lazy do %>
+            src: taxon_usages_path(
+              name: taxon.name, 
+              taxon_id: taxon.id,
+            ),
+            loading: :lazy,
+            data: { turbo_stream: true } do %>
             <%= render "taxon_usages/placeholder" %>
           <% end %>
         </td>
-        <td class="text-end"><%= taxon.samples_count %></td>
         <% if can? :manage, Taxon %>
           <td>
             <div class="btn-toolbar justify-content-end">
-                <div class="btn-group me-2">
-                  <%= bootstrap_form_for taxon do |f| %>
-                    <% if taxon.usage.present? %>
-                      <%= f.hidden_field :gbif_id, value: taxon.gbif_match.usageKey %>
-                      <%= f.hidden_field :revision_comment, value: "Matched to GBIF Backbone Taxonomy" %>
-                      <%= f.primary class: "btn btn-sm btn-primary", title: "Use suggested GBIF match" do %>
-                        <%= bs_icon "check-lg" %>
-                      <% end %>
-                    <% else %>
-                      <%= button_tag class: "btn btn-sm btn-primary", disabled: true do %>
-                        <%= bs_icon "check-lg" %>
-                      <% end %>
-                    <% end %>
-                  <% end %>
-                </div>
               <%= render "shared/action_buttons_compact", i: taxon %>
+            </div>
           </td>
-          <% end %>
-    </tr>
-  <% end %>
+        <% end %>
+      </tr>
+    <% end %>
   </tbody>
 </table>

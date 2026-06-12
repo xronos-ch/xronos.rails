@@ -1,4 +1,5 @@
-<%= turbo_frame_tag frame_id do %>
+<%= turbo_frame_tag dom_id(taxon, :match) do %>
+
   <% diagnostics = taxon_match["diagnostics"] %>
   <% if diagnostics["matchType"] == "NONE" %>
     <span class="text-body-secondary">
@@ -8,13 +9,32 @@
         No match
       <% end %>
     </span>
+
   <% else %>
-    <% usage = taxon_match["usage"] %>
-    <%# render TaxonUsage.new(id: taxon_match["usage"]["key"]) %>
-    <span class="badge text-bg-info"><%= usage["rank"] %></span>
-    <a href="<%= TaxonUsage.url usage["key"] %>" title="gbif:<%= usage["key"] %>">
-      <i><%= usage["canonicalName"] %></i> <%= usage["authorship"] %>
-    </a>
-    <span class="text-body-secondary small">(<%= diagnostics["matchType"] %>)</span>
+    <div class="d-flex justify-content-between">
+
+      <div>
+        <% usage = taxon_match["usage"] %>
+        <span class="badge text-bg-info"><%= usage["rank"] %></span>
+        <a href="<%= TaxonUsage.url usage["key"] %>" title="gbif:<%= usage["key"] %>">
+          <i><%= usage["canonicalName"] %></i> <%= usage["authorship"] %>
+        </a>
+        <span class="text-body-secondary small">(<%= diagnostics["matchType"] %>)</span>
+      </div>
+
+      <div class="btn-toolbar">
+        <div class="btn-group" role="group" aria-label="GBIF suggestion for this taxon">
+          <%= bootstrap_form_for taxon, data: { turbo_frame: "_top" } do |f| %>
+            <%= f.hidden_field :gbif_id, value: usage["acceptedKey"] || usage["key"] %>
+            <%= f.hidden_field :revision_comment, value: "Matched to GBIF Backbone Taxonomy" %>
+            <%= f.primary class: "btn btn-sm btn-primary", title: "Use suggested GBIF match" do %>
+              <%= bs_icon "check-lg" %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+
+    </div>
+
   <% end %>
 <% end %>
