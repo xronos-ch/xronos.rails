@@ -16,6 +16,7 @@
 #
 
 class Taxon < ApplicationRecord
+  include Versioned
 
   has_many :samples
 

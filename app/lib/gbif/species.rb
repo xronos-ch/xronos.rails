@@ -17,6 +17,12 @@ module GBIF
   module Species
 
     ##
+    # Get by usageKey (/v1/species/{usageKey})
+    def self.usage(usageKey)
+      get("v1/species/#{usageKey}")
+    end
+
+    ##
     # Fuzzy name match service (/v2/species/match)
     def self.match(**params)
       get("v2/species/match", params)

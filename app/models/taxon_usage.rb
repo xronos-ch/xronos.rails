@@ -9,10 +9,7 @@ class TaxonUsage
   attr_accessor :id
 
   def gbif
-    Rails.cache.fetch("gbif_usage/response/#{id}", expires_in: 30.days) do
-      Rails.logger.debug "GBIF API request: #{api_url}"
-      Gbif::Request.new("species/#{id}", nil, nil, nil).perform
-    end
+    GBIF::Species.usage(id)
   end
 
   def url

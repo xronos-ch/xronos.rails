@@ -2,6 +2,67 @@ require "test_helper"
 
 class GBIF::SpeciesTest < ActiveSupport::TestCase
 
+  test ".usage fetches species data by id" do
+    url = "https://api.gbif.org/v1/species/2877951"
+
+    stub_request(:get, url)
+      .to_return(
+        status: 200,
+        body: {
+          canonicalName: "Quercus robur",
+          scientificName: "Quercus robur L.",
+          rank: "SPECIES"
+        }.to_json
+      )
+
+    result = GBIF::Species.usage(2877951)
+
+    assert_instance_of Hash, result
+    assert_equal "Quercus robur", result["canonicalName"]
+    assert_equal "SPECIES", result["rank"]
+  end
+
+  test ".usage caches responses" do
+    url = "https://api.gbif.org/v1/species/2877951"
+
+    stub_request(:get, url)
+      .to_return(
+        status: 200,
+        body: { canonicalName: "Quercus robur" }.to_json
+      )
+
+    Rails.cache.clear
+
+    result1 = GBIF::Species.usage(2877951)
+    result2 = GBIF::Species.usage(2877951)
+
+    assert_equal result1, result2
+
+    # ✅ only one HTTP call
+    assert_requested :get, url, times: 1
+  end
+
+  test ".usage returns nil on error" do
+    url = "https://api.gbif.org/v1/species/999999"
+
+    stub_request(:get, url)
+      .to_return(status: 500, body: "error")
+
+    result = GBIF::Species.usage(999999)
+
+    assert_nil result
+  end
+
+  test ".usage returns nil on timeout" do
+    url = "https://api.gbif.org/v1/species/2877951"
+
+    stub_request(:get, url).to_timeout
+
+    result = GBIF::Species.usage(2877951)
+
+    assert_nil result
+  end
+
   test ".match returns parsed JSON for successful request" do
     url = "https://api.gbif.org/v2/species/match?scientificName=Quercus+robur"
 
