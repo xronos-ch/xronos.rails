@@ -21,15 +21,24 @@
 <h2 class="h5 mt-5">Your details</h2>
 
 <%= form.text_field :full_name, 
+  placeholder: "e.g. Willard Libby",
   help: 'Your name will be used to <strong>publicly</strong> attribute your contributions. You can change it at any time.'.html_safe,
   required: true %>
 
+<%= form.text_field :affiliation,
+  placeholder: "e.g. University of Chicago" 
+%>
+
 <%= form.text_field :orcid,
   label: "ORCID",
+  placeholder: "0000-0002-XXXX-XXXX",
   help: '<a href="https://info.orcid.org/what-is-orcid/">What is ORCID</a>?'.html_safe
 %>
 
 <%= form.email_field :public_email %>
 
-<%= form.url_field :url, label: "URL" %>
+<%= form.url_field :url, 
+  label: "Homepage",
+  placeholder: "https://"
+%>
 
