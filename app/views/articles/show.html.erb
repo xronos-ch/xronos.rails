@@ -1,6 +1,22 @@
 <% article_description = truncate(strip_tags(@article.body_html).squish.presence || @article.title, length: 160) %>
 <% content_for :title, @article.title %>
 <% content_for :meta_description, article_description %>
+<% content_for :og_type, "article" %>
+<% content_for :og_title, @article.title %>
+<% content_for :og_description, article_description %>
+<% content_for :og_url, article_url(@article.section, @article.slug) %>
+<% content_for :og_image do %>
+  <% if @article.splash.attached? %>
+    <%= url_for(@article.splash.variant(:og)) %>
+  <% else %>
+    <%= image_url("og/default.png") %>
+  <% end %>
+<% end %>
+<% content_for :article_meta do %>
+  <meta property="article:published_time" content="<%= @article.published_at&.iso8601 %>">
+  <meta property="article:modified_time"  content="<%= @article.updated_at.iso8601 %>">
+  <meta property="article:author" content="<%= @article.author_name %>">
+<% end %>
 
 <% if @article.splash.present? %>
   <% content_for :page_styles %>
@@ -17,25 +33,25 @@
       height: 20rem;
       width: 100%;
       z-index: -1;
-      background-image: url('<%= url_for(@article.splash_variant(:xs)) %>');
+      background-image: url('<%= url_for(@article.splash.variant(:xs)) %>');
       background-size: cover;
       background-position: center center;
     }
 
     @media (min-width: 576px)  { 
-      .article-hero:before { background-image: url('<%= url_for(@article.splash_variant(:sm)) %>'); }
+      .article-hero:before { background-image: url('<%= url_for(@article.splash.variant(:sm)) %>'); }
     }
     @media (min-width: 768px)  { 
-      .article-hero:before { background-image: url('<%= url_for(@article.splash_variant(:md)) %>'); }
+      .article-hero:before { background-image: url('<%= url_for(@article.splash.variant(:md)) %>'); }
     }
     @media (min-width: 992px)  { 
-      .article-hero:before { background-image: url('<%= url_for(@article.splash_variant(:lg)) %>'); }
+      .article-hero:before { background-image: url('<%= url_for(@article.splash.variant(:lg)) %>'); }
     }
     @media (min-width: 1200px) { 
-      .article-hero:before { background-image: url('<%= url_for(@article.splash_variant(:xl)) %>'); }
+      .article-hero:before { background-image: url('<%= url_for(@article.splash.variant(:xl)) %>'); }
     }
     @media (min-width: 1400px) { 
-      .article-hero:before { background-image: url('<%= url_for(@article.splash_variant(:xxl)) %>'); }
+      .article-hero:before { background-image: url('<%= url_for(@article.splash.variant(:xxl)) %>'); }
     }
   </style>
 <% end %>
@@ -54,23 +70,50 @@
 </header>
 
 <div class="container my-5">
-  <% if @article.news_section? %>
-    <p class="text-muted">
-      By <%= render @article.user %>, 
-      <%= @article.published_at.present? ? @article.published_at.to_formatted_s : "draft" %>
-    </p>
-  <% end %>
+  <div class="row">
 
-  <%= @article.body_html.html_safe %>
+    <div class="col-lg-9">
+      <div style="max-width: 720px;">
+        <%= @article.body_html.html_safe %>
+      </div>
+    </div>
+
+    <div class="col-lg-3">
+      <%= render "users/card", user: @article.user if @article.news_section? %>
+
+      <hr>
+
+      <% if @article.about_section? and @article.toc.children.present? %>
+        <nav id="toc">
+          <h2 class="text-body-secondary text-uppercase small">On this page</h2>
+          <ul class="nav flex-column mb-3">
+            <%= render partial: "toc_node", collection: @article.toc.children %>
+          </ul>
+        </nav>
+      <% end %>
+
+      <div class="small text-body-secondary">
+        <p class="mb-3">
+          <% if @article.news_section? %>
+            Published <%= @article.published_at.present? ? @article.published_at.strftime("%F") : "draft" %>
+          <% else %>
+            Last updated <%= @article.updated_at.strftime("%F") %>
+          <% end %>
+        </p>
+
+        <% if @article.splash_attribution? %>
+          <p class="mb-3">Cover image: <%= @article.splash_attribution.html_safe %></p>
+        <% end %>
+
+        <p>
+          Cite this <%= @article.news_section? ? "article" : "page" %> as:<br>
+          <%= article_citation(@article).html_safe %><br><br>
+          <a href="/about/citation">More information about citing XRONOS</a>
+        </p>
+
+      </div>
+    </div>
+
+  </div>
 </div>
 
-<footer class="bg-light">
-  <div class="container my-5 text-muted small">
-    <% if @article.splash_attribution? %>
-      <p>Cover photo: <%= @article.splash_attribution.html_safe %></span>
-    <% end %>
-    <% unless @article.news_section? %>
-      <p>Last updated <%= @article.updated_at.to_formatted_s %>.</p>
-    <% end %>
-  </div>
-</footer>

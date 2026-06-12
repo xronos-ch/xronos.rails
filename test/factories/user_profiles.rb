@@ -4,6 +4,7 @@
 # Database name: primary
 #
 #  id           :bigint           not null, primary key
+#  affiliation  :text
 #  full_name    :string
 #  orcid        :string
 #  public_email :string
@@ -28,7 +29,7 @@ FactoryBot.define do
 
     sequence(:orcid) { |n| format("0000-0000-0000-%04d", n) }
 
-    public_email { user.email }
+    sequence(:public_email) { |n| "user#{n}@xronos.ch" }
 
     url { "https://example.com/profile" }
 
@@ -36,6 +37,10 @@ FactoryBot.define do
 
     trait :with_realistic_name do
       sequence(:full_name) { |n| "User #{n}" }
+    end
+
+    trait :with_affiliation do
+      affiliation { "University of Bern" }
     end
 
     trait :with_orcid do
