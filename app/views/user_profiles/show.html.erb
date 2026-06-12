@@ -16,6 +16,16 @@
 
       <dl class="dl-inline">
 
+        <% if @user_profile.affiliation.present? %>
+          <dt>
+            <%= bs_icon "building" %>
+            <span class="visually-hidden">Affiliation</span>
+          </dt>
+          <dd>
+            <%= @user_profile.affiliation %>
+          </dd>
+        <% end %>
+
         <% if @user_profile.orcid.present? %>
           <dt>
             <%= bs_icon "circle" %><!-- TODO: replace with real logo from simple icons -->

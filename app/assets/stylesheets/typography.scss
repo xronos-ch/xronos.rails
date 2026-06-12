@@ -24,3 +24,8 @@
 	top: .125em;
 	position: relative;
 }
+
+::selection {
+	background: $primary;
+	color: $light;
+}

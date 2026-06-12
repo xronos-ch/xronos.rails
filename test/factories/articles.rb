@@ -25,10 +25,10 @@ FactoryBot.define do
   factory :article do
     section { :news }
 
-    title { Faker::Lorem.sentence(word_count: 5) }
+    title { Faker::Movies::HitchhikersGuideToTheGalaxy.marvin_quote }
 
     body do
-      Faker::Lorem.paragraphs(number: 2).join("\n\n")
+        Faker::Books::Lovecraft.paragraphs(number: 2).join("\n\n")
     end
 
     sequence(:slug) { |n| "article-#{n}" }
@@ -40,9 +40,9 @@ FactoryBot.define do
 
     trait :about do
       section { :about }
-      title { "About #{Faker::Lorem.unique.word.capitalize}" }
+      title { Faker::Books::CultureSeries.culture_ship }
       body do
-        Faker::Lorem.paragraphs(number: 4).join("\n\n")
+        Faker::Books::Lovecraft.paragraphs(number: 4).join("\n\n")
       end
 
       sequence(:slug) { |n| "about-page-#{n}" }
@@ -79,12 +79,12 @@ FactoryBot.define do
 
     trait :long_body do
       body do
-        Faker::Lorem.paragraphs(number: 8).join("\n\n")
+        Faker::Books::Lovecraft.paragraphs(number: 8).join("\n\n")
       end
     end
 
     trait :short_body do
-      body { Faker::Lorem.sentence }
+      body { Faker::Books::Lovecraft.sentence }
     end
 
     trait :no_body do

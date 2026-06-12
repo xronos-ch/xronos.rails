@@ -167,4 +167,33 @@ class ArticleTest < ActiveSupport::TestCase
     assert_not_includes Article.published, article
   end
 
+  # --- Splash ---
+  test "splash named variants are defined" do
+    article = build(:article)
+
+    article.splash.attach(
+      io: StringIO.new("fake"),
+      filename: "test.jpg",
+      content_type: "image/jpeg"
+    )
+
+    variant = article.splash.variant(:lg)
+
+    assert variant.present?
+  end
+
+  test "splash OpenGraph variant is available" do
+    article = build(:article)
+
+    article.splash.attach(
+      io: StringIO.new("fake"),
+      filename: "test.jpg",
+      content_type: "image/jpeg"
+    )
+
+    variant = article.splash.variant(:og)
+
+    assert variant.present?
+  end
+
 end

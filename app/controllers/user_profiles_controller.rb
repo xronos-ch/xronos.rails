@@ -85,6 +85,7 @@ class UserProfilesController < ApplicationController
       params.fetch(:user_profile, {}).permit(
         :full_name,
         :public_email,
+        :affiliation,
         :orcid,
         :url,
         :photo,
