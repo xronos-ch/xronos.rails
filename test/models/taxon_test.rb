@@ -150,5 +150,107 @@ class TaxonTest < ActiveSupport::TestCase
       taxon.destroy_if_orphaned
     end
   end
+
+  #
+  # Search
+  #
+  test ".search_with_gbif combines local and gbif results" do
+    local = FactoryBot.build_stubbed(:taxon, name: "Localus taxon", gbif_id: 1)
+
+    gbif_response = {
+      "results" => [
+        { "canonicalName" => "Gbifus taxon", "key" => 2 }
+      ]
+    }
+
+    Taxon.stub(:search, [local]) do
+      GBIF::Species.stub(:search, gbif_response) do
+        results = Taxon.search_with_gbif("test")
+
+        assert_equal 2, results.length
+        assert_includes results.map(&:name), "Localus taxon"
+        assert_includes results.map(&:name), "Gbifus taxon"
+      end
+    end
+  end
+
+  test ".search_with_gbif deduplicates by gbif_id" do
+    local = FactoryBot.build_stubbed(:taxon, name: "Same", gbif_id: 1)
+
+    gbif_response = {
+      "results" => [
+        { "canonicalName" => "Same", "key" => 1 }
+      ]
+    }
+
+    Taxon.stub(:search, [local]) do
+      GBIF::Species.stub(:search, gbif_response) do
+        results = Taxon.search_with_gbif("test")
+
+        assert_equal 1, results.length
+      end
+    end
+  end
+
+  test ".search_with_gbif deduplicates by name when gbif_id is nil" do
+    local = FactoryBot.build_stubbed(:taxon, name: "Quercus robur", gbif_id: nil)
+
+    gbif_response = {
+      "results" => [
+        { "canonicalName" => "Quercus robur", "key" => nil }
+      ]
+    }
+
+    Taxon.stub(:search, [local]) do
+      GBIF::Species.stub(:search, gbif_response) do
+        results = Taxon.search_with_gbif("Quercus robur")
+
+        # Only one result despite duplicate from GBIF + local
+        assert_equal 1, results.count { |t| t.name == "Quercus robur" }
+      end
+    end
+  end
+
+  test ".search_with_gbif builds unsaved Taxon objects from gbif results" do
+    gbif_response = {
+      "results" => [
+        {
+          "canonicalName" => "Fagus sylvatica",
+          "key" => 12345
+        }
+      ]
+    }
+
+    Taxon.stub(:search, []) do
+      GBIF::Species.stub(:search, gbif_response) do
+        results = Taxon.search_with_gbif("Fagus")
+
+        result = results.find { |t| t.name == "Fagus sylvatica" }
+
+        assert_not_nil result
+        assert_equal 12345, result.gbif_id
+
+        # Ensure no record was persisted
+        assert_predicate result, :new_record?
+        assert_not Taxon.exists?(name: "Fagus sylvatica")
+      end
+    end
+  end
+
+  test ".search_with_gbif returns empty array when no matches" do
+    Taxon.stub(:search, []) do
+      GBIF::Species.stub(:search, { "results" => [] }) do
+        results = Taxon.search_with_gbif("test")
+
+        assert_equal [], results
+      end
+    end
+  end
+
+  test ".search_with_gbif returns empty array for blank query" do
+    assert_equal [], Taxon.search_with_gbif(nil)
+    assert_equal [], Taxon.search_with_gbif("")
+  end
+
 end
 

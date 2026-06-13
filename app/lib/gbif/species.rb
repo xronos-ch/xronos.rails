@@ -28,6 +28,12 @@ module GBIF
       get("v2/species/match", params)
     end
 
+    ##
+    # Full text search over name usages (v1/species/search
+    def self.search(query:, limit: 10)
+      get("v1/species/search", q: query, limit: limit)
+    end
+
     # GET with caching
     def self.get(path, params = {})
       key = cache_key(path, params)

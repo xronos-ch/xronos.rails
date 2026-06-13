@@ -67,6 +67,25 @@ class Taxon < ApplicationRecord
     "taxon"
   end
 
+  def self.search_with_gbif(query, limit: 5)
+    return [] if query.blank?
+
+    local_taxons = search(query)
+    local_taxons = local_taxons.limit(limit) if local_taxons.respond_to?(:limit)
+
+    gbif_results = GBIF::Species.search(query: query, limit: limit)
+    gbif_taxons  = build_from_gbif_response(gbif_results)
+
+    unique_taxons(local_taxons + gbif_taxons)
+  end
+
+  def self.from_gbif_result(result)
+    new(
+      name: result["canonicalName"],
+      gbif_id: result["acceptedKey"] || result["key"]
+    )
+  end
+
   # Tidy up unused taxa when samples are deleted
   def destroy_if_orphaned
     if samples.count == 0
@@ -85,6 +104,20 @@ class Taxon < ApplicationRecord
   def long_taxon?
     return nil if name.blank?
     name.length > 64
+  end
+
+  private_class_method
+
+  # Extract Taxons from a GBIF search response
+  def self.build_from_gbif_response(response)
+    response
+      &.fetch("results", [])
+      &.map { |r| from_gbif_result(r) } || []
+  end
+
+  # Deduplicate by gbif_id if present, otherwise by name
+  def self.unique_taxons(taxons)
+    taxons.uniq { |t| t.gbif_id.presence || t.name }
   end
 
 end

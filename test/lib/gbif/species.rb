@@ -241,4 +241,13 @@ class GBIF::SpeciesTest < ActiveSupport::TestCase
     assert_requested :get, url, times: 1
   end
 
+  test ".search calls GBIF species search endpoint" do
+    stub_request(:get, "https://api.gbif.org/v1/species/search?q=Quercus&limit=10")
+      .to_return(status: 200, body: { "results" => [] }.to_json)
+
+    GBIF::Species.search(query: "Quercus")
+
+    assert_requested :get, "https://api.gbif.org/v1/species/search?q=Quercus&limit=10"
+  end
+
 end

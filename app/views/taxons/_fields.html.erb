@@ -1,4 +1,11 @@
-<%= f.text_field :name, floating: true %>
+<%= f.text_field :name,
+      data: {
+        controller: "tom-select",
+        tom_select_route_value: "gbif_search",
+        tom_select_value_value: "label",
+        tom_select_label_value: "label", # TODO check
+        tom_select_search_value: "label" # TODO check
+      } %>
 <%= f.hidden_field :gbif_id %>
 <% if @taxon.gbif_id.present? %>
   <div class="mb-3 small text-success">

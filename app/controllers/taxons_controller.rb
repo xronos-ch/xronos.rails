@@ -8,24 +8,27 @@ class TaxonsController < ApplicationController
   # GET /taxons
   # GET /taxons.json
   # GET /taxons.csv
+  # GET /taxons?q=
+  # GET /taxons.json?q=
+  # GET /taxons.csv?q=
   def index
-    @taxons = Taxon.all
-    
+    if params[:q].present?
+      search_gbif = params.key?(:search_gbif)
+      if search_gbif
+        @taxons = Taxon.search_with_gbif(params[:q], limit: 5)
+      else
+        @taxons = Taxon.search(params[:q]).limit(5)
+      end
+    else
+      @taxons = Taxon.all
+    end
+
     respond_to do |format|
+      format.html { head :not_acceptable }
+      format.json
       format.csv {
         @taxons = @taxons.select(index_csv_template)
         render csv: @taxons
-      }
-    end
-  end
-
-  # GET /taxons/search.json
-  def search
-    @taxons = Taxon.search(params[:q])
-
-    respond_to do |format|
-      format.json  {
-        render :index
       }
     end
   end
@@ -89,4 +92,5 @@ class TaxonsController < ApplicationController
     def taxon_params
       params.require(:taxon).permit([ :name, :gbif_id, :revision_comment ])
     end
+
 end

@@ -51,9 +51,7 @@ Rails.application.routes.draw do
 
   # Secondary data resources (no independent show/index views)
   resources :samples, only: [:index, :show]
-  resources :taxons, except: [:index, :show] do
-    get 'search', on: :collection
-  end
+  resources :taxons, except: [:show]
   resources :taxon_usages, only: [:index, :show]
 
   # External data resources
