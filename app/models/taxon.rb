@@ -67,10 +67,20 @@ class Taxon < ApplicationRecord
     "taxon"
   end
 
-  def self.search_with_gbif(query, limit: 5)
+  def self.search_with_gbif(query, limit: 5, matched_only: false)
     return [] if query.blank?
 
     local_taxons = search(query)
+
+    if matched_only
+      # Use database index if available
+      if local_taxons.respond_to?(:where)
+        local_taxons = local_taxons.where(gbif_id: :notnull)
+      else
+        local_taxons = local_taxons.select { |t| t.gbif_id.present? }
+      end
+    end
+
     local_taxons = local_taxons.limit(limit) if local_taxons.respond_to?(:limit)
 
     gbif_results = GBIF::Species.search(query: query, limit: limit)

@@ -14,8 +14,14 @@ class TaxonsController < ApplicationController
   def index
     if params[:q].present?
       search_gbif = params.key?(:search_gbif)
+      matched_only = params.key?(:matched_only)
+
       if search_gbif
-        @taxons = Taxon.search_with_gbif(params[:q], limit: 5)
+        @taxons = Taxon.search_with_gbif(
+          params[:q], 
+          limit: 5, 
+          matched_only: matched_only
+        )
       else
         @taxons = Taxon.search(params[:q]).limit(5)
       end

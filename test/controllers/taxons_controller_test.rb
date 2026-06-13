@@ -50,6 +50,21 @@ class TaxonsControllerTest < ActionDispatch::IntegrationTest
     assert json.any? { |t| t["name"] == "GBIF Taxon" }
   end
 
+  test "index excludes unknown taxons when matched_only param is present" do
+    FactoryBot.create(:taxon, name: "Matched", gbif_id: 1)
+    FactoryBot.create(:taxon, name: "Unmatched", gbif_id: nil)
+
+    get taxons_path(format: :json, q: "match", matched_only: true)
+
+    assert_response :success
+
+    json = JSON.parse(response.body)
+    names = json.map { |t| t["name"] }
+
+    assert_includes names, "Matched"
+    assert_not_includes names, "Unmatched"
+  end
+
   test "index limits local results to 5" do
     10.times { |i| FactoryBot.create(:taxon, name: "Test #{i}") }
 
@@ -73,5 +88,7 @@ class TaxonsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :not_acceptable
   end
+
+
 
 end

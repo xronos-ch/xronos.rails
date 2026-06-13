@@ -252,5 +252,23 @@ class TaxonTest < ActiveSupport::TestCase
     assert_equal [], Taxon.search_with_gbif("")
   end
 
+  test ".search_with_gbif excludes unknown taxa when matched_only is true" do
+    matched   = FactoryBot.build_stubbed(:taxon, name: "Matched", gbif_id: 1)
+    unmatched = FactoryBot.build_stubbed(:taxon, name: "Unmatched", gbif_id: nil)
+
+    gbif_response = { "results" => [] }
+
+    Taxon.stub(:search, [matched, unmatched]) do
+      GBIF::Species.stub(:search, gbif_response) do
+        results = Taxon.search_with_gbif("test", matched_only: true)
+
+        names = results.map(&:name)
+
+        assert_includes names, "Matched"
+        assert_not_includes names, "Unmatched"
+      end
+    end
+  end
+
 end
 
