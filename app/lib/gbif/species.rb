@@ -43,6 +43,17 @@ module GBIF
       end
     end
 
+    #
+    # Helpers
+    #
+
+    ##
+    # Resolves synonyms to their accepted usage, if present
+    def self.accepted_usage(match_response)
+      return nil unless match_response.present?
+      match_response["acceptedUsage"] || match_response["usage"]
+    end
+
     private
 
     def self.perform_get_request(path, params)

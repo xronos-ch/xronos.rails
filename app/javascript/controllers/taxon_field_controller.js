@@ -12,7 +12,8 @@ export default class extends Controller {
 
       tom.on("change", (value) => {
         if (this.hasGbifIdFieldTarget) {
-          this.gbifIdFieldTarget.value = value || ""
+          let gbif_id = tom.options[value]?.gbif_id || ""
+          this.gbifIdFieldTarget.value = gbif_id
         }
       })
 

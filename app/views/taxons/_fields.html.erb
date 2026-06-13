@@ -1,5 +1,5 @@
 <div data-controller="taxon-field">
-  <%= f.text_field :gbif_id, data: { taxon_field_target: "gbifIdField" } %>
+  <%= f.hidden_field :gbif_id, data: { taxon_field_target: "gbifIdField" } %>
   <%= f.text_field :name,
     floating: true,
     data: {
@@ -7,7 +7,7 @@
       taxon_field_target: "nameField",
       tom_select_route_value: "taxons",
       tom_select_search_mode_value: true,
-      tom_select_value_value: "gbif_id",
+      tom_select_value_value: "name",
       tom_select_label_value: "name", # TODO check
       tom_select_search_value: "name", # TODO check
       tom_select_params_value: "search_gbif&matched_only",

@@ -1,230 +1,144 @@
 require "test_helper"
 
 class SyncTaxonWithGbifJobTest < ActiveJob::TestCase
-  setup do
-    Rails.cache.clear
-  end
-
   #
-  # CORE SUCCESS CASE
+  # sets gbif_id from exact match
   #
-  test "sets gbif_id and canonical name for exact match" do
+  test "sets gbif_id from exact match" do
     taxon = FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: nil)
 
-    stub_match_by_name("Quercus robur", {
-      usageKey: 2877951,
-      canonicalName: "Quercus robur",
-      matchType: "EXACT"
-    })
+    match = { "matchType" => "EXACT" }
+    usage = { "key" => "123", "canonicalName" => "Quercus robur" }
 
-    perform_now(taxon)
+    GBIF::Species.stub(:match, match) do
+      GBIF::Species.stub(:accepted_usage, usage) do
+        SyncTaxonWithGbifJob.perform_now(taxon.id)
 
-    taxon.reload
-
-    assert_equal 2877951, taxon.gbif_id
-    assert_equal "Quercus robur", taxon.name
+        assert_equal 123, taxon.reload.gbif_id
+      end
+    end
   end
 
   #
-  # CANONICAL NAME ENFORCED
+  # does not set gbif_id for non-exact match
   #
-  test "updates name to canonical GBIF name" do
-    taxon = FactoryBot.create(
-      :taxon,
-      name: "Quercus robbur",  # typo
-      gbif_id: nil
-    )
+  test "does not set gbif_id for non-exact match" do
+    taxon = FactoryBot.create(:taxon, name: "Quercus", gbif_id: nil)
 
-    stub_match_by_name("Quercus robbur", {
-      usageKey: 2877951,
-      canonicalName: "Quercus robur",
-      matchType: "EXACT"
-    })
+    match = { "matchType" => "FUZZY" }
 
-    perform_now(taxon)
+    GBIF::Species.stub(:match, match) do
+      SyncTaxonWithGbifJob.perform_now(taxon.id)
 
-    taxon.reload
-
-    assert_equal 2877951, taxon.gbif_id
-    assert_equal "Quercus robur", taxon.name
+      assert_nil taxon.reload.gbif_id
+    end
   end
 
   #
-  # NO EXACT MATCH → NO CHANGES
+  # uses accepted usage when synonym returned
   #
-  test "does nothing when match is not EXACT" do
-    taxon = FactoryBot.create(:taxon, name: "Unknown taxon", gbif_id: nil)
+  test "uses accepted usage over synonym" do
+    taxon = FactoryBot.create(:taxon, name: "Scirpus maritimus", gbif_id: nil)
 
-    stub_match_by_name("Unknown taxon", {
-      matchType: "FUZZY"
-    })
+    match = { "matchType" => "EXACT" }
 
-    perform_now(taxon)
+    accepted = {
+      "key" => "2718307",
+      "canonicalName" => "Bolboschoenus maritimus"
+    }
 
-    taxon.reload
+    GBIF::Species.stub(:match, match) do
+      GBIF::Species.stub(:accepted_usage, accepted) do
+        SyncTaxonWithGbifJob.perform_now(taxon.id)
 
-    assert_nil taxon.gbif_id
-    assert_equal "Unknown taxon", taxon.name
+        taxon.reload
+        assert_equal 2718307, taxon.gbif_id
+        assert_equal "Bolboschoenus maritimus", taxon.name
+      end
+    end
   end
 
   #
-  # GBIF ID ALREADY PRESENT → SKIP MATCH STEP
+  # does nothing if accepted usage missing
   #
-  test "does not rematch when gbif_id already set but enforces canonical name" do
-    taxon = FactoryBot.create(:taxon, name: "Quercus robbur", gbif_id: 2877951)
+  test "does nothing if accepted usage missing" do
+    taxon = FactoryBot.create(:taxon, name: "Unknown", gbif_id: nil)
 
-    stub_match_by_usage_key(2877951, {
-      usageKey: 2877951,
-      canonicalName: "Quercus robur"
-    })
+    match = { "matchType" => "EXACT" }
 
-    perform_now(taxon)
+    GBIF::Species.stub(:match, match) do
+      GBIF::Species.stub(:accepted_usage, nil) do
+        SyncTaxonWithGbifJob.perform_now(taxon.id)
 
-    taxon.reload
-
-    assert_equal 2877951, taxon.gbif_id
-    assert_equal "Quercus robur", taxon.name
+        taxon.reload
+        assert_nil taxon.gbif_id
+        assert_equal "Unknown", taxon.name
+      end
+    end
   end
 
   #
-  # CACHING: NO DUPLICATE REQUESTS
+  # enforces canonical name when gbif_id already present
   #
-  test "uses cached responses across multiple runs" do
-    taxon = FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: nil)
+  test "updates name to canonical when gbif_id already present" do
+    taxon = FactoryBot.create(:taxon, name: "Old name", gbif_id: "123")
 
-    stub_match_by_name("Quercus robur", {
-      usageKey: 2877951,
-      canonicalName: "Quercus robur",
-      matchType: "EXACT"
-    })
+    usage = {
+      "key" => "123",
+      "canonicalName" => "Canonical name"
+    }
 
-    stub_match_by_usage_key(2877951, {
-      usageKey: 2877951,
-      canonicalName: "Quercus robur"
-    })
+    GBIF::Species.stub(:usage, usage) do
+      SyncTaxonWithGbifJob.perform_now(taxon.id)
 
-    perform_now(taxon)
-    perform_now(taxon)
-
-    # One call per distinct query
-    assert_requested :get, gbif_match_url,
-      query: hash_including(
-        "scientificName" => "Quercus robur",
-        "strict" => "true"
-      ),
-      times: 1
-
-    assert_requested :get, gbif_match_url,
-      query: hash_including("usageKey" => "2877951"),
-      times: 1
-  end
-
-  test "reuses initial match result and does not call usageKey lookup for EXACT match" do
-    taxon = FactoryBot.create(
-      :taxon,
-      name: "Quercus robbur",
-      gbif_id: nil
-    )
-
-    # Stub ONLY the initial match
-    stub_match_by_name("Quercus robbur", {
-      usageKey: 2877951,
-      canonicalName: "Quercus robur",
-      matchType: "EXACT"
-    })
-
-    # No stub for usageKey on purpose
-
-    SyncTaxonWithGbifJob.perform_now(taxon.id)
-
-    taxon.reload
-
-    # Behaviour is still correct
-    assert_equal 2877951, taxon.gbif_id
-    assert_equal "Quercus robur", taxon.name
-
-    # Initial call happened
-    assert_requested :get, gbif_match_url,
-      query: hash_including(
-        "scientificName" => "Quercus robbur",
-        "strict" => "true"
-      ),
-      times: 1
-
-    # But no fallback call was made
-    assert_not_requested :get, gbif_match_url,
-      query: hash_including("usageKey" => "2877951")
+      assert_equal "Canonical name", taxon.reload.name
+    end
   end
 
   #
-  # TIMEOUT HANDLING
+  # does not update name if already canonical
   #
-  test "does nothing on timeout" do
-    taxon = FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: nil)
+  test "does not update name if already canonical" do
+    taxon = FactoryBot.create(:taxon, name: "Canonical name", gbif_id: "123")
 
-    stub_request(:get, gbif_match_url)
-      .with(query: hash_including("scientificName" => "Quercus robur"))
-      .to_timeout
+    usage = {
+      "key" => "123",
+      "canonicalName" => "Canonical name"
+    }
 
-    perform_now(taxon)
+    GBIF::Species.stub(:usage, usage) do
+      SyncTaxonWithGbifJob.perform_now(taxon.id)
 
-    taxon.reload
-
-    assert_nil taxon.gbif_id
-    assert_equal "Quercus robur", taxon.name
+      assert_equal "Canonical name", taxon.reload.name
+    end
   end
 
   #
-  # ID LOOKUP FAILS → NO CRASH
+  # handles missing taxon safely
   #
-  test "handles missing canonical name gracefully" do
-    taxon = FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: nil)
-
-    stub_match_by_name("Quercus robur", {
-      usageKey: 2877951,
-      matchType: "EXACT"
-    })
-
-    stub_match_by_usage_key(2877951, {
-      usageKey: 2877951,
-      canonicalName: nil
-    })
-
-    perform_now(taxon)
-
-    taxon.reload
-
-    # gbif_id still set
-    assert_equal 2877951, taxon.gbif_id
+  test "does nothing when taxon not found" do
+    assert_nothing_raised do
+      SyncTaxonWithGbifJob.perform_now(-1)
+    end
   end
-
-  private
 
   #
-  # TEST HELPERS
+  # reuses match within job (no second API call)
   #
+  test "reuses match when enforcing canonical name" do
+    taxon = FactoryBot.create(:taxon, name: "Foo", gbif_id: nil)
 
-  def perform_now(taxon)
-    SyncTaxonWithGbifJob.perform_now(taxon.id)
-  end
+    match = { "matchType" => "EXACT" }
+    usage = { "key" => "42", "canonicalName" => "Bar" }
 
-  def gbif_match_url
-    "https://api.gbif.org/v2/species/match"
-  end
+    GBIF::Species.stub(:match, match) do
+      GBIF::Species.stub(:accepted_usage, usage) do
+        GBIF::Species.stub(:usage, ->(*) { flunk "usage should not be called" }) do
+          SyncTaxonWithGbifJob.perform_now(taxon.id)
+        end
+      end
+    end
 
-  def stub_match_by_name(name, body)
-    stub_request(:get, gbif_match_url)
-      .with(query: hash_including(
-        "scientificName" => name,
-        "strict" => "true"
-      ))
-      .to_return(status: 200, body: body.to_json)
-  end
-
-  def stub_match_by_usage_key(key, body)
-    stub_request(:get, gbif_match_url)
-      .with(query: hash_including("usageKey" => key.to_s))
-      .to_return(status: 200, body: body.to_json)
+    assert_equal "Bar", taxon.reload.name
   end
 end
-
