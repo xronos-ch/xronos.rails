@@ -40,7 +40,7 @@ module GBIF
     def self.get(path, params = {})
       key = cache_key(path, params)
 
-      Rails.cache.fetch(key, expires_in: 24.hours) do
+      Rails.cache.fetch(key, expires_in: 30.days) do
         perform_get_request(path, params)
       end
     end
