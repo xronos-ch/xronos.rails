@@ -11,6 +11,8 @@ require "json"
 #
 module GBIF
   BASE_URL = "https://api.gbif.org"
+  USER_AGENT = "XRONOS <https://xronos.ch>"
+  FROM_HEADER = "admin@xronos.ch"
 
   ##
   # GBIF species API: https://techdocs.gbif.org/en/openapi/v1/species
@@ -64,7 +66,18 @@ module GBIF
 
       Rails.logger.debug("[GBIF] GET #{uri}")
 
-      response = Net::HTTP.get_response(uri)
+      request = Net::HTTP::Get.new(uri)
+      request["User-Agent"] = USER_AGENT
+      request["From"] = FROM_HEADER
+
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = (uri.scheme == "https")
+
+      # Prevent hanging jobs if GBIF is sluggish
+      http.open_timeout = 5    # seconds
+      http.read_timeout = 10
+
+      response = http.request(request)
 
       unless response.is_a?(Net::HTTPSuccess)
         Rails.logger.error(

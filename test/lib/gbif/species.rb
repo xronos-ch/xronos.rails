@@ -1,6 +1,29 @@
 require "test_helper"
 
 class GBIF::SpeciesTest < ActiveSupport::TestCase
+  setup do
+    Rails.cache.clear
+  end
+
+  test "we identify ourselves" do
+    stub_request(:get, /api.gbif.org/)
+      .with(headers: {
+        "User-Agent" => GBIF::USER_AGENT,
+        "From" => GBIF::FROM_HEADER
+      })
+        .to_return(
+          status: 200,
+          body: { "results" => [] }.to_json
+        )
+
+      GBIF::Species.search(query: "Quercus", limit: 5)
+
+      assert_requested :get, /api.gbif.org/,
+        headers: { 
+          "User-Agent" => GBIF::USER_AGENT,
+          "From" => GBIF::FROM_HEADER
+        }
+  end
 
   test ".usage fetches species data by id" do
     url = "https://api.gbif.org/v1/species/2877951"
