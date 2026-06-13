@@ -75,7 +75,7 @@ class Taxon < ApplicationRecord
     if matched_only
       # Use database index if available
       if local_taxons.respond_to?(:where)
-        local_taxons = local_taxons.where(gbif_id: :notnull)
+        local_taxons = local_taxons.where.not(gbif_id: :nil)
       else
         local_taxons = local_taxons.select { |t| t.gbif_id.present? }
       end

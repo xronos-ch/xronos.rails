@@ -13,18 +13,7 @@ class TaxonsController < ApplicationController
   # GET /taxons.csv?q=
   def index
     if params[:q].present?
-      search_gbif = params.key?(:search_gbif)
-      matched_only = params.key?(:matched_only)
-
-      if search_gbif
-        @taxons = Taxon.search_with_gbif(
-          params[:q], 
-          limit: 5, 
-          matched_only: matched_only
-        )
-      else
-        @taxons = Taxon.search(params[:q]).limit(5)
-      end
+      @taxons = search_taxons(params[:q])
     else
       @taxons = Taxon.all
     end
@@ -32,10 +21,10 @@ class TaxonsController < ApplicationController
     respond_to do |format|
       format.html { head :not_acceptable }
       format.json
-      format.csv {
+      format.csv do
         @taxons = @taxons.select(index_csv_template)
         render csv: @taxons
-      }
+      end
     end
   end
 
@@ -97,6 +86,39 @@ class TaxonsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def taxon_params
       params.require(:taxon).permit([ :name, :gbif_id, :revision_comment ])
+    end
+
+    def matched_only?
+      params.key?(:matched_only)
+    end
+
+    def search_gbif?
+      params.key?(:search_gbif)
+    end
+
+    def search_taxons(query)
+      if search_gbif?
+        gbif_and_local_search(query)
+      else
+        local_search(query)
+      end
+    end
+
+    def gbif_and_local_search(query)
+      Taxon.search_with_gbif(
+        query,
+        limit: 5,
+        matched_only: matched_only?
+      )
+    rescue Net::OpenTimeout, Net::ReadTimeout, RuntimeError => e
+      Rails.logger.warn("[GBIF search fallback] #{e.class}: #{e.message}")
+      local_search(query)
+    end
+
+    def local_search(query)
+      scope = Taxon.search(query)
+      scope = scope.where.not(gbif_id: nil) if matched_only?
+      scope.limit(5)
     end
 
 end
