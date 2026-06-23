@@ -1,12 +1,79 @@
-<% version.changeset.each do |change| %>
-  <% unless change.first == "updated_at" %>
-    <div class="d-flex">
-      <dt><%= change.first.humanize %>:</dt>
-      <dd class="flex-grow-1 ms-3">
-        <%= change.second.first.present? ? change.second.first : na_value %>
-        &rarr;
-        <%= change.second.second.present? ? change.second.second : na_value %>
-      </dd>
+<% if version.snapshot_id.present? && (diff = version_peripheral_diff(version)).present? %>
+  <%
+    hidden_attrs = %w[id created_at updated_at linkable_id linkable_type site_id]
+    parent_class = version.item_type.constantize
+    groups = {}
+    diff.each do |entry|
+      key = entry[:child_group_name] || entry[:item_type]
+      groups[key] ||= { entries: [] }
+
+      next if entry[:action] == :update && entry[:changes].none? { |attr, _| !hidden_attrs.include?(attr.to_s) }
+
+      groups[key][:entries] << entry
+    end
+  %>
+  <% groups.each do |key, group| %>
+    <% next if group[:entries].empty? %>
+    <%
+      heading = if group[:entries].first[:child_group_name]
+                  label = group[:entries].first[:item_type].constantize.label
+                  macro = parent_class.reflect_on_association(key)&.macro
+                  macro == :has_many ? label.pluralize.humanize : label.humanize
+                else
+                  key.constantize.label.humanize
+                end
+    %>
+    <div class="ms-2 mt-1">
+      <dt class="small text-muted"><%= heading %></dt>
+      <% group[:entries].each do |change| %>
+        <% case change[:action] %>
+        <% when :create %>
+          <div class="d-flex small">
+            <%= bs_icon "plus-circle", class: "me-1" %>
+            <span>
+              Added
+              <% if (name = change[:changes]["name"] || change[:changes][:name]) %>
+                "<%= name[1] %>"
+              <% end %>
+            </span>
+          </div>
+        <% when :destroy %>
+          <div class="d-flex small">
+            <%= bs_icon "dash-circle", class: "me-1" %>
+            <span>
+              Deleted
+              <% if (name = change[:changes][:name]) %>
+                "<%= name.first %>"
+              <% end %>
+            </span>
+          </div>
+        <% when :update %>
+          <% change[:changes].each do |attr, values| %>
+            <% next if hidden_attrs.include?(attr.to_s) %>
+            <div class="d-flex small">
+              <dt class="me-1"><%= attr.to_s.humanize %>:</dt>
+              <dd class="flex-grow-1 ms-1">
+                <%= values.first.present? ? values.first : na_value %>
+                &rarr;
+                <%= values.second.present? ? values.second : na_value %>
+              </dd>
+            </div>
+          <% end %>
+        <% end %>
+      <% end %>
     </div>
+  <% end %>
+<% else %>
+  <% version.changeset.each do |change| %>
+    <% unless change.first == "updated_at" %>
+      <div class="d-flex small">
+        <dt><%= change.first.humanize %>:</dt>
+        <dd class="flex-grow-1 ms-3">
+          <%= change.second.first.present? ? change.second.first : na_value %>
+          &rarr;
+          <%= change.second.second.present? ? change.second.second : na_value %>
+        </dd>
+      </div>
+    <% end %>
   <% end %>
 <% end %>

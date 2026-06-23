@@ -1,6 +1,6 @@
 <div class="accordion" id="versionHistory">
 
-  <% versions = local_assigns[:versions] || item.versions.includes(:item) %>
+  <% versions = local_assigns[:versions] || item.versions %>
 
   <% versions.reverse_each do |version| %>
     <div class="accordion-item">

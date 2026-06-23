@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_11_235613) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_23_190612) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -316,6 +316,32 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_11_235613) do
     t.index ["name"], name: "index_sites_on_name"
   end
 
+  create_table "snapshot_items", force: :cascade do |t|
+    t.bigint "snapshot_id", null: false
+    t.string "item_type", null: false
+    t.bigint "item_id", null: false
+    t.json "object", null: false
+    t.datetime "created_at", null: false
+    t.string "child_group_name"
+    t.index ["item_type", "item_id"], name: "index_snapshot_items_on_item"
+    t.index ["snapshot_id", "item_id", "item_type"], name: "index_snapshot_items_on_snapshot_id_and_item_id_and_item_type"
+    t.index ["snapshot_id"], name: "index_snapshot_items_on_snapshot_id"
+  end
+
+  create_table "snapshots", force: :cascade do |t|
+    t.string "item_type", null: false
+    t.bigint "item_id", null: false
+    t.string "user_type"
+    t.bigint "user_id"
+    t.string "identifier"
+    t.json "metadata"
+    t.datetime "created_at", null: false
+    t.index ["identifier", "item_id", "item_type"], name: "index_snapshots_on_identifier_and_item_id_and_item_type", unique: true
+    t.index ["identifier"], name: "index_snapshots_on_identifier"
+    t.index ["item_type", "item_id"], name: "index_snapshots_on_item"
+    t.index ["user_type", "user_id"], name: "index_snapshots_on_user"
+  end
+
   create_table "taxons", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: nil, null: false
@@ -335,6 +361,12 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_11_235613) do
     t.bigint "sample_id"
     t.index ["name"], name: "index_typos_on_name"
     t.index ["sample_id"], name: "index_typos_on_sample_id"
+  end
+
+  create_table "unversioned_children", force: :cascade do |t|
+    t.integer "versioned_parent_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "user_profiles", force: :cascade do |t|
@@ -362,6 +394,23 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_11_235613) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "versioned_children", force: :cascade do |t|
+    t.integer "versioned_parent_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "versioned_parents", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "versioned_singles", force: :cascade do |t|
+    t.integer "versioned_parent_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "versions", force: :cascade do |t|
     t.string "item_type", null: false
     t.bigint "item_id", null: false
@@ -373,8 +422,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_11_235613) do
     t.text "revision_comment"
     t.jsonb "new_object"
     t.jsonb "object_changes"
+    t.bigint "snapshot_id"
     t.index ["event"], name: "index_versions_on_event"
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
+    t.index ["snapshot_id"], name: "index_versions_on_snapshot_id"
     t.index ["whodunnit"], name: "index_versions_on_whodunnit"
   end
 

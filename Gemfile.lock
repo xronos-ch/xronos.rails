@@ -44,6 +44,9 @@ GEM
       erubi (~> 1.11)
       rails-dom-testing (~> 2.2)
       rails-html-sanitizer (~> 1.6)
+    active_snapshot (1.1.0)
+      activerecord (>= 6.1)
+      railties
     activejob (8.0.5)
       activesupport (= 8.0.5)
       globalid (>= 0.3.6)
@@ -521,6 +524,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  active_snapshot
   activerecord-session_store
   annotaterb
   bibtex-ruby

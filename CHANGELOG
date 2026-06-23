@@ -2,6 +2,14 @@
 
 ## 1.2.0.9000 [unreleased]
 
+- **Migration required:** Peripheral associated records are now
+  snapshotted on Site versions via ActiveSnapshot
+  - Added new tables (snapshots, snapshot_items) and
+    add_snapshot_id_to_versions migration
+  - Site version history now shows a unified diff of both Site
+    changes and peripheral record changes
+- SiteNames and LodLinks now generate contextual revision comments
+  when added, changed, or removed (e.g. "Added site name.")
 - **Migration required:** Added affiliations to user profiles
 - Added second column to article show views (news and about pages)
   - Showing extended author metadata on news articles

@@ -147,10 +147,8 @@ class C14sController < ApplicationController
     @site = Site.find(params[:site])
   end
 
-  # Preload versions with their item for the show view (Bullet fix)
   def set_versions
     @versions = @c14.versions
-                    .includes(:item)
                     .order(:created_at, :id)
   end
 

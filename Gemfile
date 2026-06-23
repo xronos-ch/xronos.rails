@@ -84,6 +84,7 @@ gem 'doorkeeper'
 
 # Versioning
 gem 'paper_trail'
+gem 'active_snapshot'
 
 # Search
 gem 'pg_search'

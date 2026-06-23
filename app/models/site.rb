@@ -42,6 +42,11 @@ class Site < ApplicationRecord
   # Cousins
   has_and_belongs_to_many :site_types, optional: true
 
+  has_snapshot_children do
+    instance = self.class.includes(:site_names, :lod_links).find(id)
+    { site_names: instance.site_names, lod_links: instance.lod_links }
+  end
+
   composed_of :coordinates,
     mapping: [%w(lng longitude), %w(lat latitude)],
     allow_nil: true,
