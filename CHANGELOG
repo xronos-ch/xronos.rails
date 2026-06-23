@@ -2,6 +2,8 @@
 
 ## 1.2.0.9000 [unreleased]
 
+- Removed standalone Typo show view. Typological dates are now only shown
+  embedded in Site views (#398)
 - **Migration required:** Added affiliations to user profiles
 - Added second column to article show views (news and about pages)
   - Showing extended author metadata on news articles
