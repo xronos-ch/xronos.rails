@@ -3,7 +3,7 @@ class TyposController < ApplicationController
 
   load_and_authorize_resource
 
-  before_action :set_typo, only: [:show, :edit, :update, :destroy]
+  before_action :set_typo, only: [:edit, :update, :destroy]
 
   # GET /typos
   # GET /typos.json
@@ -71,11 +71,6 @@ class TyposController < ApplicationController
     end
   end
 
-  # GET /typos/1
-  # GET /typos/1.json
-  def show
-  end
-
   # GET /typos/new
   def new
     @typo = Typo.new
@@ -92,7 +87,7 @@ class TyposController < ApplicationController
 
     respond_to do |format|
       if @typo.save
-        format.html { redirect_to @typo, notice: "Typo was successfully created." }
+        format.html { redirect_to @typo.sample.context.site, notice: "Typo was successfully created." }
         format.json { render :show, status: :created, location: @typo }
       else
         format.html { render :new }
@@ -106,7 +101,7 @@ class TyposController < ApplicationController
   def update
     respond_to do |format|
       if @typo.update(typo_params)
-        format.html { redirect_to @typo, notice: "Typo was successfully updated." }
+        format.html { redirect_to @typo.sample.context.site, notice: "Typo was successfully updated." }
         format.json { render :show, status: :ok, location: @typo }
       else
         format.html { render :edit }
@@ -121,7 +116,7 @@ class TyposController < ApplicationController
     @typo.destroy
 
     respond_to do |format|
-      format.html { redirect_to typos_url, notice: "Typo was successfully destroyed." }
+      format.html { redirect_to @typo.sample.context.site, notice: "Typo was successfully destroyed." }
       format.json { head :no_content }
     end
   end
