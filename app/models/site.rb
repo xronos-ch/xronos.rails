@@ -48,6 +48,11 @@ class Site < ApplicationRecord
   has_many :linked_resources, as: :linkable, dependent: :destroy
   has_many :functional_classifications, as: :assignable, dependent: :destroy
 
+  has_snapshot_children do
+    instance = self.class.includes(:site_names, :linked_resources).find(id)
+    { site_names: instance.site_names, linked_resources: instance.linked_resources }
+  end
+
   composed_of :coordinates,
               mapping: [%w[lng longitude], %w[lat latitude]],
               allow_nil: true,

@@ -27,3 +27,70 @@
 <% elsif entry.event_type == "restore" %>
   <p>Restored</p>
 <% end %>
+
+<% if entry.respond_to?(:snapshot_id) && entry.snapshot_id.present? && (diff = version_peripheral_diff(entry)).present? %>
+  <%
+    hidden_attrs = %w[id created_at updated_id linkable_id linkable_type site_id]
+    parent_class = entry.item_type.constantize
+    groups = {}
+    diff.each do |change|
+      key = change[:child_group_name] || change[:item_type]
+      groups[key] ||= { entries: [] }
+
+      next if change[:action] == :update && change[:changes].none? { |attr, _| !hidden_attrs.include?(attr.to_s) }
+
+      groups[key][:entries] << change
+    end
+  %>
+  <% groups.each do |key, group| %>
+    <% next if group[:entries].empty? %>
+    <%
+      heading = if group[:entries].first[:child_group_name]
+                  label = group[:entries].first[:item_type].constantize.label
+                  macro = parent_class.reflect_on_association(key)&.macro
+                  macro == :has_many ? label.pluralize.humanize : label.humanize
+                else
+                  key.constantize.label.humanize
+                end
+    %>
+    <div class="ms-2 mt-1">
+      <dt class="small text-muted"><%= heading %></dt>
+      <% group[:entries].each do |change| %>
+        <% case change[:action] %>
+        <% when :create %>
+          <div class="d-flex small">
+            <%= bs_icon "plus-circle", class: "me-1" %>
+            <span>
+              Added
+              <% if (name = change[:changes]["name"] || change[:changes][:name]) %>
+                "<%= name[1] %>"
+              <% end %>
+            </span>
+          </div>
+        <% when :destroy %>
+          <div class="d-flex small">
+            <%= bs_icon "dash-circle", class: "me-1" %>
+            <span>
+              Deleted
+              <% if (name = change[:changes][:name]) %>
+                "<%= name.first %>"
+              <% end %>
+            </span>
+          </div>
+        <% when :update %>
+          <% change[:changes].each do |attr, values| %>
+            <% next if hidden_attrs.include?(attr.to_s) %>
+            <div class="d-flex small">
+              <dt class="me-1"><%= attr.to_s.humanize %>:</dt>
+              <dd class="flex-grow-1 ms-1">
+                <%= values.first.present? ? values.first : na_value %>
+                &rarr;
+                <%= values.second.present? ? values.second : na_value %>
+              </dd>
+            </div>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

@@ -36,11 +36,11 @@ end
 
 def collect_peripherals(site)
   site_names = {}
-  lod_links = {}
+  linked_resources = {}
 
   # Current peripherals
   site.site_names.each { |r| site_names[r.id] = r.versions.order(:created_at).to_a }
-  site.lod_links.each { |r| lod_links[r.id] = r.versions.order(:created_at).to_a }
+  site.linked_resources.each { |r| linked_resources[r.id] = r.versions.order(:created_at).to_a }
 
   # Deleted SiteNames (via PaperTrail)
   deleted_site_name_ids(site.id).each do |id|
@@ -49,14 +49,14 @@ def collect_peripherals(site)
       .order(:created_at).to_a
   end
 
-  # Deleted LodLinks (via PaperTrail)
-  deleted_lod_link_ids(site.id).each do |id|
-    next if lod_links.key?(id)
-    lod_links[id] = PaperTrail::Version.where(item_type: "LodLink", item_id: id)
+  # Deleted LinkedResources (via PaperTrail)
+  deleted_linked_resource_ids(site.id).each do |id|
+    next if linked_resources.key?(id)
+    linked_resources[id] = PaperTrail::Version.where(item_type: "LinkedResource", item_id: id)
       .order(:created_at).to_a
   end
 
-  { site_names: site_names, lod_links: lod_links }
+  { site_names: site_names, linked_resources: linked_resources }
 end
 
 def deleted_site_name_ids(site_id)
@@ -73,13 +73,13 @@ def deleted_site_name_ids(site_id)
   (via_object + via_changes).uniq
 end
 
-def deleted_lod_link_ids(site_id)
-  via_object = PaperTrail::Version.where(item_type: "LodLink")
+def deleted_linked_resource_ids(site_id)
+  via_object = PaperTrail::Version.where(item_type: "LinkedResource")
     .where_object(linkable_id: site_id, linkable_type: "Site")
     .distinct
     .pluck(:item_id)
 
-  via_changes = PaperTrail::Version.where(item_type: "LodLink")
+  via_changes = PaperTrail::Version.where(item_type: "LinkedResource")
     .where_object_changes(linkable_id: [site_id])
     .where_object_changes(linkable_type: ["Site"])
     .distinct
@@ -134,10 +134,10 @@ def build_version_snapshot(site, version, peripherals)
     snapshot.build_snapshot_item(p_state, child_group_name: "site_names")
   end
 
-  peripherals[:lod_links].each_value do |pvs|
-    p_state = peripheral_state_at(LodLink, pvs, time)
+  peripherals[:linked_resources].each_value do |pvs|
+    p_state = peripheral_state_at(LinkedResource, pvs, time)
     next unless p_state
-    snapshot.build_snapshot_item(p_state, child_group_name: "lod_links")
+    snapshot.build_snapshot_item(p_state, child_group_name: "linked_resources")
   end
 
   snapshot.save!

@@ -49,11 +49,18 @@ class LinkedResource < ApplicationRecord
 
   enum :status, { pending: 'pending', approved: 'approved' }
 
-  belongs_to :linkable, polymorphic: true
+  belongs_to :linkable, polymorphic: true, touch: true
+
+  before_save :set_revision_comment_on_save, if: :linkable_is_site?
+  before_destroy :set_revision_comment_on_destroy, if: :linkable_is_site?
 
   # Scopes for filtering matches
   scope :pending, -> { where(status: 'pending') }
   scope :approved, -> { where(status: 'approved') }
+
+  def self.label
+    "external link"
+  end
 
   def external_url
     LinkedResource::Source.find(source)&.url_for(external_id)
@@ -93,6 +100,18 @@ class LinkedResource < ApplicationRecord
   end
 
   private
+
+  def linkable_is_site?
+    linkable.is_a?(Site)
+  end
+
+  def set_revision_comment_on_save
+    linkable.revision_comment = new_record? ? "Added #{self.class.label}." : "Changed #{self.class.label}."
+  end
+
+  def set_revision_comment_on_destroy
+    linkable.revision_comment = "Removed #{self.class.label}."
+  end
 
   def external_id_matches_source_pattern
     source_obj = LinkedResource::Source.find(source)
