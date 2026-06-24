@@ -2,6 +2,7 @@
 
 ## 1.2.1.9000 [unreleased]
 
+- Optimised JavaScript asset pipeline (#217)
 - Made software version visible in page footer and added Zenodo archive link (#436)
 - Removed standalone Typo show view. Typological dates are now only shown
   embedded in Site views (#398)
