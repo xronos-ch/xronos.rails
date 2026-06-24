@@ -64,7 +64,15 @@ bin/rails db:reset                           # Drop, create, load schema + seeds
 2. Implement minimal code to make it pass
 3. Refactor while tests stay green
 4. Stop to ask if the change is acceptable
-5. Update CHANGELOG and commit the change with a concise message
+5. Update CHANGELOG and suggest a brief commit message
+
+Never commit or push changes yourself; that is the user's job.
+
+## CHANGELOG
+
+CHANGELOG contains a brief log of significant, user-facing changes. 
+Ideally each line should be linked to at least one issue or pull request. 
+Do not over-fill the CHANGELOG with details of internal API changes, code refactoring, etc. that has no discernable impact on users.
 
 ## Naming Conventions
 
