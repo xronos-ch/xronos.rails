@@ -3,25 +3,26 @@ require "bibtex"
 namespace :xronos do
   namespace :import do
     desc "Import 14Canarias dataset"
-    task "14canarias", [:version, :dir] => :environment do |t, args|
-      version = args[:version] || abort("Usage: bin/rails \"xronos:import:14canarias[version,dir]\" — provide a version (e.g. v2) and path to data directory")
-      dir = args[:dir] || abort("Usage: bin/rails \"xronos:import:14canarias[version,dir]\" — provide a version (e.g. v2) and path to data directory")
+    task "14canarias", [:version, :dir, :source_url] => :environment do |t, args|
+      version = args[:version] || abort("Usage: bin/rails \"xronos:import:14canarias[version,dir,source_url]\" — provide a version, data directory, and source URL")
+      dir = args[:dir] || abort("Usage: bin/rails \"xronos:import:14canarias[version,dir,source_url]\" — provide a version, data directory, and source URL")
+      source_url = args[:source_url] || abort("Usage: bin/rails \"xronos:import:14canarias[version,dir,source_url]\" — provide a version, data directory, and source URL")
       abort "Source directory not found: #{dir}" unless Dir.exist?(dir)
 
       source = Source.register(
         name: "14Canarias",
         version: version,
         path: dir,
-        source_url: "https://doi.org/10.5334/joad.105",
+        source_url: source_url,
         license: "CC-BY 4.0",
         notes: "14Canarias: a radiocarbon database for the Canary Islands"
       )
 
-      admin_user_id = ENV.fetch("XRONOS_ADMIN_USER") do
-        abort "XRONOS_ADMIN_USER must be set"
+      admin_user_id = ENV.fetch("ADMIN_USER_ID") do
+        abort "ADMIN_USER_ID must be set"
       end
 
-      revision_comment = "Imported from 14Canarias #{version} <#{source.source_url}>"
+      revision_comment = "Imported from 14Canarias #{version} (<#{source_url}>)"
 
       PaperTrail.request(whodunnit: admin_user_id) do
         runner = Xronos::ImportRunner.new(source, csv_dir: dir)
