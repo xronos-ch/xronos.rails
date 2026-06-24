@@ -33,6 +33,11 @@ $card-cap-bg: none;
 @import 'bootstrap/scss/bootstrap';
 @import 'bootstrap-icons/font/bootstrap-icons';
 
+// Library stylesheets (moved from JavaScript CSS imports)
+@import 'nouislider/dist/nouislider';
+@import 'tom-select/dist/css/tom-select.bootstrap5.min';
+@import 'easymde/dist/easymde.min';
+
 // Application
 @import "components";
 @import "leaflet";
