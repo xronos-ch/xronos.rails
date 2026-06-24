@@ -7,6 +7,7 @@
 #  bp             :integer
 #  cal_bp         :integer
 #  cal_std        :integer
+#  delta_15n      :float
 #  delta_c13      :float
 #  delta_c13_std  :float
 #  lab_identifier :string

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_24_121255) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_24_130842) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -82,6 +82,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_24_121255) do
     t.bigint "c14_lab_id"
     t.bigint "sample_id"
     t.string "lab_identifier"
+    t.float "delta_15n"
     t.index ["c14_lab_id"], name: "index_c14s_on_c14_lab_id"
     t.index ["lab_identifier"], name: "index_c14s_on_lab_identifier"
     t.index ["method"], name: "index_c14s_on_method"
