@@ -26,6 +26,9 @@
 
 class Sample < ApplicationRecord
   include Versioned
+  include HasControlledTerms
+
+  controlled_term :part_of_organism, vocabulary: "part_of_organism"
 
   delegate :site, to: :context
   
