@@ -14,10 +14,16 @@
 #  version       :string
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#  reference_id  :bigint
 #
 # Indexes
 #
 #  index_sources_on_name_and_version  (name,version) UNIQUE WHERE (version IS NOT NULL)
+#  index_sources_on_reference_id      (reference_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (reference_id => references.id)
 #
 FactoryBot.define do
   factory :source do

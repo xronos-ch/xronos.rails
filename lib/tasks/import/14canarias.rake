@@ -21,14 +21,33 @@ namespace :xronos do
         abort "XRONOS_ADMIN_USER must be set"
       end
 
-      revision_comment =
-        "Imported from 14Canarias #{version} <https://doi.org/10.5281/zenodo.7755694>"
+      revision_comment = "Imported from 14Canarias #{version} <#{source.source_url}>"
 
       PaperTrail.request(whodunnit: admin_user_id) do
         runner = Xronos::ImportRunner.new(source, csv_dir: dir)
 
         begin
           runner.describe!(whodunnit: admin_user_id, revision_comment: revision_comment)
+
+          # Phase 0: Source reference
+          source_ref = runner.import!(Reference,
+            keys: { short_ref: "14Canarias" },
+            attributes: {
+              bibtex: <<~BIB.chomp
+                @article{Morales2023,
+                  author = {Morales, Jacob and Rodr{\'\i}guez, Amelia and Delgado, Tania},
+                  title = {{14Canarias}: A radiocarbon database for the Canary Islands},
+                  journal = {Journal of Open Archaeology Data},
+                  year = {2023},
+                  volume = {11},
+                  pages = {1--7},
+                  doi = {10.5334/joad.105}
+                }
+              BIB
+            },
+            revision_comment: revision_comment
+          )
+          source.update!(reference: source_ref)
 
           # Phase 1: Sites
           site_index = {}  # Id_site -> Site
@@ -108,6 +127,7 @@ namespace :xronos do
               },
               revision_comment: revision_comment
             )
+            cite_source!(c14)
 
             # Citation
             bib_key = cell(row, "Bibliografía")

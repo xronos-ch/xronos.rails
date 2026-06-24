@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_24_130842) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_24_140000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -327,7 +327,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_24_130842) do
     t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "reference_id"
     t.index ["name", "version"], name: "index_sources_on_name_and_version", unique: true, where: "(version IS NOT NULL)"
+    t.index ["reference_id"], name: "index_sources_on_reference_id"
   end
 
   create_table "taxons", force: :cascade do |t|
@@ -412,6 +414,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_24_130842) do
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "users", column: "resource_owner_id"
   add_foreign_key "site_names", "sites"
+  add_foreign_key "sources", "references"
   add_foreign_key "user_profiles", "users"
 
   create_view "data_views", materialized: true, sql_definition: <<-SQL

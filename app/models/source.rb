@@ -14,21 +14,29 @@
 #  version       :string
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#  reference_id  :bigint
 #
 # Indexes
 #
 #  index_sources_on_name_and_version  (name,version) UNIQUE WHERE (version IS NOT NULL)
+#  index_sources_on_reference_id      (reference_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (reference_id => references.id)
 #
 class Source < ApplicationRecord
+  belongs_to :reference, optional: true
   has_many :imports, dependent: :restrict_with_error
 
   validates :name, presence: true
   validates :name, uniqueness: { scope: :version }, if: :version?
 
   def self.register(name:, version:, path:, source_url: nil, license: nil, access_date: Date.current, notes: nil)
-    current_manifest = Dir["#{path}/*.csv"].to_h { |f|
-      [File.basename(f), Digest::SHA256.hexdigest(File.read(f))]
-    }
+    current_manifest = Dir.children(path).to_h { |basename|
+      full = File.join(path, basename)
+      [basename, File.file?(full) ? Digest::SHA256.hexdigest(File.read(full)) : nil]
+    }.compact
 
     source = find_or_create_by!(name: name, version: version) do |s|
       s.path = path

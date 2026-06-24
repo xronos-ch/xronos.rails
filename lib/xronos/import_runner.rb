@@ -104,6 +104,17 @@ module Xronos
       record
     end
 
+    # Links a citable record to the source's own bibliographic reference.
+    # The source reference must be set on the Source record before this is
+    # called (typically created from a BibTeX entry in the rake task).
+    # Safe to call multiple times — will not create duplicate citations.
+    def cite_source!(citable)
+      ref = @source.reference
+      return unless ref
+
+      Citation.find_or_create_by!(citing: citable, reference: ref)
+    end
+
     def increment_created(model)
       key = model.to_s
       @import.records_created[key] = @import.records_created.fetch(key, 0) + 1
