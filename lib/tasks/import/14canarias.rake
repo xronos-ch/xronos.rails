@@ -12,7 +12,7 @@ namespace :xronos do
         path: dir,
         source_url: source_url,
         license: "CC-BY 4.0",
-        notes: "14Canarias: a radiocarbon database for the Canary Islands"
+        notes: "Chronometric hygiene data (14CanariasHIG.csv) not used."
       )
 
       admin_user_id = ENV.fetch("ADMIN_USER_ID") do
