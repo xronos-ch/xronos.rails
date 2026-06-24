@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_11_235613) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_24_112044) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -142,17 +142,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_11_235613) do
     t.index ["assignable_type", "assignable_id", "functional_classification_category_id"], name: "idx_functional_classifications_unique_category", unique: true
     t.index ["assignable_type", "assignable_id"], name: "index_functional_classifications_on_assignable"
     t.index ["functional_classification_category_id"], name: "idx_on_functional_classification_category_id_0cc23f287f"
-  end
-
-  create_table "import_tables", force: :cascade do |t|
-    t.string "file"
-    t.datetime "imported_at", precision: nil
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "user_id"
-    t.jsonb "read_options"
-    t.jsonb "mapping"
-    t.index ["user_id"], name: "index_import_tables_on_user_id"
   end
 
   create_table "lod_links", force: :cascade do |t|
@@ -392,7 +381,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_11_235613) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "functional_classifications", "functional_classification_categories"
-  add_foreign_key "import_tables", "users"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_grants", "users", column: "resource_owner_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
