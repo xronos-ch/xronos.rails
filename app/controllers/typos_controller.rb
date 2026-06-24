@@ -101,7 +101,7 @@ class TyposController < ApplicationController
   def update
     respond_to do |format|
       if @typo.update(typo_params)
-        format.html { redirect_to @typo.sample.context.site, notice: "Typo was successfully updated." }
+        format.html { redirect_to @typo.site, notice: "Typo was successfully updated." }
         format.json { render :show, status: :ok, location: @typo }
       else
         format.html { render :edit }
