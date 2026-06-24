@@ -279,18 +279,6 @@
   resolved "https://registry.yarnpkg.com/@rollup/rollup-linux-x64-gnu/-/rollup-linux-x64-gnu-4.28.1.tgz#b83001b5abed2bcb5e2dbeec6a7e69b194235c1e"
   integrity sha512-fzgeABz7rrAlKYB0y2kSEiURrI0691CSL0+KXwKwhxvj92VULEDQLpBYLHpF49MSiPG4sq5CK3qHMnb9tlCjBw==
 
-"@terraformer/common@^2.1.2":
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/@terraformer/common/-/common-2.1.2.tgz#7bf83f81f1c3a99069c714c044004f9707f00c97"
-  integrity sha512-cwPdTFzIpekZhZRrgDEkqLKNPoqbyCBQHiemaovnGIeUx0Pl336MY/eCxzJ5zXkrQLVo9zPalq/vYW5HnyKevQ==
-
-"@terraformer/spatial@^2.1.2":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@terraformer/spatial/-/spatial-2.2.1.tgz#81165d19570dc35454c620cf55e7bbc9ec44bf69"
-  integrity sha512-Zq2WbKJgZspurToBJ7KjmmHC7HbvNt/fH8Bh/kj+RgcGoM9OzurAXlEfIMrVQQIh3ypSbJn+hHQ33n/d805uBQ==
-  dependencies:
-    "@terraformer/common" "^2.1.2"
-
 "@types/codemirror@^5.60.4":
   version "5.60.15"
   resolved "https://registry.yarnpkg.com/@types/codemirror/-/codemirror-5.60.15.tgz#0f82be6f4126d1e59cf4c4830e56dcd49d3c3e8a"
@@ -849,13 +837,6 @@ kdbush@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/kdbush/-/kdbush-3.0.0.tgz#f8484794d47004cc2d85ed3a79353dbe0abc2bf0"
   integrity sha512-hRkd6/XW4HTsA9vjVpY9tuXJYLSlelnkTmVFu4M9/7MIYQtFcHpbugAU7UbOfjOiVSVYl2fqgBuJ32JUmRo5Ew==
-
-leaflet-lasso@^2.2.8:
-  version "2.2.13"
-  resolved "https://registry.yarnpkg.com/leaflet-lasso/-/leaflet-lasso-2.2.13.tgz#015134715d6cb1fa4c7829e10718e13a77e927e1"
-  integrity sha512-XVGP2zoaEB4psLZttTK6K9i+wJckvxTD65um2vgDgTGutpEwxKpEBwCClnrSEK+zIMrJ9juhV5sd72XYKKgmlA==
-  dependencies:
-    "@terraformer/spatial" "^2.1.2"
 
 leaflet-providers@^1.13.0:
   version "1.13.0"

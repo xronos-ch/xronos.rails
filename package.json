@@ -6,25 +6,26 @@
 		"@hotwired/turbo-rails": "^7.3.0",
 		"@popperjs/core": "^2.11.8",
 		"@rails/activestorage": "^6.1.4-1",
-		"autoprefixer": "^10.4.15",
 		"bootstrap": "^5.3.1",
 		"bootstrap-icons": "^1.10.5",
 		"easymde": "^2.18.0",
-		"esbuild": "^0.19.2",
 		"leaflet": "^1.8.0",
-		"leaflet-lasso": "^2.2.8",
 		"leaflet-providers": "^1.13.0",
-		"nodemon": "^3.0.1",
 		"nouislider": "^15.7.0",
-		"postcss": "^8.4.29",
-		"postcss-cli": "^10.1.0",
-		"sass": "^1.66.1",
 		"supercluster": "^7.1.5",
 		"tom-select": "^2.0.1",
 		"vega": "^5.23.0",
 		"vega-embed": "^6.21.2",
 		"vega-lite": "^5.6.0",
 		"wnumb": "^1.2.0"
+	},
+	"devDependencies": {
+		"autoprefixer": "^10.4.15",
+		"esbuild": "^0.19.2",
+		"nodemon": "^3.0.1",
+		"postcss": "^8.4.29",
+		"postcss-cli": "^10.1.0",
+		"sass": "^1.66.1"
 	},
 	"resolutions": {
 		"glob-parent": "^5.1.2"
