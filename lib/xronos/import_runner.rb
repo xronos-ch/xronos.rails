@@ -9,6 +9,15 @@ module Xronos
       @import = Import.create!(source: @source, success: false)
     end
 
+    def self.parse_args!(args)
+      version = args[:version] || abort("Usage: bin/rails \"xronos:import:TASK[version,dir,source_url]\" — provide a version, data directory, and source URL")
+      dir = args[:dir] || abort("Usage: bin/rails \"xronos:import:TASK[version,dir,source_url]\" — provide a version, data directory, and source URL")
+      source_url = args[:source_url] || abort("Usage: bin/rails \"xronos:import:TASK[version,dir,source_url]\" — provide a version, data directory, and source URL")
+      abort "Source directory not found: #{dir}" unless Dir.exist?(dir)
+
+      [version, dir, source_url]
+    end
+
     def csv(filename, **csv_options, &block)
       path = File.join(@csv_dir, filename.to_s)
       total = File.foreach(path, encoding: csv_options[:encoding]).count - 1

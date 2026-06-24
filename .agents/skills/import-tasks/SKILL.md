@@ -37,10 +37,7 @@ namespace :xronos do
   namespace :import do
     desc "Import MyDataset"
     task "mydataset", [:version, :dir, :source_url] => :environment do |t, args|
-      version = args[:version] || abort("Usage: bin/rails \"xronos:import:mydataset[version,dir,source_url]\"")
-      dir = args[:dir] || abort("Usage: bin/rails \"xronos:import:mydataset[version,dir,source_url]\"")
-      source_url = args[:source_url] || abort("Usage: bin/rails \"xronos:import:mydataset[version,dir,source_url]\"")
-      abort "Source directory not found: #{dir}" unless Dir.exist?(dir)
+      version, dir, source_url = Xronos::ImportRunner.parse_args!(args)
 
       source = Source.register(
         name: "MyDataset",
@@ -100,10 +97,11 @@ end
 | `cite_source!(citable)` | Link a citable record to the source's reference (must set `source.reference` first) |
 | `import_record` | Current `Import` audit record |
 
-### Called explicitly on `runner` outside blocks
+### Called explicitly on `runner` (or `ImportRunner`) outside blocks
 
 | Method | Purpose |
 |--------|---------|
+| `Xronos::ImportRunner.parse_args!(args)` | (class method) Extract `version, dir, source_url` from task args; aborts with usage on missing args or missing dir |
 | `csv(filename, **csv_options, &block)` | Iterate CSV with progress bar; options forwarded to `CSV.foreach` |
 | `process_enum(enumerable, title:, &block)` | Iterate any enumerable with progress bar |
 | `describe!(whodunnit:, revision_comment:)` | Print pre-import options header |
@@ -139,3 +137,7 @@ end
 ## Reference implementation
 
 See `lib/tasks/import/14canarias.rake` for the canonical example.
+
+## Maintaining this skill
+
+If you add new shared helpers to `ImportRunner` or change the task skeleton convention, **update this skill file** so future agents use the correct patterns. The skill is the single source of truth for import task conventions.

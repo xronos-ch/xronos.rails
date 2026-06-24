@@ -4,10 +4,7 @@ namespace :xronos do
   namespace :import do
     desc "Import 14Canarias dataset"
     task "14canarias", [:version, :dir, :source_url] => :environment do |t, args|
-      version = args[:version] || abort("Usage: bin/rails \"xronos:import:14canarias[version,dir,source_url]\" — provide a version, data directory, and source URL")
-      dir = args[:dir] || abort("Usage: bin/rails \"xronos:import:14canarias[version,dir,source_url]\" — provide a version, data directory, and source URL")
-      source_url = args[:source_url] || abort("Usage: bin/rails \"xronos:import:14canarias[version,dir,source_url]\" — provide a version, data directory, and source URL")
-      abort "Source directory not found: #{dir}" unless Dir.exist?(dir)
+      version, dir, source_url = Xronos::ImportRunner.parse_args!(args)
 
       source = Source.register(
         name: "14Canarias",
