@@ -20,6 +20,8 @@ $font-family-sans-serif:
 	sans-serif;
 
 $headings-font-family: "Raleway", $font-family-sans-serif;
+
+$font-family-monospace: "Fira Mono", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 $enable-rounded: false;
 $enable-shadows: true;
 
@@ -37,3 +39,4 @@ $card-cap-bg: none;
 @import "layout";
 @import "slider";
 @import "typography";
+@import "fonts";

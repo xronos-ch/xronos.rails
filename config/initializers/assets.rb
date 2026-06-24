@@ -6,6 +6,8 @@ Rails.application.config.assets.version = "1.0"
 Rails.application.config.assets.paths.concat [
                                                # Bootstrap Icons web font
                                                Rails.root.join("node_modules", "bootstrap-icons", "font"),
+                                               # Self-hosted variable fonts
+                                               Rails.root.join("app/assets/fonts"),
                                              ]
 
 Rails.application.config.assets.precompile += %w( frontend.css )
