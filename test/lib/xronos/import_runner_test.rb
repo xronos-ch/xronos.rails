@@ -180,6 +180,57 @@ class Xronos::ImportRunnerTest < ActiveSupport::TestCase
     assert_not runner.import_record.success
   end
 
+  test "skip_unless skips row in csv block and counts reason" do
+    write_csv("samples.csv", [%w[Name BP], %w[Alpha 100], %w[Beta], %w[Gamma 200]])
+
+    kept = []
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    runner.csv("samples.csv") do |row|
+      skip_unless cell(row, "BP"), "missing BP"
+      kept << cell(row, "Name")
+    end
+
+    assert_equal %w[Alpha Gamma], kept
+    assert_equal 1, runner.import_record.records_skipped["missing BP"]
+  end
+
+  test "skip_unless skips row in process_enum block and counts reason" do
+    items = [{name: "A", val: "1"}, {name: "B", val: ""}, {name: "C", val: "3"}]
+
+    kept = []
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    runner.process_enum(items, title: "test") do |item|
+      skip_unless item[:val].present?, "blank val"
+      kept << item[:name]
+    end
+
+    assert_equal %w[A C], kept
+    assert_equal 1, runner.import_record.records_skipped["blank val"]
+  end
+
+  test "skip_unless uses 'unknown' reason when none given" do
+    items = [{name: "A"}, {name: "B"}]
+
+    kept = []
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    runner.process_enum(items, title: "test") do |item|
+      skip_unless item[:name] == "A"
+      kept << item[:name]
+    end
+
+    assert_equal %w[A], kept
+    assert_equal 1, runner.import_record.records_skipped["unknown"]
+  end
+
+  test "skip_unless does not skip when condition is true" do
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    runner.process_enum([1, 2, 3], title: "test") do |n|
+      skip_unless n.is_a?(Integer), "not int"
+    end
+
+    assert runner.import_record.records_skipped.empty?
+  end
+
   private
 
   def write_csv(filename, rows)

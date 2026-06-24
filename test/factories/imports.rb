@@ -6,6 +6,7 @@
 #  id              :bigint           not null, primary key
 #  error           :text
 #  records_created :jsonb
+#  records_skipped :jsonb
 #  success         :boolean          default(FALSE)
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null

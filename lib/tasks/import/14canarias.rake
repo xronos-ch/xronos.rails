@@ -78,14 +78,12 @@ namespace :xronos do
 
           # Phase 3: C14 data
           runner.csv("14CanariasDATA.csv", col_sep: ";", encoding: "utf-16le") do |row|
+            skip_unless site_index[cell(row, "Id_site")], "unknown site"
+
             site = site_index[cell(row, "Id_site")]
-            unless site
-              import_record.update!(error: "Site not found for Id_site=#{cell(row, "Id_site")}")
-              next
-            end
 
             # Discard rows without BP or SD — scientifically worthless
-            next unless cell(row, "BP") && cell(row, "SD")
+            skip_unless cell(row, "BP") && cell(row, "SD"), "missing BP or SD"
 
             # Context
             context = import!(site.contexts,

@@ -29,7 +29,7 @@ module Xronos
       )
 
       CSV.foreach(path, headers: true, **csv_options) do |row|
-        instance_exec(row, &block)
+        catch(:skip_row) { instance_exec(row, &block) }
         progress.increment
       end
     end
@@ -42,7 +42,7 @@ module Xronos
         format: "%t |%B| %c/%C (%E)"
       )
       enumerable.each do |item|
-        instance_exec(item, &block)
+        catch(:skip_row) { instance_exec(item, &block) }
         progress.increment
       end
     end
@@ -70,6 +70,8 @@ module Xronos
 
       total = @import.records_created_total
 
+      skipped = @import.records_skipped.reject { |_, v| v == 0 }
+
       label_width = [rows.map { |r| r[0].length }.max, "Model".length].max
       num_width  = [total.to_s.length, "Created".length].max
 
@@ -87,11 +89,28 @@ module Xronos
       puts sep
       puts "| #{'Total'.ljust(label_width)} | #{total.to_s.rjust(num_width)} |"
       puts sep
-      puts
+
+      unless skipped.empty?
+        total_skipped = skipped.values.sum
+        puts
+        puts "Skipped rows: #{total_skipped}"
+        skipped.each do |reason, count|
+          puts "  #{reason}: #{count}"
+        end
+        puts
+      end
     end
 
     def cell(row, column)
       row[column].to_s.strip.presence
+    end
+
+    def skip_unless(condition, reason = nil)
+      return if condition
+
+      key = reason || "unknown"
+      @import.records_skipped[key] = @import.records_skipped.fetch(key, 0) + 1
+      throw :skip_row
     end
 
     # Imports a record into the given scope, finding it by the combined set of

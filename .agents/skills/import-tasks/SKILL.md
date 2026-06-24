@@ -18,7 +18,7 @@ After mapping known columns to XRONOS models, list any unused columns to the use
 
 ### 3. Guard defensively
 - Use `cell(row, "Column")` for all CSV cell access (strips whitespace, returns `nil` for blanks).
-- Skip rows missing critical fields with early `next unless` guards.
+- Skip rows missing critical fields with `skip_unless condition, "reason"` (counts and reports skipped rows).
 - Use `&.to_i` / `&.to_f` for numeric conversions after `cell()`.
 - Never use `find_by` + `update` — always use `import!`.
 
@@ -94,6 +94,7 @@ end
 |--------|---------|
 | `import!(scope, keys:, attributes: {}, revision_comment: nil)` | Create-only import; finds by merged keys+attributes, creates on miss |
 | `cell(row, column)` | Sanitise CSV cell: strip whitespace, blank → `nil` |
+| `skip_unless(condition, reason)` | Guard clause: `throw :skip_row` unless condition is truthy; counts skipped rows by `reason` in `records_skipped` |
 | `cite_source!(citable)` | Link a citable record to the source's reference (must set `source.reference` first) |
 | `import_record` | Current `Import` audit record |
 
@@ -131,6 +132,20 @@ test "does not duplicate identical data" do
 
   assert_equal a.id, b.id
   assert_equal 1, runner.import_record.records_created["site"]
+end
+
+test "skip_unless skips row and counts reason" do
+  write_csv("samples.csv", [%w[Name BP], %w[Alpha 100], %w[Beta], %w[Gamma 200]])
+
+  kept = []
+  runner = Xronos::ImportRunner.new(source, csv_dir: tmpdir)
+  runner.csv("samples.csv") do |row|
+    skip_unless cell(row, "BP"), "missing BP"
+    kept << cell(row, "Name")
+  end
+
+  assert_equal %w[Alpha Gamma], kept
+  assert_equal 1, runner.import_record.records_skipped["missing BP"]
 end
 ```
 

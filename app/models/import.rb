@@ -6,6 +6,7 @@
 #  id              :bigint           not null, primary key
 #  error           :text
 #  records_created :jsonb
+#  records_skipped :jsonb
 #  success         :boolean          default(FALSE)
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
@@ -26,6 +27,10 @@ class Import < ApplicationRecord
 
   def records_created_total
     records_created.values.sum
+  end
+
+  def records_skipped_total
+    records_skipped.values.sum
   end
 
   def summary
