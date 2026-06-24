@@ -24,7 +24,7 @@ class SyncTaxonWithGbifJob < ApplicationJob
 
     match = GBIF::Species.match(scientificName: taxon.name, strict: true)
     return unless match
-    return unless match["matchType"] == "EXACT"
+    return unless match.dig("diagnostics", "matchType") == "EXACT"
 
     usage = GBIF::Species.accepted_usage match
     return unless usage.present?
