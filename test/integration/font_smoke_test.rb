@@ -17,8 +17,8 @@ class FontSmokeTest < ActiveSupport::TestCase
   test "frontend.css declares @font-face for all three custom font families" do
     css = Rails.root.join("app/assets/builds/frontend.css").read
 
-    assert_includes css, 'font-family: "Inter"'
-    assert_includes css, 'font-family: "Raleway"'
-    assert_includes css, 'font-family: "Fira Mono"'
+    assert_match(/font-family:"Inter"/, css)
+    assert_match(/font-family:"Raleway"/, css)
+    assert_match(/font-family:"Fira Mono"/, css)
   end
 end
