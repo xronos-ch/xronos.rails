@@ -6,8 +6,8 @@ class SyncTaxonWithGbifJobTest < ActiveJob::TestCase
   #
   test "sets gbif_id from exact match" do
     taxon = FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: nil)
+    match = { "diagnostics" => { "matchType" => "EXACT" } }
 
-    match = { "matchType" => "EXACT" }
     usage = { "key" => "123", "canonicalName" => "Quercus robur" }
 
     GBIF::Species.stub(:match, match) do
@@ -40,7 +40,7 @@ class SyncTaxonWithGbifJobTest < ActiveJob::TestCase
   test "uses accepted usage over synonym" do
     taxon = FactoryBot.create(:taxon, name: "Scirpus maritimus", gbif_id: nil)
 
-    match = { "matchType" => "EXACT" }
+    match = { "diagnostics" => { "matchType" => "EXACT" } }
 
     accepted = {
       "key" => "2718307",
@@ -128,7 +128,7 @@ class SyncTaxonWithGbifJobTest < ActiveJob::TestCase
   test "reuses match when enforcing canonical name" do
     taxon = FactoryBot.create(:taxon, name: "Foo", gbif_id: nil)
 
-    match = { "matchType" => "EXACT" }
+    match = { "diagnostics" => { "matchType" => "EXACT" } }
     usage = { "key" => "42", "canonicalName" => "Bar" }
 
     GBIF::Species.stub(:match, match) do
