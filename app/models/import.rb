@@ -6,7 +6,6 @@
 #  id              :bigint           not null, primary key
 #  error           :text
 #  records_created :jsonb
-#  records_updated :jsonb
 #  success         :boolean          default(FALSE)
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
@@ -29,15 +28,8 @@ class Import < ApplicationRecord
     records_created.values.sum
   end
 
-  def records_updated_total
-    records_updated.values.sum
-  end
-
   def summary
     created = records_created.map { |k, v| "#{v} #{k}" }.join(", ")
-    updated = records_updated.map { |k, v| "#{v} #{k}" }.join(", ")
-    parts = ["#{source.label}: #{created} created"]
-    parts << "#{updated} updated" unless updated.blank?
-    parts.join(", ")
+    "#{source.label}: #{created} created"
   end
 end

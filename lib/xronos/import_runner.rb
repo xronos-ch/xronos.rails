@@ -20,7 +20,7 @@ module Xronos
       )
 
       CSV.foreach(path, headers: true, **csv_options) do |row|
-        block.call(row)
+        instance_exec(row, &block)
         progress.increment
       end
     end
@@ -33,15 +33,14 @@ module Xronos
         format: "%t |%B| %c/%C (%E)"
       )
       enumerable.each do |item|
-        block.call(item)
+        instance_exec(item, &block)
         progress.increment
       end
     end
 
     def describe!(whodunnit:, revision_comment:)
       puts "== Import: #{@source.label} =="
-      puts "Source: #{@source.name}"
-      puts "Version: (#{@source.version})"
+      puts "Source: #{@source.name} (#{@source.version})"
       puts "Data path: #{@csv_dir}"
       puts "Whodunnit: #{whodunnit}"
       puts "Revision comment: #{revision_comment}"
@@ -49,37 +48,35 @@ module Xronos
     end
 
     def report!
-      all_models = (@import.records_created.keys + @import.records_updated.keys).uniq.select { |m|
-        @import.records_created.fetch(m, 0) + @import.records_updated.fetch(m, 0) > 0
+      all_models = @import.records_created.keys.select { |m|
+        @import.records_created.fetch(m, 0) > 0
       }.sort
 
       return if all_models.empty?
 
       rows = all_models.map do |model|
-        created = @import.records_created.fetch(model, 0)
-        updated = @import.records_updated.fetch(model, 0)
-        [model.pluralize(created + updated), created.to_s, updated.to_s]
+        count = @import.records_created.fetch(model, 0)
+        [model.pluralize(count), count.to_s]
       end
 
-      total_created = @import.records_created_total
-      total_updated = @import.records_updated_total
+      total = @import.records_created_total
 
       label_width = [rows.map { |r| r[0].length }.max, "Model".length].max
-      num_width  = [total_created.to_s.length, total_updated.to_s.length, "Created".length, "Updated".length].max
+      num_width  = [total.to_s.length, "Created".length].max
 
-      sep = "+-#{"-" * label_width}-+-#{"-" * num_width}-+-#{"-" * num_width}-+"
+      sep = "+-#{"-" * label_width}-+-#{"-" * num_width}-+"
 
       puts
       puts "--- Import complete ---"
       puts
       puts sep
-      puts "| #{'Model'.ljust(label_width)} | #{'Created'.rjust(num_width)} | #{'Updated'.rjust(num_width)} |"
+      puts "| #{'Model'.ljust(label_width)} | #{'Created'.rjust(num_width)} |"
       puts sep
-      rows.each do |label, created, updated|
-        puts "| #{label.ljust(label_width)} | #{created.rjust(num_width)} | #{updated.rjust(num_width)} |"
+      rows.each do |label, count|
+        puts "| #{label.ljust(label_width)} | #{count.rjust(num_width)} |"
       end
       puts sep
-      puts "| #{'Total'.ljust(label_width)} | #{total_created.to_s.rjust(num_width)} | #{total_updated.to_s.rjust(num_width)} |"
+      puts "| #{'Total'.ljust(label_width)} | #{total.to_s.rjust(num_width)} |"
       puts sep
       puts
     end
@@ -88,14 +85,28 @@ module Xronos
       row[column].to_s.strip.presence
     end
 
+    # Imports a record into the given scope, finding it by the combined set of
+    # identity keys and attributes. A record is created only when no exact
+    # match exists — any difference in keys or attributes produces a new record.
+    # This ensures that all data from the source is represented, even minor
+    # variants, without ever silently overwriting existing data.
+    def import!(scope, keys:, attributes: {}, revision_comment: nil)
+      find_attrs = keys.merge(attributes)
+      record = scope.find_or_initialize_by(find_attrs)
+
+      if record.new_record?
+        record.assign_attributes(find_attrs)
+        record.revision_comment = revision_comment if record.respond_to?(:revision_comment=)
+        record.save!
+        increment_created(record.model_name.singular)
+      end
+
+      record
+    end
+
     def increment_created(model)
       key = model.to_s
       @import.records_created[key] = @import.records_created.fetch(key, 0) + 1
-    end
-
-    def increment_updated(model)
-      key = model.to_s
-      @import.records_updated[key] = @import.records_updated.fetch(key, 0) + 1
     end
 
     def succeed!

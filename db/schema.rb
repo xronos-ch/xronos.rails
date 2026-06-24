@@ -148,7 +148,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_24_130842) do
   create_table "imports", force: :cascade do |t|
     t.bigint "source_id", null: false
     t.jsonb "records_created", default: {}
-    t.jsonb "records_updated", default: {}
     t.boolean "success", default: false
     t.text "error"
     t.datetime "created_at", null: false

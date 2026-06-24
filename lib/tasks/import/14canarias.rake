@@ -33,36 +33,37 @@ namespace :xronos do
           # Phase 1: Sites
           site_index = {}  # Id_site -> Site
           runner.csv("14CanariasSITE.csv") do |row|
-            site_type = SiteType.find_or_create_by!(name: cell(row, "Tipo de yacimiento"))
-            site = Site.find_or_create_by!(name: cell(row, "Yacimiento")) do |s|
-              s.lat = cell(row, "Latitud")
-              s.lng = cell(row, "Longitud")
-              s.country_code = "ES"
-              s.revision_comment = revision_comment
-            end
+            site_type = import!(SiteType, keys: { name: cell(row, "Tipo de yacimiento") })
+            site = import!(Site,
+              keys: { name: cell(row, "Yacimiento") },
+              attributes: {
+                lat: cell(row, "Latitud"),
+                lng: cell(row, "Longitud"),
+                country_code: "ES"
+              },
+              revision_comment: revision_comment
+            )
             site.site_types << site_type unless site.site_types.include?(site_type)
             site_index[cell(row, "Id_site")] = site
-            runner.increment_created(:site) if site.previously_new_record?
           end
 
           # Phase 2: References
           bibtex_key_map = {}  # BibTeX key -> Reference
           bib = BibTeX.parse(File.read(File.join(dir, "14CanariasREF.bib")))
           runner.process_enum(bib.each_entry, title: "14CanariasREF.bib") do |entry|
-            short_ref = entry.key
-            reference = Reference.find_or_create_by!(short_ref: short_ref) do |r|
-              r.bibtex = entry.to_s
-              r.revision_comment = revision_comment
-            end
+            reference = import!(Reference,
+              keys: { short_ref: entry.key },
+              attributes: { bibtex: entry.to_s },
+              revision_comment: revision_comment
+            )
             bibtex_key_map[entry.key] = reference
-            runner.increment_created(:reference) if reference.previously_new_record?
           end
 
           # Phase 3: C14 data
           runner.csv("14CanariasDATA.csv", col_sep: ";", encoding: "utf-16le") do |row|
             site = site_index[cell(row, "Id_site")]
             unless site
-              runner.import_record.update!(error: "Site not found for Id_site=#{cell(row, "Id_site")}")
+              import_record.update!(error: "Site not found for Id_site=#{cell(row, "Id_site")}")
               next
             end
 
@@ -70,52 +71,50 @@ namespace :xronos do
             next unless cell(row, "BP") && cell(row, "SD")
 
             # Context
-            context_name = cell(row, "Contexto arqueologico")
-            context = site.contexts.find_or_create_by!(name: context_name) do |c|
-              c.revision_comment = revision_comment
-            end
-            runner.increment_created(:context) if context.previously_new_record?
+            context = import!(site.contexts,
+              keys: { name: cell(row, "Contexto arqueologico") },
+              revision_comment: revision_comment
+            )
 
             # Material
-            material_name = cell(row, "Material")
             material = nil
+            material_name = cell(row, "Material")
             if material_name
-              material = Material.find_or_create_by!(name: material_name)
-              runner.increment_created(:material) if material.previously_new_record?
+              material = import!(Material, keys: { name: material_name })
             end
 
             # Taxon
-            taxon_name = cell(row, "Especie")
             taxon = nil
+            taxon_name = cell(row, "Especie")
             if taxon_name
-              taxon = Taxon.find_or_create_by!(name: taxon_name)
-              runner.increment_created(:taxon) if taxon.previously_new_record?
+              taxon = import!(Taxon, keys: { name: taxon_name })
             end
 
             # Sample
-            sample = context.samples.find_or_create_by!(material: material, taxon: taxon) do |s|
-              s.revision_comment = revision_comment
-            end
-            runner.increment_created(:sample) if sample.previously_new_record?
+            sample = import!(context.samples,
+              keys: { material: material, taxon: taxon },
+              revision_comment: revision_comment
+            )
 
             # C14
-            lab_id = cell(row, "IdMuestra")
-            c14 = sample.c14s.find_or_create_by!(lab_identifier: lab_id) do |c|
-              c.bp = cell(row, "BP")&.to_i
-              c.std = cell(row, "SD")&.to_i
-              c.delta_c13 = cell(row, "Carbono_13")&.to_f
-              c.delta_15n = cell(row, "Nitrogeno_15")&.to_f
-              c.method = cell(row, "Tipo")
-              c.revision_comment = revision_comment
-            end
-            runner.increment_created(:c14) if c14.previously_new_record?
+            c14 = import!(sample.c14s,
+              keys: { lab_identifier: cell(row, "IdMuestra") },
+              attributes: {
+                bp: cell(row, "BP")&.to_i,
+                std: cell(row, "SD")&.to_i,
+                delta_c13: cell(row, "Carbono_13")&.to_f,
+                delta_15n: cell(row, "Nitrogeno_15")&.to_f,
+                method: cell(row, "Tipo")
+              },
+              revision_comment: revision_comment
+            )
 
             # Citation
             bib_key = cell(row, "Bibliografía")
             if bib_key
               reference = bibtex_key_map[bib_key]
               if reference
-                Citation.find_or_create_by!(citing: c14, reference: reference)
+                import!(Citation, keys: { citing: c14, reference: reference })
               end
             end
           end

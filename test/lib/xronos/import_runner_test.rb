@@ -72,14 +72,6 @@ class Xronos::ImportRunnerTest < ActiveSupport::TestCase
     assert_equal 1, runner.import_record.records_created["c14"]
   end
 
-  test "increment_updated increments per model" do
-    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
-    runner.increment_updated(:site)
-    runner.increment_updated(:site)
-
-    assert_equal 2, runner.import_record.records_updated["site"]
-  end
-
   test "succeed! sets success to true" do
     runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
     runner.succeed!
@@ -114,6 +106,72 @@ class Xronos::ImportRunnerTest < ActiveSupport::TestCase
     runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
     runner.process_enum(items, title: "letters") { |item| yielded << item }
     assert_equal %w[a b c], yielded
+  end
+
+  test "import! creates a record and increments counter" do
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    site = runner.import!(Site, keys: { name: "Alpha" },
+      attributes: { lat: "10.5", country_code: "ES" })
+
+    assert site.persisted?
+    assert_equal "Alpha", site.name
+    assert_equal BigDecimal("10.5"), site.lat
+    assert_equal "ES", site.country_code
+    assert_equal 1, runner.import_record.records_created["site"]
+  end
+
+  test "import! creates new records for attribute variations" do
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+
+    site_a = runner.import!(Site, keys: { name: "Alpha" },
+      attributes: { lat: "10.5", lng: "20.3", country_code: "ES" })
+    site_b = runner.import!(Site, keys: { name: "Alpha" },
+      attributes: { lat: "99.9", lng: "88.8", country_code: "PT" })
+
+    assert_not_equal site_a.id, site_b.id
+    assert_equal 2, runner.import_record.records_created["site"]
+  end
+
+  test "import! does not create duplicates for identical data" do
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+
+    site_a = runner.import!(Site, keys: { name: "Alpha" },
+      attributes: { lat: "10.5", lng: "20.3", country_code: "ES" })
+    site_b = runner.import!(Site, keys: { name: "Alpha" },
+      attributes: { lat: "10.5", lng: "20.3", country_code: "ES" })
+
+    assert_equal site_a.id, site_b.id
+    assert_equal 1, runner.import_record.records_created["site"]
+  end
+
+  test "import! works with association scope" do
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    site = create(:site, name: "Test")
+
+    context = runner.import!(site.contexts,
+      keys: { name: "Trench A" },
+      revision_comment: "import"
+    )
+
+    assert context.persisted?
+    assert_equal site, context.site
+    assert_equal 1, runner.import_record.records_created["context"]
+  end
+
+  test "import! works without attributes" do
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+
+    material = runner.import!(Material, keys: { name: "Wood" })
+
+    assert material.persisted?
+    assert_equal "Wood", material.name
+    assert_equal 1, runner.import_record.records_created["material"]
+  end
+
+  test "import! does not require revision_comment on models without Versioned" do
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    material = runner.import!(Material, keys: { name: "Bone" })
+    assert material.persisted?
   end
 
   test "import record is persisted immediately" do
