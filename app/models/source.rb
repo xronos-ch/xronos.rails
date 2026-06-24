@@ -4,7 +4,6 @@
 # Database name: primary
 #
 #  id            :bigint           not null, primary key
-#  access_date   :date
 #  file_manifest :jsonb
 #  license       :string
 #  name          :string           not null
@@ -32,7 +31,7 @@ class Source < ApplicationRecord
   validates :name, presence: true
   validates :name, uniqueness: { scope: :version }, if: :version?
 
-  def self.register(name:, version:, path:, source_url: nil, license: nil, access_date: Date.current, notes: nil)
+  def self.register(name:, version:, path:, source_url: nil, license: nil, notes: nil)
     current_manifest = Dir.children(path).to_h { |basename|
       full = File.join(path, basename)
       [basename, File.file?(full) ? Digest::SHA256.hexdigest(File.read(full)) : nil]
@@ -43,7 +42,6 @@ class Source < ApplicationRecord
       s.file_manifest = current_manifest
       s.source_url = source_url
       s.license = license
-      s.access_date = access_date
       s.notes = notes
     end
 

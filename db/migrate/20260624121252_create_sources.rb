@@ -6,7 +6,6 @@ class CreateSources < ActiveRecord::Migration[8.0]
       t.text :path
       t.jsonb :file_manifest, default: {}
       t.string :source_url
-      t.date :access_date
       t.string :license
       t.text :notes
       t.timestamps

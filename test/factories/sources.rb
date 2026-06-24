@@ -4,7 +4,6 @@
 # Database name: primary
 #
 #  id            :bigint           not null, primary key
-#  access_date   :date
 #  file_manifest :jsonb
 #  license       :string
 #  name          :string           not null
@@ -31,7 +30,6 @@ FactoryBot.define do
     version { "v1" }
     path { "data/sources/#{name}/#{version}" }
     source_url { Faker::Internet.url }
-    access_date { Date.current }
     license { "CC-BY 4.0" }
 
     trait :api do

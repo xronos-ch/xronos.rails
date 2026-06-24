@@ -4,7 +4,6 @@
 # Database name: primary
 #
 #  id            :bigint           not null, primary key
-#  access_date   :date
 #  file_manifest :jsonb
 #  license       :string
 #  name          :string           not null
@@ -99,13 +98,11 @@ class SourceTest < ActiveSupport::TestCase
         name: "test", version: "v1", path: dir,
         source_url: "https://example.org",
         license: "CC-BY 4.0",
-        access_date: Date.new(2026, 6, 24),
         notes: "Some notes"
       )
 
       assert_equal "https://example.org", source.source_url
       assert_equal "CC-BY 4.0", source.license
-      assert_equal Date.new(2026, 6, 24), source.access_date
       assert_equal "Some notes", source.notes
     end
   end
