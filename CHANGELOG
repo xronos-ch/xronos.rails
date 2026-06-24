@@ -2,7 +2,8 @@
 
 ## 1.2.1.9000 [unreleased]
 
-- Added generic `ControlledVocabulary` models (#444)
+- Added generic `ControlledVocabulary` models for controlled terms (#444)
+  - Added controlled term attribute `part_of_organism` to samples (#253)
 - Made software version visible in page footer and added Zenodo archive link (#436)
 - Removed standalone Typo show view. Typological dates are now only shown
   embedded in Site views (#398)

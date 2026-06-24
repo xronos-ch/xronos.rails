@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_25_120000) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_25_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -284,6 +284,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_25_120000) do
     t.decimal "position_y"
     t.decimal "position_z"
     t.text "position_crs"
+    t.text "part_of_organism"
     t.index ["context_id"], name: "index_samples_on_context_id"
     t.index ["material_id"], name: "index_samples_on_material_id"
     t.index ["position_crs"], name: "index_samples_on_position_crs"

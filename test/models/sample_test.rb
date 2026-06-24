@@ -4,6 +4,7 @@
 # Database name: primary
 #
 #  id                   :bigint           not null, primary key
+#  part_of_organism     :text
 #  position_crs         :text
 #  position_description :text
 #  position_x           :decimal(, )
@@ -38,6 +39,24 @@ class SampleTest < ActiveSupport::TestCase
     create_list(:typo, 2, sample: sample)
 
     assert_dependent_destroy(sample, :typos, count: 2)
+  end
+
+  test "part_of_organism is stored as a free-text string" do
+    sample = create(:sample, part_of_organism: "maize cob")
+
+    assert_equal "maize cob", sample.reload.part_of_organism
+  end
+
+  test "part_of_organism is nullable" do
+    sample = create(:sample, part_of_organism: nil)
+
+    assert_nil sample.reload.part_of_organism
+  end
+
+  test "part_of_organism accepts any string, including values not in any vocabulary" do
+    sample = build(:sample, part_of_organism: "some free-text value (not a known term)")
+
+    assert sample.valid?
   end
 
 end
