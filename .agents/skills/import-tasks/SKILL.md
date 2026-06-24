@@ -1,76 +1,34 @@
-# Skill: XRONOS Import Tasks
+---
+name: import-tasks
+description: Write xronos:import:* rake tasks using ImportRunner — import external datasets from CSV and BibTeX with provenance tracking and PaperTrail auditing.
+license: MIT
+---
 
-Guide for writing `xronos:import:*` rake tasks using the `ImportRunner` framework.
+## Contract
 
-## Core Contract
+Import tasks are **create-only**. They never update existing records — any variation in source data produces a new record (matched across all keys + attributes). Duplicate resolution is handled separately.
 
-**Import tasks never update existing records.** They only create new records when no exact match (by all keys + attributes) exists. Any variation in the source data produces a new record — duplicate resolution is handled separately.
+## Workflow
 
-## Architecture
+### 1. Understand the source data
+Inspect all files (CSV headers + sample rows, BibTeX keys, documentation). If a column's meaning is unclear, **ask the user**. If the data contains types that don't exist in XRONOS's model, **ask the user** whether to add them.
 
-| Component | Role |
-|-----------|------|
-| `Source` | Provenance tracking (name, version, path, licence, URL, SHA256 file manifest). Register via `Source.register`. |
-| `Import` | Audit log with per-model creation counters, success/failure status, error text. |
-| `ImportRunner` | Orchestrator: progress bars, CSV/array iteration, record import, CLI output. |
+### 2. Flag unused columns
+After mapping known columns to XRONOS models, list any unused columns to the user — they may contain overlooked data or be ignorable noise.
 
-## Workflow for Writing an Import Task
-
-### 1. Understand the Source Data
-
-- Inspect all source files: CSV headers, sample rows, BibTeX keys, any accompanying documentation.
-- If a column's meaning is unclear, **ask the user** before deciding on a mapping.
-- If the data contains a type that does not exist in XRONOS's data model (e.g. isotopic ratios, anthropological measurements), **ask the user** whether it should be added.
-
-### 2. Identify Unused Columns
-
-After mapping known columns to XRONOS models, flag any columns that were not used to the user — they may contain overlooked data or be ignorable noise.
-
-### 3. Guard Against Bad Data
-
-- Use `cell(row, "Column")` for all CSV cell access — it strips whitespace and returns `nil` for blanks.
-- Skip rows missing critical fields with early guard clauses.
+### 3. Guard defensively
+- Use `cell(row, "Column")` for all CSV cell access (strips whitespace, returns `nil` for blanks).
+- Skip rows missing critical fields with early `next unless` guards.
 - Use `&.to_i` / `&.to_f` for numeric conversions after `cell()`.
-- Use `find_or_initialize_by` (via `import!`) — never raw `find_by` or `update` calls.
+- Never use `find_by` + `update` — always use `import!`.
 
-### 4. Always Cite the Source
+### 4. Write the rake task
+Follow the skeleton below. Every task takes three required arguments: `[version, dir, source_url]`.
 
-Every import must create a bibliographic reference for the source dataset itself and link it to all citable records (C14 measurements, etc.) via `cite_source!`. The BibTeX should be provided by the source authors — do not generate it yourself.
+### 5. Cite the source
+Create a bibliographic reference for the source dataset itself (Phase 0 in the skeleton, using BibTeX provided by the source authors). Store it on the `Source` record, then call `cite_source!(record)` after creating each citable record.
 
-### 5. Create a Rake Task
-
-Use the versioned [version, dir] argument pattern. Every run is explicit about where data lives.
-
-### 6. Create a Bibliographic Reference for the Source
-
-After registering the source, create the source's own reference from a BibTeX entry supplied by the source authors and store it on the Source:
-
-```ruby
-source_ref = runner.import!(Reference,
-  keys: { short_ref: "SourceName" },
-  attributes: { bibtex: <<~BIB.chomp
-    @article{Author2023,
-      author = {Author, A. and Author, B.},
-      title  = {Title},
-      ...
-    }
-  BIB
-  },
-  revision_comment: revision_comment
-)
-source.update!(reference: source_ref)
-```
-
-### 7. Link Citable Records to the Source
-
-After creating each citable record (typically C14 measurements), call `cite_source!`:
-
-```ruby
-c14 = import!(sample.c14s, keys: { lab_identifier: ... }, attributes: { ... })
-cite_source!(c14)
-```
-
-## Rake Task Skeleton
+## Skeleton
 
 ```ruby
 require "bibtex"  # if BibTeX files are used
@@ -93,9 +51,8 @@ namespace :xronos do
         notes: "MyDataset: description"
       )
 
-      admin_user_id = ENV.fetch("ADMIN_USER_ID") { abort "ADMIN_USER_ID must be set" }
-
-      revision_comment = "Imported from MyDataset #{version} <<#{source_url}>>"
+      admin_user_id = ENV.fetch("XRONOS_ADMIN_USER") { abort "XRONOS_ADMIN_USER must be set" }
+      revision_comment = "Imported from MyDataset #{version} <#{source_url}>"
 
       PaperTrail.request(whodunnit: admin_user_id) do
         runner = Xronos::ImportRunner.new(source, csv_dir: dir)
@@ -103,7 +60,22 @@ namespace :xronos do
         begin
           runner.describe!(whodunnit: admin_user_id, revision_comment: revision_comment)
 
-          # === Import phases here ===
+          # Phase 0: Source reference
+          source_ref = runner.import!(Reference,
+            keys: { short_ref: "MyDataset" },
+            attributes: { bibtex: <<~BIB.chomp
+              @article{Author2023,
+                author = {Author, A. and Author, B.},
+                title  = {Title},
+                doi    = {10.xxxx/xxxxx}
+              }
+            BIB
+            },
+            revision_comment: revision_comment
+          )
+          source.update!(reference: source_ref)
+
+          # === Import data phases here (use csv/process_enum with instance_exec blocks) ===
 
           runner.succeed!
           runner.report!
@@ -117,84 +89,30 @@ namespace :xronos do
 end
 ```
 
-## ImportRunner API
+## API Reference
 
-Available inside `csv` and `process_enum` blocks (via `instance_exec`):
+### Available inside blocks (`csv`, `process_enum`) via `instance_exec`
 
-### `csv(filename, **csv_options, &block)`
+| Method | Purpose |
+|--------|---------|
+| `import!(scope, keys:, attributes: {}, revision_comment: nil)` | Create-only import; finds by merged keys+attributes, creates on miss |
+| `cell(row, column)` | Sanitise CSV cell: strip whitespace, blank → `nil` |
+| `cite_source!(citable)` | Link a citable record to the source's reference (must set `source.reference` first) |
+| `import_record` | Current `Import` audit record |
 
-Iterates a CSV with a progress bar. Options passed to `CSV.foreach`.
+### Called explicitly on `runner` outside blocks
 
-```ruby
-runner.csv("data.csv", col_sep: ";", encoding: "utf-16le") do |row|
-  name = cell(row, "Name")
-  import!(Site, keys: { name: name }, ...)
-end
-```
-
-### `process_enum(enumerable, title:, &block)`
-
-Progress bar for any enumerable (BibTeX entries, JSON arrays, etc.).
-
-```ruby
-bib = BibTeX.parse(File.read("refs.bib"))
-runner.process_enum(bib.each_entry, title: "refs.bib") do |entry|
-  import!(Reference, keys: { short_ref: entry.key }, attributes: { bibtex: entry.to_s })
-end
-```
-
-### `import!(scope, keys:, attributes: {}, revision_comment: nil)`
-
-Creates a record only when no exact match exists across the combined `keys` + `attributes`. Never modifies existing data. Sets `revision_comment` on models that include `Versioned`.
-
-```ruby
-# Simple lookup
-import!(Material, keys: { name: "Wood" })
-
-# With attributes
-import!(Site,
-  keys: { name: cell(row, "Name") },
-  attributes: { lat: cell(row, "Lat")&.to_f, country_code: "ES" },
-  revision_comment: revision_comment
-)
-
-# Association scope
-import!(site.contexts, keys: { name: cell(row, "Context") },
-  revision_comment: revision_comment)
-```
-
-### `cite_source!(citable)`
-
-Links a citable record to the source's own bibliographic reference. The source must have its `source_reference` set beforehand. Safe to call multiple times.
-
-```ruby
-cite_source!(c14)
-```
-
-### `cell(row, column)`
-
-Sanitises a CSV cell: strips whitespace, returns `nil` for blank/empty values.
-
-```ruby
-name = cell(row, "Name")    # "  Foo  " → "Foo"
-bp   = cell(row, "BP")&.to_i  # "" → nil, "5000" → 5000
-```
-
-### `describe!(whodunnit:, revision_comment:)`
-
-Prints an options header before the import begins.
-
-### `report!`
-
-Prints an ASCII table of created records after completion.
-
-### `succeed!` / `import_record`
-
-`succeed!` marks the Import as successful and persists counters. `import_record` returns the Import record for error logging.
+| Method | Purpose |
+|--------|---------|
+| `csv(filename, **csv_options, &block)` | Iterate CSV with progress bar; options forwarded to `CSV.foreach` |
+| `process_enum(enumerable, title:, &block)` | Iterate any enumerable with progress bar |
+| `describe!(whodunnit:, revision_comment:)` | Print pre-import options header |
+| `report!` | Print post-import ASCII table of created records |
+| `succeed!` | Mark import as successful, persist counters |
 
 ## Testing
 
-Test `import!` behaviour directly via `ImportRunner`:
+Test `import!` directly via `ImportRunner`:
 
 ```ruby
 test "creates records for attribute variations" do
@@ -218,6 +136,6 @@ test "does not duplicate identical data" do
 end
 ```
 
-## Reference Implementation
+## Reference implementation
 
 See `lib/tasks/import/14canarias.rake` for the canonical example.
