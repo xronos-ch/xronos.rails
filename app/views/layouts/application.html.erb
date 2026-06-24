@@ -150,7 +150,7 @@
     <hr>
 
     <div class="row">
-      <div class="col-md-9">
+      <div class="col-md-6">
         <small class="rights">
           This work is licensed under a
           <a class="link-light" rel="license" href="http://creativecommons.org/licenses/by/4.0/">
@@ -159,10 +159,16 @@
         </small>
       </div>
 
-      <div class="col-md-3 text-md-end">
+      <div class="col-md-6 text-md-end">
         <small class="source-code">
-          <a class="link-light" href="https://github.com/xronos-ch/xronos.rails/">
-            <span class="fa fa-github fa-lg me-1"></span>View source on GitHub
+          <a class="link-light text-decoration-none me-1" href="https://github.com/xronos-ch/xronos.rails/releases/tag/v<%= Rails.application.config.x.version %>" target="_blank">
+            XRONOS web v<%= Rails.application.config.x.version %>
+          </a>
+          <a class="link-light text-decoration-none me-1" href="https://doi.org/10.5281/zenodo.13138531" title="Archived on Zenodo" target="_blank">
+            <%= simple_icon "zenodo" %>
+          </a>
+          <a class="link-light text-decoration-none" href="https://github.com/xronos-ch/xronos.rails/" title="View source code on GitHub" target="_blank">
+            <%= bs_icon "github" %>
           </a>
         </small>
       </div>

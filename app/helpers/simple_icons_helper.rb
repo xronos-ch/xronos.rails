@@ -2,7 +2,7 @@ module SimpleIconsHelper
 
   def simple_icon(slug)
     content_tag :span, class: "svg-icon svg-baseline" do
-      embedded_svg "simple_icons/#{slug}.svg", width: 32, height: 32, role: "graphics-symbol", class: "simple-icon"
+      embedded_svg "simple_icons/#{slug}.svg", height: 32, role: "graphics-symbol", class: "simple-icon"
     end
   end
 
