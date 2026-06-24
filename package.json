@@ -2,6 +2,9 @@
 	"name": "xronos",
 	"private": true,
 	"dependencies": {
+		"@fontsource-variable/inter": "^5.2.8",
+		"@fontsource-variable/raleway": "^5.2.8",
+		"@fontsource/fira-mono": "^5.2.7",
 		"@hotwired/stimulus": "^3.0.1",
 		"@hotwired/turbo-rails": "^7.3.0",
 		"@popperjs/core": "^2.11.8",

@@ -2,8 +2,8 @@ require "test_helper"
 
 class FontSmokeTest < ActiveSupport::TestCase
   CUSTOM_FONTS = %w[
-    inter-latin-variable-wghtOnly-normal.woff2
-    raleway-latin-variable-wghtOnly-normal.woff2
+    inter-latin-wght-normal.woff2
+    raleway-latin-wght-normal.woff2
     fira-mono-latin-400-normal.woff2
   ].freeze
 
