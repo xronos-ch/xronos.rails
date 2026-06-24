@@ -26,7 +26,7 @@
         <% unless controller_name == "sites" %>
           <td><%= link_to typo.site.name, typo.site, target: :_top %></td>
         <% end %>
-        <td><%= link_to typo.name, typo, target: :_top %></td>
+        <td><%= typo.name %></td>
         <td class="font-monospace"><%= typo.age.present? ? typo.age : na_value %></td>
         <td class="small text-end"><%= render "references/citations", references: typo.references %></td>
       </tr>
