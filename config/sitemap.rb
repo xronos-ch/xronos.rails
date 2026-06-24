@@ -63,9 +63,4 @@ SitemapGenerator::Sitemap.create do
     end
   end
 
-  group sitemaps_path: "sitemaps", filename: "typos" do
-    Typo.find_each do |typo|
-      add typo_path(typo), lastmod: typo.updated_at, priority: nil, changefreq: nil
-    end
-  end
 end
