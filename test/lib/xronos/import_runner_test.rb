@@ -45,6 +45,23 @@ class Xronos::ImportRunnerTest < ActiveSupport::TestCase
     assert_equal 3, rows.size
   end
 
+  test "csv accepts options like col_sep and encoding" do
+    path = File.join(@csv_dir, "semicolons.csv")
+    CSV.open(path, "w", col_sep: ";") do |csv|
+      csv << ["Name", "Age"]
+      csv << ["Alpha", "10"]
+      csv << ["Beta", "20"]
+    end
+
+    rows = []
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    runner.csv("semicolons.csv", col_sep: ";") { |row| rows << row.to_h }
+
+    assert_equal 2, rows.size
+    assert_equal "Alpha", rows[0]["Name"]
+    assert_equal "10", rows[0]["Age"]
+  end
+
   test "increment_created increments per model" do
     runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
     runner.increment_created(:site)
@@ -79,6 +96,24 @@ class Xronos::ImportRunnerTest < ActiveSupport::TestCase
     assert_equal 1, runner.import_record.records_created["site"]
     assert_equal 1, runner.import_record.records_created["c14"]
     assert runner.import_record.success
+  end
+
+  test "cell strips whitespace and returns nil for blank" do
+    row = CSV::Row.new(%w[a b c], ["  hello  ", "", "   "])
+
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+
+    assert_equal "hello", runner.cell(row, "a")
+    assert_nil runner.cell(row, "b")
+    assert_nil runner.cell(row, "c")
+  end
+
+  test "process_enum yields items with progress bar" do
+    items = %w[a b c]
+    yielded = []
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    runner.process_enum(items, title: "letters") { |item| yielded << item }
+    assert_equal %w[a b c], yielded
   end
 
   test "import record is persisted immediately" do
