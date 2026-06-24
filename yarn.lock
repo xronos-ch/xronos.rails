@@ -117,11 +117,6 @@
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.19.12.tgz#c57c8afbb4054a3ab8317591a0b7320360b444ae"
   integrity sha512-T1QyPSDCyMXaO3pzBkF96E8xMkiRYbUEZADd29SyPGabqxMViNoii+NcK7eWJAEoU6RZyEm5lVSIjTmcdoB9HA==
 
-"@fontsource/fira-mono@^4.5.7":
-  version "4.5.10"
-  resolved "https://registry.yarnpkg.com/@fontsource/fira-mono/-/fira-mono-4.5.10.tgz#443be4b2b4fc6e685b88431fcfdaf8d5f5639bbf"
-  integrity sha512-bxUnRP8xptGRo8YXeY073DSpfK74XpSb0ZyRNpHV9WvLnJ7TwPOjZll8hTMin7zLC6iOp59pDZ8EQDj1gzgAQQ==
-
 "@hotwired/stimulus@^3.0.1":
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/@hotwired/stimulus/-/stimulus-3.2.2.tgz#071aab59c600fed95b97939e605ff261a4251608"
@@ -266,11 +261,6 @@
   version "2.11.8"
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.8.tgz#6b79032e760a0899cd4204710beede972a3a185f"
   integrity sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==
-
-"@rails/actioncable@^6.1.4-1":
-  version "6.1.710"
-  resolved "https://registry.yarnpkg.com/@rails/actioncable/-/actioncable-6.1.710.tgz#5c77515cbc9b8fb5118afa0aa0048192b33c33ea"
-  integrity sha512-YDzMuh8mDRNLFXiexlLVnF1NUwk1bXwwO1gtEhOCsCqIsL6D21JfxpMwAD5x8qzrMJ1J0RZVa2hLl7ofeg+Mqw==
 
 "@rails/actioncable@^7.0":
   version "7.2.201"
