@@ -93,11 +93,6 @@ Rails.application.routes.draw do
   # Curation backend
   get "/curate" => "curate#index"
   namespace :curate do
-    resources :import_tables do
-      get 'edit' => 'import_tables#edit_read_options'
-      get 'edit/read_options' => 'import_tables#edit_read_options'
-      get 'edit/mapping' => 'import_tables#edit_mapping'
-    end
     get "recent_changes" => "recent_changes#index"
   end
 

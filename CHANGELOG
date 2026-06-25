@@ -1,10 +1,11 @@
 # XRONOS Changelog
 
-## 1.2.0.9000 [unreleased]
+## 1.2.1.9000 [unreleased]
 
 - **Migrations required:** Added admin CLI for importing tabular datasets
   from CSV and BibTeX, replacing the removed GUI import_tables feature
   (#341)
+- Made software version visible in page footer and added Zenodo archive link (#436)
 - Removed standalone Typo show view. Typological dates are now only shown
   embedded in Site views (#398)
 - **Migration required:** Added affiliations to user profiles
