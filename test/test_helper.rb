@@ -50,10 +50,14 @@ class ActionDispatch::IntegrationTest
   end
 
   Capybara.register_driver :headless_chrome do |app|
+    options = Selenium::WebDriver::Chrome::Options.new
+    options.add_argument("--headless=new")
+    options.logging_prefs = { browser: "ALL" }
+
     Capybara::Selenium::Driver.new(
       app,
       browser: :chrome,
-      options: capabilities # change keyword
+      options: options
     )
   end
 
