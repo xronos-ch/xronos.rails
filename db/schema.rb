@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_24_112044) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_24_150000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -82,6 +82,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_24_112044) do
     t.bigint "c14_lab_id"
     t.bigint "sample_id"
     t.string "lab_identifier"
+    t.float "delta_15n"
     t.index ["c14_lab_id"], name: "index_c14s_on_c14_lab_id"
     t.index ["lab_identifier"], name: "index_c14s_on_lab_identifier"
     t.index ["method"], name: "index_c14s_on_method"
@@ -144,6 +145,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_24_112044) do
     t.index ["functional_classification_category_id"], name: "idx_on_functional_classification_category_id_0cc23f287f"
   end
 
+  create_table "imports", force: :cascade do |t|
+    t.bigint "source_id", null: false
+    t.jsonb "records_created", default: {}
+    t.boolean "success", default: false
+    t.text "error"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.jsonb "records_skipped", default: {}
+    t.index ["source_id"], name: "index_imports_on_source_id"
+  end
+
   create_table "lod_links", force: :cascade do |t|
     t.string "source", null: false
     t.string "external_id", null: false
@@ -154,7 +166,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_24_112044) do
     t.datetime "updated_at", null: false
     t.string "status", default: "pending", null: false
     t.index ["linkable_type", "linkable_id"], name: "index_lod_links_on_linkable_type_and_linkable_id"
-    t.index ["source", "external_id"], name: "index_lod_links_on_source_and_external_id", unique: true
+    t.index ["linkable_type", "linkable_id", "source", "external_id"], name: "index_lod_links_on_polymorphic_source_and_external_id", unique: true
   end
 
   create_table "materials", force: :cascade do |t|
@@ -305,6 +317,21 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_24_112044) do
     t.index ["name"], name: "index_sites_on_name"
   end
 
+  create_table "sources", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "version"
+    t.text "path"
+    t.jsonb "file_manifest", default: {}
+    t.string "source_url"
+    t.string "license"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "reference_id"
+    t.index ["name", "version"], name: "index_sources_on_name_and_version", unique: true, where: "(version IS NOT NULL)"
+    t.index ["reference_id"], name: "index_sources_on_reference_id"
+  end
+
   create_table "taxons", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: nil, null: false
@@ -381,11 +408,13 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_24_112044) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "functional_classifications", "functional_classification_categories"
+  add_foreign_key "imports", "sources"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_grants", "users", column: "resource_owner_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "users", column: "resource_owner_id"
   add_foreign_key "site_names", "sites"
+  add_foreign_key "sources", "references"
   add_foreign_key "user_profiles", "users"
 
   create_view "data_views", materialized: true, sql_definition: <<-SQL

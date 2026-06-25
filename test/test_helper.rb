@@ -16,10 +16,15 @@ end
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
 require 'rails/test_help'
+require 'minitest/autorun'
+require 'webmock/minitest'
 #require "minitest/rails/capybara"
 require 'capybara/rails'
 require 'capybara/minitest'
 require "active_job/test_helper"
+
+# Allow local requests
+WebMock.disable_net_connect!(allow_localhost: true)
 
 # Load all files in test/support
 Dir[Rails.root.join("test/support/**/*.rb")].sort.each { |f| require f }

@@ -115,9 +115,6 @@ gem 'faraday', '>= 2.5.2'
 # Geocoding
 gem 'geocoder'
 
-# GBIF (Backbone Taxonomy)
-gem 'gbifrb'
-
 # Wikidata & Wikipedia
 gem 'wikidata-client', require: 'wikidata'
 gem 'wikipedia-client', require: 'wikipedia'
@@ -213,6 +210,9 @@ group :test do
 
   # Schema testing
   gem 'json-schema'
+
+  # Mocking
+  gem 'webmock'
 
   # Acceptance testing
   gem 'selenium-webdriver'
