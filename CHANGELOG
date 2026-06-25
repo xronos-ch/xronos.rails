@@ -5,6 +5,11 @@
 - **Migrations required:** Added admin CLI for importing tabular datasets
   from CSV and BibTeX, replacing the removed GUI import_tables feature
   (#341)
+- Editing taxons now makes suggestions using the GBIF search API (#250)
+- Fixed synchronisation of taxons with GBIF (#417)
+  - Replacing use of GBIF's deprecated V1 species match API
+  - Requests to GBIF are now made asynchronously and do not block page rendering
+  - Tests no longer required on requests to GBIF
 - Made software version visible in page footer and added Zenodo archive link (#436)
 - Removed standalone Typo show view. Typological dates are now only shown
   embedded in Site views (#398)

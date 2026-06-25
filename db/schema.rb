@@ -166,7 +166,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_24_150000) do
     t.datetime "updated_at", null: false
     t.string "status", default: "pending", null: false
     t.index ["linkable_type", "linkable_id"], name: "index_lod_links_on_linkable_type_and_linkable_id"
-    t.index ["source", "external_id"], name: "index_lod_links_on_source_and_external_id", unique: true
+    t.index ["linkable_type", "linkable_id", "source", "external_id"], name: "index_lod_links_on_polymorphic_source_and_external_id", unique: true
   end
 
   create_table "materials", force: :cascade do |t|
