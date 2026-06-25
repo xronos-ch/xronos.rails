@@ -2,6 +2,7 @@ name: Test
 
 on:
   push:
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -21,12 +22,16 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: xronos
         options: >-
-          --health-cmd pg_isready
+          --health-cmd "pg_isready -U postgres -d xronos"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
 
     env:
+      # Opt JavaScript-based GitHub Actions into Node.js 24 while keeping
+      # the project runtime below unchanged.
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
       RAILS_ENV: test
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -41,6 +46,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -75,8 +82,10 @@ jobs:
         run: bin/rails test:system
 
       - name: Upload coverage to Codecov
+        if: always() && hashFiles('coverage/coverage.xml') != ''
         uses: codecov/codecov-action@v4
         with:
           files: coverage/coverage.xml
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
+          verbose: true
