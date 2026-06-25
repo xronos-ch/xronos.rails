@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_24_112044) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_25_102244) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -154,7 +154,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_24_112044) do
     t.datetime "updated_at", null: false
     t.string "status", default: "pending", null: false
     t.index ["linkable_type", "linkable_id"], name: "index_lod_links_on_linkable_type_and_linkable_id"
-    t.index ["source", "external_id"], name: "index_lod_links_on_source_and_external_id", unique: true
+    t.index ["linkable_type", "linkable_id", "source", "external_id"], name: "index_lod_links_on_polymorphic_source_and_external_id", unique: true
   end
 
   create_table "materials", force: :cascade do |t|
