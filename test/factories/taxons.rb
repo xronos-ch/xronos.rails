@@ -16,9 +16,7 @@
 #
 
 FactoryBot.define do
-  
   factory :taxon do
-    name { Faker::Creature::Animal.name }
+    sequence(:name) { |n| "Taxon #{n}" }
   end
-  
 end
