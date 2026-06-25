@@ -47,28 +47,28 @@ class ControlledVocabularyTest < ActiveSupport::TestCase
     end
   end
 
-  test "match returns the term linked to a known variant (case-insensitive)" do
-    vocabulary = create(:controlled_vocabulary)
-    term = create(:controlled_vocabulary_term, vocabulary: vocabulary, name: "Cob")
-    create(:controlled_vocabulary_variant, term: term, value: "maize cob")
-
-    assert_equal term, vocabulary.match("Maize Cob")
-  end
-
-  test "match returns the term for an exact name match (case-insensitive)" do
+  test "match returns the term for an exact name match (case-sensitive)" do
     vocabulary = create(:controlled_vocabulary)
     term = create(:controlled_vocabulary_term, vocabulary: vocabulary, name: "Cranium")
 
-    assert_equal term, vocabulary.match("CRANIUM")
+    assert_equal term, vocabulary.match("Cranium")
   end
 
-  test "match prefers a variant match over an exact name match" do
+  test "match returns nil for a case-mismatched name" do
     vocabulary = create(:controlled_vocabulary)
-    exact = create(:controlled_vocabulary_term, vocabulary: vocabulary, name: "Cob")
-    via_variant = create(:controlled_vocabulary_term, vocabulary: vocabulary, name: "Cob (maize)")
-    create(:controlled_vocabulary_variant, term: via_variant, value: "cob")
+    create(:controlled_vocabulary_term, vocabulary: vocabulary, name: "Cranium")
 
-    assert_equal via_variant, vocabulary.match("Cob")
+    assert_nil vocabulary.match("cranium")
+    assert_nil vocabulary.match("CRANIUM")
+  end
+
+  test "match does not consult variants" do
+    vocabulary = create(:controlled_vocabulary)
+    create(:controlled_vocabulary_term, vocabulary: vocabulary, name: "Cob")
+    create(:controlled_vocabulary_variant, term: vocabulary.terms.first, value: "maize cob")
+
+    assert_nil vocabulary.match("Maize Cob")
+    assert_nil vocabulary.match("maize cob")
   end
 
   test "match returns nil for unknown input" do
@@ -84,7 +84,6 @@ class ControlledVocabularyTest < ActiveSupport::TestCase
 
     assert_nil vocabulary.match(nil)
     assert_nil vocabulary.match("")
-    assert_nil vocabulary.match("   ")
   end
 
   test "match only looks up terms in this vocabulary" do
@@ -104,5 +103,98 @@ class ControlledVocabularyTest < ActiveSupport::TestCase
     vocabulary.destroy!
 
     assert_raises(ActiveRecord::RecordNotFound) { term.reload }
+  end
+
+  # --- resolve_variant ---
+
+  test "resolve_variant returns nil for nil or blank input" do
+    vocabulary = create(:controlled_vocabulary)
+    term = create(:controlled_vocabulary_term, vocabulary: vocabulary, name: "Cob")
+    create(:controlled_vocabulary_variant, term: term, value: "maize cob")
+
+    assert_nil vocabulary.resolve_variant(nil)
+    assert_nil vocabulary.resolve_variant("")
+    assert_nil vocabulary.resolve_variant("   ")
+  end
+
+  test "resolve_variant returns the term for a known variant match" do
+    vocabulary = create(:controlled_vocabulary)
+    term = create(:controlled_vocabulary_term, vocabulary: vocabulary, name: "Cob (maize)")
+    create(:controlled_vocabulary_variant, term: term, value: "maize cob")
+
+    assert_equal term, vocabulary.resolve_variant("maize cob")
+  end
+
+  test "resolve_variant is case-insensitive on the input" do
+    vocabulary = create(:controlled_vocabulary)
+    term = create(:controlled_vocabulary_term, vocabulary: vocabulary, name: "Cob (maize)")
+    create(:controlled_vocabulary_variant, term: term, value: "maize cob")
+
+    assert_equal term, vocabulary.resolve_variant("MAIZE COB")
+    assert_equal term, vocabulary.resolve_variant("Maize Cob")
+  end
+
+  test "resolve_variant strips leading and trailing whitespace" do
+    vocabulary = create(:controlled_vocabulary)
+    term = create(:controlled_vocabulary_term, vocabulary: vocabulary, name: "Cob (maize)")
+    create(:controlled_vocabulary_variant, term: term, value: "maize cob")
+
+    assert_equal term, vocabulary.resolve_variant("  maize cob  ")
+  end
+
+  test "resolve_variant collapses internal whitespace runs" do
+    vocabulary = create(:controlled_vocabulary)
+    term = create(:controlled_vocabulary_term, vocabulary: vocabulary, name: "Cob (maize)")
+    create(:controlled_vocabulary_variant, term: term, value: "maize cob")
+
+    assert_equal term, vocabulary.resolve_variant("maize  cob")
+    assert_equal term, vocabulary.resolve_variant("  maize   cob  ")
+    assert_equal term, vocabulary.resolve_variant("maize\tcob")
+  end
+
+  test "resolve_variant does not ignore punctuation differences" do
+    vocabulary = create(:controlled_vocabulary)
+    term = create(:controlled_vocabulary_term, vocabulary: vocabulary, name: "Cob (maize)")
+    create(:controlled_vocabulary_variant, term: term, value: "maize cob")
+
+    # Regression guard: a future "be more aggressive" refactor would
+    # break these. The current rule is squish only — punctuation stays.
+    assert_nil vocabulary.resolve_variant("maize, cob")
+    assert_nil vocabulary.resolve_variant("maize.cob")
+  end
+
+  test "resolve_variant does not fall back to term-name matching" do
+    vocabulary = create(:controlled_vocabulary)
+    create(:controlled_vocabulary_term, vocabulary: vocabulary, name: "Cob (maize)")
+
+    assert_nil vocabulary.resolve_variant("Cob (maize)")
+    assert_nil vocabulary.resolve_variant("cob (maize)")
+  end
+
+  test "resolve_variant returns nil when no variant matches" do
+    vocabulary = create(:controlled_vocabulary)
+    term = create(:controlled_vocabulary_term, vocabulary: vocabulary, name: "Cob (maize)")
+    create(:controlled_vocabulary_variant, term: term, value: "maize cob")
+
+    assert_nil vocabulary.resolve_variant("Kob")
+  end
+
+  test "resolve_variant only looks in this vocabulary, not others" do
+    vocabulary = create(:controlled_vocabulary)
+    other = create(:controlled_vocabulary)
+    term = create(:controlled_vocabulary_term, vocabulary: other, name: "Cob (maize)")
+    create(:controlled_vocabulary_variant, term: term, value: "maize cob")
+
+    assert_nil vocabulary.resolve_variant("maize cob")
+    assert_equal term, other.resolve_variant("maize cob")
+  end
+
+  test "resolve_variant returns nil if the matched variant was destroyed" do
+    vocabulary = create(:controlled_vocabulary)
+    term = create(:controlled_vocabulary_term, vocabulary: vocabulary, name: "Cob (maize)")
+    variant = create(:controlled_vocabulary_variant, term: term, value: "maize cob")
+    variant.destroy
+
+    assert_nil vocabulary.resolve_variant("maize cob")
   end
 end

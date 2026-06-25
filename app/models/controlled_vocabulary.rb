@@ -23,18 +23,29 @@ class ControlledVocabulary < ApplicationRecord
 
   def self.[](name) = find_by!(name: name)
 
-  # Look up a term in this vocabulary by user-typed input.
-  # 1) match a known variant (case-insensitive on the stored normalized form)
-  # 2) fall back to an exact term name match (case-insensitive)
+  # Look up a term in this vocabulary by exact, case-sensitive name match.
+  # Fuzzy case-insensitive lookups (e.g. for form UIs) compose against the
+  # variant thesaurus directly.
   def match(input)
-    needle = input.to_s.downcase.strip
-    return nil if needle.blank?
+    terms.find_by(name: input)
+  end
 
-    via_variant = terms.joins(:variants)
-      .where(controlled_vocabulary_variants: { normalized: needle })
-      .first
-    return via_variant if via_variant
+  # Resolve a user-typed string to its canonical term via the variant
+  # thesaurus. Returns the ControlledVocabulary::Term linked to the
+  # matching variant, or nil if no variant matches.
+  #
+  # Case-insensitive (input is downcased and stripped to match the
+  # stored `normalized` form on ControlledVocabulary::Variant).
+  #
+  # This is the inverse of the variant system: callers that record a
+  # variant when the user accepts a suggestion use this to look it up
+  # next time. For exact-name lookups, use #match.
+  def resolve_variant(input)
+    return nil if input.blank?
+    needle = ControlledVocabulary::Variant.normalize_for_matching(input)
+    return nil if needle.empty?
 
-    terms.find_by("LOWER(name) = ?", needle)
+    terms.joins(:variants)
+      .find_by(controlled_vocabulary_variants: { normalized: needle })
   end
 end

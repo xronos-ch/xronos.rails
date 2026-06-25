@@ -48,17 +48,18 @@ class HasControlledTermsTest < ActiveSupport::TestCase
     assert widget.colour_controlled?
   end
 
-  test "controlled? returns true for a case-insensitive name match" do
-    widget = Widget.new(colour: "RED")
+  test "controlled? returns false for a case-mismatched value" do
+    widget = Widget.new(colour: "red")
 
-    assert widget.colour_controlled?
+    assert_not widget.controlled?(:colour)
+    assert_not widget.colour_controlled?
   end
 
-  test "controlled? returns true for a known variant match" do
+  test "controlled? does not consult variants" do
     create(:controlled_vocabulary_variant, term: @red, value: "Scarlet")
-    widget = Widget.new(colour: "scarlet")
+    widget = Widget.new(colour: "Scarlet")
 
-    assert widget.colour_controlled?
+    assert_not widget.colour_controlled?
   end
 
   test "controlled? returns false for a value with no matching term" do
@@ -110,11 +111,17 @@ class HasControlledTermsTest < ActiveSupport::TestCase
     assert_equal @red, widget.colour_term
   end
 
-  test "term_for returns the term matched by a known variant" do
-    create(:controlled_vocabulary_variant, term: @red, value: "Scarlet")
-    widget = Widget.new(colour: "  SCARLET  ")
+  test "term_for returns nil for a case-mismatched value" do
+    widget = Widget.new(colour: "red")
 
-    assert_equal @red, widget.term_for(:colour)
+    assert_nil widget.term_for(:colour)
+  end
+
+  test "term_for does not consult variants" do
+    create(:controlled_vocabulary_variant, term: @red, value: "Scarlet")
+    widget = Widget.new(colour: "Scarlet")
+
+    assert_nil widget.term_for(:colour)
   end
 
   test "term_for returns nil when no term matches" do
@@ -162,6 +169,56 @@ class HasControlledTermsTest < ActiveSupport::TestCase
     assert_equal [], Widget.new(material: nil).material_ontologies
   end
 
+  # --- resolve_variant_for ---
+
+  test "resolve_variant_for returns the term for a known variant via the declared vocabulary" do
+    create(:controlled_vocabulary_variant, term: @red, value: "scarlet")
+    widget = Widget.new(colour: "scarlet")
+
+    assert_equal @red, widget.resolve_variant_for(:colour, "scarlet")
+  end
+
+  test "resolve_variant_for is case-insensitive" do
+    create(:controlled_vocabulary_variant, term: @red, value: "scarlet")
+    widget = Widget.new
+
+    assert_equal @red, widget.resolve_variant_for(:colour, "SCARLET")
+  end
+
+  test "resolve_variant_for returns nil when no variant matches" do
+    widget = Widget.new
+
+    assert_nil widget.resolve_variant_for(:colour, "mauve")
+  end
+
+  test "resolve_variant_for returns nil for blank input" do
+    widget = Widget.new
+
+    assert_nil widget.resolve_variant_for(:colour, nil)
+    assert_nil widget.resolve_variant_for(:colour, "")
+    assert_nil widget.resolve_variant_for(:colour, "   ")
+  end
+
+  test "resolve_variant_for returns nil when the vocabulary does not exist" do
+    @colours.destroy
+    widget = Widget.new
+
+    assert_nil widget.resolve_variant_for(:colour, "anything")
+  end
+
+  test "resolve_variant_for returns nil for an undeclared attribute" do
+    widget = Widget.new
+
+    assert_nil widget.resolve_variant_for(:shape, "anything")
+  end
+
+  test "resolve_variant_for does not fall back to term-name matching" do
+    widget = Widget.new(colour: "Red")
+
+    assert_nil widget.resolve_variant_for(:colour, "Red")
+    assert_nil widget.resolve_variant_for(:colour, "red")
+  end
+
   # --- parameterised vs generated equivalence ---
 
   test "generated instance methods mirror the parameterised ones" do
@@ -183,17 +240,19 @@ class HasControlledTermsTest < ActiveSupport::TestCase
     assert_not_includes Widget.controlled(:colour), unmatched
   end
 
-  test "controlled scope matches case-insensitively" do
-    matched = Widget.create!(colour: "red", material: "oak")
+  test "controlled scope is case-sensitive" do
+    matched   = Widget.create!(colour: "Red", material: "oak")
+    _mismatch = Widget.create!(colour: "red", material: "oak")
 
-    assert_includes Widget.controlled(:colour), matched
+    assert_includes     Widget.controlled(:colour), matched
+    assert_not_includes Widget.controlled(:colour), _mismatch
   end
 
-  test "controlled scope matches known variants" do
+  test "controlled scope does not consult variants" do
     create(:controlled_vocabulary_variant, term: @red, value: "Scarlet")
-    matched = Widget.create!(colour: "scarlet", material: "oak")
+    _matched = Widget.create!(colour: "Scarlet", material: "oak")
 
-    assert_includes Widget.controlled(:colour), matched
+    assert_equal 0, Widget.controlled(:colour).count
   end
 
   test "controlled scope is empty when the vocabulary has no terms" do
@@ -234,10 +293,10 @@ class HasControlledTermsTest < ActiveSupport::TestCase
   end
 
   test "scopes only consider the declared attribute, not the whole record" do
-    create(:controlled_vocabulary_variant, term: @oak, value: "Mauve")
-    widget = Widget.create!(colour: "Mauve", material: "oak")
+    create(:controlled_vocabulary_term, vocabulary: @colours, name: "Mauve")
+    widget = Widget.create!(colour: "Mauve", material: "Oak")
 
-    assert_not_includes Widget.controlled(:colour),   widget
+    assert_includes     Widget.controlled(:colour),   widget
     assert_includes     Widget.controlled(:material), widget
   end
 

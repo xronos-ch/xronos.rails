@@ -24,9 +24,17 @@ class ControlledVocabulary::Variant < ApplicationRecord
   validates :value,      presence: true, uniqueness: { scope: :controlled_vocabulary_term_id }
   validates :normalized, presence: true, uniqueness: { scope: :controlled_vocabulary_term_id }
 
+  # Normalize a value for variant matching: downcase, strip ends, collapse
+  # internal whitespace. Used by #compute_normalized (when storing) and
+  # by ControlledVocabulary#resolve_variant (when looking up). The two
+  # sides must agree; if they ever drift, matches silently break.
+  def self.normalize_for_matching(value)
+    value.to_s.downcase.squish
+  end
+
   private
 
   def compute_normalized
-    self.normalized = value.to_s.downcase.strip
+    self.normalized = self.class.normalize_for_matching(value)
   end
 end

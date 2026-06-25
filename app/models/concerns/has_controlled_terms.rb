@@ -21,40 +21,40 @@ module HasControlledTerms
 
     def controlled(attribute)
       attribute = attribute.to_sym
-      vocab = vocabulary_for_scope(attribute)
-      return none if vocab.nil?
+      name = controlled_terms[attribute]
+      raise ArgumentError, "No controlled_term declared for #{name}##{attribute}" unless name
 
-      needles = vocabulary_needles(vocab)
-      return none if needles.empty?
+      vocab_name = connection.quote(name)
+      col        = connection.quote_column_name(attribute)
+      table      = connection.quote_table_name(table_name)
 
-      col = connection.quote_column_name(attribute)
-      where("LOWER(#{col}) IN (?)", needles)
+      where("""
+        EXISTS (
+          SELECT 1 FROM controlled_vocabulary_terms t
+          INNER JOIN controlled_vocabularies c ON c.id = t.controlled_vocabulary_id
+          WHERE c.name = #{vocab_name}
+            AND t.name = #{table}.#{col}
+        )
+      """)
     end
 
     def uncontrolled(attribute)
       attribute = attribute.to_sym
-      vocab = vocabulary_for_scope(attribute)
-      return all if vocab.nil?
-
-      needles = vocabulary_needles(vocab)
-      return all if needles.empty?
-
-      col = connection.quote_column_name(attribute)
-      where.not("LOWER(#{col}) IN (?)", needles)
-    end
-
-    private
-
-    def vocabulary_for_scope(attribute)
       name = controlled_terms[attribute]
       raise ArgumentError, "No controlled_term declared for #{name}##{attribute}" unless name
-      ControlledVocabulary.find_by(name: name)
-    end
 
-    def vocabulary_needles(vocab)
-      term_names = vocab.terms.pluck(Arel.sql("LOWER(name)"))
-      variants   = vocab.terms.joins(:variants).pluck(:normalized)
-      (term_names + variants).uniq
+      vocab_name = connection.quote(name)
+      col        = connection.quote_column_name(attribute)
+      table      = connection.quote_table_name(table_name)
+
+      where("""
+        NOT EXISTS (
+          SELECT 1 FROM controlled_vocabulary_terms t
+          INNER JOIN controlled_vocabularies c ON c.id = t.controlled_vocabulary_id
+          WHERE c.name = #{vocab_name}
+            AND t.name = #{table}.#{col}
+        )
+      """)
     end
   end
 
@@ -80,5 +80,13 @@ module HasControlledTerms
     term = term_for(attribute)
     return [] if term.nil? || term.ontology_name.blank?
     [{ name: term.ontology_name, id: term.ontology_id, url: term.ontology_url }.compact]
+  end
+
+  # Resolve a user-typed string to the canonical term for the declared
+  # vocabulary's variant thesaurus. Returns the term or nil.
+  def resolve_variant_for(attribute, input)
+    vocab = vocabulary_for(attribute)
+    return nil if vocab.nil?
+    vocab.resolve_variant(input)
   end
 end

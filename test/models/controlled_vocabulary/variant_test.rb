@@ -29,6 +29,49 @@ class ControlledVocabulary::VariantTest < ActiveSupport::TestCase
     assert_equal "maize cob", variant.normalized
   end
 
+  test "normalizes internal whitespace runs to a single space" do
+    variant = build(:controlled_vocabulary_variant, value: "maize  cob")
+
+    assert variant.valid?
+    assert_equal "maize cob", variant.normalized
+  end
+
+  test "normalizes tabs and newlines as whitespace" do
+    variant = build(:controlled_vocabulary_variant, value: "maize\tcob")
+
+    assert variant.valid?
+    assert_equal "maize cob", variant.normalized
+  end
+
+  test "preserves hyphens and parens" do
+    hyphen = build(:controlled_vocabulary_variant, value: "T-cell")
+    parens = build(:controlled_vocabulary_variant, value: "bone (cranium)")
+
+    assert hyphen.valid?
+    assert parens.valid?
+    assert_equal "t-cell",          hyphen.normalized
+    assert_equal "bone (cranium)",  parens.normalized
+  end
+
+  test "normalize_for_matching is symmetric with the callback" do
+    # Regression guard: if these two ever drift, matches silently break.
+    assert_equal "maize  cob".to_s.downcase.squish,
+                 ControlledVocabulary::Variant.normalize_for_matching("maize  cob")
+  end
+
+  test "normalize_for_matching handles nil" do
+    assert_equal "", ControlledVocabulary::Variant.normalize_for_matching(nil)
+  end
+
+  test "rejects a second variant whose value normalizes to an existing one (whitespace)" do
+    term = create(:controlled_vocabulary_term)
+    create(:controlled_vocabulary_variant, term: term, value: "maize cob")
+    duplicate = build(:controlled_vocabulary_variant, term: term, value: "  maize  cob  ")
+
+    assert_not duplicate.valid?
+    assert_includes duplicate.errors[:normalized], "has already been taken"
+  end
+
   test "requires a value" do
     variant = build(:controlled_vocabulary_variant, value: nil)
 
