@@ -1,0 +1,11 @@
+part_of_organism:
+  uberon:
+    source: https://purl.obolibrary.org/obo/uberon/uberon-basic.obo
+    version: uberon/releases/2026-06-19/uberon-basic.owl
+    path: db/data/ontologies/uberon-basic.obo
+    sha256: b27618d347df171d0dbbfc6178217487b98b96424641b8c8b4ece77256e67a14
+  po:
+    source: https://purl.obolibrary.org/obo/po.obo
+    version: releases/2026-01-09
+    path: db/data/ontologies/po.obo
+    sha256: d90949737a9925bdb775ba7dd4a9521cb63ca4acd40211e4c7661655f379f4c9
