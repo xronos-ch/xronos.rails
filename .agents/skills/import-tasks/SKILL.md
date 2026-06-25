@@ -48,7 +48,7 @@ namespace :xronos do
         notes: "MyDataset: description"
       )
 
-      admin_user_id = ENV.fetch("XRONOS_ADMIN_USER") { abort "XRONOS_ADMIN_USER must be set" }
+      admin_user_id = ENV.fetch("ADMIN_USER_ID") { abort "ADMIN_USER_ID must be set" }
       revision_comment = "Imported from MyDataset #{version} <#{source_url}>"
 
       PaperTrail.request(whodunnit: admin_user_id) do
