@@ -323,7 +323,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_24_150000) do
     t.text "path"
     t.jsonb "file_manifest", default: {}
     t.string "source_url"
-    t.date "access_date"
     t.string "license"
     t.text "notes"
     t.datetime "created_at", null: false
