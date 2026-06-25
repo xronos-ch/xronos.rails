@@ -93,17 +93,26 @@ class XronosDataControllerTest < ActionDispatch::IntegrationTest
     assert_not_includes body, "Excluded-1"
   end
 
-  test "data geojson returns an empty array when no sites have coordinates" do
+  test "data geojson returns an empty array when filtered sites have no coordinates" do
     Rails.cache.clear
 
-    site = create(:site, name: "Unmapped Site", lat: nil, lng: nil)
+    site = create(:site, name: "Only Unmapped GeoJSON Site", lat: nil, lng: nil)
     context = create(:context, site: site)
     sample = create(:sample, context: context)
     create(:c14, sample: sample)
 
     ActiveRecord::Base.connection.execute("REFRESH MATERIALIZED VIEW data_views")
 
-    get data_path(format: :geojson)
+    get data_path(
+          format: :geojson,
+          params: {
+            filter: {
+              sites: {
+                name: ["Only Unmapped GeoJSON Site"]
+              }
+            }
+          }
+        )
 
     assert_response :success
     assert_equal [], JSON.parse(response.body)
