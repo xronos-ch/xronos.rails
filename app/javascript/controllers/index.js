@@ -25,6 +25,9 @@ application.register("remote-modal", RemoteModalController)
 import SliderController from "./slider_controller"
 application.register("slider", SliderController)
 
+import TaxonFieldController from "./taxon_field_controller"
+application.register("taxon-field", TaxonFieldController)
+
 import TomSelectController from "./tom_select_controller"
 application.register("tom-select", TomSelectController)
 

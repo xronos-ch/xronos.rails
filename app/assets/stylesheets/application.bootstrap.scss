@@ -20,6 +20,8 @@ $font-family-sans-serif:
 	sans-serif;
 
 $headings-font-family: "Raleway", $font-family-sans-serif;
+
+$font-family-monospace: "Fira Mono", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 $enable-rounded: false;
 $enable-shadows: true;
 
@@ -31,9 +33,16 @@ $card-cap-bg: none;
 @import 'bootstrap/scss/bootstrap';
 @import 'bootstrap-icons/font/bootstrap-icons';
 
+// Library stylesheets (moved from JavaScript CSS imports)
+@import 'nouislider/dist/nouislider';
+@import 'tom-select/dist/css/tom-select.bootstrap5.min';
+@import 'easymde/dist/easymde.min';
+
 // Application
 @import "components";
+@import "forms";
 @import "leaflet";
 @import "layout";
 @import "slider";
 @import "typography";
+@import "fonts";

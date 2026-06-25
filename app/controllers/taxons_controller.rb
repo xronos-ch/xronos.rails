@@ -8,25 +8,23 @@ class TaxonsController < ApplicationController
   # GET /taxons
   # GET /taxons.json
   # GET /taxons.csv
+  # GET /taxons?q=
+  # GET /taxons.json?q=
+  # GET /taxons.csv?q=
   def index
-    @taxons = Taxon.all
-    
+    if params[:q].present?
+      @taxons = search_taxons(params[:q])
+    else
+      @taxons = Taxon.all
+    end
+
     respond_to do |format|
-      format.csv {
+      format.html { head :not_acceptable }
+      format.json
+      format.csv do
         @taxons = @taxons.select(index_csv_template)
         render csv: @taxons
-      }
-    end
-  end
-
-  # GET /taxons/search.json
-  def search
-    @taxons = Taxon.search(params[:q])
-
-    respond_to do |format|
-      format.json  {
-        render :index
-      }
+      end
     end
   end
 
@@ -89,4 +87,38 @@ class TaxonsController < ApplicationController
     def taxon_params
       params.require(:taxon).permit([ :name, :gbif_id, :revision_comment ])
     end
+
+    def matched_only?
+      params.key?(:matched_only)
+    end
+
+    def search_gbif?
+      params.key?(:search_gbif)
+    end
+
+    def search_taxons(query)
+      if search_gbif?
+        gbif_and_local_search(query)
+      else
+        local_search(query)
+      end
+    end
+
+    def gbif_and_local_search(query)
+      Taxon.search_with_gbif(
+        query,
+        limit: 5,
+        matched_only: matched_only?
+      )
+    rescue Net::OpenTimeout, Net::ReadTimeout, RuntimeError => e
+      Rails.logger.warn("[GBIF search fallback] #{e.class}: #{e.message}")
+      local_search(query)
+    end
+
+    def local_search(query)
+      scope = Taxon.search(query)
+      scope = scope.where.not(gbif_id: nil) if matched_only?
+      scope.limit(5)
+    end
+
 end

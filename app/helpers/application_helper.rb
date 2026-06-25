@@ -80,11 +80,6 @@ module ApplicationHelper
     return dd.abs.floor.to_s + "° " + minutes.floor.to_s + "' " + seconds.floor.to_s + '" ' + suffix
   end
 
-  def javascript_exists?(script)
-    script = "#{Rails.root}/app/javascript/packs/#{params[:controller]}.js"
-    File.exists?(script) || File.exists?("#{script}.coffee") || File.exists?("#{script}.erb") 
-  end
-
   def markdown(str)
     Kramdown::Document.new(str).to_html.html_safe
   end

@@ -2,7 +2,6 @@ import { Controller } from "@hotwired/stimulus"
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
 import "leaflet-providers"
-import "leaflet-lasso"
 import Supercluster from "supercluster"
 
 // Connects to data-controller="map"

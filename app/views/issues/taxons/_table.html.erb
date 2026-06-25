@@ -36,9 +36,11 @@
         <td class="text-muted"><%= taxon.id %></td>
         <td><%= taxon.name %></td>
         <td>
-          <% if taxon.gbif_id.present? %>
-            <%= turbo_frame_tag taxon.usage, src: taxon_usage_path(taxon.usage.id) do %>
-              <span class="text-muted">gbif:<%= taxon.gbif_id %></span>
+          <% if taxon.gbif_id? %>
+            <%= turbo_frame_tag taxon.usage, 
+              src: taxon_usage_path(taxon.usage.id),
+              loading: :lazy do %>
+              <%= render "taxon_usages/placeholder" %>
             <% end %>
           <% else %>
             <%= na_value %>
