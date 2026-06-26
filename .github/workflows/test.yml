@@ -90,10 +90,6 @@ jobs:
           fi
 
       - name: Upload coverage to Codecov
-        if: >
-          always() &&
-          hashFiles('coverage/coverage.xml') != '' &&
-          (github.event_name == 'pull_request' || github.ref == 'refs/heads/master')
         uses: codecov/codecov-action@v7
         with:
           files: coverage/coverage.xml
