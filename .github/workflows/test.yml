@@ -2,6 +2,7 @@ name: Test
 
 on:
   push:
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -21,12 +22,14 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: xronos
         options: >-
-          --health-cmd pg_isready
+          --health-cmd "pg_isready -U postgres -d xronos"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
 
     env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
       RAILS_ENV: test
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -41,6 +44,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -60,7 +66,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential libboost-all-dev
+          sudo apt-get install -y build-essential libboost-program-options-dev
 
       - name: Build calibrator
         run: bin/build_calibrator
@@ -68,15 +74,50 @@ jobs:
       - name: Prepare database
         run: bin/rails db:prepare
 
+      - name: Clear previous coverage
+        run: rm -rf coverage
+
       - name: Run test suite
-        run: bin/rails test
+        run: SIMPLECOV_COMMAND_NAME=rails-tests bin/rails test
 
       - name: Run system test suite
-        run: bin/rails test:system
+        run: SIMPLECOV_COMMAND_NAME=system-tests bin/rails test:system
+
+      - name: Inspect coverage report
+        if: always() && hashFiles('coverage/coverage.xml') != ''
+        shell: bash
+        run: |
+          ls -lh coverage/coverage.xml
+          head -n 5 coverage/coverage.xml
+          ls -lah coverage || true
+
+      - name: Determine Codecov parent commit
+        id: codecov_parent
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "sha=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_OUTPUT"
+            echo "Using pull request base SHA: ${{ github.event.pull_request.base.sha }}"
+          else
+            parent_sha="$(git rev-parse HEAD^)"
+            echo "sha=${parent_sha}" >> "$GITHUB_OUTPUT"
+            echo "Using first parent SHA: ${parent_sha}"
+          fi
 
       - name: Upload coverage to Codecov
+        if: >
+          always() &&
+          hashFiles('coverage/coverage.xml') != '' &&
+          (github.event_name == 'pull_request' || github.ref == 'refs/heads/master')
         uses: codecov/codecov-action@v7
         with:
           files: coverage/coverage.xml
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
+          verbose: true
+          override_branch: ${{ github.head_ref || github.ref_name }}
+          override_commit: ${{ github.event.pull_request.head.sha || github.sha }}
+          override_pr: ${{ github.event.pull_request.number }}
+          override_build: ${{ github.run_id }}
+          override_build_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          commit_parent: ${{ steps.codecov_parent.outputs.sha }}
