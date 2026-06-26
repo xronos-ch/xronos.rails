@@ -48,6 +48,11 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
 
+      - name: Show checked out commit
+        shell: bash
+        run: |
+          git log -1 --format='Checked out commit: %H%nParents: %P%nSubject: %s'
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -104,20 +109,38 @@ jobs:
             echo "Using first parent SHA: ${parent_sha}"
           fi
 
-      - name: Upload coverage to Codecov
+      - name: Upload PR coverage to Codecov
         if: >
           always() &&
           hashFiles('coverage/coverage.xml') != '' &&
-          (github.event_name == 'pull_request' || github.ref == 'refs/heads/master')
+          github.event_name == 'pull_request'
         uses: codecov/codecov-action@v7
         with:
           files: coverage/coverage.xml
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
           verbose: true
-          override_branch: ${{ github.head_ref || github.ref_name }}
-          override_commit: ${{ github.event.pull_request.head.sha || github.sha }}
+          override_branch: ${{ github.head_ref }}
+          override_commit: ${{ github.event.pull_request.head.sha }}
           override_pr: ${{ github.event.pull_request.number }}
+          override_build: ${{ github.run_id }}
+          override_build_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          commit_parent: ${{ steps.codecov_parent.outputs.sha }}
+
+      - name: Upload master coverage to Codecov
+        if: >
+          always() &&
+          hashFiles('coverage/coverage.xml') != '' &&
+          github.event_name == 'push' &&
+          github.ref == 'refs/heads/master'
+        uses: codecov/codecov-action@v7
+        with:
+          files: coverage/coverage.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
+          verbose: true
+          override_branch: master
+          override_commit: ${{ github.sha }}
           override_build: ${{ github.run_id }}
           override_build_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           commit_parent: ${{ steps.codecov_parent.outputs.sha }}
