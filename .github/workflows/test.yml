@@ -79,6 +79,13 @@ jobs:
       - name: Run system test suite
         run: bin/rails test:system
 
+      - name: Inspect coverage report
+        if: always() && hashFiles('coverage/coverage.xml') != ''
+        shell: bash
+        run: |
+          ls -lh coverage/coverage.xml
+          head -n 5 coverage/coverage.xml
+
       - name: Determine Codecov parent commit
         id: codecov_parent
         shell: bash
@@ -106,4 +113,6 @@ jobs:
           override_branch: ${{ github.head_ref || github.ref_name }}
           override_commit: ${{ github.event.pull_request.head.sha || github.sha }}
           override_pr: ${{ github.event.pull_request.number }}
+          override_build: ${{ github.run_id }}
+          override_build_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           commit_parent: ${{ steps.codecov_parent.outputs.sha }}
