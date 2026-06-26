@@ -3,6 +3,9 @@ if ENV["COVERAGE"]
   require "simplecov"
   require "simplecov-cobertura"
 
+  SimpleCov.command_name ENV.fetch("SIMPLECOV_COMMAND_NAME", "rails-tests")
+  SimpleCov.merge_timeout 3600
+
   SimpleCov.formatters = [
     SimpleCov::Formatter::HTMLFormatter,
     SimpleCov::Formatter::CoberturaFormatter

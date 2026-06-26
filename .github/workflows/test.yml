@@ -73,11 +73,14 @@ jobs:
       - name: Prepare database
         run: bin/rails db:prepare
 
+      - name: Clear previous coverage
+        run: rm -rf coverage
+
       - name: Run test suite
-        run: bin/rails test
+        run: SIMPLECOV_COMMAND_NAME=rails-tests bin/rails test
 
       - name: Run system test suite
-        run: bin/rails test:system
+        run: SIMPLECOV_COMMAND_NAME=system-tests bin/rails test:system
 
       - name: Inspect coverage report
         if: always() && hashFiles('coverage/coverage.xml') != ''
@@ -85,6 +88,7 @@ jobs:
         run: |
           ls -lh coverage/coverage.xml
           head -n 5 coverage/coverage.xml
+          ls -lah coverage || true
 
       - name: Determine Codecov parent commit
         id: codecov_parent
