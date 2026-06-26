@@ -28,8 +28,6 @@ jobs:
           --health-retries 5
 
     env:
-      # Opt JavaScript-based GitHub Actions into Node.js 24 while keeping
-      # the project runtime below unchanged.
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
       RAILS_ENV: test
@@ -67,7 +65,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential libboost-all-dev
+          sudo apt-get install -y build-essential libboost-program-options-dev
 
       - name: Build calibrator
         run: bin/build_calibrator
@@ -81,11 +79,28 @@ jobs:
       - name: Run system test suite
         run: bin/rails test:system
 
+      - name: Determine Codecov parent commit
+        id: codecov_parent
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "sha=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "sha=$(git rev-parse HEAD^)" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Upload coverage to Codecov
-        if: always() && hashFiles('coverage/coverage.xml') != ''
+        if: >
+          always() &&
+          hashFiles('coverage/coverage.xml') != '' &&
+          (github.event_name == 'pull_request' || github.ref == 'refs/heads/master')
         uses: codecov/codecov-action@v7
         with:
           files: coverage/coverage.xml
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
           verbose: true
+          override_branch: ${{ github.head_ref || github.ref_name }}
+          override_commit: ${{ github.event.pull_request.head.sha || github.sha }}
+          override_pr: ${{ github.event.pull_request.number }}
+          commit_parent: ${{ steps.codecov_parent.outputs.sha }}
