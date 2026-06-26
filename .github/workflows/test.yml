@@ -85,8 +85,11 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             echo "sha=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_OUTPUT"
+            echo "Using pull request base SHA: ${{ github.event.pull_request.base.sha }}"
           else
-            echo "sha=$(git rev-parse HEAD^)" >> "$GITHUB_OUTPUT"
+            parent_sha="$(git rev-parse HEAD^)"
+            echo "sha=${parent_sha}" >> "$GITHUB_OUTPUT"
+            echo "Using first parent SHA: ${parent_sha}"
           fi
 
       - name: Upload coverage to Codecov
