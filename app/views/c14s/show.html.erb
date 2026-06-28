@@ -67,33 +67,51 @@
 
     <div class="col-12 col-lg-8">
 
-      <section id="c14-measurement">
-        <h2>Measurement</h2>
-        <%= render "c14_measurement", c14: @c14 %>
+      <section id="c14-measurement" class="section-with-legend position-relative">
+        <h2 class="legend">
+          <%= bs_icon "flask", class: "me-1" %>Measurement
+        </h2>
+        <div class="section-body">
+          <%= render "c14_measurement", c14: @c14 %>
+        </div>
       </section>
 
-      <section id="c14-calibration" class="mt-5">
-        <h2>Calibration</h2>
-        <%= render "c14_calibration" %>
+      <section id="c14-calibration" class="section-with-legend mt-5 position-relative">
+        <h2 class="legend">
+          <%= bs_icon "graph-down", class: "me-1" %>Calibration
+        </h2>
+        <div class="section-body">
+          <%= render "c14_calibration" %>
+        </div>
       </section>
 
-      <section id="c14-sample" class="mt-5">
-        <h2>Sample</h2>
-        <%= render "samples/sample", sample: @c14.sample %>
+      <section id="c14-sample" class="section-with-legend mt-5 position-relative">
+        <h2 class="legend">
+          <%= bs_icon "archive", class: "me-1" %>Sample
+        </h2>
+        <div class="section-body">
+          <%= render "samples/sample", sample: @c14.sample %>
+        </div>
       </section>
 
-      <section id="c14-context" class="mt-5">
-        <h2>Context</h2>
-        <%= render "c14_context", c14: @c14 %>
+      <section id="c14-context" class="section-with-legend mt-5 position-relative">
+        <h2 class="legend">
+          <%= bs_icon "diagram-3", class: "me-1" %>Context
+        </h2>
+        <div class="section-body">
+          <%= render "c14_context", c14: @c14 %>
+        </div>
       </section>
 
       <% references = (@c14.references + @c14.site.references).uniq %>
-      <section id="c14-references" class="mt-5">
-        <h2>
-          <%= Reference.label.humanize.pluralize %>
+      <section id="c14-references" class="section-with-legend mt-5 position-relative">
+        <h2 class="legend">
+          <%= bs_icon "book", class: "me-1" %><%= Reference.label.humanize.pluralize %>
           <small class="text-muted">(<%= references.count %>)</small>
         </h2>
-        <%= render "references/bibliography", references: references %>
+        <div class="section-body">
+          <%= render "references/bibliography", references: references %>
+        </div>
       </section>
 
     </div>
