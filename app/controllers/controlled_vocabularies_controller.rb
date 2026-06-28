@@ -45,12 +45,22 @@ class ControlledVocabulariesController < ApplicationController
   # (e.g. User.email, which would be an information disclosure).
   def valid_controlled_term_target?(model_name, attribute_name)
     return false if model_name.is_a?(Array) || attribute_name.is_a?(Array)
-    return false unless Object.const_defined?(model_name)
-    model_class = model_name.constantize
-    return false unless model_class < ApplicationRecord
+    model_class = controlled_term_model_class(model_name)
+    return false unless model_class
     return false unless model_class.column_names.include?(attribute_name)
     return false unless model_class.respond_to?(:controlled_terms)
     model_class.controlled_terms.key?(attribute_name.to_sym)
+  end
+
+  def controlled_term_model_class(model_name)
+    return nil if model_name.blank? || model_name.is_a?(Array)
+
+    allowed_models = ApplicationRecord.descendants.index_by(&:name)
+    model_class = allowed_models[model_name]
+    return nil unless model_class
+    return nil unless model_class.respond_to?(:controlled_terms)
+
+    model_class
   end
 
   # Returns a Hash of term_name => existing-record count, or nil
@@ -59,12 +69,13 @@ class ControlledVocabulariesController < ApplicationController
   # returned false.
   def usage_counts_for(term_names)
     return nil if params[:model].blank? || params[:attribute].blank?
-    params[:model].constantize
-                .where(params[:attribute] => term_names)
-                .group(params[:attribute])
-                .count
-  rescue NameError
-    nil
+
+    model_class = controlled_term_model_class(params[:model])
+    return nil unless model_class
+
+    model_class.where(params[:attribute] => term_names)
+               .group(params[:attribute])
+               .count
   end
 
   # Build results in five priority tiers (lower tier number = higher
