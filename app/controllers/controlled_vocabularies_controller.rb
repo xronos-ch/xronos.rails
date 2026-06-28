@@ -73,8 +73,13 @@ class ControlledVocabulariesController < ApplicationController
     model_class = controlled_term_model_class(params[:model])
     return nil unless model_class
 
-    model_class.where(params[:attribute] => term_names)
-               .group(params[:attribute])
+    attribute_name = params[:attribute]
+    return nil unless model_class.column_names.include?(attribute_name)
+    return nil unless model_class.controlled_terms.key?(attribute_name.to_sym)
+
+    attribute = attribute_name.to_sym
+    model_class.where(attribute => term_names)
+               .group(attribute)
                .count
   end
 
