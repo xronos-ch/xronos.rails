@@ -77,7 +77,7 @@ jobs:
         run: bin/build_calibrator
 
       - name: Prepare database
-        run: bin/rails db:prepare
+        run: bin/rails db:test:prepare
 
       - name: Clear previous coverage
         run: rm -rf coverage
