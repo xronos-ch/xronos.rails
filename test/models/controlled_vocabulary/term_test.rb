@@ -113,4 +113,25 @@ class ControlledVocabulary::TermTest < ActiveSupport::TestCase
 
     assert_equal 0, ControlledVocabulary::Variant.where(controlled_vocabulary_term_id: term.id).count
   end
+
+  test "search returns terms whose name matches the query" do
+    vocabulary = create(:controlled_vocabulary)
+    create(:controlled_vocabulary_term, vocabulary: vocabulary, name: "Cob (maize)")
+    create(:controlled_vocabulary_term, vocabulary: vocabulary, name: "Cranium")
+    create(:controlled_vocabulary_term, vocabulary: vocabulary, name: "Femur")
+
+    results = vocabulary.terms.search("cob").to_a
+
+    assert_equal ["Cob (maize)"], results.map(&:name)
+  end
+
+  test "search is prefix-matched" do
+    vocabulary = create(:controlled_vocabulary)
+    create(:controlled_vocabulary_term, vocabulary: vocabulary, name: "Cob (maize)")
+    create(:controlled_vocabulary_term, vocabulary: vocabulary, name: "Cranium")
+
+    results = vocabulary.terms.search("cra").to_a
+
+    assert_equal ["Cranium"], results.map(&:name)
+  end
 end

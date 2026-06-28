@@ -29,6 +29,7 @@ Rails.application.routes.draw do
   end
   resources :c14_labs
   resources :contexts
+  resources :controlled_vocabularies, only: :index
   resources :duplicates
   resources :materials do
     get 'search', on: :collection

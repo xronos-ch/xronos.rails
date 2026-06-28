@@ -35,6 +35,11 @@ class ControlledVocabulary::Term < ApplicationRecord
     validates :ontology_name, uniqueness: { scope: :ontology_id }
   end
 
+  include PgSearch::Model
+  pg_search_scope :search,
+    against: :name,
+    using: { tsearch: { prefix: true } }
+
   ONTOLOGY_URL_TEMPLATES = {
     "UBERON" => "https://www.ebi.ac.uk/ols4/ontologies/uberon/terms?iri=http://purl.obolibrary.org/obo/%s",
     "PO"     => "https://www.ebi.ac.uk/ols4/ontologies/po/terms?iri=http://purl.obolibrary.org/obo/%s"
