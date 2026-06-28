@@ -1,15 +1,78 @@
-<dl class="row">
+<dl class="d-flex flex-wrap flex-column flex-sm-row gap-0">
 
-  <dt>Age <small>(uncal BP)</small></dt>
-  <dd class="font-monospace"><%= c14.bp %></dd>
+  <div id="c14-lab-identifier" class="w-50 mb-3">
+    <dt>Lab identifier</dt>
+    <dd class="font-monospace">
+      <%= c14.lab_identifier.present? ? c14.lab_identifier : na_value %>
+    </dd>
+  </div>
 
-  <dt>Error <small>(±)</small></dt>
-  <dd class="font-monospace"><%= c14.std %></dd>
+  <div id="c14-laboratory" class="w-50 mb-3">
+    <dt>Laboratory</dt>
+    <dd>
+    <%= c14.c14_lab&.name || na_value %>
+    </dd>
+  </div>
 
-  <dt>Lab</dt>
-  <dd><%= c14.c14_lab.present? ? c14.c14_lab.name : na_value %></dd>
+  <div id="c14-method" class="w-50 mb-3">
+    <dt>Method</dt>
+    <dd>
+      <%= c14.method.present? ? c14.method.humanize : na_value %>
+    </dd>
+  </div>
 
-  <dt>Method</dt>
-  <dd><%= c14.method.present? ? c14.method : na_value %></dd>
+  <div>
+    &nbsp;<!-- Dummy div to keep subsequent entries paired in 2-col mode -->
+  </div>
+
+  <div id="c14-age" class="w-50 mb-3">
+    <dt>
+      <sup>14</sup>C age
+      <small class="text-body-secondary fw-normal">(uncal BP)</small>
+    </dt>
+    <dd class="font-monospace">
+      <%= c14.bp.present? ? c14.bp : na_value %>
+    </dd>
+  </div>
+
+  <div id="c14-age-error" class="w-50 mb-3">
+    <dt>
+      <sup>14</sup>C error
+      <small class="text-body-secondary fw-normal">(&plusmn;)</small>
+    </dt>
+    <dd class="font-monospace">
+      <%= c14.std.present? ? c14.std : na_value %>
+    </dd>
+  </div>
+
+  <div id="c14-d13c" class="w-50 mb-3">
+    <dt>
+      &delta;<sup>13</sup>C
+      <small class="text-body-secondary fw-normal">(&permil;)</small>
+    </dt>
+    <dd class="font-monospace">
+      <%= c14.delta_c13.present? ? c14.delta_c13 : na_value %>
+    </dd>
+  </div>
+
+  <div id="c14-d13c-error" class="w-50 mb-3">
+    <dt>
+      &delta;<sup>13</sup>C error
+      <small class="text-body-secondary fw-normal">(&plusmn;)</small>
+    </dt>
+    <dd class="font-monospace">
+      <%= c14.delta_c13_std.present? ? c14.delta_c13_std : na_value %>
+    </dd>
+  </div>
+
+  <div id="c14-d15n" class="w-50 mb-3">
+    <dt>
+      &delta;<sup>15</sup>N
+      <small class="text-body-secondary fw-normal">(&permil;)</small>
+    </dt>
+    <dd class="font-monospace">
+      <%= c14.delta_15n.present? ? "#{c14.delta_15n} &permil;" : na_value %>
+    </dd>
+  </div>
 
 </dl>
