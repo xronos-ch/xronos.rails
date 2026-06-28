@@ -49,4 +49,10 @@ class ControlledVocabulary::Term < ApplicationRecord
     template = ONTOLOGY_URL_TEMPLATES[ontology_name]
     template && ontology_id ? template % ontology_id : nil
   end
+
+  # Truncated plain-text description for API responses
+  def description_excerpt(max: 200)
+    return nil if description.blank?
+    description.length > max ? "#{description[0, max].rstrip}…" : description
+  end
 end

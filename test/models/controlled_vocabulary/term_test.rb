@@ -134,4 +134,35 @@ class ControlledVocabulary::TermTest < ActiveSupport::TestCase
 
     assert_equal ["Cranium"], results.map(&:name)
   end
+
+  test "description_excerpt returns nil for a missing description" do
+    term = build(:controlled_vocabulary_term, description: nil)
+    assert_nil term.description_excerpt
+
+    blank = build(:controlled_vocabulary_term, description: "")
+    assert_nil blank.description_excerpt
+  end
+
+  test "description_excerpt returns the original when shorter than max" do
+    term = build(:controlled_vocabulary_term, description: "Short.")
+
+    assert_equal "Short.", term.description_excerpt
+    assert_equal "Short.", term.description_excerpt(max: 50)
+  end
+
+  test "description_excerpt truncates with an ellipsis when longer than max" do
+    text = "a" * 250
+    term = build(:controlled_vocabulary_term, description: text)
+
+    excerpt = term.description_excerpt(max: 200)
+
+    assert_equal 201, excerpt.length          # 200 chars + "…"
+    assert_equal "a" * 200 + "…", excerpt
+  end
+
+  test "description_excerpt honours a custom max" do
+    term = build(:controlled_vocabulary_term, description: "abcdefghij")
+
+    assert_equal "abcde…", term.description_excerpt(max: 5)
+  end
 end

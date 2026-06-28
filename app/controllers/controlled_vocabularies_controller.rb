@@ -3,20 +3,44 @@ class ControlledVocabulariesController < ApplicationController
 
   MAX_RESULTS = 20
 
+  Result = Struct.new(:term, :match, :matched_variant, keyword_init: true) do
+    delegate :name, :ontology_name, :ontology_id, :ontology_url, :description_excerpt,
+      to: :term
+  end
+
   # GET /controlled_vocabularies.json?vocabulary=part_of_organism&q=maize
   def index
-    name = params[:vocabulary]
-    return head :bad_request if name.blank? || name.is_a?(Array)
+    return head :bad_request if params[:vocabulary].blank? || params[:vocabulary].is_a?(Array)
 
-    @vocabulary = ControlledVocabulary.find_by(name: name)
+    @vocabulary = ControlledVocabulary.find_by(name: params[:vocabulary])
     return head :not_found unless @vocabulary
 
-    @terms = @vocabulary.terms
-    @terms = @terms.search(params[:q]) if params[:q].present?
-    @terms = @terms.limit(MAX_RESULTS)
+    @results = build_index_results
 
-    respond_to do |format|
-      format.json
+    respond_to(&:json)
+  end
+
+  private
+
+  def build_index_results
+    return default_results if params[:q].blank?
+
+    variant_term = @vocabulary.resolve_variant(params[:q])
+    search_terms = @vocabulary.terms.search(params[:q])
+                                  .where.not(id: variant_term&.id)
+                                  .limit(MAX_RESULTS - (variant_term ? 1 : 0))
+                                  .to_a
+
+    results = []
+    results << Result.new(term: variant_term, match: "variant",
+                          matched_variant: params[:q]) if variant_term
+    results.concat(search_terms.map { |t| Result.new(term: t, match: "term") })
+    results.first(MAX_RESULTS)
+  end
+
+  def default_results
+    @vocabulary.terms.limit(MAX_RESULTS).map do |t|
+      Result.new(term: t, match: "term")
     end
   end
 end
