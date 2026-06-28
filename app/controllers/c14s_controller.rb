@@ -183,7 +183,8 @@ class C14sController < ApplicationController
           :position_x,
           :position_y,
           :position_z,
-          :position_crs
+          :position_crs,
+          :part_of_organism
         ]
       },
       sample: [

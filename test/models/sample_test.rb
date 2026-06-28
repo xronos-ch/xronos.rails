@@ -59,5 +59,16 @@ class SampleTest < ActiveSupport::TestCase
     assert sample.valid?
   end
 
+  test "part_of_organism resolves to a controlled term when the value matches" do
+    vocab = create(:controlled_vocabulary, name: "part_of_organism")
+    term  = create(:controlled_vocabulary_term, vocabulary: vocab, name: "Cranium",
+      ontology_name: "UBERON", ontology_id: "UBERON:0000029")
+    sample = create(:sample, part_of_organism: "Cranium")
+
+    assert_equal "Cranium", sample.reload.part_of_organism
+    assert sample.part_of_organism_controlled?
+    assert_equal term, sample.part_of_organism_term
+  end
+
 end
 
