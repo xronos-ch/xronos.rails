@@ -15,12 +15,57 @@ class ControlledVocabulariesController < ApplicationController
     @vocabulary = ControlledVocabulary.find_by(name: params[:vocabulary])
     return head :not_found unless @vocabulary
 
+    return head :bad_request if usage_counts_params_invalid?
+
     @results = build_index_results
+    @usage_counts = usage_counts_for(@results.map(&:term).map(&:name))
 
     respond_to(&:json)
   end
 
   private
+
+  # The (model, attribute) params are optional together. They're
+  # malformed — and we 400 — if:
+  #   - one is present without the other, or
+  #   - both are present but don't name a real ActiveRecord model
+  #     with a declared controlled_term on the named column.
+  def usage_counts_params_invalid?
+    model = params[:model]
+    attribute = params[:attribute]
+    return false if model.blank? && attribute.blank?
+    return true  if model.blank? || attribute.blank?
+    !valid_controlled_term_target?(model, attribute)
+  end
+
+  # Safelist: the (model, attribute) pair must refer to a real
+  # ActiveRecord class with a column named +attribute+ that is
+  # declared as a controlled_term. This prevents the search endpoint
+  # from being used to count rows in arbitrary tables/columns
+  # (e.g. User.email, which would be an information disclosure).
+  def valid_controlled_term_target?(model_name, attribute_name)
+    return false if model_name.is_a?(Array) || attribute_name.is_a?(Array)
+    return false unless Object.const_defined?(model_name)
+    model_class = model_name.constantize
+    return false unless model_class < ApplicationRecord
+    return false unless model_class.column_names.include?(attribute_name)
+    return false unless model_class.respond_to?(:controlled_terms)
+    model_class.controlled_terms.key?(attribute_name.to_sym)
+  end
+
+  # Returns a Hash of term_name => existing-record count, or nil
+  # when no count was requested (both model and attribute params
+  # absent). Assumes #usage_counts_params_invalid? has already
+  # returned false.
+  def usage_counts_for(term_names)
+    return nil if params[:model].blank? || params[:attribute].blank?
+    params[:model].constantize
+                .where(params[:attribute] => term_names)
+                .group(params[:attribute])
+                .count
+  rescue NameError
+    nil
+  end
 
   # Build results in five priority tiers (lower tier number = higher
   # priority). Each tier skips terms already present in higher tiers:

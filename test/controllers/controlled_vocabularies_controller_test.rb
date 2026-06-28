@@ -465,4 +465,75 @@ class ControlledVocabulariesControllerTest < ActionDispatch::IntegrationTest
     assert exact_idx < cobblestone_idx,
       "expected exact variant (tier 2) before word-boundary variant (tier 4)"
   end
+
+  # --- usage_count ---
+
+  test "usage_count is present per result when model and attribute params are given" do
+    # Use Sample#part_of_organism (the production controlled_term) so
+    # the test exercises the real safelist path.
+    create(:sample, part_of_organism: "Cranium")
+    create(:sample, part_of_organism: "Cranium")
+    create(:sample, part_of_organism: "Cob (maize)")
+
+    get controlled_vocabularies_path(format: :json,
+      vocabulary: "part_of_organism", model: "Sample", attribute: "part_of_organism")
+
+    assert_response :success
+
+    json = JSON.parse(response.body)
+    cranium = json.find { |t| t["name"] == "Cranium" }
+    cob     = json.find { |t| t["name"] == "Cob (maize)" }
+    femur   = json.find { |t| t["name"] == "Femur" }
+
+    assert_equal 2, cranium["usage_count"]
+    assert_equal 1, cob["usage_count"]
+    assert_equal 0, femur["usage_count"]
+  end
+
+  test "usage_count field is omitted when both model and attribute are absent" do
+    get controlled_vocabularies_path(format: :json, vocabulary: "part_of_organism")
+
+    assert_response :success
+
+    json = JSON.parse(response.body)
+    assert_not json.first.key?("usage_count")
+  end
+
+  test "index returns 400 when model is present but attribute is absent" do
+    get controlled_vocabularies_path(format: :json,
+      vocabulary: "part_of_organism", model: "Sample")
+
+    assert_response :bad_request
+  end
+
+  test "index returns 400 when attribute is present but model is absent" do
+    get controlled_vocabularies_path(format: :json,
+      vocabulary: "part_of_organism", attribute: "part_of_organism")
+
+    assert_response :bad_request
+  end
+
+  test "index returns 400 when the model does not exist" do
+    get controlled_vocabularies_path(format: :json,
+      vocabulary: "part_of_organism", model: "DoesNotExist", attribute: "part_of_organism")
+
+    assert_response :bad_request
+  end
+
+  test "index returns 400 when the attribute is not a declared controlled_term" do
+    # "position_description" is a real column on Sample, but it's not
+    # declared as a controlled_term. The safelist rejects it to prevent
+    # arbitrary column counts.
+    get controlled_vocabularies_path(format: :json,
+      vocabulary: "part_of_organism", model: "Sample", attribute: "position_description")
+
+    assert_response :bad_request
+  end
+
+  test "index returns 400 when the model is not an ActiveRecord subclass" do
+    get controlled_vocabularies_path(format: :json,
+      vocabulary: "part_of_organism", model: "String", attribute: "part_of_organism")
+
+    assert_response :bad_request
+  end
 end

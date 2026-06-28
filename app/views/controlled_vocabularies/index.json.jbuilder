@@ -4,4 +4,5 @@ json.array! @results do |result|
   json.description result.term.description_excerpt
   json.match result.match
   json.matched_variant result.matched_variant if result.match == "variant"
+  json.usage_count(@usage_counts&.fetch(result.term.name, 0)) if @usage_counts
 end
