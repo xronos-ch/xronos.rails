@@ -78,31 +78,29 @@ class ControlledVocabulary::TermTest < ActiveSupport::TestCase
     assert other.valid?
   end
 
-  test "ontology_url builds the UBERON URL" do
+  test "ontology_url builds the UBERON PURL" do
     term = build(:controlled_vocabulary_term,
       ontology_name: "UBERON", ontology_id: "UBERON:0000029")
 
-    assert_equal "https://www.ebi.ac.uk/ols4/ontologies/uberon/terms?iri=http://purl.obolibrary.org/obo/UBERON:0000029",
-                 term.ontology_url
+    assert_equal "http://purl.obolibrary.org/obo/UBERON_0000029", term.ontology_url
   end
 
-  test "ontology_url builds the PO URL" do
+  test "ontology_url builds the PO PURL" do
     term = build(:controlled_vocabulary_term,
       ontology_name: "PO", ontology_id: "PO:0009006")
 
-    assert_equal "https://www.ebi.ac.uk/ols4/ontologies/po/terms?iri=http://purl.obolibrary.org/obo/PO:0009006",
-                 term.ontology_url
+    assert_equal "http://purl.obolibrary.org/obo/PO_0009006", term.ontology_url
   end
 
   test "ontology_url returns nil for an unknown ontology" do
     term = build(:controlled_vocabulary_term, ontology_name: "DOES_NOT_EXIST", ontology_id: "X:Y")
 
-    assert_nil term.ontology_url
+    assert_equal "http://purl.obolibrary.org/obo/X_Y", term.ontology_url
   end
 
-  test "ontology_url returns nil when only one of ontology_name or ontology_id is set" do
+  test "ontology_url returns nil when ontology_id is missing" do
     assert_nil build(:controlled_vocabulary_term, ontology_name: "UBERON", ontology_id: nil).ontology_url
-    assert_nil build(:controlled_vocabulary_term, ontology_name: nil, ontology_id: "UBERON:0000029").ontology_url
+    assert_nil build(:controlled_vocabulary_term, ontology_name: nil, ontology_id: nil).ontology_url
   end
 
   test "destroying a term cascades to its variants" do

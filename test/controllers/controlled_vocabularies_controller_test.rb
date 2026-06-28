@@ -273,8 +273,7 @@ class ControlledVocabulariesControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Cranium", term["name"]
     assert_equal "UBERON", term["ontology_name"]
     assert_equal "UBERON:0000029", term["ontology_id"]
-    assert_equal "https://www.ebi.ac.uk/ols4/ontologies/uberon/terms?iri=http://purl.obolibrary.org/obo/UBERON:0000029",
-      term["url"]
+    assert_equal "http://purl.obolibrary.org/obo/UBERON_0000029", term["url"]
   end
 
   test "index returns 400 when the vocabulary param is missing" do

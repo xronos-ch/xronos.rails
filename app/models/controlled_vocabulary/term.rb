@@ -40,14 +40,15 @@ class ControlledVocabulary::Term < ApplicationRecord
     against: :name,
     using: { tsearch: { prefix: true } }
 
-  ONTOLOGY_URL_TEMPLATES = {
-    "UBERON" => "https://www.ebi.ac.uk/ols4/ontologies/uberon/terms?iri=http://purl.obolibrary.org/obo/%s",
-    "PO"     => "https://www.ebi.ac.uk/ols4/ontologies/po/terms?iri=http://purl.obolibrary.org/obo/%s"
-  }.freeze
-
+  # Canonical OBO PURL for the term. The stored +ontology_id+ is in
+  # "PREFIX:NNNNNNN" form (e.g. "UBERON:0000029"); the PURL replaces the
+  # colon with an underscore (e.g. "UBERON_0000029"). OBOLibrary redirects
+  # the PURL to the appropriate per-ontology viewer (OLS for UBERON,
+  # Planteome for PO, etc.) so we don't have to maintain per-ontology
+  # templates here.
   def ontology_url
-    template = ONTOLOGY_URL_TEMPLATES[ontology_name]
-    template && ontology_id ? template % ontology_id : nil
+    return nil if ontology_id.blank?
+    "http://purl.obolibrary.org/obo/#{ontology_id.tr(':', '_')}"
   end
 
   # Truncated plain-text description for API responses

@@ -183,7 +183,7 @@ class HasControlledTermsTest < ActiveSupport::TestCase
 
   test "ontologies_for returns [{name, id, url}] for a term with ontology metadata" do
     widget = Widget.new(material: "Pine")
-    expected_url = ControlledVocabulary::Term::ONTOLOGY_URL_TEMPLATES["PO"] % "PO:0000048"
+    expected_url = "http://purl.obolibrary.org/obo/PO_0000048"
 
     assert_equal [{ name: "PO", id: "PO:0000048", url: expected_url }],
                  widget.ontologies_for(:material)
