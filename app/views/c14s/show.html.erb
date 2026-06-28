@@ -12,6 +12,11 @@
     <%= render "c14_measurement", c14: @c14 %>
   </section>
 
+  <section id="c14-sample" class="my-5">
+    <h2><%= bs_icon "archive" %> Sample</h2>
+    <%= render "samples/sample", sample: @c14.sample %>
+  </section>
+
   <section id="c14-calibration" class="my-5">
     <h2><%= bs_icon "graph-down" %> Calibration</h2>
     <div class="row">

@@ -12,21 +12,4 @@
   <dt>Method</dt>
   <dd><%= c14.method.present? ? c14.method : na_value %></dd>
 
-  <dt>Sample material</dt>
-  <dd><%= c14.sample.material.present? ? c14.sample.material.name : na_value %></dd>
-
-  <dt>Sample taxon</dt>
-  <dd>
-    <% if c14.sample.taxon.present? %>
-      <%= render c14.sample.taxon %>
-    <% else %>
-      <%= na_value %>
-    <% end %>
-  </dd>
-
-  <dt>Sample part of organism</dt>
-  <dd>
-    <%= render "samples/part_of_organism", sample: c14.sample %>
-  </dd>
-
 </dl>

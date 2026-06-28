@@ -75,6 +75,7 @@ export default class extends Controller {
 		let settings = {
 			maxOptions: 255,
 			create: this.hasCreateValue ? this.createValue : false,
+			createOnBlur: this.hasCreateValue ? this.createValue : false,
 			maxItems: this.hasMaxItemsValue ? this.maxItemsValue : null
 		}
 
