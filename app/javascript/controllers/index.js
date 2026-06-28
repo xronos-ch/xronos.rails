@@ -7,6 +7,9 @@ import { application } from "./application"
 import ArticleEditorController from "./article_editor_controller"
 application.register("article-editor", ArticleEditorController)
 
+import ClipboardController from "./clipboard_controller"
+application.register("clipboard", ClipboardController)
+
 import FlashController from "./flash_controller"
 application.register("flash", FlashController)
 

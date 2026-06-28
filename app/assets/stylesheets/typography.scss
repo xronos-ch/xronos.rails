@@ -8,6 +8,12 @@
 	}
 }
 
+// Breadcrumb with a chevron separator (overrides Bootstrap's default "/" via the
+// --bs-breadcrumb-divider CSS variable).
+.breadcrumb-chevron {
+	--bs-breadcrumb-divider: "›";
+}
+
 .dl-inline dt:before {
 	content: "";
 	display: block;
