@@ -64,7 +64,7 @@ bin/rails db:reset                           # Drop, create, load schema + seeds
 2. Implement minimal code to make it pass
 3. Refactor while tests stay green
 4. Stop to ask if the change is acceptable
-5. Update CHANGELOG and suggest a brief commit message
+5. If acceptable, suggest a brief CHANGELOG entry and commit message
 
 Never commit or push changes yourself; that is the user's job.
 
