@@ -3,9 +3,10 @@ require "ruby-progressbar"
 
 module Xronos
   class ImportRunner
-    def initialize(source, csv_dir:)
+    def initialize(source, csv_dir:, output: $stderr)
       @source = source
       @csv_dir = csv_dir
+      @output = output
       @import = Import.create!(source: @source, success: false)
     end
 
@@ -25,7 +26,8 @@ module Xronos
       progress = ProgressBar.create(
         title: filename.to_s,
         total: total,
-        format: "%t |%B| %c/%C (%E)"
+        format: "%t |%B| %c/%C (%E)",
+        output: @output
       )
 
       CSV.foreach(path, headers: true, **csv_options) do |row|
@@ -39,7 +41,8 @@ module Xronos
       progress = ProgressBar.create(
         title: title.to_s,
         total: total,
-        format: "%t |%B| %c/%C (%E)"
+        format: "%t |%B| %c/%C (%E)",
+        output: @output
       )
       enumerable.each do |item|
         catch(:skip_row) { instance_exec(item, &block) }

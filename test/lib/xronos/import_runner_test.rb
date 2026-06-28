@@ -1,4 +1,5 @@
 require "test_helper"
+require "stringio"
 require "tempfile"
 require "csv"
 
@@ -6,6 +7,7 @@ class Xronos::ImportRunnerTest < ActiveSupport::TestCase
   setup do
     @source = create(:source)
     @csv_dir = Dir.mktmpdir
+    @output = StringIO.new
   end
 
   teardown do
@@ -13,7 +15,7 @@ class Xronos::ImportRunnerTest < ActiveSupport::TestCase
   end
 
   test "creates import record with success false" do
-    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
     assert_equal false, runner.import_record.success
     assert_equal @source, runner.import_record.source
   end
@@ -21,7 +23,7 @@ class Xronos::ImportRunnerTest < ActiveSupport::TestCase
   test "csv yields rows from file in csv_dir" do
     write_csv("sites.csv", [%w[Name Lat], %w[Alpha 10.5], %w[Beta 20.3]])
 
-    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
     rows = []
     runner.csv("sites.csv") { |row| rows << row.to_h }
 
@@ -31,7 +33,7 @@ class Xronos::ImportRunnerTest < ActiveSupport::TestCase
   end
 
   test "csv raises on missing file" do
-    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
     assert_raises(Errno::ENOENT) { runner.csv("nonexistent.csv").each { } }
   end
 
@@ -39,7 +41,7 @@ class Xronos::ImportRunnerTest < ActiveSupport::TestCase
     write_csv("sites.csv", [%w[Name], %w[A], %w[B], %w[C]])
 
     rows = []
-    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
     runner.csv("sites.csv") { |row| rows << row.to_h }
 
     assert_equal 3, rows.size
@@ -54,7 +56,7 @@ class Xronos::ImportRunnerTest < ActiveSupport::TestCase
     end
 
     rows = []
-    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
     runner.csv("semicolons.csv", col_sep: ";") { |row| rows << row.to_h }
 
     assert_equal 2, rows.size
@@ -63,7 +65,7 @@ class Xronos::ImportRunnerTest < ActiveSupport::TestCase
   end
 
   test "increment_created increments per model" do
-    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
     runner.increment_created(:site)
     runner.increment_created(:c14)
     runner.increment_created(:site)
@@ -73,13 +75,13 @@ class Xronos::ImportRunnerTest < ActiveSupport::TestCase
   end
 
   test "succeed! sets success to true" do
-    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
     runner.succeed!
     assert runner.import_record.success
   end
 
   test "succeed! persists counters" do
-    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
     runner.increment_created(:site)
     runner.increment_created(:c14)
     runner.succeed!
@@ -93,7 +95,7 @@ class Xronos::ImportRunnerTest < ActiveSupport::TestCase
   test "cell strips whitespace and returns nil for blank" do
     row = CSV::Row.new(%w[a b c], ["  hello  ", "", "   "])
 
-    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
 
     assert_equal "hello", runner.cell(row, "a")
     assert_nil runner.cell(row, "b")
@@ -103,13 +105,13 @@ class Xronos::ImportRunnerTest < ActiveSupport::TestCase
   test "process_enum yields items with progress bar" do
     items = %w[a b c]
     yielded = []
-    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
     runner.process_enum(items, title: "letters") { |item| yielded << item }
     assert_equal %w[a b c], yielded
   end
 
   test "import! creates a record and increments counter" do
-    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
     site = runner.import!(Site, keys: { name: "Alpha" },
       attributes: { lat: "10.5", country_code: "ES" })
 
@@ -121,7 +123,7 @@ class Xronos::ImportRunnerTest < ActiveSupport::TestCase
   end
 
   test "import! creates new records for attribute variations" do
-    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
 
     site_a = runner.import!(Site, keys: { name: "Alpha" },
       attributes: { lat: "10.5", lng: "20.3", country_code: "ES" })
@@ -133,7 +135,7 @@ class Xronos::ImportRunnerTest < ActiveSupport::TestCase
   end
 
   test "import! does not create duplicates for identical data" do
-    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
 
     site_a = runner.import!(Site, keys: { name: "Alpha" },
       attributes: { lat: "10.5", lng: "20.3", country_code: "ES" })
@@ -145,7 +147,7 @@ class Xronos::ImportRunnerTest < ActiveSupport::TestCase
   end
 
   test "import! works with association scope" do
-    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
     site = create(:site, name: "Test")
 
     context = runner.import!(site.contexts,
@@ -159,7 +161,7 @@ class Xronos::ImportRunnerTest < ActiveSupport::TestCase
   end
 
   test "import! works without attributes" do
-    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
 
     material = runner.import!(Material, keys: { name: "Wood" })
 
@@ -169,13 +171,13 @@ class Xronos::ImportRunnerTest < ActiveSupport::TestCase
   end
 
   test "import! does not require revision_comment on models without Versioned" do
-    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
     material = runner.import!(Material, keys: { name: "Bone" })
     assert material.persisted?
   end
 
   test "import record is persisted immediately" do
-    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
     assert_predicate runner.import_record, :persisted?
     assert_not runner.import_record.success
   end
@@ -184,7 +186,7 @@ class Xronos::ImportRunnerTest < ActiveSupport::TestCase
     write_csv("samples.csv", [%w[Name BP], %w[Alpha 100], %w[Beta], %w[Gamma 200]])
 
     kept = []
-    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
     runner.csv("samples.csv") do |row|
       skip_unless cell(row, "BP"), "missing BP"
       kept << cell(row, "Name")
@@ -198,7 +200,7 @@ class Xronos::ImportRunnerTest < ActiveSupport::TestCase
     items = [{name: "A", val: "1"}, {name: "B", val: ""}, {name: "C", val: "3"}]
 
     kept = []
-    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
     runner.process_enum(items, title: "test") do |item|
       skip_unless item[:val].present?, "blank val"
       kept << item[:name]
@@ -212,7 +214,7 @@ class Xronos::ImportRunnerTest < ActiveSupport::TestCase
     items = [{name: "A"}, {name: "B"}]
 
     kept = []
-    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
     runner.process_enum(items, title: "test") do |item|
       skip_unless item[:name] == "A"
       kept << item[:name]
@@ -223,7 +225,7 @@ class Xronos::ImportRunnerTest < ActiveSupport::TestCase
   end
 
   test "skip_unless does not skip when condition is true" do
-    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir)
+    runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
     runner.process_enum([1, 2, 3], title: "test") do |n|
       skip_unless n.is_a?(Integer), "not int"
     end
