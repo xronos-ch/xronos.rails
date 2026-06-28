@@ -24,6 +24,11 @@ class ControlledVocabulary::Variant < ApplicationRecord
   validates :value,      presence: true, uniqueness: { scope: :controlled_vocabulary_term_id }
   validates :normalized, presence: true, uniqueness: { scope: :controlled_vocabulary_term_id }
 
+  include PgSearch::Model
+  pg_search_scope :search,
+    against: :normalized,
+    using: { tsearch: { prefix: true } }
+
   # Normalize a value for variant matching: downcase, strip ends, collapse
   # internal whitespace. Used by #compute_normalized (when storing) and
   # by ControlledVocabulary#resolve_variant (when looking up). The two

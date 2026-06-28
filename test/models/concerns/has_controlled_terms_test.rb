@@ -142,6 +142,43 @@ class HasControlledTermsTest < ActiveSupport::TestCase
     assert_nil Widget.new(material: "Oak").term_for(:material)
   end
 
+  # --- terms_for ---
+
+  test "terms_for returns all matching terms" do
+    widget = Widget.new(colour: "Red")
+
+    assert_equal [@red], widget.terms_for(:colour)
+    assert_equal [@red], widget.colour_terms
+  end
+
+  test "terms_for returns multiple terms that share a name across ontologies" do
+    uberon_red = create(:controlled_vocabulary_term, vocabulary: @colours,
+      name: "Red", ontology_name: "UBERON", ontology_id: "UBERON:0000376")
+    widget = Widget.new(colour: "Red")
+
+    # Both terms are returned, ordered by ontology_name (UBERON first),
+    # with terms that have no ontology metadata sorted last.
+    assert_equal [uberon_red, @red], widget.terms_for(:colour)
+  end
+
+  test "terms_for returns an empty array when no term matches" do
+    widget = Widget.new(colour: "Mauve")
+
+    assert_equal [], widget.terms_for(:colour)
+    assert_equal [], widget.colour_terms
+  end
+
+  test "terms_for returns an empty array for a blank value" do
+    assert_equal [], Widget.new(colour: nil).colour_terms
+    assert_equal [], Widget.new(colour: "").colour_terms
+  end
+
+  test "terms_for returns an empty array when the vocabulary does not exist" do
+    @materials.destroy
+
+    assert_equal [], Widget.new(material: "Oak").terms_for(:material)
+  end
+
   # --- ontologies_for ---
 
   test "ontologies_for returns [{name, id, url}] for a term with ontology metadata" do
@@ -167,6 +204,28 @@ class HasControlledTermsTest < ActiveSupport::TestCase
 
   test "ontologies_for returns an empty array for a blank value" do
     assert_equal [], Widget.new(material: nil).material_ontologies
+  end
+
+  test "ontologies_for returns one entry per matching term" do
+    # Two terms with the same name, each with their own ontology metadata.
+    # ontologies_for should expose both.
+    @red.update!(ontology_name: "PO", ontology_id: "PO:0000086")
+    uberon_red = create(:controlled_vocabulary_term, vocabulary: @colours,
+      name: "Red", ontology_name: "UBERON", ontology_id: "UBERON:0000376")
+    widget = Widget.new(colour: "Red")
+
+    assert_equal 2, widget.ontologies_for(:colour).length
+    names = widget.ontologies_for(:colour).map { |o| o[:name] }
+    assert_includes names, "PO"
+    assert_includes names, "UBERON"
+  end
+
+  test "ontologies_for skips terms with no ontology metadata" do
+    # @red has no ontology_name/ontology_id, so it contributes nothing
+    # to the returned array even when it matches.
+    widget = Widget.new(colour: "Red")
+
+    assert_equal [], widget.ontologies_for(:colour)
   end
 
   # --- resolve_variant_for ---
@@ -227,6 +286,7 @@ class HasControlledTermsTest < ActiveSupport::TestCase
     assert_equal widget.controlled?(:colour),   widget.colour_controlled?
     assert_equal widget.vocabulary_for(:colour), widget.colour_vocabulary
     assert_equal widget.term_for(:material),    widget.material_term
+    assert_equal widget.terms_for(:material),   widget.material_terms
     assert_equal widget.ontologies_for(:material), widget.material_ontologies
   end
 

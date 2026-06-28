@@ -69,6 +69,74 @@ class ControlledVocabulariesControllerTest < ActionDispatch::IntegrationTest
     assert_equal "maize cob", first["matched_variant"]
   end
 
+  test "index resolves a partial variant value to the canonical term" do
+    get controlled_vocabularies_path(format: :json,
+      vocabulary: "part_of_organism", q: "maize c")
+
+    assert_response :success
+
+    json = JSON.parse(response.body)
+    cob_entry = json.find { |t| t["name"] == "Cob (maize)" }
+
+    assert cob_entry, "expected an entry for the canonical term"
+    assert_equal "variant", cob_entry["match"]
+    assert_equal "maize cob", cob_entry["matched_variant"]
+  end
+
+  test "index still respects the 20-cap with many variant + term matches" do
+    # 30 distinct terms, each with a "bulk n" variant. Combined variant +
+    # trigram results should be capped at 20.
+    30.times do |i|
+      term = create(:controlled_vocabulary_term, vocabulary: @vocabulary,
+        name: "Bulk term #{i.to_s.rjust(2, '0')}")
+      create(:controlled_vocabulary_variant, term: term, value: "bulk #{i.to_s.rjust(2, '0')}")
+    end
+
+    get controlled_vocabularies_path(format: :json,
+      vocabulary: "part_of_organism", q: "bulk")
+
+    assert_response :success
+
+    json = JSON.parse(response.body)
+    assert_operator json.length, :<=, 20
+  end
+
+  test "index dedupes multiple matching variants of the same term" do
+    create(:controlled_vocabulary_variant, term: @cob, value: "maize ear")
+    create(:controlled_vocabulary_variant, term: @cob, value: "maize spike")
+
+    get controlled_vocabularies_path(format: :json,
+      vocabulary: "part_of_organism", q: "maize")
+
+    assert_response :success
+
+    json = JSON.parse(response.body)
+    cob_entries = json.select { |t| t["name"] == "Cob (maize)" }
+
+    assert_equal 1, cob_entries.length
+  end
+
+  test "index returns multiple terms when several variants match" do
+    femur_alias = create(:controlled_vocabulary_variant, term: @femur, value: "thigh bone")
+
+    get controlled_vocabularies_path(format: :json,
+      vocabulary: "part_of_organism", q: "bone")
+
+    assert_response :success
+
+    json = JSON.parse(response.body)
+    names = json.map { |t| t["name"] }
+
+    # @cob has the variant "maize cob" — does not contain "bone".
+    # @femur has the new variant "thigh bone".
+    # The trigram term-name search would also return "Cob (maize)" (no),
+    # "Cranium" (no), "Femur" (no), and the new variant.
+    assert_includes names, "Femur"
+    femur_entry = json.find { |t| t["name"] == "Femur" }
+    assert_equal "variant", femur_entry["match"]
+    assert_equal "thigh bone", femur_entry["matched_variant"]
+  end
+
   test "index resolves a case-mismatched variant" do
     get controlled_vocabularies_path(format: :json,
       vocabulary: "part_of_organism", q: "MAIZE COB")
@@ -76,9 +144,11 @@ class ControlledVocabulariesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
 
     json = JSON.parse(response.body)
+    # matched_variant is the actual stored value (the canonical synonym),
+    # not the user's input. The user already knows what they typed.
     assert_equal "Cob (maize)", json.first["name"]
     assert_equal "variant", json.first["match"]
-    assert_equal "MAIZE COB", json.first["matched_variant"]
+    assert_equal "maize cob", json.first["matched_variant"]
   end
 
   test "index variant match is not duplicated in the trigram results" do

@@ -104,4 +104,61 @@ class ControlledVocabulary::VariantTest < ActiveSupport::TestCase
     assert_not duplicate.valid?
     assert_includes duplicate.errors[:normalized], "has already been taken"
   end
+
+  # --- search scope ---
+
+  test "search returns variants whose normalized value matches exactly" do
+    term = create(:controlled_vocabulary_term)
+    variant = create(:controlled_vocabulary_variant, term: term, value: "maize cob")
+
+    results = ControlledVocabulary::Variant.search("maize cob").to_a
+
+    assert_includes results, variant
+  end
+
+  test "search is prefix-matched" do
+    term = create(:controlled_vocabulary_term)
+    variant = create(:controlled_vocabulary_variant, term: term, value: "maize cob")
+
+    results = ControlledVocabulary::Variant.search("maize c").to_a
+
+    assert_includes results, variant
+  end
+
+  test "search is case-insensitive via normalization" do
+    term = create(:controlled_vocabulary_term)
+    variant = create(:controlled_vocabulary_variant, term: term, value: "maize cob")
+
+    results = ControlledVocabulary::Variant.search("MAIZE COB").to_a
+
+    assert_includes results, variant
+  end
+
+  test "search uses prefix matching on each token of the input" do
+    # tsearch with prefix:true tokenises "ma" as ["ma"] and matches any
+    # variant containing a word starting with "ma". The minimum word length
+    # is 1, not the trigram minimum of 3. The 20-cap at the controller
+    # level bounds the result count.
+    term = create(:controlled_vocabulary_term)
+    variant = create(:controlled_vocabulary_variant, term: term, value: "maize cob")
+
+    results = ControlledVocabulary::Variant.search("ma").to_a
+
+    assert_includes results, variant
+  end
+
+  test "search returns nothing for an empty or blank input" do
+    term = create(:controlled_vocabulary_term)
+    create(:controlled_vocabulary_variant, term: term, value: "maize cob")
+
+    assert_empty ControlledVocabulary::Variant.search("").to_a
+    assert_empty ControlledVocabulary::Variant.search(nil).to_a
+  end
+
+  test "search returns nothing when no variant matches" do
+    term = create(:controlled_vocabulary_term)
+    create(:controlled_vocabulary_variant, term: term, value: "maize cob")
+
+    assert_empty ControlledVocabulary::Variant.search("wheat").to_a
+  end
 end

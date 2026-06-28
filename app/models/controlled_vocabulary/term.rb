@@ -14,8 +14,8 @@
 #
 # Indexes
 #
-#  index_cv_terms_on_ontology             (ontology_name,ontology_id) UNIQUE WHERE ((ontology_name IS NOT NULL) AND (ontology_id IS NOT NULL))
-#  index_cv_terms_on_vocabulary_and_name  (controlled_vocabulary_id,name) UNIQUE
+#  index_cv_terms_on_ontology                      (ontology_name,ontology_id) UNIQUE WHERE ((ontology_name IS NOT NULL) AND (ontology_id IS NOT NULL))
+#  index_cv_terms_on_vocabulary_ontology_and_name  (controlled_vocabulary_id,ontology_name,name) UNIQUE
 #
 class ControlledVocabulary::Term < ApplicationRecord
   belongs_to :vocabulary, class_name: "ControlledVocabulary",
@@ -27,7 +27,7 @@ class ControlledVocabulary::Term < ApplicationRecord
   default_scope { order(:name) }
 
   validates :name, presence: true,
-                   uniqueness: { scope: :controlled_vocabulary_id }
+                   uniqueness: { scope: [:controlled_vocabulary_id, :ontology_name] }
 
   with_options if: -> { ontology_name.present? || ontology_id.present? } do
     validates :ontology_name, presence: true

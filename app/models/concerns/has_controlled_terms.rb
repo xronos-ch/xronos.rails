@@ -9,6 +9,7 @@ module HasControlledTerms
       define_method("#{attribute}_controlled?") { controlled?(attribute) }
       define_method("#{attribute}_vocabulary")  { vocabulary_for(attribute) }
       define_method("#{attribute}_term")       { term_for(attribute) }
+      define_method("#{attribute}_terms")      { terms_for(attribute) }
       define_method("#{attribute}_ontologies") { ontologies_for(attribute) }
 
       scope "controlled_#{attribute}",   -> { controlled(attribute) }
@@ -76,10 +77,23 @@ module HasControlledTerms
     vocab.match(value)
   end
 
+  # Plural form of #term_for. Returns every term in the declared
+  # vocabulary whose name equals the attribute value. The value may
+  # match multiple terms across ontologies (e.g. PO and UBERON both have
+  # a "cortex"); all matches are returned so the consumer can surface
+  # the ambiguity. The order matches ControlledVocabulary#matches.
+  def terms_for(attribute)
+    vocab = vocabulary_for(attribute)
+    return [] if vocab.nil?
+    value = public_send(attribute)
+    return [] if value.blank?
+    vocab.matches(value).to_a
+  end
+
   def ontologies_for(attribute)
-    term = term_for(attribute)
-    return [] if term.nil? || term.ontology_name.blank?
-    [{ name: term.ontology_name, id: term.ontology_id, url: term.ontology_url }.compact]
+    terms_for(attribute)
+      .reject { |t| t.ontology_name.blank? }
+      .map { |t| { name: t.ontology_name, id: t.ontology_id, url: t.ontology_url }.compact }
   end
 
   # Resolve a user-typed string to the canonical term for the declared

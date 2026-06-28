@@ -25,16 +25,24 @@ class ControlledVocabulariesController < ApplicationController
   def build_index_results
     return default_results if params[:q].blank?
 
-    variant_term = @vocabulary.resolve_variant(params[:q])
-    search_terms = @vocabulary.terms.search(params[:q])
-                                  .where.not(id: variant_term&.id)
-                                  .limit(MAX_RESULTS - (variant_term ? 1 : 0))
-                                  .to_a
-
     results = []
-    results << Result.new(term: variant_term, match: "variant",
-                          matched_variant: params[:q]) if variant_term
-    results.concat(search_terms.map { |t| Result.new(term: t, match: "term") })
+    excluded_ids = []
+
+    @vocabulary.search_variants(params[:q]).each do |variant|
+      results << Result.new(term: variant.term, match: "variant",
+                            matched_variant: variant.value)
+      excluded_ids << variant.controlled_vocabulary_term_id
+    end
+
+    remaining = MAX_RESULTS - results.length
+    if remaining.positive?
+      term_scope = @vocabulary.terms
+                              .search(params[:q])
+                              .where.not(id: excluded_ids)
+                              .limit(remaining)
+      term_scope.each { |t| results << Result.new(term: t, match: "term") }
+    end
+
     results.first(MAX_RESULTS)
   end
 

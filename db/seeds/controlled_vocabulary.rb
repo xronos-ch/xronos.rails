@@ -20,8 +20,7 @@ UBERON_FILTER = ->(term) {
 
 PO_FILTER = ->(term) {
   return false if term[:is_obsolete]
-  return false unless term[:subsets].include?('reference')
-  return false if term[:id] == 'PO:0000003'
+  return false unless term[:namespace] == 'plant_anatomy'
 
   true
 }.freeze

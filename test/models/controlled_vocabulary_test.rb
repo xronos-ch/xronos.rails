@@ -95,6 +95,58 @@ class ControlledVocabularyTest < ActiveSupport::TestCase
     assert_equal term, other.match('Cob')
   end
 
+  test 'match is deterministic when multiple terms share a name' do
+    # Two terms in the same vocabulary with the same name. PO (alphabetically
+    # before UBERON) should win, and the lower id should break further ties.
+    vocabulary = create(:controlled_vocabulary)
+    uberon_term = create(:controlled_vocabulary_term, vocabulary: vocabulary,
+      name: 'Cortex', ontology_name: 'UBERON', ontology_id: 'UBERON:0001850')
+    po_term     = create(:controlled_vocabulary_term, vocabulary: vocabulary,
+      name: 'Cortex', ontology_name: 'PO',     ontology_id: 'PO:0000055')
+
+    assert_equal po_term, vocabulary.match('Cortex')
+    assert_equal [po_term, uberon_term], vocabulary.matches('Cortex').to_a
+  end
+
+  # --- matches ---
+
+  test 'matches returns all terms with the given name' do
+    vocabulary = create(:controlled_vocabulary)
+    cranium = create(:controlled_vocabulary_term, vocabulary: vocabulary, name: 'Cranium')
+    create(:controlled_vocabulary_term, vocabulary: vocabulary, name: 'Femur')
+
+    assert_equal [cranium], vocabulary.matches('Cranium').to_a
+  end
+
+  test 'matches returns multiple terms that share a name' do
+    vocabulary = create(:controlled_vocabulary)
+    uberon = create(:controlled_vocabulary_term, vocabulary: vocabulary,
+      name: 'Cortex', ontology_name: 'UBERON', ontology_id: 'UBERON:0001850')
+    po     = create(:controlled_vocabulary_term, vocabulary: vocabulary,
+      name: 'Cortex', ontology_name: 'PO',     ontology_id: 'PO:0000055')
+
+    results = vocabulary.matches('Cortex').to_a
+
+    assert_equal [po, uberon], results
+  end
+
+  test 'matches returns an empty relation for unknown or blank input' do
+    vocabulary = create(:controlled_vocabulary)
+    create(:controlled_vocabulary_term, vocabulary: vocabulary, name: 'Cranium')
+
+    assert_empty vocabulary.matches('Kob').to_a
+    assert_empty vocabulary.matches(nil).to_a
+    assert_empty vocabulary.matches('').to_a
+  end
+
+  test 'matches does not consult variants' do
+    vocabulary = create(:controlled_vocabulary)
+    term = create(:controlled_vocabulary_term, vocabulary: vocabulary, name: 'Cob')
+    create(:controlled_vocabulary_variant, term: term, value: 'maize cob')
+
+    assert_empty vocabulary.matches('maize cob').to_a
+  end
+
   test 'destroying a vocabulary cascades to its terms and their variants' do
     vocabulary = create(:controlled_vocabulary)
     term = create(:controlled_vocabulary_term, vocabulary: vocabulary)

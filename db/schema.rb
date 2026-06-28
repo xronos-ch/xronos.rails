@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_25_130000) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_28_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -140,7 +140,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_25_130000) do
     t.string "ontology_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["controlled_vocabulary_id", "name"], name: "index_cv_terms_on_vocabulary_and_name", unique: true
+    t.index ["controlled_vocabulary_id", "ontology_name", "name"], name: "index_cv_terms_on_vocabulary_ontology_and_name", unique: true
     t.index ["ontology_name", "ontology_id"], name: "index_cv_terms_on_ontology", unique: true, where: "((ontology_name IS NOT NULL) AND (ontology_id IS NOT NULL))"
   end
 
