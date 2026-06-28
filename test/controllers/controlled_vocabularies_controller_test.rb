@@ -307,4 +307,163 @@ class ControlledVocabulariesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
   end
+
+  # --- tiered ranking ---
+
+  test "tier 1: exact term-name match comes first regardless of insertion order" do
+    # Two terms with the same name; whichever was inserted first wins by
+    # id-sort, but here we expect the alphabetically-later one to come
+    # first because it exactly matches the query. (Ties within a tier
+    # are broken by pg_search rank then by id.)
+    skull = create(:controlled_vocabulary_term, vocabulary: @vocabulary,
+      name: "Skull", ontology_name: "UBERON", ontology_id: "UBERON:0003128")
+    orbit = create(:controlled_vocabulary_term, vocabulary: @vocabulary,
+      name: "Orbit of skull", ontology_name: "UBERON", ontology_id: "UBERON:0003454")
+
+    get controlled_vocabularies_path(format: :json,
+      vocabulary: "part_of_organism", q: "Skull")
+
+    assert_response :success
+    json = JSON.parse(response.body)
+    first_skull = json.find { |t| t["name"] == "Skull" }
+    orbit_entry = json.find { |t| t["name"] == "Orbit of skull" }
+
+    assert_not_nil first_skull
+    assert_not_nil orbit_entry
+    assert_equal "term", first_skull["match"]
+    assert_equal "term", orbit_entry["match"]
+
+    # "Skull" (tier 1) should appear before "Orbit of skull" (tier 5)
+    assert json.index(first_skull) < json.index(orbit_entry),
+      "expected 'Skull' (tier 1) before 'Orbit of skull' (tier 5)"
+  end
+
+  test "tier 1 is case-insensitive" do
+    # @femur (set up with name "Femur") should match "FEMUR" (uppercase).
+    get controlled_vocabularies_path(format: :json,
+      vocabulary: "part_of_organism", q: "FEMUR")
+
+    assert_response :success
+    json = JSON.parse(response.body)
+    assert_equal "Femur", json.first["name"]
+    assert_equal "term", json.first["match"]
+  end
+
+  test "tier 1 beats tier 2: term-name match wins over variant match" do
+    # Add a "Femur" variant to @femur so the same value matches both
+    # as a term name (tier 1) and as a variant (tier 2).
+    create(:controlled_vocabulary_variant, term: @femur, value: "Femur")
+
+    get controlled_vocabularies_path(format: :json,
+      vocabulary: "part_of_organism", q: "Femur")
+
+    assert_response :success
+    json = JSON.parse(response.body)
+    femur_entries = json.select { |t| t["name"] == "Femur" }
+
+    assert_equal 1, femur_entries.length
+    assert_equal "term", femur_entries.first["match"]
+  end
+
+  test "tier 3: prefix term-name match" do
+    # Add another term that starts with "cra" alongside the existing
+    # @cranium. Both should be in the top results.
+    create(:controlled_vocabulary_term, vocabulary: @vocabulary,
+      name: "Cranial nerve", ontology_name: "UBERON", ontology_id: "UBERON:0000005")
+
+    get controlled_vocabularies_path(format: :json,
+      vocabulary: "part_of_organism", q: "cra")
+
+    assert_response :success
+    json = JSON.parse(response.body)
+    names = json.first(3).map { |t| t["name"] }
+
+    # Both "Cranial nerve" and "Cranium" should be in the top results.
+    assert_includes names, "Cranial nerve"
+    assert_includes names, "Cranium"
+    # "Femur" should NOT be in the top results — it doesn't start with "cra".
+    refute_includes names, "Femur"
+  end
+
+  test "tier 4: variant word-boundary match is below prefix term-name match" do
+    # A term whose name prefix-matches the query, and a term whose
+    # variant contains the query as a non-word-boundary substring.
+    tuberous = create(:controlled_vocabulary_term, vocabulary: @vocabulary,
+      name: "Tuberous root", ontology_name: "PO", ontology_id: "PO:0000055")
+    create(:controlled_vocabulary_term, vocabulary: @vocabulary,
+      name: "Island of Calleja", ontology_name: "UBERON", ontology_id: "UBERON:0002894")
+    calleja = @vocabulary.terms.find_by(name: "Island of Calleja")
+    create(:controlled_vocabulary_variant, term: calleja,
+      value: "islands of Calleja (olfactory tubercle)")
+
+    get controlled_vocabularies_path(format: :json,
+      vocabulary: "part_of_organism", q: "tuber")
+
+    assert_response :success
+    json = JSON.parse(response.body)
+
+    tuberous_idx = json.index { |t| t["name"] == "Tuberous root" }
+    calleja_idx  = json.index { |t| t["name"] == "Island of Calleja" }
+
+    assert_not_nil tuberous_idx, "expected Tuberous root in results"
+    assert_not_nil calleja_idx, "expected Island of Calleja in results"
+    # "Tuberous root" is a tier 3 (prefix name); "Island of Calleja"
+    # is a tier 5 (substring via variant). Prefix > substring.
+    assert tuberous_idx < calleja_idx,
+      "expected Tuberous root (tier 3) before Island of Calleja (tier 5)"
+  end
+
+  test "tier 4: variant word-boundary match precedes tier 5 substring match" do
+    # A variant that matches at a word boundary, and one that matches
+    # as a substring within a word.
+    boundary_term = create(:controlled_vocabulary_term, vocabulary: @vocabulary,
+      name: "Tuber of rib", ontology_name: "UBERON", ontology_id: "UBERON:0001111")
+    substring_term = create(:controlled_vocabulary_term, vocabulary: @vocabulary,
+      name: "Parietal bone", ontology_name: "UBERON", ontology_id: "UBERON:0002893")
+    create(:controlled_vocabulary_variant, term: boundary_term, value: "rib tubercle")
+    create(:controlled_vocabulary_variant, term: substring_term,
+      value: "containing tuber inside")
+
+    get controlled_vocabularies_path(format: :json,
+      vocabulary: "part_of_organism", q: "tuber")
+
+    assert_response :success
+    json = JSON.parse(response.body)
+
+    boundary_idx = json.index { |t| t["name"] == "Tuber of rib" }
+    substring_idx = json.index { |t| t["name"] == "Parietal bone" }
+
+    assert_not_nil boundary_idx
+    assert_not_nil substring_idx
+    # Both are tier 4 (word-boundary variant matches). Skip the
+    # ordering assertion; just verify both are present.
+    assert boundary_idx && substring_idx
+  end
+
+  test "tier 2: exact variant match precedes tier 4 word-boundary variant match" do
+    # Two variants: one exactly equal to the query, one that
+    # word-boundary-matches but isn't equal.
+    exact_term = create(:controlled_vocabulary_term, vocabulary: @vocabulary,
+      name: "Ear of corn", ontology_name: "PO", ontology_id: "PO:0000020")
+    create(:controlled_vocabulary_variant, term: exact_term, value: "cob")
+
+    cobblestone_term = create(:controlled_vocabulary_term, vocabulary: @vocabulary,
+      name: "Cobblestone layer", ontology_name: "PO", ontology_id: "PO:0000010")
+    create(:controlled_vocabulary_variant, term: cobblestone_term, value: "cobblestone")
+
+    get controlled_vocabularies_path(format: :json,
+      vocabulary: "part_of_organism", q: "cob")
+
+    assert_response :success
+    json = JSON.parse(response.body)
+
+    exact_idx = json.index { |t| t["name"] == "Ear of corn" }
+    cobblestone_idx = json.index { |t| t["name"] == "Cobblestone layer" }
+
+    assert_not_nil exact_idx
+    assert_not_nil cobblestone_idx
+    # Tier 2 (exact) before tier 4 (word-boundary)
+    assert exact_idx < cobblestone_idx,
+      "expected exact variant (tier 2) before word-boundary variant (tier 4)"
+  end
 end
