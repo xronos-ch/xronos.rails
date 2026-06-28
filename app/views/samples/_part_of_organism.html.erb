@@ -1,0 +1,18 @@
+<% if sample.part_of_organism.blank? %>
+  <%= na_value %>
+<% elsif sample.part_of_organism_controlled? %>
+  <% term = sample.part_of_organism_term %>
+  <span><%= sample.part_of_organism %></span>
+  <% if term.ontology_id.present? && term.ontology_url.present? %>
+    <%= link_to term.ontology_id, term.ontology_url,
+        target: "_blank", rel: "noopener",
+        title: "Ontology identifier for '#{sample.part_of_organism}'",
+        class: "badge text-bg-info text-decoration-none ms-2" %>
+  <% end %>
+<% else %>
+  <span class="text-muted"><%= sample.part_of_organism %></span>
+  <%= bs_icon "exclamation-circle",
+    class: "text-warning",
+    data: { "bs-toggle": "tooltip", controller: "tooltips" },
+    title: "Not matched to a controlled term" %>
+<% end %>
