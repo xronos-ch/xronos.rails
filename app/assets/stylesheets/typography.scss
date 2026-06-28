@@ -1,5 +1,13 @@
 @use 'bootstrap/scss/bootstrap' as *;
 
+// Responsive heading-size utilities (Bootstrap has no built-in responsive variants
+// of its .h1–.h6 classes, so we define them here following the same naming pattern).
+@media (min-width: 992px) {
+	.h5-lg {
+		font-size: 1.25rem;
+	}
+}
+
 .dl-inline dt:before {
 	content: "";
 	display: block;
@@ -30,3 +38,4 @@
 	background: $primary;
 	color: $light;
 }
+

@@ -29,30 +29,38 @@
 
   <div class="row g-4">
 
-    <div class="col-12 col-lg-8 mb-5">
+    <div class="col-12 col-lg-8">
 
-      <section id="c14-measurement" class="mb-5">
+      <section id="c14-measurement">
         <h2>Measurement</h2>
         <%= render "c14_measurement", c14: @c14 %>
       </section>
 
-      <section id="c14-calibration" class="my-5">
+      <hr class="my-5">
+
+      <section id="c14-calibration">
         <h2>Calibration</h2>
         <%= render "c14_calibration" %>
       </section>
 
-      <section id="c14-sample" class="my-5">
+      <hr class="my-5">
+
+      <section id="c14-sample">
         <h2>Sample</h2>
         <%= render "samples/sample", sample: @c14.sample %>
       </section>
 
-      <section id="c14-context" class="my-5">
+      <hr class="my-5">
+
+      <section id="c14-context">
         <h2>Context</h2>
         <%= render "c14_context", c14: @c14 %>
       </section>
 
+      <hr class="my-5">
+
       <% references = (@c14.references + @c14.site.references).uniq %>
-      <section id="c14-references" class="my-5">
+      <section id="c14-references">
         <h2>
           <%= Reference.label.humanize.pluralize %>
           <small class="text-muted">(<%= references.count %>)</small>
@@ -63,17 +71,21 @@
     </div>
 
     <aside class="col-lg-4">
-      <div class="mb-5">
+      <div class="mb-lg-5">
         <%= render "shared/record_metadata", record: @c14 %>
       </div>
 
-      <section id="c14-linked-data" class="my-5">
-        <h2>Linked data</h2>
+      <hr class="my-5 d-lg-none">
+
+      <section id="c14-linked-data" class="my-lg-5">
+        <h2 class="h5-lg">Linked data</h2>
         <%= render "c14_linked_data" %>
       </section>
 
-      <section id="c14-changelog" class="my-5">
-        <h2>Changelog</h2>
+      <hr class="my-5 d-lg-none">
+
+      <section id="c14-changelog" class="mt-lg-5">
+        <h2 class="h5-lg">Changelog</h2>
         <%= render "application/paper_trail/versions", item: @c14, versions: @versions %>
       </section>
     </aside>
