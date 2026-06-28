@@ -1,0 +1,26 @@
+<div class="btn-toolbar" role="toolbar" aria-label="Record actions">
+
+  <div class="btn-group me-2" role="group" aria-label="Public actions">
+    <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+      Download as
+    </button>
+    <ul class="dropdown-menu">
+      <li><%= link_to "JSON", c14_path(c14, format: :json), class: "dropdown-item" %></li>
+    </ul>
+    <%= link_to "Cite", "#", class: "btn btn-sm btn-outline-primary", title: "Export citation" %>
+  </div>
+
+  <% if can?(:edit, c14) || can?(:destroy, c14) %>
+    <div class="btn-group" role="group" aria-label="Access-controlled actions">
+      <% if can? :edit, c14 %>
+        <%= link_to edit_icon, edit_c14_path(c14), class: "btn btn-sm btn-outline-primary", title: "Edit radiocarbon date", data: { turbo_frame: "remote_modal" } %>
+      <% end %>
+      <% if can? :destroy, c14 %>
+        <%= button_to c14_path(c14), method: :delete, class: "btn btn-sm btn-outline-danger", title: "Delete radiocarbon date", data: { turbo_confirm: "Are you sure?" } do %>
+          <%= bs_icon "trash" %>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+
+</div>
