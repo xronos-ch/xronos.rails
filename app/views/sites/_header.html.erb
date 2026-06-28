@@ -1,44 +1,78 @@
-<header id="site-header">
-  <div class="d-flex">
-    <h1 class="display-3"><%= site.name %></h1>
-    <div class="ms-auto">
-      <%= render "shared/record_toolbar", record: site,
-            formats: [{ name: "JSON", path: site_path(site, format: :json) }] %>
+<header id="site-header" class="mb-3">
+
+  <div class="text-uppercase small d-flex align-items-center">
+    <%= xr_icon Site, {}, { class: "me-2", style: "width: auto; height: 1rem;" } %>
+    <span><%= Site.label %></span>
+    <span class="vr mx-2"></span>
+    <%= link_to "XRONOS", root_path, class: "text-body-secondary text-decoration-none" %>
+  </div>
+
+  <div class="d-flex align-items-baseline mb-2">
+    <h1 class="mb-0 me-3"><%= site.name %></h1>
+  </div>
+
+  <div class="lead text-body-secondary d-flex align-items-end flex-wrap">
+    <div class="d-flex align-items-center">
+      <%= bs_icon "globe", class: "me-2" %>
+      <nav aria-label="Geographic location">
+        <ol class="breadcrumb breadcrumb-chevron mb-0">
+          <% unless site.country.blank? %>
+            <li class="breadcrumb-item"><%= site.country %></li>
+          <% end %>
+          <li class="breadcrumb-item active" aria-current="page"><%= site.name %></li>
+        </ol>
+      </nav>
     </div>
+    <% unless site.coordinates.blank? %>
+      <div class="d-flex align-items-center ms-auto small">
+        <%= bs_icon "geo-alt", class: "me-2" %>
+        <span class="font-monospace"><%= site.coordinates.to_s("dd") %></span>
+      </div>
+    <% end %>
   </div>
 
-  <div class="h5">
-    <%= xr_icon Site, {}, { style: "width: auto; height: 1.25rem;" } %>
-    Archaeological site
-    in <%= render "country", site: @site %>
-  </div>
-
-  <% if @site.site_names.any? %>
-    <dl>
-      <dt>Also known as</dt>
-      <dd>
-        <ul class="list-unstyled">
-          <%= turbo_frame_tag "site_names", class: "my-3" do %>
-            <% for site_name in @site.site_names.order(:language, :name) do %>
-              <%= turbo_frame_tag site_name do %>
-                <li><%= render site_name %></li>
-              <% end %>
-            <% end %>
-          <% end %>
-          <% if can? :create, :site_name %>
-            <%= turbo_frame_tag SiteName.new %>
-          <% end %>
-        </ul>
-      </dd>
-    </dl>
-  <% end %>
-  <% if can? :create, :site_name %>
-    <%= link_to create_icon + "Add alias", [:new, @site, :site_name],
-      data: { turbo_frame: dom_id(SiteName.new) } %>
-  <% end %>
-
-  <div class="my-3">
-    <%= render "shared/record_metadata", record: @site %>
+  <div class="d-flex align-items-center text-body-secondary small mt-2">
+    <%= bs_icon "link-45deg", class: "me-2" %>
+    <span class="font-monospace text-truncate"><%= site_url(site) %></span>
+    <button type="button"
+            class="btn btn-sm btn-link p-0 ms-2"
+            data-controller="clipboard"
+            data-clipboard-text-value="<%= site_url(site) %>"
+            data-action="clipboard#copy"
+            title="Copy permalink">
+      <%= bs_icon "clipboard" %>
+    </button>
   </div>
 
 </header>
+
+<% if site.site_names.any? %>
+  <dl class="dl-inline small">
+    <dt class="text-body-secondary">Also known as</dt>
+    <dd>
+      <%= turbo_frame_tag "site_names" do %>
+        <% site.site_names.order(:language, :name).each_with_index do |site_name, i| %>
+          <%= turbo_frame_tag site_name do %>
+            <%= render site_name %><%= i < site.site_names.count - 1 ? ", " : "" %>
+          <% end %>
+        <% end %>
+      <% end %>
+      <% if can? :create, :site_name %>
+        <%= turbo_frame_tag SiteName.new %>
+      <% end %>
+    </dd>
+  </dl>
+<% end %>
+<% if can? :create, :site_name %>
+  <%= link_to create_icon + "Add alias", [:new, site, :site_name],
+    data: { turbo_frame: dom_id(SiteName.new) } %>
+<% end %>
+
+<div class="mt-3">
+  <%= render "shared/record_metadata", record: site %>
+</div>
+
+<div class="mt-3 mb-5">
+    <%= render "shared/record_toolbar", record: site,
+          downloads: [{ name: "JSON", path: site_path(site, format: :json) }] %>
+</div>
