@@ -70,6 +70,7 @@ class ControlledVocabulary < ApplicationRecord
     return [] if needle.empty?
 
     ControlledVocabulary::Variant.search(needle)
+      .includes(:term)
       .joins(:term)
       .where(controlled_vocabulary_terms: { controlled_vocabulary_id: id })
       .limit(limit * 3)

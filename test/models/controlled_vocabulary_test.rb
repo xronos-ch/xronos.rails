@@ -249,4 +249,47 @@ class ControlledVocabularyTest < ActiveSupport::TestCase
 
     assert_nil vocabulary.resolve_variant('maize cob')
   end
+
+  # --- search_variants ---
+
+  test 'search_variants eager-loads the term to avoid N+1' do
+    # Regression guard: Bullet flagged `ControlledVocabulary::Variant =>
+    # [:term]` because every .term access on a returned variant fired a
+    # SELECT. With .includes(:term) in the scope, ActiveRecord merges
+    # the join into the variant query and pre-loads each term in one
+    # round-trip; .term access on the returned records is a no-op.
+    vocabulary = create(:controlled_vocabulary)
+    3.times do |i|
+      term = create(:controlled_vocabulary_term, vocabulary: vocabulary,
+        name: "Term #{i}")
+      create(:controlled_vocabulary_variant, term: term, value: 'match me')
+    end
+
+    variant_queries = 0
+    term_queries = 0
+    callback = ->(event_name, _start, _finish, _id, payload) do
+      next unless event_name == 'sql.active_record'
+      next if payload[:cached]
+      sql = payload[:sql].to_s
+      # The combined .includes(:term).joins(:term) yields a single SELECT
+      # against controlled_vocabulary_variants that also pulls
+      # controlled_vocabulary_terms columns. Anything other than that
+      # one SELECT is an N+1.
+      if sql.include?('FROM "controlled_vocabulary_variants"')
+        variant_queries += 1
+      elsif sql.include?('FROM "controlled_vocabulary_terms"')
+        term_queries += 1
+      end
+    end
+    ActiveSupport::Notifications.subscribed(callback, 'sql.active_record') do
+      results = vocabulary.search_variants('match me')
+      # Touch every result's term — this mirrors what the controller does.
+      results.each { |v| v.term.name }
+    end
+
+    assert_equal 1, variant_queries,
+      "expected exactly 1 variant query (with terms joined), got #{variant_queries}"
+    assert_equal 0, term_queries,
+      "expected 0 standalone term queries (N+1), got #{term_queries}"
+  end
 end
