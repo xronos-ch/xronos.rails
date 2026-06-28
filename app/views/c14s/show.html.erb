@@ -7,8 +7,15 @@
 
   <header id="c14-header" class="mb-5">
 
-    <div class="d-flex align-items-baseline mb-3">
-      <h1 class="display-3 mb-0 me-3"><%= @c14.lab_id %></h1>
+    <div class="text-uppercase small d-flex align-items-center">
+      <%= xr_icon C14, {}, { class: "me-2", style: "width: auto; height: 1rem;" } %>
+      <span><%= C14.label %></span>
+      <span class="vr mx-2"></span>
+      <%= link_to "XRONOS", root_path, class: "text-body-secondary text-decoration-none" %>
+    </div>
+
+    <div class="d-flex align-items-baseline mb-2">
+      <h1 class="mb-0 me-3"><%= @c14.lab_id %></h1>
       <% if can? :edit, @c14 %>
         <%= link_to edit_icon,
           edit_c14_path(@c14),
@@ -18,9 +25,40 @@
       <% end %>
     </div>
 
-    <div class="h5 text-muted">
-      Radiocarbon date from <%= link_to @c14.site.name, @c14.site %>
-      <% unless @c14.site.country.blank? %>(<%= @c14.site.country %>)<% end %>
+    <div class="lead text-body-secondary d-flex align-items-end flex-wrap">
+      <div class="d-flex align-items-center">
+        <%= bs_icon "globe", class: "me-2" %>
+        <nav aria-label="Geographic location">
+          <ol class="breadcrumb breadcrumb-chevron mb-0">
+            <% unless @c14.site.country.blank? %>
+              <li class="breadcrumb-item"><%= @c14.site.country %></li>
+            <% end %>
+            <li class="breadcrumb-item">
+              <%= link_to @c14.site.name, @c14.site %>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page"><%= @c14.lab_id %></li>
+          </ol>
+        </nav>
+      </div>
+      <% unless @c14.site.coordinates.blank? %>
+        <div class="d-flex align-items-center ms-auto small">
+          <%= bs_icon "geo-alt", class: "me-2" %>
+          <span class="font-monospace"><%= @c14.site.coordinates.to_s("dd") %></span>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="d-flex align-items-center text-body-secondary small mt-2">
+      <%= bs_icon "link-45deg", class: "me-2" %>
+      <span class="font-monospace text-truncate"><%= c14_url(@c14) %></span>
+      <button type="button"
+              class="btn btn-sm btn-link p-0 ms-2"
+              data-controller="clipboard"
+              data-clipboard-text-value="<%= c14_url(@c14) %>"
+              data-action="clipboard#copy"
+              title="Copy permalink">
+        <%= bs_icon "clipboard" %>
+      </button>
     </div>
 
   </header>
@@ -36,31 +74,23 @@
         <%= render "c14_measurement", c14: @c14 %>
       </section>
 
-      <hr class="my-5">
-
-      <section id="c14-calibration">
+      <section id="c14-calibration" class="mt-5">
         <h2>Calibration</h2>
         <%= render "c14_calibration" %>
       </section>
 
-      <hr class="my-5">
-
-      <section id="c14-sample">
+      <section id="c14-sample" class="mt-5">
         <h2>Sample</h2>
         <%= render "samples/sample", sample: @c14.sample %>
       </section>
 
-      <hr class="my-5">
-
-      <section id="c14-context">
+      <section id="c14-context" class="mt-5">
         <h2>Context</h2>
         <%= render "c14_context", c14: @c14 %>
       </section>
 
-      <hr class="my-5">
-
       <% references = (@c14.references + @c14.site.references).uniq %>
-      <section id="c14-references">
+      <section id="c14-references" class="mt-5">
         <h2>
           <%= Reference.label.humanize.pluralize %>
           <small class="text-muted">(<%= references.count %>)</small>
@@ -71,20 +101,16 @@
     </div>
 
     <aside class="col-lg-4">
-      <div class="mb-lg-5">
+      <div>
         <%= render "shared/record_metadata", record: @c14 %>
       </div>
 
-      <hr class="my-5 d-lg-none">
-
-      <section id="c14-linked-data" class="my-lg-5">
+      <section id="c14-linked-data" class="mt-5">
         <h2 class="h5-lg">Linked data</h2>
         <%= render "c14_linked_data" %>
       </section>
 
-      <hr class="my-5 d-lg-none">
-
-      <section id="c14-changelog" class="mt-lg-5">
+      <section id="c14-changelog" class="mt-5">
         <h2 class="h5-lg">Changelog</h2>
         <%= render "application/paper_trail/versions", item: @c14, versions: @versions %>
       </section>
