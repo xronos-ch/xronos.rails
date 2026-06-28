@@ -1,13 +1,13 @@
 <% label = record.class.respond_to?(:label) ? record.class.label : record.class.name.humanize(capitalize: false) %>
 <div class="btn-toolbar" role="toolbar" aria-label="Record actions">
 
-  <% if formats.present? %>
+  <% if downloads.present? %>
     <div class="btn-group me-2" role="group" aria-label="Public actions">
       <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
         Download as
       </button>
       <ul class="dropdown-menu">
-        <% formats.each do |fmt| %>
+        <% downloads.each do |fmt| %>
           <li><%= link_to fmt[:name], fmt[:path], class: "dropdown-item" %></li>
         <% end %>
       </ul>
