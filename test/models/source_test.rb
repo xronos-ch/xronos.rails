@@ -141,7 +141,21 @@ class SourceTest < ActiveSupport::TestCase
     end
   end
 
-  test "register aborts on changed files" do
+  test "register raises on changed files" do
+    Dir.mktmpdir do |dir|
+      write_csv(dir, "sites.csv", [%w[Name], %w[Alpha]])
+      Source.register(name: "test", version: "v1", path: dir)
+
+      # Change the file content
+      write_csv(dir, "sites.csv", [%w[Name], %w[Beta]])
+
+      assert_raises(Source::ManifestMismatchError) do
+        Source.register(name: "test", version: "v1", path: dir)
+      end
+    end
+  end
+
+  test "register! aborts on changed files" do
     Dir.mktmpdir do |dir|
       write_csv(dir, "sites.csv", [%w[Name], %w[Alpha]])
       Source.register(name: "test", version: "v1", path: dir)
@@ -150,8 +164,17 @@ class SourceTest < ActiveSupport::TestCase
       write_csv(dir, "sites.csv", [%w[Name], %w[Beta]])
 
       assert_raises(SystemExit) do
-        Source.register(name: "test", version: "v1", path: dir)
+        capture_io { Source.register!(name: "test", version: "v1", path: dir) }
       end
+    end
+  end
+
+  test "register! returns the source on success" do
+    Dir.mktmpdir do |dir|
+      write_csv(dir, "sites.csv", [%w[Name], %w[Alpha]])
+      source = Source.register!(name: "test", version: "v1", path: dir)
+      assert source.persisted?
+      assert_equal "test", source.name
     end
   end
 

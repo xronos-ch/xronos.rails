@@ -6,7 +6,7 @@ namespace :xronos do
     task "14canarias", [:version, :dir, :source_url] => :environment do |t, args|
       version, dir, source_url = Xronos::ImportRunner.parse_args!(args)
 
-      source = Source.register(
+      source = Source.register!(
         name: "14Canarias",
         version: version,
         path: dir,
