@@ -1,21 +1,40 @@
-<dl>
+<dl class="row mb-0">
 
-      <dt>Site</dt>
-      <dd><%= link_to c14.site.name, c14.site  %></dd>
+  <dt class="col-12 col-lg-4">Site</dt>
+  <dd class="col-12 col-lg-8">
+    <%= link_to c14.site.name, c14.site %>
+    <% unless c14.site.country.blank? %>
+      <span class="text-muted">(<%= c14.site.country %>)</span>
+    <% end %>
+  </dd>
 
-      <dt>Context</dt>
-      <dd><%= c14.context.name %></dd>
+  <dt class="col-12 col-lg-4">Context</dt>
+  <dd class="col-12 col-lg-8">
+    <%= c14.context&.name || na_value %>
+  </dd>
 
-        <dt>Functional classification</dt>
-        <dd>
-          <% if c14.context&.functional_classifications&.any? %>
-            <% c14.context.functional_classifications.each do |classification| %>
-              <%= classification.functional_classification_category.name.humanize %>, <%= classification.confidence.humanize %>
-            <% end %>
-          <% else %>
-            <%= na_value %>
-          <% end %>
-        </dd>
+  <dt class="col-12 col-lg-4">Approximate date</dt>
+  <dd class="col-12 col-lg-8 font-monospace">
+    <% if c14.context&.approx_start_time.present? && c14.context&.approx_end_time.present? %>
+      <%= c14.context.approx_start_time %>–<%= c14.context.approx_end_time %> cal BP
+    <% elsif c14.context&.approx_start_time.present? %>
+      from <%= c14.context.approx_start_time %> cal BP
+    <% elsif c14.context&.approx_end_time.present? %>
+      until <%= c14.context.approx_end_time %> cal BP
+    <% else %>
+      <%= na_value %>
+    <% end %>
+  </dd>
+
+  <dt class="col-12 col-lg-4">Functional classification</dt>
+  <dd class="col-12 col-lg-8">
+    <% if c14.context&.functional_classifications&.any? %>
+      <% c14.context.functional_classifications.each do |classification| %>
+        <%= classification.functional_classification_category.name.humanize %>, <%= classification.confidence.humanize %>
+      <% end %>
+    <% else %>
+      <%= na_value %>
+    <% end %>
+  </dd>
 
 </dl>
-
