@@ -5,7 +5,7 @@
 
 <main class="container my-5">
 
-  <header id="c14-header" class="mb-5">
+  <header id="c14-header" class="mb-3">
 
     <div class="text-uppercase small d-flex align-items-center">
       <%= xr_icon C14, {}, { class: "me-2", style: "width: auto; height: 1rem;" } %>
@@ -16,13 +16,6 @@
 
     <div class="d-flex align-items-baseline mb-2">
       <h1 class="mb-0 me-3"><%= @c14.lab_id %></h1>
-      <% if can? :edit, @c14 %>
-        <%= link_to edit_icon,
-          edit_c14_path(@c14),
-          title: "Edit radiocarbon date",
-          class: "btn btn-sm btn-outline-primary",
-          data: { turbo_frame: "remote_modal" } %>
-      <% end %>
     </div>
 
     <div class="lead text-body-secondary d-flex align-items-end flex-wrap">
@@ -62,6 +55,10 @@
     </div>
 
   </header>
+
+  <div class="mb-5">
+    <%= render "c14_toolbar", c14: @c14 %>
+  </div>
 
   <%= render "c14_summary" %>
 
