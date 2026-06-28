@@ -25,6 +25,8 @@
 #  fk_rails_...  (reference_id => references.id)
 #
 class Source < ApplicationRecord
+  class ManifestMismatchError < StandardError; end
+
   belongs_to :reference, optional: true
   has_many :imports, dependent: :restrict_with_error
 
@@ -51,7 +53,7 @@ class Source < ApplicationRecord
       end
 
       if source.file_manifest != current_manifest
-        abort <<~MSG
+        raise ManifestMismatchError, <<~MSG
           Files for '#{name} (#{version})' have changed since last import.
           To import updated data, register a new version and re-run this task.
         MSG
@@ -59,6 +61,12 @@ class Source < ApplicationRecord
     end
 
     source
+  end
+
+  def self.register!(**kwargs)
+    register(**kwargs)
+  rescue ManifestMismatchError => e
+    abort e.message
   end
 
   def label
