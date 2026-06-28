@@ -9,8 +9,10 @@
 
 <% else %>
 
-  <%= turbo_frame_tag taxon.usage, src: taxon_usage_path(taxon.usage.id) do %>
-    <i><%= taxon.name %></i>
+  <%= turbo_frame_tag taxon.usage, 
+    src: taxon_usage_path(taxon.usage.id),
+    loading: :lazy do %>
+    <%= render "taxon_usages/placeholder" %>
   <% end %>
   <%= bs_icon "question-circle",
     class: "text-info",

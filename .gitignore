@@ -70,6 +70,9 @@ yarn-debug.log*
 
 # --- XRONOS ---
 
+# import data
+data/sources/
+
 # macOS
 *.DS_Store
 
