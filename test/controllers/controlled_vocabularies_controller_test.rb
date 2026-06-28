@@ -536,4 +536,18 @@ class ControlledVocabulariesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :bad_request
   end
+
+  # --- rank ---
+
+  test "index includes a 1-based rank reflecting the ordered position" do
+    get controlled_vocabularies_path(format: :json,
+      vocabulary: "part_of_organism", q: "Cranium")
+
+    assert_response :success
+
+    json = JSON.parse(response.body)
+    ranks = json.map { |r| r["rank"] }
+
+    assert_equal (1..json.length).to_a, ranks
+  end
 end
