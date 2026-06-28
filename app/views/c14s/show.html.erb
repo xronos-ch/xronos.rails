@@ -25,9 +25,11 @@
 
   </header>
 
+  <%= render "c14_summary" %>
+
   <div class="row g-4">
 
-    <div class="col-12 col-lg-8">
+    <div class="col-12 col-lg-8 mb-5">
 
       <section id="c14-measurement" class="mb-5">
         <h2>Measurement</h2>
@@ -61,7 +63,7 @@
     </div>
 
     <aside class="col-lg-4">
-      <div class="my-5">
+      <div class="mb-5">
         <%= render "shared/record_metadata", record: @c14 %>
       </div>
 
