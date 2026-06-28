@@ -1,15 +1,10 @@
 <header id="site-header">
   <div class="d-flex">
     <h1 class="display-3"><%= site.name %></h1>
-    <% if can? :edit, Site %>
-      <div class="ms-auto">
-        <%= link_to edit_icon,
-          edit_site_path, 
-          title: "Edit site details",
-          class: "btn btn-sm btn-outline-primary",
-          data: { turbo_frame: "remote_modal" } %>
-      </div>
-    <% end %>
+    <div class="ms-auto">
+      <%= render "shared/record_toolbar", record: site,
+            formats: [{ name: "JSON", path: site_path(site, format: :json) }] %>
+    </div>
   </div>
 
   <div class="h5">

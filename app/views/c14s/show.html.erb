@@ -57,7 +57,8 @@
   </header>
 
   <div class="mb-5">
-    <%= render "c14_toolbar", c14: @c14 %>
+    <%= render "shared/record_toolbar", record: @c14,
+          formats: [{ name: "JSON", path: c14_path(@c14, format: :json) }] %>
   </div>
 
   <%= render "c14_summary" %>

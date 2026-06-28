@@ -1,0 +1,31 @@
+<% label = record.class.respond_to?(:label) ? record.class.label : record.class.name.humanize(capitalize: false) %>
+<div class="btn-toolbar" role="toolbar" aria-label="Record actions">
+
+  <% if formats.present? %>
+    <div class="btn-group me-2" role="group" aria-label="Public actions">
+      <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        Download as
+      </button>
+      <ul class="dropdown-menu">
+        <% formats.each do |fmt| %>
+          <li><%= link_to fmt[:name], fmt[:path], class: "dropdown-item" %></li>
+        <% end %>
+      </ul>
+      <%= link_to "Cite", "#", class: "btn btn-sm btn-outline-primary", title: "Export citation" %>
+    </div>
+  <% end %>
+
+  <% if can?(:edit, record) || can?(:destroy, record) %>
+    <div class="btn-group" role="group" aria-label="Access-controlled actions">
+      <% if can? :edit, record %>
+        <%= link_to edit_icon, edit_polymorphic_path(record), class: "btn btn-sm btn-outline-primary", title: "Edit #{label}", data: { turbo_frame: "remote_modal" } %>
+      <% end %>
+      <% if can? :destroy, record %>
+        <%= button_to polymorphic_path(record), method: :delete, class: "btn btn-sm btn-outline-danger", title: "Delete #{label}", data: { turbo_confirm: "Are you sure?" } do %>
+          <%= bs_icon "trash" %>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+
+</div>
