@@ -3,16 +3,34 @@
 
   <% if downloads.present? %>
     <div class="btn-group me-2" role="group" aria-label="Public actions">
-      <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-        Download as
+      <button type="button" 
+              class="btn btn-sm btn-outline-primary dropdown-toggle" 
+              data-bs-toggle="dropdown" 
+              aria-expanded="false"
+              title="Download record in other formats">
+        Export
       </button>
       <ul class="dropdown-menu">
         <% downloads.each do |fmt| %>
           <li><%= link_to fmt[:name], fmt[:path], class: "dropdown-item" %></li>
         <% end %>
       </ul>
-      <%= link_to "Cite", "#", class: "btn btn-sm btn-outline-primary", title: "Export citation" %>
     </div>
+
+    <% if record.respond_to?(:citation) %>
+      <div class="btn-group me-2" role="group" aria-label="Citation export">
+        <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle"
+                              data-bs-toggle="dropdown" aria-expanded="false" title="Export citation to this record">
+          Cite
+        </button>
+        <ul class="dropdown-menu">
+          <li><%= link_to "BibTeX",   record.citation_path(format: :bibtex), class: "dropdown-item" %></li>
+          <li><%= link_to "CSL-JSON", record.citation_path(format: :json),   class: "dropdown-item" %></li>
+          <li><%= link_to "YAML",     record.citation_path(format: :yaml),   class: "dropdown-item" %></li>
+          <li><%= link_to "RIS",      record.citation_path(format: :ris),    class: "dropdown-item" %></li>
+        </ul>
+      </div>
+    <% end %>
   <% end %>
 
   <% if can?(:edit, record) || can?(:destroy, record) %>

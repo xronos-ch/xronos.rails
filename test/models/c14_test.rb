@@ -65,4 +65,54 @@ class C14Test < ActiveSupport::TestCase
     assert_includes rendered, "http://localhost:3000/c14s/#{c14.id}"
   end
 
+  test "format_bibtex returns a BibTeX entry string" do
+    c14 = create(:c14, lab_identifier: "OxA-12345")
+    bib = c14.format_bibtex
+    assert_match(/^@dataset\{xronos_c14_#{c14.id},/, bib)
+    assert_includes bib, "OxA-12345 (radiocarbon date)"
+  end
+
+  test "format_bibtex double-braces the XRONOS Core Team admin author" do
+    admin = create(:user)
+    admin.user_profile.update!(full_name: "Zara Admin")
+    with_env("ADMIN_USER_ID" => admin.id.to_s) do
+      c14 = create(:c14, lab_identifier: "OxA-12345")
+      bib = c14.format_bibtex
+      assert_includes bib, "{{XRONOS Core Team}}"
+    end
+  end
+
+  private
+
+  def with_env(vars)
+    previous = vars.keys.to_h { |k| [k, ENV[k]] }
+    vars.each { |k, v| ENV[k] = v }
+    yield
+  ensure
+    previous.each { |k, v| ENV[k] = v }
+  end
+
+  test "format_json returns CSL-JSON" do
+    c14 = create(:c14, lab_identifier: "OxA-12345")
+    json = JSON.parse(c14.format_json)
+    assert_equal "entry", json["type"]
+    assert_equal "xronos_c14_#{c14.id}", json["id"]
+    assert_equal "OxA-12345 (radiocarbon date)", json["title"]
+  end
+
+  test "format_yaml returns YAML serialization" do
+    c14 = create(:c14, lab_identifier: "OxA-12345")
+    yaml = YAML.safe_load(c14.format_yaml, permitted_classes: [Symbol])
+    assert_equal "entry", yaml["type"]
+  end
+
+  test "format_ris returns a RIS record" do
+    c14 = create(:c14, lab_identifier: "OxA-12345")
+    ris = c14.format_ris
+    assert_match(/^TY  - DATA/, ris)
+    assert_includes ris, "TI  - OxA-12345 (radiocarbon date)"
+    assert_includes ris, "UR  - http://localhost:3000/c14s/#{c14.id}"
+    assert_match(/^ER  - /, ris)
+  end
+
 end

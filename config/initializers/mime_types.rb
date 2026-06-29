@@ -4,4 +4,6 @@
 # Mime::Type.register "text/richtext", :rtf
 Mime::Type.register "text/csv", :csv
 Mime::Type.register "application/geo+json", :geojson
+Mime::Type.register "application/x-bibtex", :bibtex
+Mime::Type.register "application/x-research-info-systems", :ris
 
