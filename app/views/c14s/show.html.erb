@@ -124,6 +124,14 @@
         <%= render "c14_linked_data" %>
       </section>
 
+      <section id="c14-citation" class="mt-5">
+        <h2 class="h5-lg">Citation</h2>
+        <p>This record compiles data from the <a href="#c14-references">listed sources</a> and does not replace them; as a matter of good scholarly practice, please consult and cite the original publications where appropriate.</p>
+        <p>If you need to cite this record specifically, use:</p>
+        <p class="small font-monospace offset-1"><%= @c14.render_citation %></p>
+        <p>For more information, see <a href="/about/citing-xronos">citing XRONOS</a>.</p>
+      </section>
+
       <section id="c14-changelog" class="mt-5">
         <h2 class="h5-lg">Changelog</h2>
         <%= render "application/paper_trail/versions", item: @c14, versions: @versions %>
