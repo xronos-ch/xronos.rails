@@ -5,6 +5,7 @@ class SitesController < ApplicationController
   load_and_authorize_resource
 
   before_action :set_site, only: [:show, :edit, :update, :destroy]
+  before_action :set_versions, only: [:show]
 
   include MergeableController
 
@@ -172,6 +173,12 @@ class SitesController < ApplicationController
 
   def set_site
     @site = Site.with_counts.includes(:linked_resources).find(params[:id])
+  end
+
+  def set_versions
+    @versions = @site.versions
+                    .includes(:item)
+                    .order(:created_at, :id)
   end
 
   def site_params
