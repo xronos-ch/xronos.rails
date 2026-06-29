@@ -1,3 +1,5 @@
+@use 'bootstrap/scss/bootstrap' as *;
+
 .collapse-status-open { display: initial; }
 .collapse-status-closed { display: none; }
 .collapsed .collapse-status-open { display: none; }
@@ -5,4 +7,13 @@
 
 .card-link {
 	text-decoration: none;
+}
+
+// Small variant of Bootstrap's dropdown menu, matching .btn-sm sizing.
+// Use on dropdowns paired with .btn-sm trigger buttons.
+.dropdown-menu-sm {
+  .dropdown-item {
+    padding: $btn-padding-y-sm $btn-padding-x-sm;
+    font-size: $btn-font-size-sm;
+  }
 }
