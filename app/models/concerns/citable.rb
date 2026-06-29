@@ -1,31 +1,30 @@
 module Citable
   extend ActiveSupport::Concern
 
-  # Citation label for the default (admin) user. Brace-wrapped to
-  # preserve as a single literal name in BibTeX (avoids the
-  # "Team, X. R. O. N. O. S. C." splitting when parsed as a personal name).
-  ADMIN_AUTHOR_LABEL = "{XRONOS Core Team}".freeze
+  # CSL name entry for the default (admin) user, representing the
+  # project as a whole rather than an individual.
+  ADMIN_AUTHOR_NAME = { "literal" => "XRONOS Core Team" }.freeze
 
   included do
     include Rails.application.routes.url_helpers
   end
 
   def citation
-    BibTeX::Entry.new.tap do |e|
-      e.type         = :dataset
-      e.key          = citation_key
-      e.author       = citation_author
-      e.title        = citation_title
-      e.date         = citation_date
-      e.publisher    = citation_publisher
-      e.url          = citation_url
-      e.urldate      = citation_access_date
-    end
+    {
+      "id"        => citation_key,
+      "type"          => "entry",
+      "title"         => "#{citation_title} (#{self.class.label})",
+      "author"        => citation_authors,
+      "issued"        => citation_issued,
+      "container-title" => citation_container_title,
+      "URL"           => citation_url,
+      "accessed"      => citation_accessed
+    }
   end
 
   def render_citation
     cp = CiteProc::Processor.new style: 'apa', format: 'html', locale: 'en'
-    cp.import [citation.to_citeproc]
+    cp.import [citation]
     Array.wrap(cp.render(:bibliography, id: citation_key)).join.html_safe
   end
 
@@ -39,17 +38,13 @@ module Citable
     "xronos_#{model_name.singular}_#{id}"
   end
 
-  def citation_author
-    citation_contributors
-  end
-
-  # Author ordering is:
+  # Author ordering:
   # 1. Record creator, unless that is the default user
   # 2. Contributors except the creator and default user, alphabetically
   # 3. The default user (ADMIN_USER_ID)
   #
   # Contributors without a display name are omitted.
-  def citation_contributors
+  def citation_authors
     admin_id = ENV["ADMIN_USER_ID"].to_i
     ids = versions.collect(&:whodunnit).compact.map(&:to_i).uniq
     contributor_users = User.includes(:user_profile).where(id: ids).select(&:has_real_name?)
@@ -60,14 +55,29 @@ module Citable
     creator = contributor_users.find { |u| u.id == creator_id && u.id != admin_id }
     others  = contributor_users - [ creator, admin ].compact
 
-    ordered = []
-    ordered << creator.display_name if creator
-    ordered.concat others.sort_by { |u| u.display_name.downcase }.map(&:display_name)
-    ordered << ADMIN_AUTHOR_LABEL if admin
+    names = []
+    names << csl_name(creator) if creator
+    names.concat others.sort_by { |u| u.display_name.downcase }.map { |u| csl_name(u) }
+    names << ADMIN_AUTHOR_NAME if admin
 
-    return "{XRONOS contributors}" if ordered.empty?
+    return [{ "literal" => "XRONOS contributors" }] if names.empty?
 
-    ordered.join(" and ")
+    names
+  end
+
+  # Convert a User's display_name to a CSL personal-name entry, using
+  # BibTeX's name parser to handle particles (e.g. "von Humboldt"),
+  # inverted forms ("Humboldt, Alexander"), and mononyms ("Madonna").
+  def csl_name(user)
+    parsed = BibTeX::Names.parse(user.display_name.to_s.strip).first
+    return { "family" => user.display_name.to_s.strip } if parsed.nil?
+
+    csl = {}
+    csl["family"] = parsed.family if parsed.family
+    csl["given"] = parsed.given if parsed.given
+    csl["non-dropping-particle"] = parsed.prefix if parsed.prefix
+    csl["suffix"] = parsed.suffix if parsed.suffix
+    csl
   end
 
   # Models should override to set a sensible title
@@ -75,11 +85,15 @@ module Citable
     "XRONOS #{model_name.singular} ##{id}"
   end
 
+  def citation_issued
+    { "date-parts" => [[citation_date.year, citation_date.month, citation_date.day]] }
+  end
+
   def citation_date
     updated_at
   end
-  
-  def citation_publisher
+
+  def citation_container_title
     "XRONOS: An Open Data Infrastructure for Archaeological Chronology"
   end
 
@@ -87,8 +101,11 @@ module Citable
     polymorphic_url(self)
   end
 
+  def citation_accessed
+    { "date-parts" => [[citation_access_date.year, citation_access_date.month, citation_access_date.day]] }
+  end
+
   def citation_access_date
     Time.current
   end
-  
 end
