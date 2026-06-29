@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_25_102244) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_28_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -122,6 +122,36 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_25_102244) do
     t.index ["site_id", "name"], name: "index_contexts_unique_name_per_site", unique: true, where: "(name IS NOT NULL)"
     t.index ["site_id"], name: "index_contexts_on_site_id"
     t.index ["site_id"], name: "index_contexts_one_null_name_per_site", unique: true, where: "(name IS NULL)"
+  end
+
+  create_table "controlled_vocabularies", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_controlled_vocabularies_on_name", unique: true
+  end
+
+  create_table "controlled_vocabulary_terms", force: :cascade do |t|
+    t.bigint "controlled_vocabulary_id", null: false
+    t.string "name", null: false
+    t.text "description"
+    t.string "ontology_name"
+    t.string "ontology_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["controlled_vocabulary_id", "ontology_name", "name"], name: "index_cv_terms_on_vocabulary_ontology_and_name", unique: true
+    t.index ["ontology_name", "ontology_id"], name: "index_cv_terms_on_ontology", unique: true, where: "((ontology_name IS NOT NULL) AND (ontology_id IS NOT NULL))"
+  end
+
+  create_table "controlled_vocabulary_variants", force: :cascade do |t|
+    t.bigint "controlled_vocabulary_term_id", null: false
+    t.string "value", null: false
+    t.string "normalized", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["controlled_vocabulary_term_id", "normalized"], name: "index_cv_variants_on_term_and_normalized", unique: true
+    t.index ["controlled_vocabulary_term_id", "value"], name: "index_cv_variants_on_term_and_value", unique: true
   end
 
   create_table "functional_classification_categories", force: :cascade do |t|
@@ -266,6 +296,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_25_102244) do
     t.decimal "position_y"
     t.decimal "position_z"
     t.text "position_crs"
+    t.text "part_of_organism"
     t.index ["context_id"], name: "index_samples_on_context_id"
     t.index ["material_id"], name: "index_samples_on_material_id"
     t.index ["position_crs"], name: "index_samples_on_position_crs"

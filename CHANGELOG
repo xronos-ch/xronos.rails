@@ -11,6 +11,9 @@
   - Replacing use of GBIF's deprecated V1 species match API
   - Requests to GBIF are now made asynchronously and do not block page rendering
   - Tests no longer required on requests to GBIF
+- **Migrations required**: added generic representation of controlled 
+  vocabularies with variant thesauri (#444)
+  - Added controlled term attribute `part_of_organism` to samples (#253)
 - Made software version visible in page footer and added Zenodo archive link (#436)
 - Removed standalone Typo show view. Typological dates are now only shown
   embedded in Site views (#398)

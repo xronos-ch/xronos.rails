@@ -4,6 +4,7 @@
 # Database name: primary
 #
 #  id                   :bigint           not null, primary key
+#  part_of_organism     :text
 #  position_crs         :text
 #  position_description :text
 #  position_x           :decimal(, )
@@ -25,6 +26,9 @@
 
 class Sample < ApplicationRecord
   include Versioned
+  include HasControlledTerms
+
+  controlled_term :part_of_organism, vocabulary: "part_of_organism"
 
   delegate :site, to: :context
   
