@@ -10,7 +10,7 @@
               title="Download record in other formats">
         Export
       </button>
-      <ul class="dropdown-menu">
+      <ul class="dropdown-menu dropdown-menu-sm">
         <% downloads.each do |fmt| %>
           <li><%= link_to fmt[:name], fmt[:path], class: "dropdown-item" %></li>
         <% end %>
@@ -23,7 +23,7 @@
                               data-bs-toggle="dropdown" aria-expanded="false" title="Export citation to this record">
           Cite
         </button>
-        <ul class="dropdown-menu">
+        <ul class="dropdown-menu dropdown-menu-sm">
           <li><%= link_to "BibTeX",   record.citation_path(format: :bibtex), class: "dropdown-item" %></li>
           <li><%= link_to "CSL-JSON", record.citation_path(format: :json),   class: "dropdown-item" %></li>
           <li><%= link_to "YAML",     record.citation_path(format: :yaml),   class: "dropdown-item" %></li>
