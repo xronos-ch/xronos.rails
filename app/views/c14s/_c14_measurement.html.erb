@@ -1,78 +1,42 @@
-<dl class="d-flex flex-wrap flex-column flex-sm-row gap-0">
+<dl class="row mb-0">
 
-  <div id="c14-lab-identifier" class="w-50 mb-3">
-    <dt>Lab identifier</dt>
-    <dd class="font-monospace">
-      <%= c14.lab_identifier.present? ? c14.lab_identifier : na_value %>
-    </dd>
-  </div>
+  <dt class="col-12 col-lg-4">Lab identifier</dt>
+  <dd class="col-12 col-lg-8 font-monospace">
+    <%= c14.lab_identifier.present? ? c14.lab_identifier : na_value %>
+  </dd>
 
-  <div id="c14-laboratory" class="w-50 mb-3">
-    <dt>Laboratory</dt>
-    <dd>
+  <dt class="col-12 col-lg-4">Laboratory</dt>
+  <dd class="col-12 col-lg-8">
     <%= c14.c14_lab&.name || na_value %>
-    </dd>
-  </div>
+  </dd>
 
-  <div id="c14-method" class="w-50 mb-3">
-    <dt>Method</dt>
-    <dd>
-      <%= c14.method.present? ? c14.method.humanize : na_value %>
-    </dd>
-  </div>
+  <dt class="col-12 col-lg-4">Method</dt>
+  <dd class="col-12 col-lg-8">
+    <%= c14.method.present? ? c14.method : na_value %>
+  </dd>
 
-  <div>
-    &nbsp;<!-- Dummy div to keep subsequent entries paired in 2-col mode -->
-  </div>
+  <dt class="col-12 col-lg-4"><sup>14</sup>C age</dt>
+  <dd class="col-12 col-lg-8 font-monospace mb-0">
+    <%= c14.uncal_age || na_value %>
+  </dd>
+  <dd class="col-12 col-lg-8 offset-lg-4">
+    <small class="text-body-secondary">
+      Conventional radiocarbon age (CRA), uncalibrated <sup>14</sup>C years Before Present
+    </small>
+  </dd>
 
-  <div id="c14-age" class="w-50 mb-3">
-    <dt>
-      <sup>14</sup>C age
-      <small class="text-body-secondary fw-normal">(uncal BP)</small>
-    </dt>
-    <dd class="font-monospace">
-      <%= c14.bp.present? ? c14.bp : na_value %>
-    </dd>
-  </div>
+  <dt class="col-12 col-lg-4">&delta;<sup>13</sup>C</dt>
+  <dd class="col-12 col-lg-8 font-monospace">
+    <% if c14.delta_c13.present? %>
+      <%= c14.delta_c13 %><% if c14.delta_c13_std.present? %>&plusmn;<%= c14.delta_c13_std %><% end %>&permil;
+    <% else %>
+      <%= na_value %>
+    <% end %>
+  </dd>
 
-  <div id="c14-age-error" class="w-50 mb-3">
-    <dt>
-      <sup>14</sup>C error
-      <small class="text-body-secondary fw-normal">(&plusmn;)</small>
-    </dt>
-    <dd class="font-monospace">
-      <%= c14.std.present? ? c14.std : na_value %>
-    </dd>
-  </div>
-
-  <div id="c14-d13c" class="w-50 mb-3">
-    <dt>
-      &delta;<sup>13</sup>C
-      <small class="text-body-secondary fw-normal">(&permil;)</small>
-    </dt>
-    <dd class="font-monospace">
-      <%= c14.delta_c13.present? ? c14.delta_c13 : na_value %>
-    </dd>
-  </div>
-
-  <div id="c14-d13c-error" class="w-50 mb-3">
-    <dt>
-      &delta;<sup>13</sup>C error
-      <small class="text-body-secondary fw-normal">(&plusmn;)</small>
-    </dt>
-    <dd class="font-monospace">
-      <%= c14.delta_c13_std.present? ? c14.delta_c13_std : na_value %>
-    </dd>
-  </div>
-
-  <div id="c14-d15n" class="w-50 mb-3">
-    <dt>
-      &delta;<sup>15</sup>N
-      <small class="text-body-secondary fw-normal">(&permil;)</small>
-    </dt>
-    <dd class="font-monospace">
-      <%= c14.delta_15n.present? ? "#{c14.delta_15n} &permil;" : na_value %>
-    </dd>
-  </div>
+  <dt class="col-12 col-lg-4">&delta;<sup>15</sup>N</dt>
+  <dd class="col-12 col-lg-8 font-monospace">
+    <%= c14.delta_15n.present? ? "#{c14.delta_15n} &permil;" : na_value %>
+  </dd>
 
 </dl>
