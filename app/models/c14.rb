@@ -33,6 +33,7 @@
 
 class C14 < ApplicationRecord
   include Versioned
+  include Citable
 
   belongs_to :sample
   accepts_nested_attributes_for :sample, reject_if: :all_blank
@@ -51,13 +52,13 @@ class C14 < ApplicationRecord
   composed_of :lab_id, mapping: %w(lab_identifier), allow_nil: true
 
   include HasIssues
-  @issues = [ :missing_c14_age, :very_old_c14, :missing_c14_error, 
-              :missing_d13c, :missing_d13c_error, :missing_c14_method, 
+  @issues = [ :missing_c14_age, :very_old_c14, :missing_c14_error,
+              :missing_d13c, :missing_d13c_error, :missing_c14_method,
               :missing_c14_lab_id, :invalid_lab_id, :missing_c14_lab ]
 
   include PgSearch::Model
-  pg_search_scope :search, 
-    against: :lab_identifier, 
+  pg_search_scope :search,
+    against: :lab_identifier,
     using: { tsearch: { prefix: true } } # match partial words
   multisearchable against: :lab_identifier
 
@@ -84,7 +85,7 @@ class C14 < ApplicationRecord
   end
 
   # Issues
-  
+
   scope :missing_c14_age, -> { where(bp: nil) }
   def missing_c14_age?
     bp.blank?
@@ -110,12 +111,12 @@ class C14 < ApplicationRecord
   def missing_d13c_error?
     delta_c13_std.blank?
   end
-  
+
   scope :missing_c14_method, -> { where(method: nil) }
   def missing_c14_method?
     method.blank?
   end
-  
+
   scope :missing_c14_lab_id, -> { where(lab_identifier: nil) }
   def missing_c14_lab_id?
     lab_identifier.blank?
@@ -126,11 +127,17 @@ class C14 < ApplicationRecord
     return false if lab_id.blank?
     lab_id.invalid?
   end
-  
+
   scope :missing_c14_lab, -> { where(c14_lab_id: nil) }
   def missing_c14_lab?
     c14_lab_id.blank?
   end
-  
+
+  private
+
+  def citation_title
+    lab_id.presence || "C14 record ##{id}"
+  end
+
 end
 

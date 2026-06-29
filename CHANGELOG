@@ -2,6 +2,7 @@
 
 ## 1.2.1.9000 [unreleased]
 
+- Added suggested citation for radiocarbon dates
 - Optimised JavaScript asset pipeline (#217)
 - **Migrations required:** Added admin CLI for importing tabular datasets
   from CSV and BibTeX, replacing the removed GUI import_tables feature
