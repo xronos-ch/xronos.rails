@@ -121,24 +121,23 @@
                  Sign in
                </button>
 
-                <div class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="dropdownMenuLink" style="width: 300px" data-bs-display="static">
-                  <%= form_for :user, :url => session_path(:user), :html => {:class => "px-4"}, data: {turbo: false}  do |f| %>
-                    <%= f.label :email, class: "visually-hidden" %>
-                    <div class="input-group">
-                      <div class="input-group-text" style="width: 35px;"><%= bs_icon "person" %></div>
-                      <%= f.text_field :email, class: "form-control form-control-sm", placeholder: "email@example.com"  %>
-                    </div>
-                    <%= f.label :password, class: "visually-hidden" %>
-                    <div class="input-group">
-                      <div class="input-group-text" style="width: 35px;"><%= bs_icon "key-fill" %></div>
-                      <%= f.password_field :password, class: "form-control form-control-sm", placeholder: "password"  %>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <%= f.check_box :remember_me, class: "form-check-input form-check-input-sm"  %>
-                      <%= f.label :remember_me, "Remember me", class: "form-check-label form-label-sm" %>
-                    </div>
-                    <%= f.submit 'Sign in', class: "btn btn-primary btn-sm float-end" %>
-                  <% end %>
+                 <div class="dropdown-menu dropdown-menu-end p-3" aria-labelledby="dropdownMenuLink" style="min-width: 24rem" data-bs-display="static">
+                   <%= form_for :user, :url => session_path(:user), data: {turbo: false} do |f| %>
+                     <h2 class="h6 mb-3">Sign in</h2>
+                     <div class="form-floating mb-3">
+                       <%= f.email_field :email, class: "form-control", placeholder: " " %>
+                       <%= f.label :email %>
+                     </div>
+                     <div class="form-floating mb-3">
+                       <%= f.password_field :password, class: "form-control", placeholder: " " %>
+                       <%= f.label :password %>
+                     </div>
+                     <div class="mb-3 form-check">
+                       <%= f.check_box :remember_me, class: "form-check-input" %>
+                       <%= f.label :remember_me, "Remember me", class: "form-check-label" %>
+                     </div>
+                     <%= f.submit 'Sign in', class: "btn btn-primary" %>
+                   <% end %>
                  <!-- <div class="dropdown-divider"></div>
                    <%= link_to "Forgot your password?", new_password_path(:user), class: "dropdown-item" %>
                    <%= link_to('New around here? Sign up', new_user_registration_path, class: "dropdown-item") %> -->
