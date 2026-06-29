@@ -18,61 +18,66 @@ class CitableTest < ActiveSupport::TestCase
     include Versioned
     include Citable
 
+    def self.label
+      "test record"
+    end
+
     def polymorphic_url(*)
       "http://example.com/citable_models/#{id}"
     end
   end
 
-  test "citation returns a BibTeX::Entry" do
+  test "citation returns a Hash" do
     PaperTrail.request(whodunnit: 1) do
       record = CitableModel.create!(name: "Test")
-      assert_kind_of BibTeX::Entry, record.citation
+      assert_kind_of Hash, record.citation
     end
   end
 
-  test "citation is a :dataset entry with a model-prefixed key" do
+  test "citation type is entry with a model-prefixed id" do
     PaperTrail.request(whodunnit: 1) do
       record = CitableModel.create!(name: "Test")
-      assert_equal :dataset, record.citation.type
-      assert_equal "xronos_citable_test_citable_model_#{record.id}", record.citation.key
+      assert_equal "entry", record.citation['type']
+      assert_equal "xronos_citable_test_citable_model_#{record.id}", record.citation['id']
     end
   end
 
   test "citation year is the current year" do
     PaperTrail.request(whodunnit: 1) do
       record = CitableModel.create!(name: "Test")
-      assert_equal Time.current.year, record.citation.year.to_i
+      assert_equal Time.current.year, record.citation['issued']['date-parts'].flatten.first
     end
   end
 
   test "citation title defaults to model name and id" do
     PaperTrail.request(whodunnit: 1) do
       record = CitableModel.create!(name: "Test")
-      assert_equal "XRONOS citable_test_citable_model ##{record.id}", record.citation.title
+      assert_equal "XRONOS citable_test_citable_model ##{record.id} (test record)", record.citation['title']
     end
   end
 
-  test "citation url is the polymorphic URL" do
+  test "citation URL is the polymorphic URL" do
     PaperTrail.request(whodunnit: 1) do
       record = CitableModel.create!(name: "Test")
-      assert_equal "http://example.com/citable_models/#{record.id}", record.citation.url
+      assert_equal "http://example.com/citable_models/#{record.id}", record.citation['URL']
     end
   end
 
-  test "citation publisher is the XRONOS project name" do
+  test "citation container-title is the XRONOS project name" do
     PaperTrail.request(whodunnit: 1) do
       record = CitableModel.create!(name: "Test")
       assert_equal "XRONOS: An Open Data Infrastructure for Archaeological Chronology",
-        record.citation.publisher
+        record.citation['container-title']
     end
   end
 
-  test "citation urldate is the current time" do
+  test "citation accessed is the current time" do
     freeze_time = Time.zone.local(2026, 6, 29, 12, 0, 0)
     travel_to(freeze_time) do
       PaperTrail.request(whodunnit: 1) do
         record = CitableModel.create!(name: "Test")
-        assert_equal freeze_time.to_s, record.citation.urldate.to_s
+        assert_equal [freeze_time.year, freeze_time.month, freeze_time.day],
+          record.citation['accessed']['date-parts'].first
       end
     end
   end
@@ -92,7 +97,7 @@ class CitableTest < ActiveSupport::TestCase
 
     PaperTrail.request(whodunnit: user.id) do
       record = CitableModel.create!(name: "Test")
-      assert_equal "Alice Smith", record.citation.author
+      assert_equal [{ "family" => "Smith", "given" => "Alice" }], record.citation['author']
     end
   end
 
@@ -102,7 +107,7 @@ class CitableTest < ActiveSupport::TestCase
 
     PaperTrail.request(whodunnit: user.id) do
       record = CitableModel.create!(name: "Test")
-      assert_equal "{XRONOS contributors}", record.citation.author
+      assert_equal [{ "literal" => "XRONOS contributors" }], record.citation['author']
     end
   end
 
@@ -122,7 +127,11 @@ class CitableTest < ActiveSupport::TestCase
       PaperTrail.request(whodunnit: bob.id) do
         record.update!(name: "Updated again")
       end
-      assert_equal "Zara Zebra and Alice Smith and Bob Brown", record.citation.author
+      assert_equal [
+        { "family" => "Zebra", "given" => "Zara" },
+        { "family" => "Smith", "given" => "Alice" },
+        { "family" => "Brown", "given" => "Bob" }
+      ], record.citation['author']
     end
   end
 
@@ -138,7 +147,10 @@ class CitableTest < ActiveSupport::TestCase
         PaperTrail.request(whodunnit: admin.id) do
           record.update!(name: "Updated")
         end
-        assert_equal "Alice Smith and {XRONOS Core Team}", record.citation.author
+        assert_equal [
+          { "family" => "Smith", "given" => "Alice" },
+          { "literal" => "XRONOS Core Team" }
+        ], record.citation['author']
       end
     end
   end
@@ -151,7 +163,10 @@ class CitableTest < ActiveSupport::TestCase
     with_env("ADMIN_USER_ID" => admin.id.to_s) do
       PaperTrail.request(whodunnit: creator.id) do
         record = CitableModel.create!(name: "Test")
-        assert_equal "Alice Smith and {XRONOS Core Team}", record.citation.author
+        assert_equal [
+          { "family" => "Smith", "given" => "Alice" },
+          { "literal" => "XRONOS Core Team" }
+        ], record.citation['author']
       end
     end
   end
@@ -165,7 +180,10 @@ class CitableTest < ActiveSupport::TestCase
     with_env("ADMIN_USER_ID" => admin.id.to_s) do
       PaperTrail.request(whodunnit: creator.id) do
         record = CitableModel.create!(name: "Test")
-        assert_equal "Alice Smith and {XRONOS Core Team}", record.citation.author
+        assert_equal [
+          { "family" => "Smith", "given" => "Alice" },
+          { "literal" => "XRONOS Core Team" }
+        ], record.citation['author']
       end
     end
   end
@@ -186,7 +204,10 @@ class CitableTest < ActiveSupport::TestCase
       PaperTrail.request(whodunnit: bob.id) do
         record.update!(name: "Updated again")
       end
-      assert_equal "Alice Smith and Bob Brown", record.citation.author
+      assert_equal [
+        { "family" => "Smith", "given" => "Alice" },
+        { "family" => "Brown", "given" => "Bob" }
+      ], record.citation['author']
     end
   end
 
@@ -197,7 +218,7 @@ class CitableTest < ActiveSupport::TestCase
     with_env("ADMIN_USER_ID" => admin.id.to_s) do
       PaperTrail.request(whodunnit: admin.id) do
         record = CitableModel.create!(name: "Test")
-        assert_equal "{XRONOS Core Team}", record.citation.author
+        assert_equal [{ "literal" => "XRONOS Core Team" }], record.citation['author']
       end
     end
   end
@@ -210,7 +231,7 @@ class CitableTest < ActiveSupport::TestCase
       record = CitableModel.create!(name: "Test")
       user.user_profile.delete
       User.where(id: user.id).delete_all
-      assert_equal "{XRONOS contributors}", record.citation.author
+      assert_equal [{ "literal" => "XRONOS contributors" }], record.citation['author']
     end
   end
 

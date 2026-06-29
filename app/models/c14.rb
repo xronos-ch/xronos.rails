@@ -136,7 +136,7 @@ class C14 < ApplicationRecord
   private
 
   def citation_title
-    lab_id.presence || "C14 record ##{id}"
+    lab_id.to_s.presence || "C14 record ##{id}"
   end
 
 end
