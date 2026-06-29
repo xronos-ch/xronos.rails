@@ -2,7 +2,8 @@
 
 ## [1.3.1.900] - unreleased
 
-- Added suggested citation for radiocarbon dates
+- Added suggested citation for radiocarbon dates to show view
+  - Exportable as BibTeX, CSL-JSON, YAML, RIS
 
 ## [1.3.1] - 2026-10-26
 

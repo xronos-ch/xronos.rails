@@ -28,8 +28,68 @@ module Citable
     Array.wrap(cp.render(:bibliography, id: citation_key)).join.html_safe
   end
 
+  # CSL-JSON — canonical machine-readable form
+  def format_json
+    citation.to_json
+  end
+
+  # YAML serialization of the same data
+  def format_yaml
+    citation.to_yaml
+  end
+
+  # BibTeX entry built from the CSL hash
+  def format_bibtex
+    bib = BibTeX::Entry.new
+    bib.type      = :dataset
+    bib.key       = citation["id"]
+    bib.title     = citation["title"]
+    bib.year      = citation.dig("issued", "date-parts", 0, 0)
+    bib.publisher = citation["container-title"]
+    bib.url       = citation["URL"]
+    bib.author    = Array(citation["author"]).map { |a|
+      if a["literal"]
+        # Double braces protect the literal name from name parsing
+        # in BibTeX styles, in addition to the standard single-brace
+        # name-part protection.
+        "{#{a["literal"]}}"
+      else
+        [a["given"], a["family"]].compact.join(" ")
+      end
+    }.join(" and ")
+    bib.to_s
+  end
+
+  # RIS — no built-in support in bibtex-ruby/citeproc; produce manually
+  def format_ris
+    c = citation
+    lines = ["TY  - DATA"]
+    lines << "TI  - #{c['title']}" if c['title']
+    Array(c['author']).each do |a|
+      name = a['literal'] || [a['given'], a['family']].compact.join(' ')
+      lines << "AU  - #{name}" unless name.blank?
+    end
+    if (y = c.dig('issued', 'date-parts', 0, 0))
+      lines << "PY  - #{y}"
+    end
+    lines << "PB  - #{c['container-title']}" if c['container-title']
+    if (parts = c.dig('accessed', 'date-parts', 0))
+      lines << "Y2  - #{parts[0]}-#{format('%02d', parts[1])}-#{format('%02d', parts[2])}"
+    end
+    lines << "UR  - #{c['URL']}" if c['URL']
+    lines << "ER  - "
+    lines.join("\n") + "\n"
+  end
+
   def default_url_options
     Rails.application.config.action_mailer.default_url_options
+  end
+
+  # Path to this record's citation sub-resource, optionally with a format extension.
+  # Used by the Cite dropdown to generate per-format download URLs.
+  def citation_path(format: nil)
+    helper = "#{model_name.singular}_citation_path"
+    Rails.application.routes.url_helpers.send(helper, self, format: format)
   end
 
   private

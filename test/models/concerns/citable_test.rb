@@ -235,6 +235,51 @@ class CitableTest < ActiveSupport::TestCase
     end
   end
 
+  test "format_bibtex returns a BibTeX entry" do
+    PaperTrail.request(whodunnit: 1) do
+      record = CitableModel.create!(name: "Test")
+      bib = record.format_bibtex
+      assert_match(/^@dataset\{xronos_citable_test_citable_model_#{record.id},/, bib)
+    end
+  end
+
+  test "format_bibtex double-braces literal authors" do
+    # The {{XRONOS contributors}} and {{XRONOS Core Team}} entries
+    # are institutional names; BibTeX needs double braces to keep
+    # them as a single literal value (single braces only protect
+    # against name-part inversion, not against further parsing).
+    PaperTrail.request(whodunnit: 1) do
+      record = CitableModel.create!(name: "Test")
+      bib = record.format_bibtex
+      assert_includes bib, "author = {{XRONOS contributors}}"
+    end
+  end
+
+  test "format_json returns CSL-JSON" do
+    PaperTrail.request(whodunnit: 1) do
+      record = CitableModel.create!(name: "Test")
+      json = JSON.parse(record.format_json)
+      assert_equal "entry", json["type"]
+    end
+  end
+
+  test "format_yaml returns YAML serialization" do
+    PaperTrail.request(whodunnit: 1) do
+      record = CitableModel.create!(name: "Test")
+      yaml = YAML.safe_load(record.format_yaml, permitted_classes: [Symbol])
+      assert_equal "entry", yaml["type"]
+    end
+  end
+
+  test "format_ris returns a RIS record" do
+    PaperTrail.request(whodunnit: 1) do
+      record = CitableModel.create!(name: "Test")
+      ris = record.format_ris
+      assert_match(/^TY  - /, ris)
+      assert_match(/^ER  - /, ris)
+    end
+  end
+
   private
 
   def with_env(vars)
