@@ -18,61 +18,61 @@
 
        <div class="collapse navbar-collapse" id="navbarSupportedContent">
          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-           <li class="nav-item">
-             <a class="nav-link link-info <%= active_class data_path %>" href="/data" <%= active_aria data_path %>>Browse data</a>
-           </li>
-           <% if user_signed_in? %>
-           <li class="nav-item dropdown">
-             <a class="nav-link link-info dropdown-toggle" href="#" id="contribDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-               Add data
-             </a>
-             <ul class="dropdown-menu" aria-labelledby="contribDropdown">
-               <li class="nav-item"><a class="dropdown-item nav-link <%= active_class new_site_path %>" href="<%= new_site_path %>">New site</a></li>
-             </ul>
-           </li>
-             <li class="nav-item">
-               <a class="nav-link link-info <%= active_class curate_path %>" href="/curate" <%= active_aria curate_path %>>Curation</a>
-             </li>
-           <% end %>
-           <% if user_signed_in? and current_user.admin? %>
-             <li class="nav-item">
-               <a class="nav-link link-info <%= active_class admin_path %>" href="/admin" <%= active_aria admin_path %>>Admin</a>
-             </li>
-           <% end %>
-           <li class="nav-item dropdown">
-             <a class="nav-link link-info dropdown-toggle" href="#" id="aboutDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-               About
-             </a>
-             <ul class="dropdown-menu" aria-labelledby="aboutDropdown">
-               <%= render "articles/nav", section: "about", itemclass: "nav-item", linkclass: "dropdown-item nav-link" %>
-               <li class="nav-item">
-                 <a class="dropdown-item nav-link <%= active_class acknowledgements_path %>"
-                    href="<%= acknowledgements_path %>"
-                    <%= active_aria acknowledgements_path %>>
-                   Acknowledgements
-                 </a>
-               </li>
-             </ul>
-           </li>
-           <li class="nav-item dropdown">
-             <a class="nav-link link-info dropdown-toggle" href="#" id="toolsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-               Tools
-             </a>
-             <ul class="dropdown-menu" aria-labelledby="toolsDropdown">
-               <li class="nav-item">
-                 <a class="nav-link dropdown-item <%= active_class database_path %>" href="/database" <%= active_aria database_path %>>Schema</a>
-               </li>
-               <li class="nav-item">
-                 <a class="nav-link dropdown-item <%= active_class api_path %>" href="/api" <%= active_aria api_path %>>API</a>
-               </li>
-               <li class="nav-item">
-                 <a class="nav-link dropdown-item" href="https://r.xronos.ch" target="_blank">R package <span class="badge"><%= bs_icon "box-arrow-up-right" %></span></a>
-               </li>
-             </ul>
-           </li>
-           <li class="nav-item">
-             <a class="nav-link link-info" href="/news">News</a>
-           </li>
+            <li class="nav-item">
+              <a class="nav-link link-info <%= active_class data_path %>" href="/data" <%= active_aria data_path %>>Browse data</a>
+            </li>
+            <% if user_signed_in? %>
+            <li class="nav-item dropdown">
+              <a class="nav-link link-info dropdown-toggle" href="#" id="contribDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Add data
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="contribDropdown">
+                <li><a class="dropdown-item <%= active_class new_site_path %>" href="<%= new_site_path %>">New site</a></li>
+              </ul>
+            </li>
+              <li class="nav-item">
+                <a class="nav-link link-info <%= active_class curate_path %>" href="/curate" <%= active_aria curate_path %>>Curation</a>
+              </li>
+            <% end %>
+            <% if user_signed_in? and current_user.admin? %>
+              <li class="nav-item">
+                <a class="nav-link link-info <%= active_class admin_path %>" href="/admin" <%= active_aria admin_path %>>Admin</a>
+              </li>
+            <% end %>
+            <li class="nav-item dropdown">
+              <a class="nav-link link-info dropdown-toggle" href="#" id="aboutDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                About
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="aboutDropdown">
+                <%= render "articles/nav", section: "about", itemclass: "", linkclass: "dropdown-item" %>
+                <li>
+                  <a class="dropdown-item <%= active_class acknowledgements_path %>"
+                     href="<%= acknowledgements_path %>"
+                     <%= active_aria acknowledgements_path %>>
+                    Acknowledgements
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link link-info dropdown-toggle" href="#" id="toolsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Tools
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="toolsDropdown">
+                <li>
+                  <a class="dropdown-item <%= active_class database_path %>" href="/database" <%= active_aria database_path %>>Schema</a>
+                </li>
+                <li>
+                  <a class="dropdown-item <%= active_class api_path %>" href="/api" <%= active_aria api_path %>>API</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="https://r.xronos.ch" target="_blank">R package <span class="badge text-bg-light"><%= bs_icon "box-arrow-up-right" %></span></a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link link-info" href="/news">News</a>
+            </li>
          </ul>
 
          <form id="navbarSearch"
@@ -96,22 +96,22 @@
                <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                  <%= current_user.email %>
                </button>
-               <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                 <li>
-                   <%= link_to(new_or_edit_profile_path(current_user.user_profile), class: "dropdown-item") do %>
-                     <%= bs_icon "person-circle" %> Edit public profile
-                   <% end %>
-                 </li>
-                 <li>
-                   <%= link_to(edit_user_registration_path, class: "dropdown-item") do %>
-                     <%= bs_icon "gear" %> Account settings
-                   <% end %>
-                 </li>
-                 <hr>
-                 <li>
-                   <%= button_to destroy_user_session_path, method: :delete, class: "dropdown-item" do %>Sign out<% end %>
-                 </li>
-               </ul>
+                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
+                  <li>
+                    <%= link_to(new_or_edit_profile_path(current_user.user_profile), class: "dropdown-item") do %>
+                      <%= bs_icon "person-circle" %> Edit public profile
+                    <% end %>
+                  </li>
+                  <li>
+                    <%= link_to(edit_user_registration_path, class: "dropdown-item") do %>
+                      <%= bs_icon "gear" %> Account settings
+                    <% end %>
+                  </li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li>
+                    <%= button_to destroy_user_session_path, method: :delete, class: "dropdown-item" do %>Sign out<% end %>
+                  </li>
+                </ul>
              </div>
 
 
@@ -121,28 +121,24 @@
                  Sign in
                </button>
 
-               <div class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="dropdownMenuLink" style="width: 300px">
-                 <%= form_for :user, :url => session_path(:user), :html => {:class => "px-4"}, data: {turbo: false}  do |f| %>
-                   <div class="form-group">
-                     <%= f.label :email, class: "sr-only col-form-label col-form-label-sm" %>
-                     <div class="input-group">
-                       <div class="input-group-text" style="width: 35px;"><%= bs_icon "person" %></div>
-                       <%= f.text_field :email, class: "form-control form-control-sm", placeholder: "email@example.com"  %>
-                     </div>
-                   </div>
-                   <div class="form-group">
-                     <%= f.label :password, class: "sr-only col-form-label col-form-label-sm" %>
-                     <div class="input-group">
-                       <div class="input-group-text" style="width: 35px;"><%= bs_icon "key-fill" %></div>
-                       <%= f.password_field :password, class: "form-control form-control-sm", placeholder: "password"  %>
-                     </div>
-                   </div>
-                   <div class="form-check" style="display: inline-block;">
-                     <%= f.check_box :remember_me, class: "form-check-input form-check-input-sm"  %>
-                     <%= f.label :remember_me, "Remember me", class: "form-check-label col-form-label-sm" %>
-                   </div>
-                   <%= f.submit 'Sign in', class: "btn btn-primary btn-sm pull-right" %>
-                 <% end %>
+                <div class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="dropdownMenuLink" style="width: 300px" data-bs-display="static">
+                  <%= form_for :user, :url => session_path(:user), :html => {:class => "px-4"}, data: {turbo: false}  do |f| %>
+                    <%= f.label :email, class: "visually-hidden" %>
+                    <div class="input-group">
+                      <div class="input-group-text" style="width: 35px;"><%= bs_icon "person" %></div>
+                      <%= f.text_field :email, class: "form-control form-control-sm", placeholder: "email@example.com"  %>
+                    </div>
+                    <%= f.label :password, class: "visually-hidden" %>
+                    <div class="input-group">
+                      <div class="input-group-text" style="width: 35px;"><%= bs_icon "key-fill" %></div>
+                      <%= f.password_field :password, class: "form-control form-control-sm", placeholder: "password"  %>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <%= f.check_box :remember_me, class: "form-check-input form-check-input-sm"  %>
+                      <%= f.label :remember_me, "Remember me", class: "form-check-label form-label-sm" %>
+                    </div>
+                    <%= f.submit 'Sign in', class: "btn btn-primary btn-sm float-end" %>
+                  <% end %>
                  <!-- <div class="dropdown-divider"></div>
                    <%= link_to "Forgot your password?", new_password_path(:user), class: "dropdown-item" %>
                    <%= link_to('New around here? Sign up', new_user_registration_path, class: "dropdown-item") %> -->
