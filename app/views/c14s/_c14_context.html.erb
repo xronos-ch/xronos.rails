@@ -1,30 +1,30 @@
 <dl class="row mb-0">
 
-  <dt class="col-12 col-lg-4">Site</dt>
+  <dt class="col-12 col-lg-4">Country</dt>
   <dd class="col-12 col-lg-8">
-    <%= link_to c14.site.name, c14.site %>
-    <% unless c14.site.country.blank? %>
-      <span class="text-muted">(<%= c14.site.country %>)</span>
-    <% end %>
-  </dd>
-
-  <dt class="col-12 col-lg-4">Context</dt>
-  <dd class="col-12 col-lg-8">
-    <%= c14.context&.name || na_value %>
-  </dd>
-
-  <dt class="col-12 col-lg-4">Approximate date</dt>
-  <dd class="col-12 col-lg-8 font-monospace">
-    <% if c14.context&.approx_start_time.present? && c14.context&.approx_end_time.present? %>
-      <%= c14.context.approx_start_time %>–<%= c14.context.approx_end_time %> cal BP
-    <% elsif c14.context&.approx_start_time.present? %>
-      from <%= c14.context.approx_start_time %> cal BP
-    <% elsif c14.context&.approx_end_time.present? %>
-      until <%= c14.context.approx_end_time %> cal BP
+    <% if c14.site.country.present? %>
+      <%= c14.site.country %> <span class="text-body-secondary">(<%= c14.site.country_code %>)</span>
     <% else %>
       <%= na_value %>
     <% end %>
   </dd>
+
+  <dt class="col-12 col-lg-4">Site</dt>
+  <dd class="col-12 col-lg-8">
+    <%= link_to c14.site.name, c14.site %>
+  </dd>
+
+  <% if c14.site.site_names.any? %>
+    <dt class="col-12 col-lg-4">Aliases</dt>
+    <dd class="col-12 col-lg-8">
+      <% c14.site.site_names.order(:language, :name).each_with_index do |site_name, i| %>
+        <span<% if site_name.language.present? %> lang="<%= site_name.language.downcase %>"<% end %>>
+          <%= site_name.name %>
+        </span>
+        <% if site_name.language.present? %><%= language_badge site_name.language %><% end %><%= i < c14.site.site_names.count - 1 ? ", " : "" %>
+      <% end %>
+    </dd>
+  <% end %>
 
   <dt class="col-12 col-lg-4">Functional classification</dt>
   <dd class="col-12 col-lg-8">
@@ -35,6 +35,11 @@
     <% else %>
       <%= na_value %>
     <% end %>
+  </dd>
+
+  <dt class="col-12 col-lg-4">Context</dt>
+  <dd class="col-12 col-lg-8">
+    <%= c14.context&.name || na_value %>
   </dd>
 
 </dl>

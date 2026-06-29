@@ -105,7 +105,7 @@
       <section id="c14-references" class="section-with-legend mt-5 position-relative">
         <h2 class="legend">
           <%= bs_icon "book", class: "me-1" %><%= Reference.label.humanize.pluralize %>
-          <small class="text-muted">(<%= references.count %>)</small>
+          <span class="badge text-bg-info ms-1"><%= references.count %></span>
         </h2>
         <div class="section-body">
           <%= render "references/bibliography", references: references %>
