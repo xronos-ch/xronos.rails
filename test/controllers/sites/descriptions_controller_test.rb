@@ -16,7 +16,8 @@ class Sites::DescriptionsControllerTest < ActionDispatch::IntegrationTest # rubo
   test 'show returns the populated frame' do
     description = Site::Description.new(lod_link: @lod_link)
     description.define_singleton_method(:data) {
-      { wikipedia_title: 'Site', wikipedia_extract_text: 'Lead.', wikipedia_url: 'https://...' }
+      { wikipedia_title: 'Site', wikipedia_extract_text: 'Lead.', wikipedia_url: 'https://...',
+        images: [], commons_category_url: nil, commons_category_title: nil }
     }
     description.define_singleton_method(:fetched_at) { Time.zone.local(2026, 6, 30) }
 

@@ -1,19 +1,27 @@
 <%= turbo_frame_tag dom_id(site, :description) do %>
   <div id="site-description-content">
-    <% if description.data[:wikipedia_extract_text].present? %>
-      <figure class="mb-3" style="max-width: 36rem;">
-        <blockquote class="blockquote">
-          <p><%= description.data[:wikipedia_extract_text] %></p>
-        </blockquote>
-        <figcaption class="blockquote-footer">
-          Adapted from the English Wikipedia article on
-          <cite><a href="<%= description.data[:wikipedia_url] %>" target="_blank" rel="noopener"><%= description.data[:wikipedia_title] %></a></cite>
-          (accessed <%= description.fetched_at.strftime("%-d %B %Y") %>;
-          <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>).
-        </figcaption>
-      </figure>
-    <% else %>
+    <% excerpt = description.data[:wikipedia_extract_text] %>
+    <% images = description.data[:images] %>
+
+    <% if excerpt.blank? && images.empty? %>
       <p class="text-muted mb-0">No description is available for this site on Wikipedia.</p>
+    <% else %>
+      <div class="d-flex flex-column-reverse flex-lg-row gap-4">
+        <% if excerpt.present? %>
+          <div class="col-12" style="flex: 7 1 0;">
+            <%= render "sites/descriptions/excerpt", description: description %>
+          </div>
+        <% end %>
+
+        <% if images.any? %>
+          <div class="col-12" style="flex: 5 1 0;">
+            <%= render "sites/descriptions/image_grid",
+                  images: images,
+                  commons_category_url: description.data[:commons_category_url],
+                  commons_category_title: description.data[:commons_category_title] %>
+          </div>
+        <% end %>
+      </div>
     <% end %>
   </div>
 <% end %>

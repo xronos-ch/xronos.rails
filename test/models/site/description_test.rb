@@ -11,6 +11,14 @@ class Site::DescriptionTest < ActiveSupport::TestCase # rubocop:disable Style/Cl
                                   source: 'Wikidata',
                                   external_id: 123,
                                   status: 'approved')
+    @sitelinks = { lang_title: 'Site', commons_title: 'Category:Site' }
+    @extract = { title: 'Site', text: 'Lead.', url: 'https://en.wikipedia.org/wiki/Site' }
+    @images = [
+      { basename: 'Site_a', extension: 'jpg',
+        thumb_url: 'https://example.org/a', page_url: 'https://example.org/page/a' },
+      { basename: 'Site_b', extension: 'jpg',
+        thumb_url: 'https://example.org/b', page_url: 'https://example.org/page/b' }
+    ]
   end
 
   test 'cache_key includes the lod_link id, updated_at and lang' do
@@ -42,82 +50,137 @@ class Site::DescriptionTest < ActiveSupport::TestCase # rubocop:disable Style/Cl
   end
 
   test 'cached? is true after data has been read' do
-    sitelinks = { lang_title: 'Site' }
-    extract = { title: 'Site', text: 'Lead.', url: 'https://en.wikipedia.org/wiki/Site' }
-    Wikimedia::Sitelinks.stub(:for, sitelinks) do
-      Wikipedia::Article.stub(:summary, extract) do
-        description = Site::Description.new(lod_link: @lod_link)
-        description.data
-        assert description.cached?
-      end
+    with_stubs do
+      description = Site::Description.new(lod_link: @lod_link)
+      description.data
+      assert description.cached?
     end
   end
 
   test 'data includes the Wikipedia title, extract text and URL when a lang sitelink is present' do
-    sitelinks = { lang_title: 'Site' }
-    extract = { title: 'Site', text: 'Lead.', url: 'https://en.wikipedia.org/wiki/Site' }
-    Wikimedia::Sitelinks.stub(:for, sitelinks) do
-      Wikipedia::Article.stub(:summary, extract) do
-        description = Site::Description.new(lod_link: @lod_link)
-        assert_equal 'Site', description.data[:wikipedia_title]
-        assert_equal 'Lead.', description.data[:wikipedia_extract_text]
-        assert_equal 'https://en.wikipedia.org/wiki/Site', description.data[:wikipedia_url]
-      end
+    with_stubs do
+      description = Site::Description.new(lod_link: @lod_link)
+      assert_equal 'Site', description.data[:wikipedia_title]
+      assert_equal 'Lead.', description.data[:wikipedia_extract_text]
+      assert_equal 'https://en.wikipedia.org/wiki/Site', description.data[:wikipedia_url]
     end
   end
 
   test 'data has nil fields when the lang sitelink is absent' do
-    sitelinks = { lang_title: nil }
-    Wikimedia::Sitelinks.stub(:for, sitelinks) do
-      description = Site::Description.new(lod_link: @lod_link)
-      assert_nil description.data[:wikipedia_title]
-      assert_nil description.data[:wikipedia_extract_text]
-      assert_nil description.data[:wikipedia_url]
-    end
-  end
-
-  test 'data caches the combined result' do
-    sitelinks = { lang_title: 'Site' }
-    extract = { title: 'Site', text: 'Lead.', url: 'https://en.wikipedia.org/wiki/Site' }
-    Wikimedia::Sitelinks.stub(:for, sitelinks) do
-      Wikipedia::Article.stub(:summary, extract) do
+    Wikimedia::Sitelinks.stub(:for, { lang_title: nil }) do
+      Wikimedia::Images.stub(:for, []) do
         description = Site::Description.new(lod_link: @lod_link)
-        first = description.data
-        second = description.data
-        assert_equal first, second
+        assert_nil description.data[:wikipedia_title]
+        assert_nil description.data[:wikipedia_extract_text]
+        assert_nil description.data[:wikipedia_url]
       end
     end
   end
 
-  test 'failed? is true when there is no Wikipedia text' do
-    sitelinks = { lang_title: nil }
-    extract = nil
-    Wikimedia::Sitelinks.stub(:for, sitelinks) do
-      Wikipedia::Article.stub(:summary, extract) do
-        description = Site::Description.new(lod_link: @lod_link)
-        assert description.failed?
+  test 'data includes the images from Wikimedia::Images' do
+    with_stubs do
+      description = Site::Description.new(lod_link: @lod_link)
+      assert_equal @images, description.data[:images]
+    end
+  end
+
+  test 'data has an empty images array when Wikimedia::Images returns nothing' do
+    Wikimedia::Sitelinks.stub(:for, @sitelinks) do
+      Wikipedia::Article.stub(:summary, @extract) do
+        Wikimedia::Images.stub(:for, []) do
+          description = Site::Description.new(lod_link: @lod_link)
+          assert_equal [], description.data[:images]
+        end
+      end
+    end
+  end
+
+  test 'data includes a Commons category URL when a commonswiki sitelink is present' do
+    with_stubs do
+      description = Site::Description.new(lod_link: @lod_link)
+      assert_equal 'https://commons.wikimedia.org/wiki/Category:Site',
+        description.data[:commons_category_url]
+    end
+  end
+
+  test 'data has a nil Commons category URL when no commonswiki sitelink is present' do
+    Wikimedia::Sitelinks.stub(:for, { lang_title: 'Site', commons_title: nil }) do
+      Wikipedia::Article.stub(:summary, @extract) do
+        Wikimedia::Images.stub(:for, @images) do
+          description = Site::Description.new(lod_link: @lod_link)
+          assert_nil description.data[:commons_category_url]
+        end
+      end
+    end
+  end
+
+  test 'data includes a human-readable Commons category title without the prefix' do
+    Wikimedia::Sitelinks.stub(:for, { lang_title: 'Site', commons_title: 'Category:Göbekli Tepe' }) do
+      Wikipedia::Article.stub(:summary, @extract) do
+        Wikimedia::Images.stub(:for, @images) do
+          description = Site::Description.new(lod_link: @lod_link)
+          assert_equal 'Göbekli Tepe', description.data[:commons_category_title]
+        end
+      end
+    end
+  end
+
+  test 'data has a nil Commons category title when no commonswiki sitelink is present' do
+    Wikimedia::Sitelinks.stub(:for, { lang_title: 'Site', commons_title: nil }) do
+      Wikipedia::Article.stub(:summary, @extract) do
+        Wikimedia::Images.stub(:for, @images) do
+          description = Site::Description.new(lod_link: @lod_link)
+          assert_nil description.data[:commons_category_title]
+        end
+      end
+    end
+  end
+
+  test 'data caches the combined result' do
+    with_stubs do
+      description = Site::Description.new(lod_link: @lod_link)
+      first = description.data
+      second = description.data
+      assert_equal first, second
+    end
+  end
+
+  test 'failed? is true when there is no Wikipedia text and no images' do
+    Wikimedia::Sitelinks.stub(:for, { lang_title: nil }) do
+      Wikipedia::Article.stub(:summary, nil) do
+        Wikimedia::Images.stub(:for, []) do
+          description = Site::Description.new(lod_link: @lod_link)
+          assert description.failed?
+        end
+      end
+    end
+  end
+
+  test 'failed? is false when only images are present' do
+    Wikimedia::Sitelinks.stub(:for, { lang_title: nil, commons_title: 'Category:Site' }) do
+      Wikipedia::Article.stub(:summary, nil) do
+        Wikimedia::Images.stub(:for, @images) do
+          description = Site::Description.new(lod_link: @lod_link)
+          refute description.failed?
+        end
       end
     end
   end
 
   test 'failed? is false when a Wikipedia text is present' do
-    sitelinks = { lang_title: 'Site' }
-    extract = { title: 'Site', text: 'Lead.', url: 'https://en.wikipedia.org/wiki/Site' }
-    Wikimedia::Sitelinks.stub(:for, sitelinks) do
-      Wikipedia::Article.stub(:summary, extract) do
-        description = Site::Description.new(lod_link: @lod_link)
-        refute description.failed?
-      end
+    with_stubs do
+      description = Site::Description.new(lod_link: @lod_link)
+      refute description.failed?
     end
   end
 
   test 'lang changes the Wikipedia URL' do
-    sitelinks = { lang_title: 'Site' }
-    extract = { title: 'Site', text: 'Lead.', url: 'https://de.wikipedia.org/wiki/Site' }
-    Wikimedia::Sitelinks.stub(:for, sitelinks) do
-      Wikipedia::Article.stub(:summary, extract) do
-        description = Site::Description.new(lod_link: @lod_link, lang: 'de')
-        assert_equal 'https://de.wikipedia.org/wiki/Site', description.data[:wikipedia_url]
+    Wikimedia::Sitelinks.stub(:for, { lang_title: 'Site' }) do
+      Wikipedia::Article.stub(:summary, { title: 'Site', text: 'Lead.', url: 'https://de.wikipedia.org/wiki/Site' }) do
+        Wikimedia::Images.stub(:for, []) do
+          description = Site::Description.new(lod_link: @lod_link, lang: 'de')
+          assert_equal 'https://de.wikipedia.org/wiki/Site', description.data[:wikipedia_url]
+        end
       end
     end
   end
@@ -126,11 +189,7 @@ class Site::DescriptionTest < ActiveSupport::TestCase # rubocop:disable Style/Cl
     description = Site::Description.new(lod_link: @lod_link)
     before = Time.current
 
-    Wikimedia::Sitelinks.stub(:for, { lang_title: 'Site' }) do
-      Wikipedia::Article.stub(:summary, { title: 'Site', text: 'Lead.', url: 'https://...' }) do
-        description.data
-      end
-    end
+    with_stubs { description.data }
 
     after = Time.current
 
@@ -142,13 +201,23 @@ class Site::DescriptionTest < ActiveSupport::TestCase # rubocop:disable Style/Cl
   test 'fetched_at is the same on subsequent reads within the cache window' do
     description = Site::Description.new(lod_link: @lod_link)
 
-    Wikimedia::Sitelinks.stub(:for, { lang_title: 'Site' }) do
-      Wikipedia::Article.stub(:summary, { title: 'Site', text: 'Lead.', url: 'https://...' }) do
-        description.data
-        first = description.fetched_at
+    with_stubs do
+      description.data
+      first = description.fetched_at
 
-        travel_to 1.hour.from_now do
-          assert_equal first, description.fetched_at
+      travel_to 1.hour.from_now do
+        assert_equal first, description.fetched_at
+      end
+    end
+  end
+
+  private
+
+  def with_stubs
+    Wikimedia::Sitelinks.stub(:for, @sitelinks) do
+      Wikipedia::Article.stub(:summary, @extract) do
+        Wikimedia::Images.stub(:for, @images) do
+          yield
         end
       end
     end

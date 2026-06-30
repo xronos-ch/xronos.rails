@@ -3,8 +3,9 @@
 ##
 # Site::Description
 #
-# Composes a site's Wikipedia lead excerpt from the Wikimedia APIs via the
-# +Wikipedia::Article+ and +Wikimedia::Sitelinks+ lib clients. Caches both
+# Composes a site's Wikipedia lead excerpt and Wikidata-sourced image
+# gallery from the Wikimedia APIs via the +Wikipedia::Article+,
+# +Wikimedia::Sitelinks+ and +Wikimedia::Images+ lib clients. Caches both
 # the data and the fetch timestamp.
 class Site::Description # rubocop:disable Style/ClassAndModuleChildren
   CACHE_TTL = 7.days
@@ -33,7 +34,7 @@ class Site::Description # rubocop:disable Style/ClassAndModuleChildren
   end
 
   def failed?
-    data[:wikipedia_extract_text].blank?
+    data[:wikipedia_extract_text].blank? && data[:images].empty?
   end
 
   private
@@ -45,12 +46,17 @@ class Site::Description # rubocop:disable Style/ClassAndModuleChildren
   end
 
   def build_data
-    lang_title = (Wikimedia::Sitelinks.for(lod_link.qcode, lang: lang) || {})[:lang_title]
+    sitelinks = Wikimedia::Sitelinks.for(lod_link.qcode, lang: lang) || {}
+    lang_title = sitelinks[:lang_title]
+    commons_title = sitelinks[:commons_title]
 
     {
       wikipedia_title: lang_title,
       wikipedia_extract_text: fetch_wikipedia_extract(lang_title),
-      wikipedia_url: wikipedia_url_for(lang_title)
+      wikipedia_url: wikipedia_url_for(lang_title),
+      images: Wikimedia::Images.for(lod_link.qcode),
+      commons_category_url: commons_category_url_for(commons_title),
+      commons_category_title: commons_category_title_for(commons_title)
     }
   end
 
@@ -64,5 +70,17 @@ class Site::Description # rubocop:disable Style/ClassAndModuleChildren
     return nil if title.blank?
 
     Wikipedia::Article.url(title, lang: lang)
+  end
+
+  def commons_category_url_for(title)
+    return nil if title.blank?
+
+    "https://commons.wikimedia.org/wiki/#{title.tr(' ', '_')}"
+  end
+
+  def commons_category_title_for(title)
+    return nil if title.blank?
+
+    title.sub(/\ACategory:/, '').tr('_', ' ')
   end
 end
