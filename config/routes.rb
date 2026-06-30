@@ -151,5 +151,10 @@ Rails.application.routes.draw do
       resources :data, controller: 'xronos_data'
     end
   end
+
+  # MIaaRD export
+  namespace :miaard do
+    resources :c14s, only: [:index, :show]
+  end
   
 end

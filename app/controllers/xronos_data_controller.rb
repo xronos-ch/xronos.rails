@@ -105,6 +105,24 @@ class XronosDataController < ApplicationController
                   filename: "xronos_data_#{Date.today}.csv",
                   disposition: "attachment"
       end
+
+      format.miaard_json do
+        miaard_json = if unfiltered_request?
+                        Rails.cache.fetch(
+                          cache_key_for("miaard_json"),
+                          expires_in: 10.minutes
+                        ) do
+                          build_miaard_json(@data.xrons)
+                        end
+                      else
+                        build_miaard_json(@data.xrons)
+                      end
+
+        send_data miaard_json,
+                  type: "application/json; charset=utf-8",
+                  filename: "xronos_data_miaard_#{Date.today}.json",
+                  disposition: "attachment"
+      end
     end
   end
 
@@ -187,6 +205,14 @@ class XronosDataController < ApplicationController
     end
 
     csv_data
+  end
+
+  def build_miaard_json(xrons_relation)
+    c14s = xrons_relation
+             .includes(sample: [:taxon, { context: :site }])
+             .reorder(:id)
+
+    JSON.pretty_generate(Miaard::C14CollectionExporter.new(c14s).as_json)
   end
 
   def filter_params

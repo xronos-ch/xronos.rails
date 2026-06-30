@@ -8,8 +8,16 @@
 
   <turbo-frame id="c14s-table">
     <div id="c14s-toolbar" class="d-flex">
-      <div class="ms-auto">
-        <%= link_to bs_icon("download"), c14s_path(format: :csv, **@c14_params.to_h), class: "btn btn-sm btn-outline-primary", title: "Download CSV" %>
+      <div class="ms-auto d-flex gap-2">
+        <%= link_to bs_icon("download"),
+                    c14s_path(format: :csv, **@c14_params.to_h),
+                    class: "btn btn-sm btn-outline-primary",
+                    title: "Download CSV" %>
+
+        <%= link_to "MIaaRD JSON",
+                    miaard_c14s_path(format: :json, c14: @c14_params.to_h),
+                    class: "btn btn-sm btn-outline-primary",
+                    title: "Export the current C14 selection as a MIaaRD JSON collection" %>
       </div>
     </div>
     <%= render "table", c14s: @c14s %>

@@ -36,6 +36,19 @@ class XronosDataControllerTest < ActionDispatch::IntegrationTest
     assert_kind_of Array, JSON.parse(response.body)
   end
 
+  test "data miaard json responds successfully" do
+    get data_path(format: :miaard_json)
+
+    assert_response :success
+    assert_equal "application/json", response.media_type
+
+    json = JSON.parse(response.body)
+
+    assert_kind_of Hash, json
+    assert json.key?("entries")
+    assert_kind_of Array, json["entries"]
+  end
+
   test "data geojson excludes sites without complete coordinates" do
     mapped_site = create(:site, name: "Mapped Site", lat: 47.0, lng: 8.0)
     unmapped_site = create(:site, name: "Unmapped Site", lat: nil, lng: nil)
@@ -162,6 +175,53 @@ class XronosDataControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.media_type, "text/csv"
     assert_includes response.body, "CSV-Included-1"
     assert_not_includes response.body, "CSV-Excluded-1"
+  end
+
+  test "data miaard json includes only filtered records" do
+    included_material = create(:material, name: "MIaaRD Charcoal")
+    excluded_material = create(:material, name: "MIaaRD Bone")
+
+    included_sample = create(:sample, material: included_material)
+    excluded_sample = create(:sample, material: excluded_material)
+
+    create(
+      :c14,
+      sample: included_sample,
+      lab_identifier: "OxA-12345",
+      bp: 4500,
+      std: 30
+    )
+
+    create(
+      :c14,
+      sample: excluded_sample,
+      lab_identifier: "Beta-67890",
+      bp: 3200,
+      std: 25
+    )
+
+    refresh_data_views
+
+    get data_path(
+          format: :miaard_json,
+          params: material_filter_params("MIaaRD Charcoal")
+        )
+
+    assert_response :success
+    assert_equal "application/json", response.media_type
+
+    json = JSON.parse(response.body)
+    entries = json.fetch("entries")
+
+    assert_equal 1, entries.length
+
+    body = response.body
+
+    assert_includes body, "OxA-12345"
+    assert_not_includes body, "Beta-67890"
+
+    assert_equal "oxa", entries.first["lab_code"]
+    assert_equal "12345", entries.first["lab_id"]
   end
 
   private
