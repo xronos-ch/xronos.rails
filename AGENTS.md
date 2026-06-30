@@ -81,6 +81,7 @@ Do not over-fill the CHANGELOG with details of internal API changes, code refact
 | Model | Singular PascalCase | `Site`, `SiteName` |
 | Controller | Plural, nested by resource | `Articles::PublicationsController` |
 | State Record | Noun describing state | `Supersession`, `Publication` |
+| PORO under AR | `ModelName::PoroName` | `Site::Description`, `LinkedResource::Source` |
 | Concern | Adjective/-able | `Versioned`, `Duplicable`, `Supersedable` |
 | Job | `Model::VerbJob` | `Event::RelayJob`, `Card::CleanupJob` |
 | Test | `ModelTest` / `ControllerTest` | `SiteTest`, `Articles::PublicationsControllerTest` |
