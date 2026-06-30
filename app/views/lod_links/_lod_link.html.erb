@@ -18,18 +18,17 @@
         <% end %>
       </span>
       <% if can? :manage, LodLink %>
-        <%= link_to edit_lod_link_path(lod_link),
-                    class: "small",
-                    title: "Edit #{lod_link.source} link",
-                    data: { turbo_frame: "remote_modal" } do %>
-          <%= edit_icon %>
-        <% end %>
-        <%= link_to lod_link_path(lod_link),
-                    class: "small text-danger",
-                    title: "Delete #{lod_link.source} link",
-                    data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to delete this #{lod_link.source} link?" } do %>
-          <%= delete_icon %>
-        <% end %>
+        <%= link_to edit_inline_icon,
+          edit_lod_link_path(lod_link),
+          title: "Edit #{lod_link.source} link",
+          data: { turbo_frame: "remote_modal" } 
+        %>
+        <%= link_to delete_inline_icon,
+          lod_link_path(lod_link),
+          class: "text-danger",
+          title: "Delete #{lod_link.source} link",
+          data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to delete this #{lod_link.source} link?" } 
+        %>
       <% end %>
     </dd>
   </dl>

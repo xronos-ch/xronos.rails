@@ -29,20 +29,32 @@ module ApplicationHelper
     bs_icon "plus", options
   end
 
+  def create_inline_icon(options = {})
+    bs_icon "plus-square", options
+  end
+
   def edit_icon(options = {})
     bs_icon "pencil", options
   end
 
+  def edit_inline_icon(options = {})
+    bs_icon "pencil-square", options
+  end
+
   def delete_icon(options = {})
-    bs_icon "trash", options
+    bs_icon "x-lg", options
+  end
+
+  def delete_inline_icon(options = {})
+    bs_icon "x-square", options
   end
 
   def confirm_icon(options = {})
     bs_icon "check-lg", options
   end
 
-  def cancel_icon(options = {})
-    bs_icon "x-lg", options
+  def confirm_inline_icon(options = {})
+    bs_icon "check-square", options
   end
 
   def active_class(path)
