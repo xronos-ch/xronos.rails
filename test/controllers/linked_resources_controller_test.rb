@@ -11,7 +11,7 @@ class LinkedResourcesControllerTest < ActionDispatch::IntegrationTest
 
   setup do
     @site = create(:site)
-    @linked_resource = create(:linked_resource, linkable: @site, source: 'Wikidata', external_id: 12_345)
+    @linked_resource = create(:linked_resource, linkable: @site, source: 'Wikidata', external_id: 'Q12345')
     @admin = create(:user, :admin)
   end
 
@@ -21,7 +21,7 @@ class LinkedResourcesControllerTest < ActionDispatch::IntegrationTest
     get linked_resource_path(@linked_resource)
 
     assert_response :success
-    assert_match @linked_resource.qcode, response.body
+    assert_match @linked_resource.external_id, response.body
     assert_match @linked_resource.source, response.body
   end
 
@@ -37,7 +37,7 @@ class LinkedResourcesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'destroy returns a turbo stream that removes the frame when other linked_resources remain' do
-    create(:linked_resource, linkable: @site, source: 'Wikidata', external_id: 67_890)
+    create(:linked_resource, linkable: @site, source: 'Wikidata', external_id: 'Q67890')
     sign_in @admin
 
     delete linked_resource_path(@linked_resource),

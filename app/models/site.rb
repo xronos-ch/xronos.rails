@@ -295,7 +295,7 @@ class Site < ApplicationRecord
       .transform_values do |matches|
         matches.map do |match|
           OpenStruct.new(
-            qid: match.dig("item", "value")&.split("/")&.last&.gsub(/^Q/i, ''),
+            qid: match.dig("item", "value")&.split("/")&.last,
             label: match.dig("itemLabel", "value"),
             description: match.dig("itemDescription", "value"),
             url: match.dig("itemURL", "value")

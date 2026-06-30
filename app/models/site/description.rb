@@ -46,7 +46,7 @@ class Site::Description # rubocop:disable Style/ClassAndModuleChildren
   end
 
   def build_data
-    sitelinks = Wikimedia::Sitelinks.for(linked_resource.qcode, lang: lang) || {}
+    sitelinks = Wikimedia::Sitelinks.for(linked_resource.external_id, lang: lang) || {}
     lang_title = sitelinks[:lang_title]
     commons_title = sitelinks[:commons_title]
 
@@ -54,7 +54,7 @@ class Site::Description # rubocop:disable Style/ClassAndModuleChildren
       wikipedia_title: lang_title,
       wikipedia_extract_text: fetch_wikipedia_extract(lang_title),
       wikipedia_url: wikipedia_url_for(lang_title),
-      images: Wikimedia::Images.for(linked_resource.qcode),
+      images: Wikimedia::Images.for(linked_resource.external_id),
       commons_category_url: commons_category_url_for(commons_title),
       commons_category_title: commons_category_title_for(commons_title)
     }

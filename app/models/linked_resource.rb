@@ -21,13 +21,10 @@
 class LinkedResource < ApplicationRecord
   include Turbo::Broadcastable
 
-  EXTERNAL_URL = {
-    'Wikidata' => 'https://www.wikidata.org/wiki/'
-  }.with_indifferent_access
-
-  validates :external_id, presence: true, numericality: { only_integer: true }
   validates :source, presence: true
   validates :source, uniqueness: { scope: [:external_id, :linkable_type, :linkable_id] }
+
+  validate :external_id_matches_source_pattern
 
   enum :status, { pending: "pending", approved: "approved" }
 
@@ -37,12 +34,19 @@ class LinkedResource < ApplicationRecord
   scope :pending, -> { where(status: "pending") }
   scope :approved, -> { where(status: "approved") }
 
-  def qcode
-    "Q#{external_id}"
-  end
-
   def external_url
-    EXTERNAL_URL[source]&.then { |base| base + qcode }
+    LinkedResource::Source.find(source)&.url_for(external_id)
   end
 
+  private
+
+  def external_id_matches_source_pattern
+    source_obj = LinkedResource::Source.find(source)
+    if source_obj.nil?
+      errors.add(:source, "is not a known linked resource source") and return if source.present?
+    else
+      return if source_obj.valid_id?(external_id)
+      errors.add(:external_id, "does not match the expected format for #{source_obj.name}")
+    end
+  end
 end

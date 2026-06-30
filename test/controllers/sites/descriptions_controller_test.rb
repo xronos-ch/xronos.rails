@@ -9,7 +9,7 @@ class Sites::DescriptionsControllerTest < ActionDispatch::IntegrationTest # rubo
     @linked_resource = FactoryBot.create(:linked_resource,
                                          linkable: @site,
                                          source: 'Wikidata',
-                                         external_id: 123,
+                                         external_id: 'Q123',
                                          status: 'approved')
   end
 

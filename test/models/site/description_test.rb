@@ -9,7 +9,7 @@ class Site::DescriptionTest < ActiveSupport::TestCase # rubocop:disable Style/Cl
     @linked_resource = FactoryBot.create(:linked_resource,
                                          linkable: @site,
                                          source: 'Wikidata',
-                                         external_id: 123,
+                                         external_id: 'Q123',
                                          status: 'approved')
     @sitelinks = { lang_title: 'Site', commons_title: 'Category:Site' }
     @extract = { title: 'Site', text: 'Lead.', url: 'https://en.wikipedia.org/wiki/Site' }

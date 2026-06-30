@@ -22,6 +22,6 @@ FactoryBot.define do
   factory :linked_resource do
     association :linkable, factory: :site
     source { "Wikidata" }
-    external_id { Faker::Number.number(digits: 6) }
+    external_id { "Q#{Faker::Number.number(digits: 6)}" }
   end
 end

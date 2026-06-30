@@ -9,7 +9,7 @@ class Site::FetchDescriptionJobTest < ActiveJob::TestCase # rubocop:disable Styl
     @linked_resource = FactoryBot.create(:linked_resource,
                                          linkable: @site,
                                          source: 'Wikidata',
-                                         external_id: 123,
+                                         external_id: 'Q123',
                                          status: 'approved')
   end
 
@@ -53,7 +53,7 @@ class Site::FetchDescriptionJobTest < ActiveJob::TestCase # rubocop:disable Styl
     FactoryBot.create(:linked_resource,
                       linkable: site,
                       source: 'Wikidata',
-                      external_id: 456,
+                      external_id: 'Q456',
                       status: 'pending')
 
     called = false
