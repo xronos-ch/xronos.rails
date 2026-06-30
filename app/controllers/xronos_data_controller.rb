@@ -59,7 +59,23 @@ class XronosDataController < ApplicationController
       end
 
       format.json do
-        if unfiltered_request?
+        if params[:schema].to_s == "miaard"
+          miaard_json = if unfiltered_request?
+                          Rails.cache.fetch(
+                            cache_key_for("json_miaard"),
+                            expires_in: 10.minutes
+                          ) do
+                            build_miaard_json(@data.xrons)
+                          end
+                        else
+                          build_miaard_json(@data.xrons)
+                        end
+
+          send_data miaard_json,
+                    type: "application/json; charset=utf-8",
+                    filename: "xronos_data_miaard_#{Date.today}.json",
+                    disposition: "attachment"
+        elsif unfiltered_request?
           json_payload = Rails.cache.fetch(
             cache_key_for("json"),
             expires_in: 10.minutes
@@ -105,24 +121,6 @@ class XronosDataController < ApplicationController
                   filename: "xronos_data_#{Date.today}.csv",
                   disposition: "attachment"
       end
-
-      format.miaard_json do
-        miaard_json = if unfiltered_request?
-                        Rails.cache.fetch(
-                          cache_key_for("miaard_json"),
-                          expires_in: 10.minutes
-                        ) do
-                          build_miaard_json(@data.xrons)
-                        end
-                      else
-                        build_miaard_json(@data.xrons)
-                      end
-
-        send_data miaard_json,
-                  type: "application/json; charset=utf-8",
-                  filename: "xronos_data_miaard_#{Date.today}.json",
-                  disposition: "attachment"
-      end
     end
   end
 
@@ -157,23 +155,23 @@ class XronosDataController < ApplicationController
 
   def build_geojson_from_sql(sites_sql)
     geojson_sql = <<~SQL.squish
-    (
-      SELECT jsonb_build_object(
-        'type', 'Feature',
-        'geometry', jsonb_build_object(
-          'type', 'Point',
-          'coordinates', jsonb_build_array(lng, lat)
-        ),
-        'properties', jsonb_build_object(
-          'name', name,
-          'id', id
-        )
-      ) AS geojson
-      FROM (#{sites_sql}) AS subquery1
-      WHERE lat IS NOT NULL
-        AND lng IS NOT NULL
-    ) AS subquery2
-  SQL
+      (
+        SELECT jsonb_build_object(
+          'type', 'Feature',
+          'geometry', jsonb_build_object(
+            'type', 'Point',
+            'coordinates', jsonb_build_array(lng, lat)
+          ),
+          'properties', jsonb_build_object(
+            'name', name,
+            'id', id
+          )
+        ) AS geojson
+        FROM (#{sites_sql}) AS subquery1
+        WHERE lat IS NOT NULL
+          AND lng IS NOT NULL
+      ) AS subquery2
+    SQL
 
     Site.connection.exec_query(
       Site
@@ -188,12 +186,12 @@ class XronosDataController < ApplicationController
     return +"id\n" if ids.empty?
 
     query = <<~SQL.squish
-    COPY (
-      SELECT *
-      FROM data_views
-      WHERE id IN (#{ids.join(", ")})
-    ) TO STDOUT WITH CSV HEADER
-  SQL
+      COPY (
+        SELECT *
+        FROM data_views
+        WHERE id IN (#{ids.join(", ")})
+      ) TO STDOUT WITH CSV HEADER
+    SQL
 
     connection = ActiveRecord::Base.connection.raw_connection
     csv_data   = +""

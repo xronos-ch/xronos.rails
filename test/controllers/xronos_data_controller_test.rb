@@ -37,7 +37,7 @@ class XronosDataControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "data miaard json responds successfully" do
-    get data_path(format: :miaard_json)
+    get data_path(format: :json, schema: :miaard)
 
     assert_response :success
     assert_equal "application/json", response.media_type
@@ -203,7 +203,7 @@ class XronosDataControllerTest < ActionDispatch::IntegrationTest
     refresh_data_views
 
     get data_path(
-          format: :miaard_json,
+          format: :json, schema: :miaard,
           params: material_filter_params("MIaaRD Charcoal")
         )
 
