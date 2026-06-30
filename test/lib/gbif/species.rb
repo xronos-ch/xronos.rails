@@ -8,8 +8,8 @@ class GBIF::SpeciesTest < ActiveSupport::TestCase
   test "we identify ourselves" do
     stub_request(:get, /api.gbif.org/)
       .with(headers: {
-        "User-Agent" => GBIF::USER_AGENT,
-        "From" => GBIF::FROM_HEADER
+        "User-Agent" => Xronos::USER_AGENT,
+        "From" => Xronos::CONTACT_EMAIL
       })
         .to_return(
           status: 200,
@@ -19,9 +19,9 @@ class GBIF::SpeciesTest < ActiveSupport::TestCase
       GBIF::Species.search(query: "Quercus", limit: 5)
 
       assert_requested :get, /api.gbif.org/,
-        headers: { 
-          "User-Agent" => GBIF::USER_AGENT,
-          "From" => GBIF::FROM_HEADER
+        headers: {
+          "User-Agent" => Xronos::USER_AGENT,
+          "From" => Xronos::CONTACT_EMAIL
         }
   end
 

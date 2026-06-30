@@ -27,7 +27,6 @@ module BatchMatchableToWikidata
 
   extend ActiveSupport::Concern
 
-  USER_AGENT = 'XRONOS/1.0 (martin.hinz@unibe.ch)'.freeze
   ARCHAEOLOGICAL_SITE_WIKIDATA_ID = 'Q839954'.freeze
 
   class_methods do
@@ -93,7 +92,8 @@ module BatchMatchableToWikidata
     def execute_sparql_request(sparql_query)
       url = URI("https://query.wikidata.org/sparql?query=#{URI.encode_www_form_component(sparql_query)}&format=json")
       request = Net::HTTP::Get.new(url)
-      request['User-Agent'] = USER_AGENT
+      request['User-Agent'] = Xronos::USER_AGENT
+      request['From'] = Xronos::CONTACT_EMAIL
 
       Net::HTTP.start(url.hostname, url.port, use_ssl: true, open_timeout: 2, read_timeout: 3) do |http|
         if Rails.env.development?

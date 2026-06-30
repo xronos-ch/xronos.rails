@@ -11,8 +11,6 @@ require "json"
 #
 module GBIF
   BASE_URL = "https://api.gbif.org"
-  USER_AGENT = "XRONOS <https://xronos.ch>"
-  FROM_HEADER = "admin@xronos.ch"
 
   ##
   # GBIF species API: https://techdocs.gbif.org/en/openapi/v1/species
@@ -67,8 +65,8 @@ module GBIF
       Rails.logger.debug("[GBIF] GET #{uri}")
 
       request = Net::HTTP::Get.new(uri)
-      request["User-Agent"] = USER_AGENT
-      request["From"] = FROM_HEADER
+      request["User-Agent"] = Xronos::USER_AGENT
+      request["From"] = Xronos::CONTACT_EMAIL
 
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = (uri.scheme == "https")
