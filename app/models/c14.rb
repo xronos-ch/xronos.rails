@@ -63,6 +63,8 @@ class C14 < ApplicationRecord
 
   acts_as_copy_target # enable CSV exports
 
+  LIBBY_MEAN_LIFE = 8033.0
+
   def self.label
     "radiocarbon date"
   end
@@ -81,6 +83,16 @@ class C14 < ApplicationRecord
 
   def calibration(curve: site.default_c14_curve)
     @calibration ||= Calibration.find_or_create_by c14_age: bp, c14_error: std, c14_curve: curve
+  end
+
+  def f14c
+    return nil if bp.blank?
+    Math.exp(-bp.to_f / LIBBY_MEAN_LIFE)
+  end
+
+  def f14c_error
+    return nil if bp.blank? || std.blank?
+    f14c * std.to_f / LIBBY_MEAN_LIFE
   end
 
   # Issues

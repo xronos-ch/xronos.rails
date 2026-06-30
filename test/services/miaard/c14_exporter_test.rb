@@ -48,11 +48,10 @@ module Miaard
       assert_equal 4500, export[:conventional_age]
       assert_equal 30, export[:conventional_age_error]
 
-      assert_in_delta Math.exp(-4500.0 / C14Exporter::LIBBY_MEAN_LIFE),
+      assert_in_delta c14.f14c,
                       export[:f14c],
                       0.0000001
-
-      assert_in_delta export[:f14c] * 30.0 / C14Exporter::LIBBY_MEAN_LIFE,
+      assert_in_delta c14.f14c_error,
                       export[:f14c_error],
                       0.0000001
 

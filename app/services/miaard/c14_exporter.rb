@@ -2,8 +2,6 @@
 
 module Miaard
   class C14Exporter
-    LIBBY_MEAN_LIFE = 8033.0
-
     MIAARD_FIELDS = %i[
       lab_code
       lab_id
@@ -67,8 +65,8 @@ module Miaard
         lab_id: lab_id,
         conventional_age: c14.bp,
         conventional_age_error: c14.std,
-        f14c: derived_f14c,
-        f14c_error: derived_f14c_error,
+        f14c: c14.f14c,
+        f14c_error: c14.f14c_error,
         delta_13_c_calculation_method: nil,
         sample_ids: sample_ids,
         sample_material: nil,
@@ -138,22 +136,10 @@ module Miaard
       c14.lab_id.lab_number
     end
 
-    def derived_f14c
-      return nil if c14.bp.blank?
-
-      Math.exp(-c14.bp.to_f / LIBBY_MEAN_LIFE)
-    end
-
-    def derived_f14c_error
-      return nil if c14.bp.blank? || c14.std.blank?
-
-      derived_f14c * c14.std.to_f / LIBBY_MEAN_LIFE
-    end
-
     def derived_fields
       fields = []
-      fields << :f14c if derived_f14c.present?
-      fields << :f14c_error if derived_f14c_error.present?
+      fields << :f14c if c14.f14c.present?
+      fields << :f14c_error if c14.f14c_error.present?
       fields
     end
 
