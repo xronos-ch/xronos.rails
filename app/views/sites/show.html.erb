@@ -69,27 +69,7 @@
       <i class="bi-link-45deg"></i> Linked Data
     </h3>
 
-    <% if @site.lod_links.any? %>
-      <ul class="list-unstyled mb-0">
-        <% @site.lod_links.each do |lod_link| %>
-          <li class="py-2">
-            <%= turbo_frame_tag lod_link, src: lod_link %>
-          </li>
-        <% end %>
-      </ul>
-    <% else %>
-      <p>There is no linked data available for this record.</p>
-      <% if can? :manage, LodLink %>
-        <ul class="list-unstyled">
-          <li>
-            <%= link_to "Add Wikidata link",
-                        new_lod_link_path(lod_link: { linkable_type: "Site", linkable_id: @site }),
-                        data: { turbo_frame: "remote_modal" },
-                        class: "text-primary" %>
-          </li>
-        </ul>
-      <% end %>
-    <% end %>
+    <%= render "external_links", site: @site %>
   </section>
 
   <% unless @c14s.nil? %>

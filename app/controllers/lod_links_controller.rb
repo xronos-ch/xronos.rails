@@ -40,6 +40,22 @@ class LodLinksController < ApplicationController
   end
 
   def destroy
+    linkable = @lod_link.linkable
+    @lod_link.destroy
+    respond_to do |format|
+      format.turbo_stream do
+        if linkable.lod_links.count.positive?
+          render turbo_stream: turbo_stream.remove(@lod_link)
+        else
+          render turbo_stream: turbo_stream.replace(
+            'site-external-links-content',
+            partial: 'sites/external_links',
+            locals: { site: linkable }
+          )
+        end
+      end
+      format.html { redirect_to linkable, notice: "#{@lod_link.source} link removed.", status: :see_other }
+    end
   end
 
   private

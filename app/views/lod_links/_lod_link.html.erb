@@ -22,7 +22,13 @@
                     class: "small",
                     title: "Edit #{lod_link.source} link",
                     data: { turbo_frame: "remote_modal" } do %>
-          <%= bs_icon "pencil" %>
+          <%= edit_icon %>
+        <% end %>
+        <%= link_to lod_link_path(lod_link),
+                    class: "small text-danger",
+                    title: "Delete #{lod_link.source} link",
+                    data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to delete this #{lod_link.source} link?" } do %>
+          <%= delete_icon %>
         <% end %>
       <% end %>
     </dd>
