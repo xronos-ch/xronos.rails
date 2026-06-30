@@ -6,11 +6,11 @@ class Site::DescriptionTest < ActiveSupport::TestCase # rubocop:disable Style/Cl
   setup do
     Rails.cache.clear
     @site = FactoryBot.create(:site)
-    @lod_link = FactoryBot.create(:lod_link,
-                                  linkable: @site,
-                                  source: 'Wikidata',
-                                  external_id: 123,
-                                  status: 'approved')
+    @linked_resource = FactoryBot.create(:linked_resource,
+                                         linkable: @site,
+                                         source: 'Wikidata',
+                                         external_id: 123,
+                                         status: 'approved')
     @sitelinks = { lang_title: 'Site', commons_title: 'Category:Site' }
     @extract = { title: 'Site', text: 'Lead.', url: 'https://en.wikipedia.org/wiki/Site' }
     @images = [
@@ -21,37 +21,37 @@ class Site::DescriptionTest < ActiveSupport::TestCase # rubocop:disable Style/Cl
     ]
   end
 
-  test 'cache_key includes the lod_link id, updated_at and lang' do
-    description = Site::Description.new(lod_link: @lod_link)
-    assert_equal "site_description/#{@lod_link.id}/#{@lod_link.updated_at.to_i}/en",
+  test 'cache_key includes the linked_resource id, updated_at and lang' do
+    description = Site::Description.new(linked_resource: @linked_resource)
+    assert_equal "site_description/#{@linked_resource.id}/#{@linked_resource.updated_at.to_i}/en",
       description.cache_key
   end
 
-  test 'cache_key changes when the lod_link is updated' do
-    description = Site::Description.new(lod_link: @lod_link)
+  test 'cache_key changes when the linked_resource is updated' do
+    description = Site::Description.new(linked_resource: @linked_resource)
     key1 = description.cache_key
 
     travel_to 1.minute.from_now do
-      @lod_link.touch
+      @linked_resource.touch
       key2 = description.cache_key
       refute_equal key1, key2
     end
   end
 
   test 'cache_key reflects the chosen language' do
-    en = Site::Description.new(lod_link: @lod_link, lang: 'en')
-    de = Site::Description.new(lod_link: @lod_link, lang: 'de')
+    en = Site::Description.new(linked_resource: @linked_resource, lang: 'en')
+    de = Site::Description.new(linked_resource: @linked_resource, lang: 'de')
     refute_equal en.cache_key, de.cache_key
   end
 
   test 'cached? is false on a fresh model' do
-    description = Site::Description.new(lod_link: @lod_link)
+    description = Site::Description.new(linked_resource: @linked_resource)
     refute description.cached?
   end
 
   test 'cached? is true after data has been read' do
     with_stubs do
-      description = Site::Description.new(lod_link: @lod_link)
+      description = Site::Description.new(linked_resource: @linked_resource)
       description.data
       assert description.cached?
     end
@@ -59,7 +59,7 @@ class Site::DescriptionTest < ActiveSupport::TestCase # rubocop:disable Style/Cl
 
   test 'data includes the Wikipedia title, extract text and URL when a lang sitelink is present' do
     with_stubs do
-      description = Site::Description.new(lod_link: @lod_link)
+      description = Site::Description.new(linked_resource: @linked_resource)
       assert_equal 'Site', description.data[:wikipedia_title]
       assert_equal 'Lead.', description.data[:wikipedia_extract_text]
       assert_equal 'https://en.wikipedia.org/wiki/Site', description.data[:wikipedia_url]
@@ -69,7 +69,7 @@ class Site::DescriptionTest < ActiveSupport::TestCase # rubocop:disable Style/Cl
   test 'data has nil fields when the lang sitelink is absent' do
     Wikimedia::Sitelinks.stub(:for, { lang_title: nil }) do
       Wikimedia::Images.stub(:for, []) do
-        description = Site::Description.new(lod_link: @lod_link)
+        description = Site::Description.new(linked_resource: @linked_resource)
         assert_nil description.data[:wikipedia_title]
         assert_nil description.data[:wikipedia_extract_text]
         assert_nil description.data[:wikipedia_url]
@@ -79,7 +79,7 @@ class Site::DescriptionTest < ActiveSupport::TestCase # rubocop:disable Style/Cl
 
   test 'data includes the images from Wikimedia::Images' do
     with_stubs do
-      description = Site::Description.new(lod_link: @lod_link)
+      description = Site::Description.new(linked_resource: @linked_resource)
       assert_equal @images, description.data[:images]
     end
   end
@@ -88,7 +88,7 @@ class Site::DescriptionTest < ActiveSupport::TestCase # rubocop:disable Style/Cl
     Wikimedia::Sitelinks.stub(:for, @sitelinks) do
       Wikipedia::Article.stub(:summary, @extract) do
         Wikimedia::Images.stub(:for, []) do
-          description = Site::Description.new(lod_link: @lod_link)
+          description = Site::Description.new(linked_resource: @linked_resource)
           assert_equal [], description.data[:images]
         end
       end
@@ -97,7 +97,7 @@ class Site::DescriptionTest < ActiveSupport::TestCase # rubocop:disable Style/Cl
 
   test 'data includes a Commons category URL when a commonswiki sitelink is present' do
     with_stubs do
-      description = Site::Description.new(lod_link: @lod_link)
+      description = Site::Description.new(linked_resource: @linked_resource)
       assert_equal 'https://commons.wikimedia.org/wiki/Category:Site',
         description.data[:commons_category_url]
     end
@@ -107,7 +107,7 @@ class Site::DescriptionTest < ActiveSupport::TestCase # rubocop:disable Style/Cl
     Wikimedia::Sitelinks.stub(:for, { lang_title: 'Site', commons_title: nil }) do
       Wikipedia::Article.stub(:summary, @extract) do
         Wikimedia::Images.stub(:for, @images) do
-          description = Site::Description.new(lod_link: @lod_link)
+          description = Site::Description.new(linked_resource: @linked_resource)
           assert_nil description.data[:commons_category_url]
         end
       end
@@ -118,7 +118,7 @@ class Site::DescriptionTest < ActiveSupport::TestCase # rubocop:disable Style/Cl
     Wikimedia::Sitelinks.stub(:for, { lang_title: 'Site', commons_title: 'Category:Göbekli Tepe' }) do
       Wikipedia::Article.stub(:summary, @extract) do
         Wikimedia::Images.stub(:for, @images) do
-          description = Site::Description.new(lod_link: @lod_link)
+          description = Site::Description.new(linked_resource: @linked_resource)
           assert_equal 'Göbekli Tepe', description.data[:commons_category_title]
         end
       end
@@ -129,7 +129,7 @@ class Site::DescriptionTest < ActiveSupport::TestCase # rubocop:disable Style/Cl
     Wikimedia::Sitelinks.stub(:for, { lang_title: 'Site', commons_title: nil }) do
       Wikipedia::Article.stub(:summary, @extract) do
         Wikimedia::Images.stub(:for, @images) do
-          description = Site::Description.new(lod_link: @lod_link)
+          description = Site::Description.new(linked_resource: @linked_resource)
           assert_nil description.data[:commons_category_title]
         end
       end
@@ -138,7 +138,7 @@ class Site::DescriptionTest < ActiveSupport::TestCase # rubocop:disable Style/Cl
 
   test 'data caches the combined result' do
     with_stubs do
-      description = Site::Description.new(lod_link: @lod_link)
+      description = Site::Description.new(linked_resource: @linked_resource)
       first = description.data
       second = description.data
       assert_equal first, second
@@ -149,7 +149,7 @@ class Site::DescriptionTest < ActiveSupport::TestCase # rubocop:disable Style/Cl
     Wikimedia::Sitelinks.stub(:for, { lang_title: nil }) do
       Wikipedia::Article.stub(:summary, nil) do
         Wikimedia::Images.stub(:for, []) do
-          description = Site::Description.new(lod_link: @lod_link)
+          description = Site::Description.new(linked_resource: @linked_resource)
           assert description.failed?
         end
       end
@@ -160,7 +160,7 @@ class Site::DescriptionTest < ActiveSupport::TestCase # rubocop:disable Style/Cl
     Wikimedia::Sitelinks.stub(:for, { lang_title: nil, commons_title: 'Category:Site' }) do
       Wikipedia::Article.stub(:summary, nil) do
         Wikimedia::Images.stub(:for, @images) do
-          description = Site::Description.new(lod_link: @lod_link)
+          description = Site::Description.new(linked_resource: @linked_resource)
           refute description.failed?
         end
       end
@@ -169,7 +169,7 @@ class Site::DescriptionTest < ActiveSupport::TestCase # rubocop:disable Style/Cl
 
   test 'failed? is false when a Wikipedia text is present' do
     with_stubs do
-      description = Site::Description.new(lod_link: @lod_link)
+      description = Site::Description.new(linked_resource: @linked_resource)
       refute description.failed?
     end
   end
@@ -178,7 +178,7 @@ class Site::DescriptionTest < ActiveSupport::TestCase # rubocop:disable Style/Cl
     Wikimedia::Sitelinks.stub(:for, { lang_title: 'Site' }) do
       Wikipedia::Article.stub(:summary, { title: 'Site', text: 'Lead.', url: 'https://de.wikipedia.org/wiki/Site' }) do
         Wikimedia::Images.stub(:for, []) do
-          description = Site::Description.new(lod_link: @lod_link, lang: 'de')
+          description = Site::Description.new(linked_resource: @linked_resource, lang: 'de')
           assert_equal 'https://de.wikipedia.org/wiki/Site', description.data[:wikipedia_url]
         end
       end
@@ -186,7 +186,7 @@ class Site::DescriptionTest < ActiveSupport::TestCase # rubocop:disable Style/Cl
   end
 
   test 'fetched_at returns a Time recorded when the data was cached' do
-    description = Site::Description.new(lod_link: @lod_link)
+    description = Site::Description.new(linked_resource: @linked_resource)
     before = Time.current
 
     with_stubs { description.data }
@@ -199,7 +199,7 @@ class Site::DescriptionTest < ActiveSupport::TestCase # rubocop:disable Style/Cl
   end
 
   test 'fetched_at is the same on subsequent reads within the cache window' do
-    description = Site::Description.new(lod_link: @lod_link)
+    description = Site::Description.new(linked_resource: @linked_resource)
 
     with_stubs do
       description.data

@@ -2,7 +2,7 @@
 
 # == Schema Information
 #
-# Table name: lod_links
+# Table name: linked_resources
 # Database name: primary
 #
 #  id            :bigint           not null, primary key
@@ -17,28 +17,28 @@
 #
 # Indexes
 #
-#  index_lod_links_on_linkable_type_and_linkable_id       (linkable_type,linkable_id)
-#  index_lod_links_on_polymorphic_source_and_external_id  (linkable_type,linkable_id,source,external_id) UNIQUE
+#  index_linked_resources_on_linkable_type_and_linkable_id       (linkable_type,linkable_id)
+#  index_linked_resources_on_polymorphic_source_and_external_id  (linkable_type,linkable_id,source,external_id) UNIQUE
 #
 require 'test_helper'
 
-class LodLinkTest < ActiveSupport::TestCase
+class LinkedResourceTest < ActiveSupport::TestCase
   test 'has a valid factory' do
-    assert FactoryBot.build(:lod_link).save
+    assert FactoryBot.build(:linked_resource).save
   end
 
   test 'qcode returns Q-prefixed external id' do
-    lod_link = build(:lod_link, external_id: 12_345)
-    assert_equal 'Q12345', lod_link.qcode
+    linked_resource = build(:linked_resource, external_id: 12_345)
+    assert_equal 'Q12345', linked_resource.qcode
   end
 
   test 'external_url returns the registered URL for a known source' do
-    lod_link = build(:lod_link, source: 'Wikidata', external_id: 12_345)
-    assert_equal 'https://www.wikidata.org/wiki/Q12345', lod_link.external_url
+    linked_resource = build(:linked_resource, source: 'Wikidata', external_id: 12_345)
+    assert_equal 'https://www.wikidata.org/wiki/Q12345', linked_resource.external_url
   end
 
   test 'external_url returns nil for an unknown source' do
-    lod_link = build(:lod_link, source: 'OpenStreetMap', external_id: 12_345)
-    assert_nil lod_link.external_url
+    linked_resource = build(:linked_resource, source: 'OpenStreetMap', external_id: 12_345)
+    assert_nil linked_resource.external_url
   end
 end

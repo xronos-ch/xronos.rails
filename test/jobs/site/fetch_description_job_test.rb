@@ -6,11 +6,11 @@ class Site::FetchDescriptionJobTest < ActiveJob::TestCase # rubocop:disable Styl
   setup do
     Rails.cache.clear
     @site = FactoryBot.create(:site)
-    @lod_link = FactoryBot.create(:lod_link,
-                                  linkable: @site,
-                                  source: 'Wikidata',
-                                  external_id: 123,
-                                  status: 'approved')
+    @linked_resource = FactoryBot.create(:linked_resource,
+                                         linkable: @site,
+                                         source: 'Wikidata',
+                                         external_id: 123,
+                                         status: 'approved')
   end
 
   test 'enqueues with the site id' do
@@ -20,7 +20,7 @@ class Site::FetchDescriptionJobTest < ActiveJob::TestCase # rubocop:disable Styl
   end
 
   test 'pre-warms the description cache' do
-    description = Site::Description.new(lod_link: @lod_link)
+    description = Site::Description.new(linked_resource: @linked_resource)
     called = false
     description.define_singleton_method(:data) { called = true }
 
@@ -48,9 +48,9 @@ class Site::FetchDescriptionJobTest < ActiveJob::TestCase # rubocop:disable Styl
     refute called
   end
 
-  test 'returns silently when the lod_link is pending' do
+  test 'returns silently when the linked_resource is pending' do
     site = FactoryBot.create(:site)
-    FactoryBot.create(:lod_link,
+    FactoryBot.create(:linked_resource,
                       linkable: site,
                       source: 'Wikidata',
                       external_id: 456,

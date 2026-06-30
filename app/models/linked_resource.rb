@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: lod_links
+# Table name: linked_resources
 # Database name: primary
 #
 #  id            :bigint           not null, primary key
@@ -15,10 +15,10 @@
 #
 # Indexes
 #
-#  index_lod_links_on_linkable_type_and_linkable_id       (linkable_type,linkable_id)
-#  index_lod_links_on_polymorphic_source_and_external_id  (linkable_type,linkable_id,source,external_id) UNIQUE
+#  index_linked_resources_on_linkable_type_and_linkable_id       (linkable_type,linkable_id)
+#  index_linked_resources_on_polymorphic_source_and_external_id  (linkable_type,linkable_id,source,external_id) UNIQUE
 #
-class LodLink < ApplicationRecord
+class LinkedResource < ApplicationRecord
   include Turbo::Broadcastable
 
   EXTERNAL_URL = {

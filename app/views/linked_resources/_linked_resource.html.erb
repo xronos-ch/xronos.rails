@@ -1,0 +1,35 @@
+<%= turbo_frame_tag linked_resource do %>
+  <dl class="row mb-0 align-items-center">
+    <dt class="col-sm-3 text-muted">
+      <%= simple_icon linked_resource.source.downcase %>
+      <span class="ms-1"><%= linked_resource.source %></span>
+    </dt>
+    <dd class="col-sm-9 mb-0 d-flex align-items-center gap-2">
+      <span>
+        <% if linked_resource.external_url.present? %>
+          <%= link_to linked_resource.qcode, linked_resource.external_url,
+                      title: "#{linked_resource.source} identifier corresponding to this record",
+                      target: "_blank", rel: "noopener" %>
+        <% else %>
+          <span class="text-muted"><%= linked_resource.qcode %></span>
+        <% end %>
+        <% if linked_resource.pending? %>
+          <span class="badge text-bg-warning ms-2">pending</span>
+        <% end %>
+      </span>
+      <% if can? :manage, LinkedResource %>
+        <%= link_to edit_inline_icon,
+          edit_linked_resource_path(linked_resource),
+          title: "Edit #{linked_resource.source} link",
+          data: { turbo_frame: "remote_modal" }
+        %>
+        <%= link_to delete_inline_icon,
+          linked_resource_path(linked_resource),
+          class: "text-danger",
+          title: "Delete #{linked_resource.source} link",
+          data: { turbo_method: :delete }
+        %>
+      <% end %>
+    </dd>
+  </dl>
+<% end %>

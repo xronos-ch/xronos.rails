@@ -1,19 +1,19 @@
 <div id="site-external-links-content">
-  <% if site.lod_links.any? %>
+  <% if site.linked_resources.any? %>
     <ul class="list-unstyled mb-0">
-      <% site.lod_links.each do |lod_link| %>
+      <% site.linked_resources.each do |linked_resource| %>
         <li class="py-2">
-          <%= turbo_frame_tag lod_link, src: lod_link %>
+          <%= turbo_frame_tag linked_resource, src: linked_resource %>
         </li>
       <% end %>
     </ul>
   <% else %>
     <p>There is no linked data available for this record.</p>
-    <% if can? :manage, LodLink %>
+    <% if can? :manage, LinkedResource %>
       <ul class="list-unstyled">
         <li>
           <%= link_to "Add Wikidata link",
-                      new_lod_link_path(lod_link: { linkable_type: "Site", linkable_id: site }),
+                      new_linked_resource_path(linked_resource: { linkable_type: "Site", linkable_id: site }),
                       data: { turbo_frame: "remote_modal" },
                       class: "text-primary" %>
         </li>

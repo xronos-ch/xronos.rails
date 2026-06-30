@@ -1,0 +1,17 @@
+<% content_for :title, "Linked resources – Sites" %>
+
+<h2 class="border-bottom">Sites</h2>
+
+<%= render "linked_resources/nav", model: Site, base_path: linked_resources_sites_path %>
+
+<turbo-frame id="linked-resources-sites-table">
+
+  <%= render "linked_resources/filter_form" %>
+
+  <%=
+      render "table", sites: @sites
+  %>
+
+  <%== @pagy.series_nav(:bootstrap) %>
+
+</turbo-frame>

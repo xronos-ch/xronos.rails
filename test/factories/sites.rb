@@ -38,13 +38,13 @@ FactoryBot.define do
       end
     end
 
-    trait :with_lod_links do
+    trait :with_linked_resources do
       transient do
-        lod_links_count { 2 }
+        linked_resources_count { 2 }
       end
 
       after(:create) do |site, evaluator|
-        create_list(:lod_link, evaluator.lod_links_count, linkable: site)
+        create_list(:linked_resource, evaluator.linked_resources_count, linkable: site)
       end
     end
 

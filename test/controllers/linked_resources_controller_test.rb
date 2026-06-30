@@ -6,23 +6,23 @@ require 'test_helper'
 # environment does not eager-load routes by default.
 Rails.application.routes.eager_load!
 
-class LodLinksControllerTest < ActionDispatch::IntegrationTest
+class LinkedResourcesControllerTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
 
   setup do
     @site = create(:site)
-    @lod_link = create(:lod_link, linkable: @site, source: 'Wikidata', external_id: 12_345)
+    @linked_resource = create(:linked_resource, linkable: @site, source: 'Wikidata', external_id: 12_345)
     @admin = create(:user, :admin)
   end
 
   # --- show ---
 
-  test 'show renders the lod_link partial' do
-    get lod_link_path(@lod_link)
+  test 'show renders the linked_resource partial' do
+    get linked_resource_path(@linked_resource)
 
     assert_response :success
-    assert_match @lod_link.qcode, response.body
-    assert_match @lod_link.source, response.body
+    assert_match @linked_resource.qcode, response.body
+    assert_match @linked_resource.source, response.body
   end
 
   # --- destroy ---
@@ -30,27 +30,27 @@ class LodLinksControllerTest < ActionDispatch::IntegrationTest
   test 'destroy as admin removes the record and redirects to the parent' do
     sign_in @admin
 
-    assert_difference 'LodLink.count', -1 do
-      delete lod_link_path(@lod_link)
+    assert_difference 'LinkedResource.count', -1 do
+      delete linked_resource_path(@linked_resource)
     end
     assert_redirected_to @site
   end
 
-  test 'destroy returns a turbo stream that removes the frame when other lod_links remain' do
-    create(:lod_link, linkable: @site, source: 'Wikidata', external_id: 67_890)
+  test 'destroy returns a turbo stream that removes the frame when other linked_resources remain' do
+    create(:linked_resource, linkable: @site, source: 'Wikidata', external_id: 67_890)
     sign_in @admin
 
-    delete lod_link_path(@lod_link),
+    delete linked_resource_path(@linked_resource),
            headers: { 'Accept' => 'text/vnd.turbo-stream.html, text/html' }
 
     assert_response :success
-    assert_match(/<turbo-stream action="remove" target="lod_link_#{@lod_link.id}">/, response.body)
+    assert_match(/<turbo-stream action="remove" target="linked_resource_#{@linked_resource.id}">/, response.body)
   end
 
-  test 'destroy replaces the section with the empty state when the last lod_link is removed' do
+  test 'destroy replaces the section with the empty state when the last linked_resource is removed' do
     sign_in @admin
 
-    delete lod_link_path(@lod_link),
+    delete linked_resource_path(@linked_resource),
            headers: { 'Accept' => 'text/vnd.turbo-stream.html, text/html' }
 
     assert_response :success
@@ -61,9 +61,9 @@ class LodLinksControllerTest < ActionDispatch::IntegrationTest
   test 'destroy as a non-admin user returns not found' do
     sign_in create(:user)
 
-    delete lod_link_path(@lod_link)
+    delete linked_resource_path(@linked_resource)
 
     assert_response :not_found
-    assert LodLink.exists?(@lod_link.id)
+    assert LinkedResource.exists?(@linked_resource.id)
   end
 end

@@ -2,6 +2,7 @@
 
 ## 1.2.1.9000 [unreleased]
 
+- Renamed LODLinks to LinkedResources (#372)
 - Added a "Site description" section to site show pages populated via Wikidata
   - Linked-data panel on site pages no longer fetches supplementary data
     from Wikidata or Wikipedia on every page load (#479)

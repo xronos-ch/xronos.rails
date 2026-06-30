@@ -165,7 +165,7 @@ class SitesController < ApplicationController
   private
 
   def set_site
-    @site = Site.includes(:lod_links).find(params[:id])
+    @site = Site.includes(:linked_resources).find(params[:id])
     @wikidata_matches = Site.wikidata_match_candidates_batch([@site]) || {}
   end
 

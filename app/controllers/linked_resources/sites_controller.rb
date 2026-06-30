@@ -1,11 +1,14 @@
-class Lods::SitesController < LodsController
+class LinkedResources::SitesController < ApplicationController
+  before_action :authenticate_user!
+  layout "curate"
+
   load_and_authorize_resource
 
-  # GET /issues/sites/:issue
+  # GET /linked_resources/sites/:issue
   def index
-    allowed_methods = lods
-    if lod_param.present? && allowed_methods.include?(lod_param.to_sym)
-      @sites = Site.public_send(lod_param)
+    issue = params[:issue]&.to_sym
+    if issue.present? && Site.linked_resource_issues.include?(issue)
+      @sites = Site.public_send(issue)
     else
       @sites = Site.all
     end
@@ -34,10 +37,6 @@ class Lods::SitesController < LodsController
   end
 
   private
-
-  def lods
-    Site.lods
-  end
 
   def fetch_wikidata_matches(sites)
     # Ensure Wikidata matches are always a hash

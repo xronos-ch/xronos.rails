@@ -6,15 +6,15 @@ class Sites::DescriptionsControllerTest < ActionDispatch::IntegrationTest # rubo
   setup do
     Rails.cache.clear
     @site = FactoryBot.create(:site)
-    @lod_link = FactoryBot.create(:lod_link,
-                                  linkable: @site,
-                                  source: 'Wikidata',
-                                  external_id: 123,
-                                  status: 'approved')
+    @linked_resource = FactoryBot.create(:linked_resource,
+                                         linkable: @site,
+                                         source: 'Wikidata',
+                                         external_id: 123,
+                                         status: 'approved')
   end
 
   test 'show returns the populated frame' do
-    description = Site::Description.new(lod_link: @lod_link)
+    description = Site::Description.new(linked_resource: @linked_resource)
     description.define_singleton_method(:data) {
       { wikipedia_title: 'Site', wikipedia_extract_text: 'Lead.', wikipedia_url: 'https://...',
         images: [], commons_category_url: nil, commons_category_title: nil }

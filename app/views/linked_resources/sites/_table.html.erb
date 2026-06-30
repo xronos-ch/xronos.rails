@@ -33,7 +33,7 @@
         <% end %>
       </th>
       <th scope="col" class="text-end">Wikidata ID</th>
-      <th scope="col">Needs LOD</th>
+      <th scope="col">Needs linked resource</th>
       <% if can?(:manage, Site) %>
         <th scope="col"><span class="visually-hidden">Actions</span></th>
       <% end %>
@@ -62,8 +62,8 @@
           <% end %>
         </td>
         <td>
-          <% site.lods.each do |lod| %>
-            <%= lod_badge(lod) %>
+          <% site.linked_resource_issues.each do |issue| %>
+            <%= linked_resource_badge(issue) %>
           <% end %>
         </td>
  <% if can?(:manage, Site) %>
@@ -71,7 +71,7 @@
      <div class="btn-toolbar justify-content-end">
        <div class="btn-group me-2">
          <% if site.wikidata_link %>
-          <%= bootstrap_form_for site.wikidata_link, url: lod_link_path(site.wikidata_link), method: :patch do |f| %>
+          <%= bootstrap_form_for site.wikidata_link, url: linked_resource_path(site.wikidata_link), method: :patch do |f| %>
              <%= f.hidden_field :linkable_type, value: "Site" %>
              <%= f.hidden_field :linkable_id, value: site.id %>
              <%= f.hidden_field :source, value: "Wikidata" %>

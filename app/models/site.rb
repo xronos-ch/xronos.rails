@@ -31,7 +31,7 @@ class Site < ApplicationRecord
   has_many :contexts
   destroy_async_with_paper_trail :contexts
   has_many :citations, as: :citing, dependent: :destroy_async
-  has_many :lod_links, as: :linkable, dependent: :destroy
+  has_many :linked_resources, as: :linkable, dependent: :destroy
 
   # Grandchildren
   has_many :samples, through: :contexts
@@ -67,8 +67,8 @@ class Site < ApplicationRecord
   include HasIssues
   @issues = [ :missing_coordinates, :invalid_coordinates, :missing_country_code ]
   
-  include NeedsLods
-  @lods = [ :missing_wikidata_link, :pending_wikidata_link ]
+  include HasLinkedResourceIssues
+  @linked_resource_issues = [ :missing_wikidata_link, :pending_wikidata_link ]
 
   include PgSearch::Model
   pg_search_scope :search, 
@@ -111,7 +111,7 @@ class Site < ApplicationRecord
   end
   
   def wikidata_link
-    lod_links.where(source: "Wikidata").first
+    linked_resources.where(source: "Wikidata").first
   end
 
   def country_from_coordinates
@@ -138,7 +138,7 @@ class Site < ApplicationRecord
 
   def self.wikidata_match_candidates_batch(sites)
     # Filter for sites without a Wikidata link
-    sites_without_wikidata_link = sites.select { |site| site.lod_links.where(source: "Wikidata").empty? }
+    sites_without_wikidata_link = sites.select { |site| site.linked_resources.where(source: "Wikidata").empty? }
 
     return [] if sites_without_wikidata_link.empty?
 
@@ -148,19 +148,19 @@ class Site < ApplicationRecord
     response = execute_sparql_request(sparql_query)
     wikidata_results = parse_wikidata_response(response)
 
-    # Iterate through the results and populate lod_links
+    # Iterate through the results and populate linked_resources
     wikidata_results.each do |site_name, matches|
       site = sites_without_wikidata_link.find { |s| s.name == site_name }
       next unless site
 
       matches.each do |match|
-        # Find or create the LOD link for this Wikidata match
-        site.lod_links.find_or_create_by(source: "Wikidata", external_id: match.qid) do |lod_link|
-          lod_link.data = {
+        # Find or create the linked resource for this Wikidata match
+        site.linked_resources.find_or_create_by(source: "Wikidata", external_id: match.qid) do |linked_resource|
+          linked_resource.data = {
             label: match.label,
             description: match.description
           }
-          lod_link.save!
+          linked_resource.save!
         end
       end
     end
@@ -219,14 +219,14 @@ class Site < ApplicationRecord
   
   # LODs
   scope :missing_wikidata_link, -> {
-    where.not(id: LodLink.where(linkable_type: "Site", source: "Wikidata").select(:linkable_id).distinct)
+    where.not(id: LinkedResource.where(linkable_type: "Site", source: "Wikidata").select(:linkable_id).distinct)
   }
   def missing_wikidata_link?
     wikidata_link.blank?
   end
-  
+
   scope :pending_wikidata_link, -> {
-    joins(:lod_links).where(lod_links: { source: "Wikidata", status: "pending" })
+    joins(:linked_resources).where(linked_resources: { source: "Wikidata", status: "pending" })
   }
   def pending_wikidata_link?
     wikidata_link&.status == "pending"
