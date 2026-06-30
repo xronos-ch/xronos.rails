@@ -22,7 +22,7 @@ class Wikipedia::ArticleTest < ActiveSupport::TestCase # rubocop:disable Style/C
         }
       }.to_json
 
-      stub_request(:get, /en.wikipedia.org/).to_return(status: 200, body: body)
+      stub_request(:get, /en\.wikipedia\.org/).to_return(status: 200, body: body)
 
       result = Wikipedia::Article.summary('Göbekli Tepe')
 
@@ -44,7 +44,7 @@ class Wikipedia::ArticleTest < ActiveSupport::TestCase # rubocop:disable Style/C
         }
       }.to_json
 
-      stub_request(:get, /en.wikipedia.org/).to_return(status: 200, body: body)
+      stub_request(:get, /en\.wikipedia\.org/).to_return(status: 200, body: body)
 
       result = Wikipedia::Article.summary('Site')
 
@@ -57,13 +57,13 @@ class Wikipedia::ArticleTest < ActiveSupport::TestCase # rubocop:disable Style/C
     end
 
     test '.summary returns nil when the API errors' do
-      stub_request(:get, /en.wikipedia.org/).to_return(status: 500)
+      stub_request(:get, /en\.wikipedia\.org/).to_return(status: 500)
 
       assert_nil Wikipedia::Article.summary('Site')
     end
 
     test '.summary returns nil on timeout' do
-      stub_request(:get, /en.wikipedia.org/).to_timeout
+      stub_request(:get, /en\.wikipedia\.org/).to_timeout
 
       assert_nil Wikipedia::Article.summary('Site')
     end
@@ -75,12 +75,12 @@ class Wikipedia::ArticleTest < ActiveSupport::TestCase # rubocop:disable Style/C
         }
       }.to_json
 
-      stub_request(:get, /en.wikipedia.org/).to_return(status: 200, body: body)
+      stub_request(:get, /en\.wikipedia\.org/).to_return(status: 200, body: body)
 
       Wikipedia::Article.summary('Site')
       Wikipedia::Article.summary('Site')
 
-      assert_requested :get, /en.wikipedia.org/, times: 1
+      assert_requested :get, /en\.wikipedia\.org/, times: 1
     end
 
     test '.url returns the canonical article URL' do
