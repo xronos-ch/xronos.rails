@@ -1,5 +1,10 @@
 class LinkedResource
   class Source
+    # Standard UUID regex per RFC 4122 (any version, case-insensitive).
+    # Use as the `id_pattern` for any linked-resource source that exposes
+    # UUID-based ids (e.g. OpenContext).
+    UUID_PATTERN = /\A[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\z/i
+
     attr_reader :key, :name, :url_template, :id_pattern, :icon, :description
 
     def initialize(key:, name:, url_template:, id_pattern: nil, icon: nil, description: nil)

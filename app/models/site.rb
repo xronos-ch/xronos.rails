@@ -68,6 +68,7 @@ class Site < ApplicationRecord
   linkable_to :wikidata
   linkable_to :pleiades
   linkable_to :vici
+  linkable_to :opencontext
 
   include PgSearch::Model
   pg_search_scope :search, 

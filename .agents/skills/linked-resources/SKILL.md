@@ -109,7 +109,7 @@ end
 ```ruby
 # app/models/linked_resource.rb
 class LinkedResource < ApplicationRecord
-  KNOWN_SOURCES = %i[wikidata pleiades vici].freeze
+  KNOWN_SOURCES = %i[wikidata pleiades vici opencontext].freeze
   KNOWN_SOURCES.each do |key|
     Sources.const_get(key.to_s.camelize)
     next if Source.known?(key.to_s)
@@ -131,6 +131,7 @@ end
 - `LinkedResource::Source.known?(name)` — boolean
 - `LinkedResource::Source.all` — array of all registered
 - `LinkedResource::Source.reset!` — for tests
+- `LinkedResource::Source::UUID_PATTERN` — shared `id_pattern` regex (RFC 4122) for any source with UUID-based ids (e.g. OpenContext). Avoids duplicating the regex across source files.
 - Instance: `source.url_for(id)`, `source.valid_id?(id)`. The optional `icon` attribute is a SimpleIcons slug (see "Icons" below).
 
 ## Icons
@@ -184,7 +185,7 @@ When writing any new external-service integration:
 
 Most sources need only steps 1–2. Add a concern only if you need SPARQL/API enrichment.
 
-1. **Create a source module** at `app/models/linked_resource/sources/<key>.rb` (e.g. `pleiades.rb`). The filename is the source key in lowercase; the module name is the camelized form. The module exposes an `ATTRIBUTES` hash and **calls `Source.register` at the bottom** to register itself when loaded. If the source has a SimpleIcons brand logo, set `icon: "<slug>"` (see "Icons" above); otherwise omit it.
+1. **Create a source module** at `app/models/linked_resource/sources/<key>.rb` (e.g. `pleiades.rb`). The filename is the source key in lowercase; the module name is the camelized form. The module exposes an `ATTRIBUTES` hash and **calls `Source.register` at the bottom** to register itself when loaded. If the source has a SimpleIcons brand logo, set `icon: "<slug>"` (see "Icons" above); otherwise omit it. For sources whose ids are standard UUIDs, use `LinkedResource::Source::UUID_PATTERN` instead of writing the regex inline.
 
    ```ruby
    # app/models/linked_resource/sources/pleiades.rb
@@ -202,9 +203,25 @@ Most sources need only steps 1–2. Add a concern only if you need SPARQL/API en
        end
      end
    end
+
+   # app/models/linked_resource/sources/opencontext.rb
+   class LinkedResource
+     module Sources
+       module Opencontext
+         ATTRIBUTES = {
+           name: "OpenContext",
+           url_template: "https://opencontext.org/subjects/%<id>s",
+           id_pattern: LinkedResource::Source::UUID_PATTERN,
+           description: "OpenContext record"
+         }.freeze
+
+         LinkedResource::Source.register(:opencontext, **ATTRIBUTES)
+       end
+     end
+   end
    ```
 2. **Add the key** to `LinkedResource::KNOWN_SOURCES` in `app/models/linked_resource.rb`. The model iterates this list to trigger each source's load and then asserts the registration actually happened. Forgetting the `Source.register` call (or getting the key wrong) will raise a loud error at class-load time, not at use-time.
-3. **Add `linkable_to :pleiades`** to the host model (e.g. `Site`). This generates `pleiades_link`, `missing_pleiades_link?`, `pending_pleiades_link?`, the corresponding scopes, and registers the issue symbols so the per-site view and curation dashboard auto-populate.
+3. **Add `linkable_to :pleiades`** to the host model (e.g. `Site`). This generates `pleiades_link`, `missing_pleiades_link?`, `pending_pleiades_link?`, the corresponding scopes, and registers the issue symbols so the per-site view and curation dashboard auto-populate. The same source can be linked from multiple host models — `linkable_to :opencontext` on `Site` and on `C14` are independent calls that each generate their own per-model methods, all backed by the same registered source and the same UUID-pattern id validation.
 4. **If the source has a brand logo** (i.e. you set `icon:` in step 1), add the SimpleIcons SVG at `app/assets/images/simple_icons/<slug>.svg` matching the `icon` slug. If the source has no logo, omit the `icon` attribute and skip this step.
 5. **Test it** — no per-source parallel coverage. The macro and registry are tested once with a test source (see "Testing strategy" below); real sources are covered by parameterized tests that iterate `KNOWN_SOURCES`. Add a new source: (a) append the key to `KNOWN_SOURCES`, (b) add a `(name, id, expected_url)` row to the URL-templates test, (c) optionally add the host-model's `linkable_to` line. The site page's "Add {source} link" button and the missing/pending badges appear automatically; no view changes needed.
 
@@ -240,12 +257,14 @@ test 'all KNOWN_SOURCES are registered at boot' do
   end
 end
 
-test 'known sources have expected URL templates' do
-  {
-    'Wikidata' => [ 'Q123', 'https://www.wikidata.org/wiki/Q123' ],
-    'Pleiades' => [ '687917', 'https://pleiades.stoa.org/places/687917' ],
-    'Vici.org' => [ '57205', 'https://vici.org/vici/57205/' ]
-  }.each do |name, (id, expected_url)|
+  test 'known sources have expected URL templates' do
+    {
+      'Wikidata' => [ 'Q123', 'https://www.wikidata.org/wiki/Q123' ],
+      'Pleiades' => [ '687917', 'https://pleiades.stoa.org/places/687917' ],
+      'Vici.org' => [ '57205', 'https://vici.org/vici/57205/' ],
+      'OpenContext' => [ '8606d40b-1bad-4a8f-99c7-bcab8b794d6e',
+        'https://opencontext.org/subjects/8606d40b-1bad-4a8f-99c7-bcab8b794d6e' ]
+    }.each do |name, (id, expected_url)|
     assert_equal expected_url, LinkedResource::Source.find(name).url_for(id),
       "URL template for #{name} should produce #{expected_url}"
   end
