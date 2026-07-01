@@ -1,0 +1,49 @@
+<% label = record.class.respond_to?(:label) ? record.class.label : record.class.name.humanize(capitalize: false) %>
+<div class="btn-toolbar" role="toolbar" aria-label="Record actions">
+
+  <% if downloads.present? %>
+    <div class="btn-group me-2" role="group" aria-label="Public actions">
+      <button type="button" 
+              class="btn btn-sm btn-outline-primary dropdown-toggle" 
+              data-bs-toggle="dropdown" 
+              aria-expanded="false"
+              title="Download record in other formats">
+        Export
+      </button>
+      <ul class="dropdown-menu dropdown-menu-sm">
+        <% downloads.each do |fmt| %>
+          <li><%= link_to fmt[:name], fmt[:path], class: "dropdown-item" %></li>
+        <% end %>
+      </ul>
+    </div>
+
+    <% if record.respond_to?(:citation) %>
+      <div class="btn-group me-2" role="group" aria-label="Citation export">
+        <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle"
+                              data-bs-toggle="dropdown" aria-expanded="false" title="Export citation to this record">
+          Cite
+        </button>
+        <ul class="dropdown-menu dropdown-menu-sm">
+          <li><%= link_to "BibTeX",   record.citation_path(format: :bibtex), class: "dropdown-item" %></li>
+          <li><%= link_to "CSL-JSON", record.citation_path(format: :json),   class: "dropdown-item" %></li>
+          <li><%= link_to "YAML",     record.citation_path(format: :yaml),   class: "dropdown-item" %></li>
+          <li><%= link_to "RIS",      record.citation_path(format: :ris),    class: "dropdown-item" %></li>
+        </ul>
+      </div>
+    <% end %>
+  <% end %>
+
+  <% if can?(:edit, record) || can?(:destroy, record) %>
+    <div class="btn-group" role="group" aria-label="Access-controlled actions">
+      <% if can? :edit, record %>
+        <%= link_to edit_icon, edit_polymorphic_path(record), class: "btn btn-sm btn-outline-primary", title: "Edit #{label}", data: { turbo_frame: "remote_modal" } %>
+      <% end %>
+      <% if can? :destroy, record %>
+        <%= button_to polymorphic_path(record), method: :delete, class: "btn btn-sm btn-outline-danger", title: "Delete #{label}", data: { turbo_confirm: "Are you sure?" } do %>
+          <%= bs_icon "trash" %>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+
+</div>

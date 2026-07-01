@@ -1,21 +1,45 @@
-<dl>
+<dl class="row mb-0">
 
-      <dt>Site</dt>
-      <dd><%= link_to c14.site.name, c14.site  %></dd>
+  <dt class="col-12 col-lg-4">Country</dt>
+  <dd class="col-12 col-lg-8">
+    <% if c14.site.country.present? %>
+      <%= c14.site.country %> <span class="text-body-secondary">(<%= c14.site.country_code %>)</span>
+    <% else %>
+      <%= na_value %>
+    <% end %>
+  </dd>
 
-      <dt>Context</dt>
-      <dd><%= c14.context.name %></dd>
+  <dt class="col-12 col-lg-4">Site</dt>
+  <dd class="col-12 col-lg-8">
+    <%= link_to c14.site.name, c14.site %>
+  </dd>
 
-        <dt>Functional classification</dt>
-        <dd>
-          <% if c14.context&.functional_classifications&.any? %>
-            <% c14.context.functional_classifications.each do |classification| %>
-              <%= classification.functional_classification_category.name.humanize %>, <%= classification.confidence.humanize %>
-            <% end %>
-          <% else %>
-            <%= na_value %>
-          <% end %>
-        </dd>
+  <% if c14.site.site_names.any? %>
+    <dt class="col-12 col-lg-4">Aliases</dt>
+    <dd class="col-12 col-lg-8">
+      <% c14.site.site_names.order(:language, :name).each_with_index do |site_name, i| %>
+        <span<% if site_name.language.present? %> lang="<%= site_name.language.downcase %>"<% end %>>
+          <%= site_name.name %>
+        </span>
+        <% if site_name.language.present? %><%= language_badge site_name.language %><% end %><%= i < c14.site.site_names.count - 1 ? ", " : "" %>
+      <% end %>
+    </dd>
+  <% end %>
+
+  <dt class="col-12 col-lg-4">Functional classification</dt>
+  <dd class="col-12 col-lg-8">
+    <% if c14.context&.functional_classifications&.any? %>
+      <% c14.context.functional_classifications.each do |classification| %>
+        <%= classification.functional_classification_category.name.humanize %>, <%= classification.confidence.humanize %>
+      <% end %>
+    <% else %>
+      <%= na_value %>
+    <% end %>
+  </dd>
+
+  <dt class="col-12 col-lg-4">Context</dt>
+  <dd class="col-12 col-lg-8">
+    <%= c14.context&.name || na_value %>
+  </dd>
 
 </dl>
-

@@ -2,7 +2,7 @@
   <% unless change.first == "updated_at" %>
     <div class="d-flex">
       <dt><%= change.first.humanize %>:</dt>
-      <dd class="flex-grow-1 ms-3">
+      <dd class="flex-grow-1 ms-3 mb-0">
         <%= change.second.first.present? ? change.second.first : na_value %>
         &rarr;
         <%= change.second.second.present? ? change.second.second : na_value %>

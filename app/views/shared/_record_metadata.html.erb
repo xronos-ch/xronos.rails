@@ -1,22 +1,46 @@
-<div>
-  <small class="text-muted">
+<h2 class="h5-lg">Record metadata</h2>
+<dl class="row mb-0 small">
 
-    Record created in XRONOS on <%= record.created_at %>.
-    Last updated on <%= record.updated_at %>.
-    <% if record.versions.any? %>
-      <a href="#changelog">See changelog for details</a>.
+  <% creator_id = record.versions.where(event: 'create').first&.whodunnit %>
+  <dt class="col-12 col-lg-4">Created</dt>
+  <dd class="col-12 col-lg-8">
+    <% if creator_id.present? %>
+      By <%= render "users/user", user: User.find_by(id: creator_id) %> on <%= record.created_at.strftime("%F") %>
+    <% else %>
+      on <%= record.created_at.strftime("%F") %>
     <% end %>
+  </dd>
 
-    <% if record.versions.any? %>
-      <br>Contributors:
-      <% contributors = record.versions.collect(&:whodunnit).uniq %>
-      <% if contributors.any? %>
-        <%= render partial: "users/user", collection: User.find(contributors),
-          spacer_template: "comma" || na_value %>
-      <% else %>
-        <%= na_value %>
-      <% end %>
+  <% last_editor_id = record.versions.last&.whodunnit %>
+  <dt class="col-12 col-lg-4">Updated</dt>
+  <dd class="col-12 col-lg-8">
+    <% if last_editor_id.present? %>
+      By <%= render "users/user", user: User.find_by(id: last_editor_id) %> on <%= record.updated_at.strftime("%F") %>
+    <% else %>
+      on <%= record.updated_at.strftime("%F") %>
     <% end %>
+  </dd>
 
-  </small>
-</div>
+  <% changelog_id = "#{record.class.name.downcase}-changelog" %>
+  <dt class="col-12 col-lg-4">Revisions</dt>
+  <dd class="col-12 col-lg-8">
+    <%= link_to record.versions.count, "##{changelog_id}" %>
+  </dd>
+
+  <% contributors = record.versions.collect(&:whodunnit).uniq %>
+  <dt class="col-12 col-lg-4">Contributors</dt>
+  <dd class="col-12 col-lg-8">
+    <% if contributors.any? %>
+      <%= render partial: "users/user", collection: User.find(contributors),
+        spacer_template: "comma" %>
+    <% else %>
+      <%= na_value %>
+    <% end %>
+  </dd>
+
+  <dt class="col-12 col-lg-4">Internal ID</dt>
+  <dd class="col-12 col-lg-8 font-monospace">
+    <%= dom_id(record) %>
+  </dd>
+
+</dl>
