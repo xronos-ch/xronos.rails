@@ -1,0 +1,11 @@
+<figure class="mb-0">
+  <blockquote class="blockquote">
+    <p><%= description.data[:wikipedia_extract_text] %></p>
+  </blockquote>
+  <figcaption class="blockquote-footer">
+    Adapted from the English Wikipedia article on
+    <cite><a href="<%= description.data[:wikipedia_url] %>" target="_blank" rel="noopener"><%= description.data[:wikipedia_title] %></a></cite>
+    (accessed <%= description.fetched_at.strftime("%-d %B %Y") %>;
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>).
+  </figcaption>
+</figure>

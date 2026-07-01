@@ -1,3 +1,8 @@
+// Offset in-page anchor scrolls so targets are not hidden behind the sticky/fixed navbar
+html {
+	scroll-padding-top: 4.5rem;
+}
+
 // stop page overflowing on mobile
 @media (max-width: 768px) {
 	html, 

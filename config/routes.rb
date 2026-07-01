@@ -42,6 +42,9 @@ Rails.application.routes.draw do
   resources :sites do
     get 'search', on: :collection
     resources :site_names, except: [:index, :show]
+    scope module: :sites do
+      resource :description, only: :show
+    end
   end
   resources :site_types do
     get 'search', on: :collection

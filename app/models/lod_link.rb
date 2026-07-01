@@ -21,34 +21,28 @@
 class LodLink < ApplicationRecord
   include Turbo::Broadcastable
 
-  attr_reader :item
+  EXTERNAL_URL = {
+    'Wikidata' => 'https://www.wikidata.org/wiki/'
+  }.with_indifferent_access
 
   validates :external_id, presence: true, numericality: { only_integer: true }
   validates :source, presence: true
   validates :source, uniqueness: { scope: [:external_id, :linkable_type, :linkable_id] }
-  
+
   enum :status, { pending: "pending", approved: "approved" }
 
   belongs_to :linkable, polymorphic: true
-  
+
   # Scopes for filtering matches
   scope :pending, -> { where(status: "pending") }
   scope :approved, -> { where(status: "approved") }
-  
-  def item
-    @item ||= request_item
+
+  def qcode
+    "Q#{external_id}"
   end
 
-  def request_item
-    if source == "Wikidata"
-      Rails.cache.fetch("wikidata_item_#{external_id}", expires_in: 24.hours) do
-        WikidataItem.new(external_id)
-      end
-    end
-  end
-
-  def title
-    item.present? ? item.label : qcode
+  def external_url
+    EXTERNAL_URL[source]&.then { |base| base + qcode }
   end
 
 end

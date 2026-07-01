@@ -29,20 +29,32 @@ module ApplicationHelper
     bs_icon "plus", options
   end
 
+  def create_inline_icon(options = {})
+    bs_icon "plus-square", options
+  end
+
   def edit_icon(options = {})
     bs_icon "pencil", options
   end
 
+  def edit_inline_icon(options = {})
+    bs_icon "pencil-square", options
+  end
+
   def delete_icon(options = {})
-    bs_icon "trash", options
+    bs_icon "x-lg", options
+  end
+
+  def delete_inline_icon(options = {})
+    bs_icon "x-square", options
   end
 
   def confirm_icon(options = {})
     bs_icon "check-lg", options
   end
 
-  def cancel_icon(options = {})
-    bs_icon "x-lg", options
+  def confirm_inline_icon(options = {})
+    bs_icon "check-square", options
   end
 
   def active_class(path)
@@ -90,23 +102,6 @@ module ApplicationHelper
       .remove('<p>')
       .remove('</p>')
       .html_safe
-  end
-
-  def floating_button(path, options = {})
-    default_classes = "d-block position-absolute top-0 start-100 small"
-    if options.has_key?(:class)
-      options[:class] = options[:class] + " " + default_classes
-    else
-      options[:class] = default_classes
-    end
-
-    options[:title] = "Edit" unless options.has_key?(:title)
-    
-    content_tag :div, class: "position-relative" do
-      link_to path, **options do 
-        bs_icon "pencil"
-      end
-    end
   end
 
 end

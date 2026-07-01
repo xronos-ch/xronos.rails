@@ -1,3 +1,4 @@
 Rails.autoloaders.main.inflector.inflect(
-  "gbif" => "GBIF"
+  "gbif" => "GBIF",
+  "wikipedia" => "Wikipedia"
 )
