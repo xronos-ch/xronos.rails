@@ -29,17 +29,7 @@ class LinkedResources::SitesController < ApplicationController
     respond_to do |format|
       format.html do
         @pagy, @sites = pagy(:offset, @sites)
-
-        # Fetch and cache Wikidata matches for the current page
-        @wikidata_matches = fetch_wikidata_matches(@sites)
       end
     end
-  end
-
-  private
-
-  def fetch_wikidata_matches(sites)
-    # Ensure Wikidata matches are always a hash
-    Site.wikidata_match_candidates_batch(sites) || {}
   end
 end
