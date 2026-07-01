@@ -41,6 +41,7 @@ class C14 < ApplicationRecord
 
   has_many :citations, as: :citing, dependent: :destroy
   has_many :references, :through => :citations
+  has_many :linked_resources, as: :linkable, dependent: :destroy
 
   delegate :context, to: :sample
   delegate :site, to: :sample
@@ -54,6 +55,9 @@ class C14 < ApplicationRecord
   @issues = [ :missing_c14_age, :very_old_c14, :missing_c14_error, 
               :missing_d13c, :missing_d13c_error, :missing_c14_method, 
               :missing_c14_lab_id, :invalid_lab_id, :missing_c14_lab ]
+
+  include Linkable
+  linkable_to :opencontext
 
   include PgSearch::Model
   pg_search_scope :search, 
