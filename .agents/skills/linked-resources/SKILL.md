@@ -132,14 +132,14 @@ end
 - `LinkedResource::Source.all` — array of all registered
 - `LinkedResource::Source.reset!` — for tests
 - `LinkedResource::Source::UUID_PATTERN` — shared `id_pattern` regex (RFC 4122) for any source with UUID-based ids (e.g. OpenContext). Avoids duplicating the regex across source files.
-- Instance: `source.url_for(id)`, `source.valid_id?(id)`. The optional `icon` attribute is a SimpleIcons slug (see "Icons" below).
+- Instance: `source.url_for(id)`, `source.valid_id?(id)`. The optional `icon` attribute is a slug matching an SVG at `app/assets/images/simple_icons/<slug>.svg` (see "Icons" below).
 
 ## Icons
 
 The icon for a source is rendered by the `linked_resource_icon(source_name)` helper in `app/helpers/linked_resources_helper.rb`.
 
-- **Source has a brand logo** (set the `icon` attribute to a SimpleIcons slug): the helper renders `simple_icon(slug)`, which embeds the SVG at `app/assets/images/simple_icons/<slug>.svg`. Example: Wikidata → `icon: "wikidata"` → `simple_icon "wikidata"`.
-- **Source has no logo** (omit the `icon` attribute): the helper renders nothing. Example: Pleiades and Vici.org have no `icon` attribute, so the linked-resource card shows just the source name.
+- **Source has a brand logo** (set the `icon` attribute to a slug): the helper calls `simple_icon(slug)`, which embeds the SVG at `app/assets/images/simple_icons/<slug>.svg`. Example: Wikidata → `icon: "wikidata"` → `simple_icon "wikidata"`. The SVG should be a `viewBox="0 0 24 24"` shape that inherits `currentColor` so it matches the surrounding text color on both light and dark backgrounds. Wikidata, Wikipedia, Wikimedia Commons, and Zenodo all came from SimpleIcons; OpenContext was rasterized from its PNG brand mark with potrace.
+- **Source has no logo** (omit the `icon` attribute): the helper falls back to `bs_icon 'share'`, a Bootstrap Icons share icon, as a generic placeholder. Example: Pleiades and Vici.org have no `icon` attribute, so their linked-resource card shows the share icon next to the source name.
 
 ## The `Linkable` concern
 
@@ -185,7 +185,7 @@ When writing any new external-service integration:
 
 Most sources need only steps 1–2. Add a concern only if you need SPARQL/API enrichment.
 
-1. **Create a source module** at `app/models/linked_resource/sources/<key>.rb` (e.g. `pleiades.rb`). The filename is the source key in lowercase; the module name is the camelized form. The module exposes an `ATTRIBUTES` hash and **calls `Source.register` at the bottom** to register itself when loaded. If the source has a SimpleIcons brand logo, set `icon: "<slug>"` (see "Icons" above); otherwise omit it. For sources whose ids are standard UUIDs, use `LinkedResource::Source::UUID_PATTERN` instead of writing the regex inline.
+1. **Create a source module** at `app/models/linked_resource/sources/<key>.rb` (e.g. `pleiades.rb`). The filename is the source key in lowercase; the module name is the camelized form. The module exposes an `ATTRIBUTES` hash and **calls `Source.register` at the bottom** to register itself when loaded. If the source has a brand logo, set `icon: "<slug>"` (see "Icons" above); otherwise omit it and the helper will fall back to the share icon. For sources whose ids are standard UUIDs, use `LinkedResource::Source::UUID_PATTERN` instead of writing the regex inline.
 
    ```ruby
    # app/models/linked_resource/sources/pleiades.rb
@@ -212,6 +212,7 @@ Most sources need only steps 1–2. Add a concern only if you need SPARQL/API en
            name: "OpenContext",
            url_template: "https://opencontext.org/subjects/%<id>s",
            id_pattern: LinkedResource::Source::UUID_PATTERN,
+           icon: "opencontext",
            description: "OpenContext record"
          }.freeze
 
@@ -222,7 +223,7 @@ Most sources need only steps 1–2. Add a concern only if you need SPARQL/API en
    ```
 2. **Add the key** to `LinkedResource::KNOWN_SOURCES` in `app/models/linked_resource.rb`. The model iterates this list to trigger each source's load and then asserts the registration actually happened. Forgetting the `Source.register` call (or getting the key wrong) will raise a loud error at class-load time, not at use-time.
 3. **Add `linkable_to :pleiades`** to the host model (e.g. `Site`). This generates `pleiades_link`, `missing_pleiades_link?`, `pending_pleiades_link?`, the corresponding scopes, and registers the issue symbols so the per-site view and curation dashboard auto-populate. The same source can be linked from multiple host models — `linkable_to :opencontext` on `Site` and on `C14` are independent calls that each generate their own per-model methods, all backed by the same registered source and the same UUID-pattern id validation.
-4. **If the source has a brand logo** (i.e. you set `icon:` in step 1), add the SimpleIcons SVG at `app/assets/images/simple_icons/<slug>.svg` matching the `icon` slug. If the source has no logo, omit the `icon` attribute and skip this step.
+4. **If the source has a brand logo** (i.e. you set `icon:` in step 1), add the SVG at `app/assets/images/simple_icons/<slug>.svg` matching the `icon` slug. Drop in a SimpleIcons SVG if the brand has one there, or vectorize the brand's PNG with potrace (see the OpenContext icon as a worked example). If the source has no logo, omit the `icon` attribute and skip this step.
 5. **Test it** — no per-source parallel coverage. The macro and registry are tested once with a test source (see "Testing strategy" below); real sources are covered by parameterized tests that iterate `KNOWN_SOURCES`. Add a new source: (a) append the key to `KNOWN_SOURCES`, (b) add a `(name, id, expected_url)` row to the URL-templates test, (c) optionally add the host-model's `linkable_to` line. The site page's "Add {source} link" button and the missing/pending badges appear automatically; no view changes needed.
 
 ## Testing strategy
@@ -329,7 +330,7 @@ If a new source has an enrichment flow (e.g. matching C14s to Pleiades, finding 
 - `app/controllers/linked_resources_controller.rb` — CRUD
 - `app/controllers/linked_resources/sites_controller.rb` — curation dashboard
 - `app/views/linked_resources/` — CRUD and curation views
-- `app/helpers/linked_resources_helper.rb` — `linked_resource_icon` (logo SVG or letter-circle fallback), `linked_resource_badge` (issue badge)
+- `app/helpers/linked_resources_helper.rb` — `linked_resource_icon` (logo SVG from `app/assets/images/simple_icons/`, or `bs_icon 'share'` fallback for sources without one), `linked_resource_badge` (issue badge)
 - `lib/xronos.rb` — `Xronos::USER_AGENT`, `Xronos::CONTACT_EMAIL`
 - `test/models/linked_resource_test.rb`
 - `test/models/linked_resource/source_test.rb`
