@@ -4,6 +4,7 @@ class SitesController < ApplicationController
   load_and_authorize_resource
 
   before_action :set_site, only: [:show, :edit, :update, :destroy]
+  before_action :set_versions, only: [:show]
 
   # GET /sites
   # GET /sites.json
@@ -167,6 +168,12 @@ class SitesController < ApplicationController
   def set_site
     @site = Site.includes(:lod_links).find(params[:id])
     @wikidata_matches = Site.wikidata_match_candidates_batch([@site]) || {}
+  end
+
+  def set_versions
+    @versions = @site.versions
+                    .includes(:item)
+                    .order(:created_at, :id)
   end
 
   def site_params

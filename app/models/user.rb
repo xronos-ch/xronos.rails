@@ -38,5 +38,13 @@ class User < ApplicationRecord
            dependent: :delete_all # or :destroy if you need callbacks
 
   has_one :user_profile
-           
+
+  def display_name
+    user_profile&.full_name
+  end
+
+  def has_real_name?
+    user_profile&.full_name.present?
+  end
+
 end

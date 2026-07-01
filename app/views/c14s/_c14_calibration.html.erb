@@ -1,0 +1,37 @@
+<div data-controller="vega">
+  <% if @calibration&.tpq.present? %>
+    <%= calibration_plot(@calibration) %>
+  <% else %>
+    <div class="d-flex align-items-center justify-content-center text-muted py-5"
+         style="min-height: 16rem;">
+      <span>Calibration not available</span>
+    </div>
+  <% end %>
+</div>
+
+<div>
+  <dl class="row mb-0">
+
+    <dt class="col-5 col-lg-4">Calibration curve</dt>
+    <dd class="col-7 col-lg-8">
+    <%= @calibration&.c14_curve || na_value %>
+    <% if @calibration&.c14_curve %>
+      <span class="text-muted">(<%= c14_curve_ref(@calibration.c14_curve) %>)</span>
+    <% end %>
+    </dd>
+
+    <dt class="col-5 col-lg-4">Calibrated age <small>(2&sigma;, cal BP)</small></dt>
+    <dd class="col-7 col-lg-8 font-monospace">
+    <% if @calibration&.tpq.present? %>
+      <ul class="list-unstyled mb-0">
+        <% @calibration.hd_intervals.each do |hdi| %>
+          <li><%= format_hd_interval(hdi) %></li>
+        <% end %>
+      </ul>
+    <% else %>
+      <%= na_value %>
+    <% end %>
+    </dd>
+
+  </dl>
+</div>
