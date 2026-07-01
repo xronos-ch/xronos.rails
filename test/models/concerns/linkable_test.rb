@@ -46,8 +46,6 @@ class LinkableTest < ActiveSupport::TestCase
   class LinkableTestHost < ApplicationRecord
     self.table_name = "linkable_test_hosts"
 
-    has_many :linked_resources, as: :linkable, dependent: :destroy
-
     include Linkable
     linkable_to :source_test
   end

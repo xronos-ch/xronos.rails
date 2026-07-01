@@ -16,8 +16,9 @@ require 'ostruct'
 # the pending records from the dashboard.
 #
 # The host model is expected to provide:
-#   - a +linked_resources+ association (e.g. +has_many :linked_resources,
-#     as: :linkable+)
+#   - +include Linkable+ (which declares the +linked_resources+ association
+#     and the +wikidata_link+ / +missing_wikidata_link?+ / +pending_wikidata_link?+
+#     methods used to identify candidate records)
 #   - a +name+ attribute used as the SPARQL search key
 #
 # When attaching to additional models, override +ARCHAEOLOGICAL_SITE_WIKIDATA_ID+

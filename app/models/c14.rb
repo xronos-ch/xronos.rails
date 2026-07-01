@@ -41,7 +41,6 @@ class C14 < ApplicationRecord
 
   has_many :citations, as: :citing, dependent: :destroy
   has_many :references, :through => :citations
-  has_many :linked_resources, as: :linkable, dependent: :destroy
 
   delegate :context, to: :sample
   delegate :site, to: :sample

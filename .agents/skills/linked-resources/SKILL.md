@@ -143,12 +143,10 @@ The icon for a source is rendered by the `linked_resource_icon(source_name)` hel
 
 ## The `Linkable` concern
 
-`Linkable` is mixed into any model that can have linked resources. The `linkable_to` macro generates per-source shortcut methods from the registry.
+`Linkable` is mixed into any model that can have linked resources. The concern declares the polymorphic `has_many :linked_resources, as: :linkable, dependent: :destroy` association (so the host model doesn't have to), and the `linkable_to` macro generates per-source shortcut methods from the registry.
 
 ```ruby
 class Site < ApplicationRecord
-  has_many :linked_resources, as: :linkable, dependent: :destroy
-
   include Linkable
   linkable_to :wikidata          # one line per source
 end
@@ -160,7 +158,7 @@ end
 - `Site.missing_wikidata_link` / `Site.pending_wikidata_link` — scopes
 - Registers both issue symbols in `Site.linked_resource_issues` (the class-level array)
 
-Adding Pleiades is a one-liner (`linkable_to :pleiades`); all the per-source methods appear automatically.
+Adding Pleiades is a one-liner (`linkable_to :pleiades`); all the per-source methods appear automatically. No `has_many :linked_resources` line is needed on the host — `include Linkable` provides it.
 
 ## ⛔ The async enrichment principle (CRITICAL)
 
@@ -222,7 +220,7 @@ Most sources need only steps 1–2. Add a concern only if you need SPARQL/API en
    end
    ```
 2. **Add the key** to `LinkedResource::KNOWN_SOURCES` in `app/models/linked_resource.rb`. The model iterates this list to trigger each source's load and then asserts the registration actually happened. Forgetting the `Source.register` call (or getting the key wrong) will raise a loud error at class-load time, not at use-time.
-3. **Add `linkable_to :pleiades`** to the host model (e.g. `Site`). This generates `pleiades_link`, `missing_pleiades_link?`, `pending_pleiades_link?`, the corresponding scopes, and registers the issue symbols so the per-site view and curation dashboard auto-populate. The same source can be linked from multiple host models — `linkable_to :opencontext` on `Site` and on `C14` are independent calls that each generate their own per-model methods, all backed by the same registered source and the same UUID-pattern id validation.
+3. **Add `linkable_to :pleiades`** to the host model (e.g. `Site`). This generates `pleiades_link`, `missing_pleiades_link?`, `pending_pleiades_link?`, the corresponding scopes, and registers the issue symbols so the per-site view and curation dashboard auto-populate. The same source can be linked from multiple host models — `linkable_to :opencontext` on `Site` and on `C14` are independent calls that each generate their own per-model methods, all backed by the same registered source and the same UUID-pattern id validation. The host model needs `include Linkable` (or some other concern that declares `has_many :linked_resources, as: :linkable`); the macro itself only needs `linkable_to` calls.
 4. **If the source has a brand logo** (i.e. you set `icon:` in step 1), add the SVG at `app/assets/images/simple_icons/<slug>.svg` matching the `icon` slug. Drop in a SimpleIcons SVG if the brand has one there, or vectorize the brand's PNG with potrace (see the OpenContext icon as a worked example). If the source has no logo, omit the `icon` attribute and skip this step.
 5. **Test it** — no per-source parallel coverage. The macro and registry are tested once with a test source (see "Testing strategy" below); real sources are covered by parameterized tests that iterate `KNOWN_SOURCES`. Add a new source: (a) append the key to `KNOWN_SOURCES`, (b) add a `(name, id, expected_url)` row to the URL-templates test, (c) optionally add the host-model's `linkable_to` line. The site page's "Add {source} link" button and the missing/pending badges appear automatically; no view changes needed.
 
@@ -323,7 +321,7 @@ If a new source has an enrichment flow (e.g. matching C14s to Pleiades, finding 
 - `app/models/linked_resource.rb` — the polymorphic model (also registers `KNOWN_SOURCES` in its class body)
 - `app/models/linked_resource/source.rb` — the registry PORO
 - `app/models/linked_resource/sources/` — one file per known source, each defining a module under `LinkedResource::Sources::<KeyCamelized>` with an `ATTRIBUTES` constant
-- `app/models/concerns/linkable.rb` — the `linkable_to` macro
+- `app/models/concerns/linkable.rb` — the `linkable_to` macro; also declares `has_many :linked_resources, as: :linkable, dependent: :destroy` for any host that includes it
 - `app/models/concerns/batch_matchable_to_wikidata.rb` — SPARQL enrichment for Wikidata
 - `app/models/site/description.rb` — lazy Wikipedia + Wikimedia images, cached 7 days
 - `app/jobs/site/fetch_description_job.rb` — pre-warms the description cache

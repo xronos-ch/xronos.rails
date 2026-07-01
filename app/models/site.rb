@@ -28,7 +28,6 @@ class Site < ApplicationRecord
   has_many :contexts
   destroy_async_with_paper_trail :contexts
   has_many :citations, as: :citing, dependent: :destroy_async
-  has_many :linked_resources, as: :linkable, dependent: :destroy
 
   # Grandchildren
   has_many :samples, through: :contexts

@@ -67,6 +67,8 @@ module Linkable
   end
 
   included do
+    has_many :linked_resources, as: :linkable, dependent: :destroy
+
     # The subset of the class's linked_resource_issues that this instance
     # currently has. Used by the curation dashboard nav and badges.
     def linked_resource_issues
