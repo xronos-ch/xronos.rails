@@ -109,7 +109,7 @@ end
 ```ruby
 # app/models/linked_resource.rb
 class LinkedResource < ApplicationRecord
-  KNOWN_SOURCES = %i[wikidata pleiades].freeze
+  KNOWN_SOURCES = %i[wikidata pleiades vici].freeze
   KNOWN_SOURCES.each do |key|
     Sources.const_get(key.to_s.camelize)
     next if Source.known?(key.to_s)

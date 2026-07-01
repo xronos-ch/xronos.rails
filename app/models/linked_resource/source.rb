@@ -15,8 +15,7 @@ class LinkedResource
     # True if the source has a logo SVG at
     # `app/assets/images/simple_icons/<icon>.svg`. False if the source
     # uses a fallback icon (e.g. the first letter of its name in a
-    # Bootstrap Icons circle). Defaults to true so existing sources
-    # behave unchanged.
+    # Bootstrap Icons circle). 
     def has_logo?
       @has_logo
     end

@@ -39,6 +39,16 @@ class LinkableTest < ActiveSupport::TestCase
     linkable_to :pleiades
   end
 
+  # Parallel test-only host model — uses the real Vici.org source.
+  class LinkableViciTestHost < ApplicationRecord
+    self.table_name = "linkable_test_hosts"
+
+    has_many :linked_resources, as: :linkable, dependent: :destroy
+
+    include Linkable
+    linkable_to :vici
+  end
+
   # --- Macro: per-source methods ---
 
   test "linkable_to defines a reader for the linked resource" do
@@ -196,5 +206,70 @@ class LinkableTest < ActiveSupport::TestCase
     host = LinkablePleiadesTestHost.create!
     host.linked_resources.create!(source: "Pleiades", external_id: "687917", status: "pending")
     assert_equal [ :pending_pleiades_link ], host.linked_resource_issues
+  end
+
+  # --- Vici.org (parallel coverage of the macro on a third source) ---
+
+  test "linkable_to defines a vici_link reader" do
+    host = LinkableViciTestHost.create!
+    link = host.linked_resources.create!(source: "Vici.org", external_id: "57205")
+    assert_equal link, host.vici_link
+  end
+
+  test "linkable_to defines a missing_vici_link? predicate" do
+    host = LinkableViciTestHost.create!
+    assert host.missing_vici_link?
+    host.linked_resources.create!(source: "Vici.org", external_id: "57205")
+    refute host.missing_vici_link?
+  end
+
+  test "linkable_to defines a pending_vici_link? predicate" do
+    host = LinkableViciTestHost.create!
+    host.linked_resources.create!(source: "Vici.org", external_id: "57205", status: "pending")
+    assert host.pending_vici_link?
+    host.linked_resources.first.update!(status: "approved")
+    refute host.pending_vici_link?
+  end
+
+  test "linkable_to defines a missing_vici_link scope" do
+    with_link = LinkableViciTestHost.create!
+    with_link.linked_resources.create!(source: "Vici.org", external_id: "57205")
+    without_link = LinkableViciTestHost.create!
+
+    result = LinkableViciTestHost.missing_vici_link
+    assert_includes result, without_link
+    refute_includes result, with_link
+  end
+
+  test "linkable_to defines a pending_vici_link scope" do
+    pending_host = LinkableViciTestHost.create!
+    pending_host.linked_resources.create!(source: "Vici.org", external_id: "57205", status: "pending")
+    approved_host = LinkableViciTestHost.create!
+    approved_host.linked_resources.create!(source: "Vici.org", external_id: "12345", status: "approved")
+
+    result = LinkableViciTestHost.pending_vici_link
+    assert_includes result, pending_host
+    refute_includes result, approved_host
+  end
+
+  test "class.linked_resource_issues for the Vici host has only Vici issues" do
+    issues = LinkableViciTestHost.linked_resource_issues
+    assert_includes issues, :missing_vici_link
+    assert_includes issues, :pending_vici_link
+    refute_includes issues, :missing_wikidata_link
+    refute_includes issues, :pending_wikidata_link
+    refute_includes issues, :missing_pleiades_link
+    refute_includes issues, :pending_pleiades_link
+  end
+
+  test "instance.linked_resource_issues returns the Vici missing issue" do
+    host = LinkableViciTestHost.create!
+    assert_equal [ :missing_vici_link ], host.linked_resource_issues
+  end
+
+  test "instance.linked_resource_issues returns the Vici pending issue" do
+    host = LinkableViciTestHost.create!
+    host.linked_resources.create!(source: "Vici.org", external_id: "57205", status: "pending")
+    assert_equal [ :pending_vici_link ], host.linked_resource_issues
   end
 end

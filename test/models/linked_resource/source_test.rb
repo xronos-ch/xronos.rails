@@ -118,6 +118,30 @@ class LinkedResource::SourceTest < ActiveSupport::TestCase
     assert_nil pleiades.icon
   end
 
+  test 'the Vici.org source module registers itself on load' do
+    assert LinkedResource::Source.known?('Vici.org')
+  end
+
+  test 'known-source Vici.org has expected attributes' do
+    vici = LinkedResource::Source.find('Vici.org')
+    assert_equal 'https://vici.org/vici/57205/', vici.url_for('57205')
+  end
+
+  test 'known-source Vici.org id_pattern accepts positive integers' do
+    vici = LinkedResource::Source.find('Vici.org')
+    assert vici.valid_id?('57205')
+    assert vici.valid_id?('1')
+    refute vici.valid_id?('Q42')
+    refute vici.valid_id?('abc')
+    refute vici.valid_id?('')
+  end
+
+  test 'known-source Vici.org has no logo (falls back to letter icon)' do
+    vici = LinkedResource::Source.find('Vici.org')
+    refute vici.has_logo?
+    assert_nil vici.icon
+  end
+
   test 'known-source Wikidata defaults to has_logo? true' do
     wikidata = LinkedResource::Source.find('Wikidata')
     assert wikidata.has_logo?
