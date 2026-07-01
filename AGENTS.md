@@ -96,6 +96,8 @@ Do not over-fill the CHANGELOG with details of internal API changes, code refact
 - **No premature abstraction:** Don't extract until complexity demands it. Three similar lines > wrong abstraction.
 - **Explicit > implicit:** Clear service calls over hidden callbacks. Named methods over metaprogramming.
 
+Run rubocop on your code before it is committed. But avoid churn; only fix the style of code that you have changed in the current branch.
+
 ## Testing Conventions
 
 - Test behaviour, not implementation
