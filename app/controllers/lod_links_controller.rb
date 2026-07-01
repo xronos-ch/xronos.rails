@@ -4,13 +4,7 @@ class LodLinksController < ApplicationController
   before_action :set_lod_link, only: [:show, :edit, :update, :destroy]
 
   def show
-    if @wikidata_link.source == "Wikidata"
-      @wikidata_link.request_item
-      if @wikidata_link.item.sitelink_title("enwiki").present?
-        @wikidata_link.item.request_wikipedia_extract
-      end
-    end
-    render partial: "lod_link"
+    render partial: 'lod_link', locals: { lod_link: @lod_link }
   end
 
   def new
@@ -46,19 +40,34 @@ class LodLinksController < ApplicationController
   end
 
   def destroy
+    linkable = @lod_link.linkable
+    @lod_link.destroy
+    respond_to do |format|
+      format.turbo_stream do
+        if linkable.lod_links.count.positive?
+          render turbo_stream: turbo_stream.remove(@lod_link)
+        else
+          render turbo_stream: turbo_stream.replace(
+            'site-external-links-content',
+            partial: 'sites/external_links',
+            locals: { site: linkable }
+          )
+        end
+      end
+      format.html { redirect_to linkable, notice: "#{@lod_link.source} link removed.", status: :see_other }
+    end
   end
 
   private
 
   def set_lod_link
     @lod_link = LodLink.find(params[:id])
-    @wikidata_link = LodLink.where(source: "Wikidata").find(params[:id])
   end
 
   def lod_link_params
     params.require(:lod_link).permit([
       :external_id,
-      :source, 
+      :source,
       :linkable_type,
       :linkable_id,
       :revision_comment,
