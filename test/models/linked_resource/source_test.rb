@@ -80,13 +80,13 @@ class LinkedResource::SourceTest < ActiveSupport::TestCase
     assert source.valid_id?('anything goes')
   end
 
-  # --- Initializer ---
+  # --- Known sources ---
 
-  test 'initializer registers Wikidata' do
+  test 'the Wikidata source module registers itself on load' do
     assert LinkedResource::Source.known?('Wikidata')
   end
 
-  test 'initializer-registered Wikidata has expected attributes' do
+  test 'known-source Wikidata has expected attributes' do
     wikidata = LinkedResource::Source.find('Wikidata')
     assert_equal 'https://www.wikidata.org/wiki/Q123', wikidata.url_for('Q123')
     assert wikidata.valid_id?('Q123')

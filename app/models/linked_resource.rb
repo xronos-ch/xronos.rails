@@ -21,6 +21,27 @@
 class LinkedResource < ApplicationRecord
   include Turbo::Broadcastable
 
+  # Each known source is a module under LinkedResource::Sources that
+  # exposes an ATTRIBUTES constant and calls Source.register (self-
+  # registration) when Zeitwerk loads the file. KNOWN_SOURCES is the
+  # canonical list of source keys; iterating it triggers each module's
+  # load, and we then assert the registration actually happened — so a
+  # missing or misbehaving source module fails loudly at class-load time
+  # rather than silently at use-time. The class body re-evaluates on
+  # every Zeitwerk reload, so the registry stays populated through
+  # dev-mode reloads without a separate to_prepare / after_initialize
+  # hook in config/.
+  KNOWN_SOURCES = %i[wikidata].freeze
+  KNOWN_SOURCES.each do |key|
+    Sources.const_get(key.to_s.camelize)
+    next if Source.known?(key.to_s)
+
+    raise "Known source :#{key} is not registered. Check that " \
+      "app/models/linked_resource/sources/#{key}.rb defines module " \
+      "LinkedResource::Sources::#{key.to_s.camelize} and calls " \
+      "LinkedResource::Source.register(#{key.inspect}, **ATTRIBUTES)."
+  end
+
   validates :source, presence: true
   validates :source, uniqueness: { scope: [:external_id, :linkable_type, :linkable_id] }
 

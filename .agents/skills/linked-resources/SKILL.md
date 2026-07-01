@@ -83,18 +83,44 @@ A new source typically needs only the registry entry. The `Linkable` macro picks
 
 A PORO nested under `LinkedResource` (per the PORO-under-AR convention). Holds the per-source configuration.
 
-**Registering a source** in `config/initializers/linked_resource_sources.rb` (inside `Rails.application.config.after_initialize`):
+**Each known source is a separate file** at `app/models/linked_resource/sources/<key>.rb`, defining a module `LinkedResource::Sources::<KeyCamelized>` that exposes an `ATTRIBUTES` constant (a frozen hash) **and calls `Source.register` at the bottom** to register itself when Zeitwerk loads the file. The `LinkedResource` model keeps a `KNOWN_SOURCES` whitelist that triggers the load (via `const_get`) and then asserts each source actually registered — so a missing or misbehaving source module fails loudly at class-load time rather than silently at use-time. The class body re-evaluates on every Zeitwerk reload, so the registry is repopulated in development without a separate `to_prepare` / `after_initialize` hook:
 
 ```ruby
-LinkedResource::Source.register :pleiades,
-  name: "Pleiades",
-  url_template: "https://pleiades.stoa.org/places/%{id}",
-  id_pattern: /\A\d+\z/,
-  icon: "pleiades",
-  description: "Pleiades place identifier"
+# app/models/linked_resource/sources/pleiades.rb
+class LinkedResource
+  module Sources
+    module Pleiades
+      ATTRIBUTES = {
+        name: "Pleiades",
+        url_template: "https://pleiades.stoa.org/places/%<id>s",
+        id_pattern: /\A\d+\z/,
+        icon: "pleiades",
+        description: "Pleiades place identifier"
+      }.freeze
+
+      LinkedResource::Source.register(:pleiades, **ATTRIBUTES)
+    end
+  end
+end
 ```
 
-`id_prefix` is **not** a thing — ids are stored as the user sees them. The `url_template` interpolates the full id via `%{id}`.
+```ruby
+# app/models/linked_resource.rb
+class LinkedResource < ApplicationRecord
+  KNOWN_SOURCES = %i[wikidata pleiades].freeze
+  KNOWN_SOURCES.each { |key| Sources.const_get(key.to_s.camelize) }
+  KNOWN_SOURCES.each do |key|
+    next if Source.known?(key.to_s)
+    raise "Known source :#{key} is not registered. Check that " \
+      "app/models/linked_resource/sources/#{key}.rb defines module " \
+      "LinkedResource::Sources::#{key.to_s.camelize} and calls " \
+      "LinkedResource::Source.register(#{key.inspect}, **ATTRIBUTES)."
+  end
+  # ...
+end
+```
+
+`id_prefix` is **not** a thing — ids are stored as the user sees them. The `url_template` interpolates the full id via `%<id>s` (or `%{id}`, both work via `Kernel#format`).
 
 **Registry API** (in `app/models/linked_resource/source.rb`):
 - `LinkedResource::Source.register(:key, **attrs)` — register
@@ -148,18 +174,29 @@ When writing any new external-service integration:
 
 Most sources need only steps 1–2. Add a concern only if you need SPARQL/API enrichment.
 
-1. **Register the source** in `config/initializers/linked_resource_sources.rb` (inside the existing `after_initialize` block):
+1. **Create a source module** at `app/models/linked_resource/sources/<key>.rb` (e.g. `pleiades.rb`). The filename is the source key in lowercase; the module name is the camelized form. The module exposes an `ATTRIBUTES` hash and **calls `Source.register` at the bottom** to register itself when loaded:
    ```ruby
-   LinkedResource::Source.register :pleiades,
-     name: "Pleiades",
-     url_template: "https://pleiades.stoa.org/places/%{id}",
-     id_pattern: /\A\d+\z/,
-     icon: "pleiades",
-     description: "Pleiades place identifier"
+   # app/models/linked_resource/sources/pleiades.rb
+   class LinkedResource
+     module Sources
+       module Pleiades
+         ATTRIBUTES = {
+           name: "Pleiades",
+           url_template: "https://pleiades.stoa.org/places/%<id>s",
+           id_pattern: /\A\d+\z/,
+           icon: "pleiades",
+           description: "Pleiades place identifier"
+         }.freeze
+
+         LinkedResource::Source.register(:pleiades, **ATTRIBUTES)
+       end
+     end
+   end
    ```
-2. **Add `linkable_to :pleiades`** to the host model (e.g. `Site`).
-3. **Add a SimpleIcons SVG** at `app/assets/images/simple_icons/pleiades.svg` (lowercase key) for the icon in `_linked_resource.html.erb`.
-4. **Test it** — `test/models/linked_resource/source_test.rb` for the registry, `test/models/concerns/linkable_test.rb` for the macro. The curation dashboard nav auto-populates; no view changes needed (the dashboard is intentionally Wikidata-only by default — see below).
+2. **Add the key** to `LinkedResource::KNOWN_SOURCES` in `app/models/linked_resource.rb`. The model iterates this list to trigger each source's load and then asserts the registration actually happened. Forgetting the `Source.register` call (or getting the key wrong) will raise a loud error at class-load time, not at use-time.
+3. **Add `linkable_to :pleiades`** to the host model (e.g. `Site`).
+4. **Add a SimpleIcons SVG** at `app/assets/images/simple_icons/pleiades.svg` (lowercase key) for the icon in `_linked_resource.html.erb`.
+5. **Test it** — `test/models/linked_resource/source_test.rb` for the registry, `test/models/concerns/linkable_test.rb` for the macro. The curation dashboard nav auto-populates; no view changes needed (the dashboard is intentionally Wikidata-only by default — see below).
 
 ## The curation dashboard — Wikidata-only by design
 
@@ -187,8 +224,9 @@ If a new source has an enrichment flow (e.g. matching C14s to Pleiades, finding 
 - Do not use the `wikidata_link_attributes` strong-params key. There is no `WikidataLink` model.
 
 ## File map
-- `app/models/linked_resource.rb` — the polymorphic model
+- `app/models/linked_resource.rb` — the polymorphic model (also registers `KNOWN_SOURCES` in its class body)
 - `app/models/linked_resource/source.rb` — the registry PORO
+- `app/models/linked_resource/sources/` — one file per known source, each defining a module under `LinkedResource::Sources::<KeyCamelized>` with an `ATTRIBUTES` constant
 - `app/models/concerns/linkable.rb` — the `linkable_to` macro
 - `app/models/concerns/batch_matchable_to_wikidata.rb` — SPARQL enrichment for Wikidata
 - `app/models/site/description.rb` — lazy Wikipedia + Wikimedia images, cached 7 days
@@ -196,7 +234,6 @@ If a new source has an enrichment flow (e.g. matching C14s to Pleiades, finding 
 - `app/controllers/linked_resources_controller.rb` — CRUD
 - `app/controllers/linked_resources/sites_controller.rb` — curation dashboard
 - `app/views/linked_resources/` — CRUD and curation views
-- `config/initializers/linked_resource_sources.rb` — source registry
 - `lib/xronos.rb` — `Xronos::USER_AGENT`, `Xronos::CONTACT_EMAIL`
 - `test/models/linked_resource_test.rb`
 - `test/models/linked_resource/source_test.rb`
