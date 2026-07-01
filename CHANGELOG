@@ -2,7 +2,11 @@
 
 ## 1.2.1.9000 [unreleased]
 
-- Renamed LODLinks to LinkedResources (#372)
+- Added OpenContext, Pleiades, Vici.org, and iDAI.gazetteer as potential linked
+  record sources for sites and c14s (OpenContext only) (#487)
+  - Renamed LODLinks to LinkedResources (#372)
+  - Public views and controllers for linked resources decoupled from Wikidata
+    specifically (previously the only available linked record source)
 - Added a "Site description" section to site show pages populated via Wikidata
   - Linked-data panel on site pages no longer fetches supplementary data
     from Wikidata or Wikipedia on every page load (#479)
