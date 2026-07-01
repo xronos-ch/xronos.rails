@@ -1,6 +1,6 @@
 ---
 name: linked-resources
-description: Work with the LinkedResource model, the LinkedResource::Source registry, the Linkable concern, and the BatchMatchableToWikidata concern in XRONOS. Use when adding new linked data sources (Pleiades, Vici.org, OpenContext, iDAI, etc.), working with the curation dashboard, refactoring the linked_resources form, or attaching the linkable macro to a new model.
+description: Work with the LinkedResource model, the LinkedResource::Source registry, the Linkable concern, and the BatchMatchableToWikidata concern in XRONOS. Use when adding new linked data sources (Pleiades, Vici.org, OpenContext, iDAI.gazetteer, etc.), working with the curation dashboard, refactoring the linked_resources form, or attaching the linkable macro to a new model.
 license: MIT
 metadata:
   domain: xronos
@@ -17,7 +17,7 @@ metadata:
 
 ## When to use me
 Use this when:
-- Adding a new linked-data source (Pleiades, Vici.org, OpenContext, iDAI, etc.)
+- Adding a new linked-data source (Pleiades, Vici.org, OpenContext, iDAI.gazetteer, etc.)
 - Wiring the linkable macro into a new model (C14, Context, …)
 - Refactoring the linked_resources form to be source-selectable
 - Writing or debugging a rake task / background job that enriches records from an external API
@@ -109,7 +109,7 @@ end
 ```ruby
 # app/models/linked_resource.rb
 class LinkedResource < ApplicationRecord
-  KNOWN_SOURCES = %i[wikidata pleiades vici opencontext].freeze
+  KNOWN_SOURCES = %i[wikidata pleiades vici opencontext idai_gazetteer].freeze
   KNOWN_SOURCES.each do |key|
     Sources.const_get(key.to_s.camelize)
     next if Source.known?(key.to_s)

@@ -95,7 +95,8 @@ class LinkedResource::SourceTest < ActiveSupport::TestCase
       'Pleiades' => [ '687917', 'https://pleiades.stoa.org/places/687917' ],
       'Vici.org' => [ '57205', 'https://vici.org/vici/57205/' ],
       'OpenContext' => [ '8606d40b-1bad-4a8f-99c7-bcab8b794d6e',
-        'https://opencontext.org/subjects/8606d40b-1bad-4a8f-99c7-bcab8b794d6e' ]
+        'https://opencontext.org/subjects/8606d40b-1bad-4a8f-99c7-bcab8b794d6e' ],
+      'iDAI.gazetteer' => [ '2043891', 'https://gazetteer.dainst.org/place/2043891' ]
     }.each do |name, (id, expected_url)|
       assert_equal expected_url, LinkedResource::Source.find(name).url_for(id),
         "URL template for #{name} should produce #{expected_url}"
