@@ -66,4 +66,51 @@ class LinkedResourcesControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
     assert LinkedResource.exists?(@linked_resource.id)
   end
+
+  # --- new ---
+
+  test 'new with a source param pre-fills the source on the form' do
+    sign_in @admin
+    get new_linked_resource_path, params: {
+      linked_resource: { linkable_type: 'Site', linkable_id: @site.id, source: 'Wikidata' }
+    }
+
+    assert_response :success
+    assert_match 'name="linked_resource[source]"', response.body
+    assert_match 'value="Wikidata"', response.body
+  end
+
+  test 'new without a source param returns bad request' do
+    sign_in @admin
+    get new_linked_resource_path
+
+    assert_response :bad_request
+  end
+
+  test 'new with an unknown source returns bad request' do
+    sign_in @admin
+    get new_linked_resource_path, params: {
+      linked_resource: { linkable_type: 'Site', linkable_id: @site.id, source: 'NotASource' }
+    }
+
+    assert_response :bad_request
+  end
+
+  # --- create ---
+
+  test 'create with a source param creates the linked resource with that source' do
+    sign_in @admin
+
+    assert_difference 'LinkedResource.count' do
+      post linked_resources_path, params: {
+        linked_resource: {
+          linkable_type: 'Site', linkable_id: @site.id,
+          source: 'Wikidata', external_id: 'Q999'
+        }
+      }
+    end
+
+    assert_equal 'Wikidata', LinkedResource.last.source
+    assert_response :redirect
+  end
 end

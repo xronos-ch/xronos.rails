@@ -1,17 +1,20 @@
 class LinkedResourcesController < ApplicationController
   load_and_authorize_resource
 
-  before_action :set_linked_resource, only: [:show, :edit, :update, :destroy]
+  before_action :set_linked_resource, only: %i[show edit update destroy]
 
   def show
     render partial: 'linked_resource', locals: { linked_resource: @linked_resource }
   end
 
   def new
+    source = params.dig(:linked_resource, :source)
+    head :bad_request and return unless source.present? && LinkedResource::Source.known?(source)
+
+    @linked_resource = LinkedResource.new(linked_resource_params_from_query)
   end
 
-  def edit
-  end
+  def edit; end
 
   def create
     @linked_resource = LinkedResource.new(linked_resource_params)
@@ -65,21 +68,21 @@ class LinkedResourcesController < ApplicationController
   end
 
   def linked_resource_params
-    params.require(:linked_resource).permit([
+    params.require(:linked_resource).permit(
       :external_id,
       :source,
       :linkable_type,
       :linkable_id,
-      :revision_comment,
       :status
-    ])
+    )
   end
 
   def success_notice
-    @linked_resource.linkable_type +
-      ":" +
-      @linked_resource.linkable_id.to_s +
-      " is now linked to Wikidata item Q" +
-      @linked_resource.external_id.to_s
+    "#{@linked_resource.linkable_type}:#{@linked_resource.linkable_id} " \
+      "is now linked to #{@linked_resource.source} #{@linked_resource.external_id}"
+  end
+
+  def linked_resource_params_from_query
+    params.fetch(:linked_resource, {}).permit(:linkable_type, :linkable_id, :source)
   end
 end

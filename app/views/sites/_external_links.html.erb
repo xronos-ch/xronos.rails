@@ -9,15 +9,24 @@
     </ul>
   <% else %>
     <p>There is no linked data available for this record.</p>
-    <% if can? :manage, LinkedResource %>
-      <ul class="list-unstyled">
-        <li>
-          <%= link_to "Add Wikidata link",
-                      new_linked_resource_path(linked_resource: { linkable_type: "Site", linkable_id: site }),
-                      data: { turbo_frame: "remote_modal" },
-                      class: "text-primary" %>
-        </li>
-      </ul>
-    <% end %>
+  <% end %>
+
+  <% if can? :manage, LinkedResource %>
+    <ul class="list-unstyled">
+      <% LinkedResource::Source.all.each do |source| %>
+        <% if site.linked_resources.where(source: source.name).none? %>
+          <li>
+            <%= link_to "Add #{source.name} link",
+                        new_linked_resource_path(linked_resource: {
+                          linkable_type: "Site",
+                          linkable_id: site,
+                          source: source.name
+                        }),
+                        data: { turbo_frame: "remote_modal" },
+                        class: "text-primary" %>
+          </li>
+        <% end %>
+      <% end %>
+    </ul>
   <% end %>
 </div>

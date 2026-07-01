@@ -1,26 +1,26 @@
-  <!-- Hidden Fields -->
-  <%= f.hidden_field :linkable_type %>
-  <%= f.hidden_field :linkable_id %>
-  <%= f.hidden_field :source, value: "Wikidata" %>
+<%= f.hidden_field :linkable_type %>
+<%= f.hidden_field :linkable_id %>
+<%= f.hidden_field :source %>
 
-  <!-- QID Input Field -->
-  <div class="input-group">
-    <%= f.text_field :external_id, prepend: "Q", hide_label: true, placeholder: "Enter QID" %>
-  </div>
+<% source_obj = LinkedResource::Source.find(@linked_resource.source) %>
 
-  <!-- Status Checkbox -->
+<%= f.text_field :external_id,
+  label: "#{source_obj.name} identifier",
+  placeholder: (source_obj.id_pattern ? "e.g. #{source_obj.id_pattern.random_example}" : nil)
+%>
+
 <div class="form-check">
   <%= f.hidden_field :status, value: "pending" %>
   <%= f.check_box :status, { class: "form-check-input", id: "status_checkbox", label: "Approve" }, "approved", "pending" %>
 </div>
 
-  <!-- Suggestions from Lod Match -->
+<% if @linked_resource.source == "Wikidata" && f.object.linkable.present? %>
   <p>Suggestion from Name:</p>
   <ul>
     <% if wikidata_matches_for(f.object.linkable).present? %>
       <% wikidata_matches_for(f.object.linkable)[f.object.linkable.name]&.each do |match| %>
         <li>
-          <%= match.qid %>: 
+          <%= match.qid %>:
           <%= link_to "#{match.label} (#{match.description})", match.url, target: "_blank" %>
         </li>
       <% end %>
@@ -28,3 +28,4 @@
       <li>No suggestions available</li>
     <% end %>
   </ul>
+<% end %>
