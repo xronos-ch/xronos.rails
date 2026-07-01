@@ -2,13 +2,23 @@ class LinkedResource
   class Source
     attr_reader :key, :name, :url_template, :id_pattern, :icon, :description
 
-    def initialize(key:, name:, url_template:, id_pattern: nil, icon: nil, description: nil)
+    def initialize(key:, name:, url_template:, id_pattern: nil, icon: nil, description: nil, has_logo: true)
       @key = key.to_sym
       @name = name
       @url_template = url_template
       @id_pattern = id_pattern
       @icon = icon
       @description = description
+      @has_logo = has_logo
+    end
+
+    # True if the source has a logo SVG at
+    # `app/assets/images/simple_icons/<icon>.svg`. False if the source
+    # uses a fallback icon (e.g. the first letter of its name in a
+    # Bootstrap Icons circle). Defaults to true so existing sources
+    # behave unchanged.
+    def has_logo?
+      @has_logo
     end
 
     def url_for(id)

@@ -1,10 +1,10 @@
 <%= turbo_frame_tag linked_resource do %>
-  <dl class="row mb-0 align-items-center">
-    <dt class="col-sm-3 text-muted">
-      <%= simple_icon linked_resource.source.downcase %>
-      <span class="ms-1"><%= linked_resource.source %></span>
+  <dl class="d-flex justify-content-between align-items-center mb-0" style="max-width: 32rem;">
+    <dt class="text-muted d-flex align-items-center gap-1">
+      <%= linked_resource_icon linked_resource.source %>
+      <span><%= linked_resource.source %></span>
     </dt>
-    <dd class="col-sm-9 mb-0 d-flex align-items-center gap-2">
+    <dd class="mb-0 d-flex align-items-center gap-2">
       <span>
         <% if linked_resource.external_url.present? %>
           <%= link_to linked_resource.external_id, linked_resource.external_url,

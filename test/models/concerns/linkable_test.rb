@@ -28,6 +28,17 @@ class LinkableTest < ActiveSupport::TestCase
     linkable_to :wikidata
   end
 
+  # Parallel test-only host model — uses the real Pleiades source to
+  # exercise the linkable_to macro on a second, non-Wikidata source.
+  class LinkablePleiadesTestHost < ApplicationRecord
+    self.table_name = "linkable_test_hosts"
+
+    has_many :linked_resources, as: :linkable, dependent: :destroy
+
+    include Linkable
+    linkable_to :pleiades
+  end
+
   # --- Macro: per-source methods ---
 
   test "linkable_to defines a reader for the linked resource" do
@@ -122,5 +133,68 @@ class LinkableTest < ActiveSupport::TestCase
     host.linked_resources.create!(source: "Wikidata", external_id: "Q42", status: "approved")
     refute host.has_linked_resource_issue?(:missing_wikidata_link)
     refute host.has_linked_resource_issue?(:pending_wikidata_link)
+  end
+
+  # --- Pleiades (parallel coverage of the macro on a non-Wikidata source) ---
+
+  test "linkable_to defines a pleiades_link reader" do
+    host = LinkablePleiadesTestHost.create!
+    link = host.linked_resources.create!(source: "Pleiades", external_id: "687917")
+    assert_equal link, host.pleiades_link
+  end
+
+  test "linkable_to defines a missing_pleiades_link? predicate" do
+    host = LinkablePleiadesTestHost.create!
+    assert host.missing_pleiades_link?
+    host.linked_resources.create!(source: "Pleiades", external_id: "687917")
+    refute host.missing_pleiades_link?
+  end
+
+  test "linkable_to defines a pending_pleiades_link? predicate" do
+    host = LinkablePleiadesTestHost.create!
+    host.linked_resources.create!(source: "Pleiades", external_id: "687917", status: "pending")
+    assert host.pending_pleiades_link?
+    host.linked_resources.first.update!(status: "approved")
+    refute host.pending_pleiades_link?
+  end
+
+  test "linkable_to defines a missing_pleiades_link scope" do
+    with_link = LinkablePleiadesTestHost.create!
+    with_link.linked_resources.create!(source: "Pleiades", external_id: "687917")
+    without_link = LinkablePleiadesTestHost.create!
+
+    result = LinkablePleiadesTestHost.missing_pleiades_link
+    assert_includes result, without_link
+    refute_includes result, with_link
+  end
+
+  test "linkable_to defines a pending_pleiades_link scope" do
+    pending_host = LinkablePleiadesTestHost.create!
+    pending_host.linked_resources.create!(source: "Pleiades", external_id: "687917", status: "pending")
+    approved_host = LinkablePleiadesTestHost.create!
+    approved_host.linked_resources.create!(source: "Pleiades", external_id: "423422", status: "approved")
+
+    result = LinkablePleiadesTestHost.pending_pleiades_link
+    assert_includes result, pending_host
+    refute_includes result, approved_host
+  end
+
+  test "class.linked_resource_issues for the Pleiades host has only Pleiades issues" do
+    issues = LinkablePleiadesTestHost.linked_resource_issues
+    assert_includes issues, :missing_pleiades_link
+    assert_includes issues, :pending_pleiades_link
+    refute_includes issues, :missing_wikidata_link
+    refute_includes issues, :pending_wikidata_link
+  end
+
+  test "instance.linked_resource_issues returns the Pleiades missing issue" do
+    host = LinkablePleiadesTestHost.create!
+    assert_equal [ :missing_pleiades_link ], host.linked_resource_issues
+  end
+
+  test "instance.linked_resource_issues returns the Pleiades pending issue" do
+    host = LinkablePleiadesTestHost.create!
+    host.linked_resources.create!(source: "Pleiades", external_id: "687917", status: "pending")
+    assert_equal [ :pending_pleiades_link ], host.linked_resource_issues
   end
 end

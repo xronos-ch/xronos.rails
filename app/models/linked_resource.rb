@@ -31,7 +31,7 @@ class LinkedResource < ApplicationRecord
   # every Zeitwerk reload, so the registry stays populated through
   # dev-mode reloads without a separate to_prepare / after_initialize
   # hook in config/.
-  KNOWN_SOURCES = %i[wikidata].freeze
+  KNOWN_SOURCES = %i[wikidata pleiades].freeze
   KNOWN_SOURCES.each do |key|
     Sources.const_get(key.to_s.camelize)
     next if Source.known?(key.to_s)

@@ -93,4 +93,34 @@ class LinkedResource::SourceTest < ActiveSupport::TestCase
     refute wikidata.valid_id?('123')
     refute wikidata.valid_id?('abc')
   end
+
+  test 'the Pleiades source module registers itself on load' do
+    assert LinkedResource::Source.known?('Pleiades')
+  end
+
+  test 'known-source Pleiades has expected attributes' do
+    pleiades = LinkedResource::Source.find('Pleiades')
+    assert_equal 'https://pleiades.stoa.org/places/687917', pleiades.url_for('687917')
+  end
+
+  test 'known-source Pleiades id_pattern accepts positive integers' do
+    pleiades = LinkedResource::Source.find('Pleiades')
+    assert pleiades.valid_id?('687917')
+    assert pleiades.valid_id?('1')
+    refute pleiades.valid_id?('Q42')
+    refute pleiades.valid_id?('abc')
+    refute pleiades.valid_id?('')
+  end
+
+  test 'known-source Pleiades has no logo (falls back to letter icon)' do
+    pleiades = LinkedResource::Source.find('Pleiades')
+    refute pleiades.has_logo?
+    assert_nil pleiades.icon
+  end
+
+  test 'known-source Wikidata defaults to has_logo? true' do
+    wikidata = LinkedResource::Source.find('Wikidata')
+    assert wikidata.has_logo?
+    assert_equal 'wikidata', wikidata.icon
+  end
 end

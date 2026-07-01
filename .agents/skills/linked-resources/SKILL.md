@@ -83,7 +83,9 @@ A new source typically needs only the registry entry. The `Linkable` macro picks
 
 A PORO nested under `LinkedResource` (per the PORO-under-AR convention). Holds the per-source configuration.
 
-**Each known source is a separate file** at `app/models/linked_resource/sources/<key>.rb`, defining a module `LinkedResource::Sources::<KeyCamelized>` that exposes an `ATTRIBUTES` constant (a frozen hash) **and calls `Source.register` at the bottom** to register itself when Zeitwerk loads the file. The `LinkedResource` model keeps a `KNOWN_SOURCES` whitelist that triggers the load (via `const_get`) and then asserts each source actually registered — so a missing or misbehaving source module fails loudly at class-load time rather than silently at use-time. The class body re-evaluates on every Zeitwerk reload, so the registry is repopulated in development without a separate `to_prepare` / `after_initialize` hook:
+**Each known source is a separate file** at `app/models/linked_resource/sources/<key>.rb`, defining a module `LinkedResource::Sources::<KeyCamelized>` that exposes an `ATTRIBUTES` constant (a frozen hash) **and calls `Source.register` at the bottom** to register itself when Zeitwerk loads the file. The `LinkedResource` model keeps a `KNOWN_SOURCES` whitelist that triggers the load (via `const_get`) and then asserts each source actually registered — so a missing or misbehaving source module fails loudly at class-load time rather than silently at use-time. The class body re-evaluates on every Zeitwerk reload, so the registry is repopulated in development without a separate `to_prepare` / `after_initialize` hook.
+
+Pleiades (no brand logo) is a representative example:
 
 ```ruby
 # app/models/linked_resource/sources/pleiades.rb
@@ -94,8 +96,8 @@ class LinkedResource
         name: "Pleiades",
         url_template: "https://pleiades.stoa.org/places/%<id>s",
         id_pattern: /\A\d+\z/,
-        icon: "pleiades",
-        description: "Pleiades place identifier"
+        has_logo: false,
+        description: "Pleiades place resource"
       }.freeze
 
       LinkedResource::Source.register(:pleiades, **ATTRIBUTES)
@@ -108,9 +110,10 @@ end
 # app/models/linked_resource.rb
 class LinkedResource < ApplicationRecord
   KNOWN_SOURCES = %i[wikidata pleiades].freeze
-  KNOWN_SOURCES.each { |key| Sources.const_get(key.to_s.camelize) }
   KNOWN_SOURCES.each do |key|
+    Sources.const_get(key.to_s.camelize)
     next if Source.known?(key.to_s)
+
     raise "Known source :#{key} is not registered. Check that " \
       "app/models/linked_resource/sources/#{key}.rb defines module " \
       "LinkedResource::Sources::#{key.to_s.camelize} and calls " \
@@ -128,7 +131,14 @@ end
 - `LinkedResource::Source.known?(name)` — boolean
 - `LinkedResource::Source.all` — array of all registered
 - `LinkedResource::Source.reset!` — for tests
-- Instance: `source.url_for(id)`, `source.valid_id?(id)`, `source.external_code(id)` (= `id_prefix + id`, currently unused for non-Wikidata sources)
+- Instance: `source.url_for(id)`, `source.valid_id?(id)`, `source.has_logo?` (true by default; false for sources that fall back to a letter icon — see "Icons" below)
+
+## Icons: logo SVG or letter fallback
+
+The icon for a source is rendered by the `linked_resource_icon(source_name)` helper in `app/helpers/linked_resources_helper.rb`. Two paths:
+
+- **Has a logo SVG** (`has_logo: true`, the default): the source's `icon` attribute is a SimpleIcons slug, and the helper renders `simple_icon(slug)`, which embeds the SVG at `app/assets/images/simple_icons/<slug>.svg`. Example: Wikidata → `simple_icon "wikidata"`.
+- **No logo** (`has_logo: false`): the helper falls back to a Bootstrap Icons letter-circle built from the first letter of the source's name — `bs_icon "#{name.first.downcase}-circle"`. Example: Pleiades → `bs_icon "p-circle"`. The Bootstrap Icons `*-circle` alphabet is available for every letter, so the fallback works for any future source without a brand logo (Pleiades, Vici.org, OpenContext, iDAI, …).
 
 ## The `Linkable` concern
 
@@ -170,11 +180,12 @@ When writing any new external-service integration:
 - Use `Rails.cache` to memoize external responses; default TTL ≥ 1 day.
 - If a record needs to be enriched on user-visible display, do it once at save and store the result. Never fetch on every request.
 
-## Adding a new source
+## Adding a new source: worked example (Pleiades)
 
 Most sources need only steps 1–2. Add a concern only if you need SPARQL/API enrichment.
 
-1. **Create a source module** at `app/models/linked_resource/sources/<key>.rb` (e.g. `pleiades.rb`). The filename is the source key in lowercase; the module name is the camelized form. The module exposes an `ATTRIBUTES` hash and **calls `Source.register` at the bottom** to register itself when loaded:
+1. **Create a source module** at `app/models/linked_resource/sources/<key>.rb` (e.g. `pleiades.rb`). The filename is the source key in lowercase; the module name is the camelized form. The module exposes an `ATTRIBUTES` hash and **calls `Source.register` at the bottom** to register itself when loaded. Set `has_logo: false` if the source has no brand logo (see "Icons" above); set `icon: "<simpleicons-slug>"` (and `has_logo: true`, the default) if it does.
+
    ```ruby
    # app/models/linked_resource/sources/pleiades.rb
    class LinkedResource
@@ -184,8 +195,8 @@ Most sources need only steps 1–2. Add a concern only if you need SPARQL/API en
            name: "Pleiades",
            url_template: "https://pleiades.stoa.org/places/%<id>s",
            id_pattern: /\A\d+\z/,
-           icon: "pleiades",
-           description: "Pleiades place identifier"
+           has_logo: false,
+           description: "Pleiades place resource"
          }.freeze
 
          LinkedResource::Source.register(:pleiades, **ATTRIBUTES)
@@ -194,9 +205,9 @@ Most sources need only steps 1–2. Add a concern only if you need SPARQL/API en
    end
    ```
 2. **Add the key** to `LinkedResource::KNOWN_SOURCES` in `app/models/linked_resource.rb`. The model iterates this list to trigger each source's load and then asserts the registration actually happened. Forgetting the `Source.register` call (or getting the key wrong) will raise a loud error at class-load time, not at use-time.
-3. **Add `linkable_to :pleiades`** to the host model (e.g. `Site`).
-4. **Add a SimpleIcons SVG** at `app/assets/images/simple_icons/pleiades.svg` (lowercase key) for the icon in `_linked_resource.html.erb`.
-5. **Test it** — `test/models/linked_resource/source_test.rb` for the registry, `test/models/concerns/linkable_test.rb` for the macro. The curation dashboard nav auto-populates; no view changes needed (the dashboard is intentionally Wikidata-only by default — see below).
+3. **Add `linkable_to :pleiades`** to the host model (e.g. `Site`). This generates `pleiades_link`, `missing_pleiades_link?`, `pending_pleiades_link?`, the corresponding scopes, and registers the issue symbols so the per-site view and curation dashboard auto-populate.
+4. **If the source has a logo** (the default path), add the SimpleIcons SVG at `app/assets/images/simple_icons/<key>.svg` (lowercase key). If `has_logo: false`, the `linked_resource_icon` helper falls back to a Bootstrap letter-circle — no asset to add.
+5. **Test it** — `test/models/linked_resource/source_test.rb` for the registry (including `id_pattern` boundary cases and `has_logo?` for both states), `test/models/concerns/linkable_test.rb` for the macro on the new source. The site page's "Add {source} link" button and the missing/pending badges appear automatically; no view changes needed.
 
 ## The curation dashboard — Wikidata-only by design
 
@@ -234,6 +245,7 @@ If a new source has an enrichment flow (e.g. matching C14s to Pleiades, finding 
 - `app/controllers/linked_resources_controller.rb` — CRUD
 - `app/controllers/linked_resources/sites_controller.rb` — curation dashboard
 - `app/views/linked_resources/` — CRUD and curation views
+- `app/helpers/linked_resources_helper.rb` — `linked_resource_icon` (logo SVG or letter-circle fallback), `linked_resource_badge` (issue badge)
 - `lib/xronos.rb` — `Xronos::USER_AGENT`, `Xronos::CONTACT_EMAIL`
 - `test/models/linked_resource_test.rb`
 - `test/models/linked_resource/source_test.rb`
