@@ -152,9 +152,4 @@ Rails.application.routes.draw do
     end
   end
 
-  # MIaaRD export
-  namespace :miaard do
-    resources :c14s, only: [:index, :show]
-  end
-  
 end

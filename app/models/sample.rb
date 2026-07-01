@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: samples
@@ -28,12 +30,16 @@ class Sample < ApplicationRecord
   include Versioned
   include HasControlledTerms
 
-  controlled_term :part_of_organism, vocabulary: "part_of_organism"
+  controlled_term :part_of_organism, vocabulary: 'part_of_organism'
 
   delegate :site, to: :context
-  
+
   belongs_to :context, optional: true
-  accepts_nested_attributes_for :context, :reject_if => proc { |attributes| attributes.all? { |key, value| key == "_destroy" || value.blank? || (value.is_a?(Hash) && value.values.all?(&:blank?)) } }
+  accepts_nested_attributes_for :context, reject_if: proc { |attributes|
+    attributes.all? do |key, value|
+      key == '_destroy' || value.blank? || (value.is_a?(Hash) && value.values.all?(&:blank?))
+    end
+  }
   validates_associated :context
 
   belongs_to :material, optional: true
@@ -54,26 +60,34 @@ class Sample < ApplicationRecord
   has_many :typos, dependent: :destroy
 
   include PgSearch::Model
-  pg_search_scope :search, 
-    against: :position_description,
-    using: { tsearch: { prefix: true } } # match partial words
+  pg_search_scope :search,
+                  against: :position_description,
+                  using: { tsearch: { prefix: true } } # match partial words
   acts_as_copy_target # enable CSV exports
 
   include HasIssues
-  @issues = [ :missing_material, :missing_taxon, :missing_crs ]
+  @issues = %i[missing_material missing_taxon missing_crs]
 
   def self.label
-    "sample"
+    'sample'
   end
 
   def destroy_material_if_orphaned
     return if material.nil?
+
     material.destroy_if_orphaned
   end
 
   def destroy_taxon_if_orphaned
     return if taxon.nil?
+
     taxon.destroy_if_orphaned
+  end
+
+  def gbif_taxon_uri
+    return nil if taxon.blank? || taxon.gbif_id.blank?
+
+    "gbif:#{taxon.gbif_id}"
   end
 
   # Issues
@@ -87,9 +101,11 @@ class Sample < ApplicationRecord
     taxon.blank?
   end
 
-  scope :missing_crs, -> { where('position_crs IS NULL AND (position_x IS NOT NULL OR position_y IS NOT NULL OR position_z IS NOT NULL)') }
+  scope :missing_crs, lambda {
+    where('position_crs IS NULL AND (position_x IS NOT NULL OR position_y IS NOT NULL OR position_z IS NOT NULL)')
+  }
   def missing_crs?
-    if position_x.blank? and position_y.blank? and position_z.blank?
+    if position_x.blank? && position_y.blank? && position_z.blank?
       false
     else
       position_crs.blank?

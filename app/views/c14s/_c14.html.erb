@@ -29,7 +29,7 @@
       <%= c14.references.count %>
     <% end %>
 
-    <%= link_to miaard_c14_path(c14, format: :json),
+    <%= link_to c14_path(c14, format: :json, schema: C14::MIAARD::SCHEMA),
                 class: "card-link fw-semibold",
                 title: "Export as MIaaRD JSON" do %>
       MIaaRD JSON

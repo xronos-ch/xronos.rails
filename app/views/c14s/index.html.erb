@@ -15,7 +15,7 @@
                     title: "Download CSV" %>
 
         <%= link_to "MIaaRD JSON",
-                    miaard_c14s_path(format: :json, c14: @c14_params.to_h),
+                    c14s_path(format: :json, schema: C14::MIAARD::SCHEMA, c14: @c14_params.to_h),
                     class: "btn btn-sm btn-outline-primary",
                     title: "Export the current C14 selection as a MIaaRD JSON collection" %>
       </div>
