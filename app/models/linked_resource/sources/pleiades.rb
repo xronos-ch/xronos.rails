@@ -7,7 +7,6 @@ class LinkedResource
         name: "Pleiades",
         url_template: "https://pleiades.stoa.org/places/%<id>s",
         id_pattern: /\A\d+\z/,
-        has_logo: false,
         description: "Pleiades place resource"
       }.freeze
 

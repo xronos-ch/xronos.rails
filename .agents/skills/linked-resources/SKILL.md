@@ -97,7 +97,6 @@ class LinkedResource
         name: "Pleiades",
         url_template: "https://pleiades.stoa.org/places/%<id>s",
         id_pattern: /\A\d+\z/,
-        has_logo: false,
         description: "Pleiades place resource"
       }.freeze
 
@@ -132,14 +131,14 @@ end
 - `LinkedResource::Source.known?(name)` — boolean
 - `LinkedResource::Source.all` — array of all registered
 - `LinkedResource::Source.reset!` — for tests
-- Instance: `source.url_for(id)`, `source.valid_id?(id)`, `source.has_logo?` (true by default; false for sources that fall back to a letter icon — see "Icons" below)
+- Instance: `source.url_for(id)`, `source.valid_id?(id)`. The optional `icon` attribute is a SimpleIcons slug (see "Icons" below).
 
-## Icons: logo SVG or letter fallback
+## Icons
 
-The icon for a source is rendered by the `linked_resource_icon(source_name)` helper in `app/helpers/linked_resources_helper.rb`. Two paths:
+The icon for a source is rendered by the `linked_resource_icon(source_name)` helper in `app/helpers/linked_resources_helper.rb`.
 
-- **Has a logo SVG** (`has_logo: true`, the default): the source's `icon` attribute is a SimpleIcons slug, and the helper renders `simple_icon(slug)`, which embeds the SVG at `app/assets/images/simple_icons/<slug>.svg`. Example: Wikidata → `simple_icon "wikidata"`.
-- **No logo** (`has_logo: false`): the helper falls back to a Bootstrap Icons letter-circle built from the first letter of the source's name — `bs_icon "#{name.first.downcase}-circle"`. Example: Pleiades → `bs_icon "p-circle"`. The Bootstrap Icons `*-circle` alphabet is available for every letter, so the fallback works for any future source without a brand logo (Pleiades, Vici.org, OpenContext, iDAI, …).
+- **Source has a brand logo** (set the `icon` attribute to a SimpleIcons slug): the helper renders `simple_icon(slug)`, which embeds the SVG at `app/assets/images/simple_icons/<slug>.svg`. Example: Wikidata → `icon: "wikidata"` → `simple_icon "wikidata"`.
+- **Source has no logo** (omit the `icon` attribute): the helper renders nothing. Example: Pleiades and Vici.org have no `icon` attribute, so the linked-resource card shows just the source name.
 
 ## The `Linkable` concern
 
@@ -185,7 +184,7 @@ When writing any new external-service integration:
 
 Most sources need only steps 1–2. Add a concern only if you need SPARQL/API enrichment.
 
-1. **Create a source module** at `app/models/linked_resource/sources/<key>.rb` (e.g. `pleiades.rb`). The filename is the source key in lowercase; the module name is the camelized form. The module exposes an `ATTRIBUTES` hash and **calls `Source.register` at the bottom** to register itself when loaded. Set `has_logo: false` if the source has no brand logo (see "Icons" above); set `icon: "<simpleicons-slug>"` (and `has_logo: true`, the default) if it does.
+1. **Create a source module** at `app/models/linked_resource/sources/<key>.rb` (e.g. `pleiades.rb`). The filename is the source key in lowercase; the module name is the camelized form. The module exposes an `ATTRIBUTES` hash and **calls `Source.register` at the bottom** to register itself when loaded. If the source has a SimpleIcons brand logo, set `icon: "<slug>"` (see "Icons" above); otherwise omit it.
 
    ```ruby
    # app/models/linked_resource/sources/pleiades.rb
@@ -196,7 +195,6 @@ Most sources need only steps 1–2. Add a concern only if you need SPARQL/API en
            name: "Pleiades",
            url_template: "https://pleiades.stoa.org/places/%<id>s",
            id_pattern: /\A\d+\z/,
-           has_logo: false,
            description: "Pleiades place resource"
          }.freeze
 
@@ -207,7 +205,7 @@ Most sources need only steps 1–2. Add a concern only if you need SPARQL/API en
    ```
 2. **Add the key** to `LinkedResource::KNOWN_SOURCES` in `app/models/linked_resource.rb`. The model iterates this list to trigger each source's load and then asserts the registration actually happened. Forgetting the `Source.register` call (or getting the key wrong) will raise a loud error at class-load time, not at use-time.
 3. **Add `linkable_to :pleiades`** to the host model (e.g. `Site`). This generates `pleiades_link`, `missing_pleiades_link?`, `pending_pleiades_link?`, the corresponding scopes, and registers the issue symbols so the per-site view and curation dashboard auto-populate.
-4. **If the source has a logo** (the default path), add the SimpleIcons SVG at `app/assets/images/simple_icons/<key>.svg` (lowercase key). If `has_logo: false`, the `linked_resource_icon` helper falls back to a Bootstrap letter-circle — no asset to add.
+4. **If the source has a brand logo** (i.e. you set `icon:` in step 1), add the SimpleIcons SVG at `app/assets/images/simple_icons/<slug>.svg` matching the `icon` slug. If the source has no logo, omit the `icon` attribute and skip this step.
 5. **Test it** — no per-source parallel coverage. The macro and registry are tested once with a test source (see "Testing strategy" below); real sources are covered by parameterized tests that iterate `KNOWN_SOURCES`. Add a new source: (a) append the key to `KNOWN_SOURCES`, (b) add a `(name, id, expected_url)` row to the URL-templates test, (c) optionally add the host-model's `linkable_to` line. The site page's "Add {source} link" button and the missing/pending badges appear automatically; no view changes needed.
 
 ## Testing strategy

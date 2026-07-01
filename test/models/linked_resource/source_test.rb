@@ -99,10 +99,4 @@ class LinkedResource::SourceTest < ActiveSupport::TestCase
         "URL template for #{name} should produce #{expected_url}"
     end
   end
-
-  test 'known-source Wikidata defaults to has_logo? true' do
-    wikidata = LinkedResource::Source.find('Wikidata')
-    assert wikidata.has_logo?
-    assert_equal 'wikidata', wikidata.icon
-  end
 end
