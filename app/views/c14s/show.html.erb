@@ -77,6 +77,11 @@
       <section id="c14-calibration" class="section-with-legend mt-5 position-relative">
         <h2 class="legend">
           <%= bs_icon "graph-down", class: "me-1" %>Calibration
+          <%= bs_icon "question-circle",
+            class: "text-muted",
+            data: { bs_toggle: "tooltip", controller: "tooltips" },
+            title: "Estimated real calendar age of the sample based on default calibration parameters; use with caution."
+          %>
         </h2>
         <div class="section-body">
           <%= render "c14_calibration" %>
