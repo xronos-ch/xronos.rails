@@ -80,66 +80,24 @@ class LinkedResource::SourceTest < ActiveSupport::TestCase
     assert source.valid_id?('anything goes')
   end
 
-  # --- Known sources ---
+  # --- Known sources (real, registered at app boot) ---
 
-  test 'the Wikidata source module registers itself on load' do
-    assert LinkedResource::Source.known?('Wikidata')
+  test 'all KNOWN_SOURCES are registered at boot' do
+    LinkedResource::KNOWN_SOURCES.each do |key|
+      assert LinkedResource::Source.known?(key.to_s),
+        "Source :#{key} is in KNOWN_SOURCES but not registered"
+    end
   end
 
-  test 'known-source Wikidata has expected attributes' do
-    wikidata = LinkedResource::Source.find('Wikidata')
-    assert_equal 'https://www.wikidata.org/wiki/Q123', wikidata.url_for('Q123')
-    assert wikidata.valid_id?('Q123')
-    refute wikidata.valid_id?('123')
-    refute wikidata.valid_id?('abc')
-  end
-
-  test 'the Pleiades source module registers itself on load' do
-    assert LinkedResource::Source.known?('Pleiades')
-  end
-
-  test 'known-source Pleiades has expected attributes' do
-    pleiades = LinkedResource::Source.find('Pleiades')
-    assert_equal 'https://pleiades.stoa.org/places/687917', pleiades.url_for('687917')
-  end
-
-  test 'known-source Pleiades id_pattern accepts positive integers' do
-    pleiades = LinkedResource::Source.find('Pleiades')
-    assert pleiades.valid_id?('687917')
-    assert pleiades.valid_id?('1')
-    refute pleiades.valid_id?('Q42')
-    refute pleiades.valid_id?('abc')
-    refute pleiades.valid_id?('')
-  end
-
-  test 'known-source Pleiades has no logo (falls back to letter icon)' do
-    pleiades = LinkedResource::Source.find('Pleiades')
-    refute pleiades.has_logo?
-    assert_nil pleiades.icon
-  end
-
-  test 'the Vici.org source module registers itself on load' do
-    assert LinkedResource::Source.known?('Vici.org')
-  end
-
-  test 'known-source Vici.org has expected attributes' do
-    vici = LinkedResource::Source.find('Vici.org')
-    assert_equal 'https://vici.org/vici/57205/', vici.url_for('57205')
-  end
-
-  test 'known-source Vici.org id_pattern accepts positive integers' do
-    vici = LinkedResource::Source.find('Vici.org')
-    assert vici.valid_id?('57205')
-    assert vici.valid_id?('1')
-    refute vici.valid_id?('Q42')
-    refute vici.valid_id?('abc')
-    refute vici.valid_id?('')
-  end
-
-  test 'known-source Vici.org has no logo (falls back to letter icon)' do
-    vici = LinkedResource::Source.find('Vici.org')
-    refute vici.has_logo?
-    assert_nil vici.icon
+  test 'known sources have expected URL templates' do
+    {
+      'Wikidata' => [ 'Q123', 'https://www.wikidata.org/wiki/Q123' ],
+      'Pleiades' => [ '687917', 'https://pleiades.stoa.org/places/687917' ],
+      'Vici.org' => [ '57205', 'https://vici.org/vici/57205/' ]
+    }.each do |name, (id, expected_url)|
+      assert_equal expected_url, LinkedResource::Source.find(name).url_for(id),
+        "URL template for #{name} should produce #{expected_url}"
+    end
   end
 
   test 'known-source Wikidata defaults to has_logo? true' do

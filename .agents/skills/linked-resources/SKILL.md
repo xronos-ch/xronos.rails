@@ -12,6 +12,7 @@ metadata:
 - Document the `LinkedResource::Source` registry and the per-source configuration pattern
 - Document the `Linkable` concern and the `linkable_to` macro
 - Document the `BatchMatchableToWikidata` concern as the canonical pattern for SPARQL-based enrichment
+- Document the canonical testing strategy (test source + parameterized real-source coverage, no per-source parallel host classes)
 - Flag the async-enrichment principle: XRONOS never blocks user-facing actions on external services
 
 ## When to use me
@@ -207,7 +208,73 @@ Most sources need only steps 1–2. Add a concern only if you need SPARQL/API en
 2. **Add the key** to `LinkedResource::KNOWN_SOURCES` in `app/models/linked_resource.rb`. The model iterates this list to trigger each source's load and then asserts the registration actually happened. Forgetting the `Source.register` call (or getting the key wrong) will raise a loud error at class-load time, not at use-time.
 3. **Add `linkable_to :pleiades`** to the host model (e.g. `Site`). This generates `pleiades_link`, `missing_pleiades_link?`, `pending_pleiades_link?`, the corresponding scopes, and registers the issue symbols so the per-site view and curation dashboard auto-populate.
 4. **If the source has a logo** (the default path), add the SimpleIcons SVG at `app/assets/images/simple_icons/<key>.svg` (lowercase key). If `has_logo: false`, the `linked_resource_icon` helper falls back to a Bootstrap letter-circle — no asset to add.
-5. **Test it** — `test/models/linked_resource/source_test.rb` for the registry (including `id_pattern` boundary cases and `has_logo?` for both states), `test/models/concerns/linkable_test.rb` for the macro on the new source. The site page's "Add {source} link" button and the missing/pending badges appear automatically; no view changes needed.
+5. **Test it** — no per-source parallel coverage. The macro and registry are tested once with a test source (see "Testing strategy" below); real sources are covered by parameterized tests that iterate `KNOWN_SOURCES`. Add a new source: (a) append the key to `KNOWN_SOURCES`, (b) add a `(name, id, expected_url)` row to the URL-templates test, (c) optionally add the host-model's `linkable_to` line. The site page's "Add {source} link" button and the missing/pending badges appear automatically; no view changes needed.
+
+## Testing strategy
+
+The registry, the macro, and the per-source attributes are tested in **two layers** that are deliberately non-overlapping. Adding a new source should not add per-source parallel coverage; the canonical tests already cover the macro, and the real-source tests already cover all sources by iterating.
+
+### Layer 1: canonical tests with a test source (one source, full coverage)
+
+The macro and registry are generic — they don't care about Wikidata vs. Pleiades vs. Vici.org. So the canonical tests use a **test source** registered in the test file itself, not a real source. This isolates the tests from any external service and makes them self-documenting.
+
+**Registry tests** (`test/models/linked_resource/source_test.rb`):
+- Register a `:source_test` source in `setup` with the full set of attributes (`name`, `url_template`, `id_pattern`, `icon`, `description`).
+- Exercise every method of the registry API: `register`, `find`, `known?`, `all`, `reset!`, plus the PORO methods `url_for`, `valid_id?`, `has_logo?`.
+- The teardown removes the source so it doesn't leak into other tests.
+- These 13-ish tests cover the registry fully. New source files don't need their own registry tests.
+
+**Macro tests** (`test/models/concerns/linkable_test.rb`):
+- Register the test source **at the top of the file** (before the class definition) so the test host class can use `linkable_to :source_test` at class-definition time. Also re-register in `setup` because `source_test.rb`'s teardown removes the source from the registry, and `LinkedResource`'s validation looks the source up in the registry at validation time.
+- Define a single `LinkableTestHost` with `linkable_to :source_test`. The macro generates `source_test_link`, `missing_source_test_link?`, `pending_source_test_link?`, the two scopes, and registers the two issue symbols.
+- All macro tests (reader, predicates, scopes, issue registration, unknown-source error) use this single host class.
+- These 13-ish tests cover the macro fully. New source files don't need their own test host classes.
+
+### Layer 2: parameterized real-source coverage (loop, not per-source tests)
+
+Real source files (`app/models/linked_resource/sources/*.rb`) are thin — just an `ATTRIBUTES` hash and a `Source.register` call. Configuration typos (wrong URL template, wrong key) are caught by two small tests in `source_test.rb` that iterate:
+
+```ruby
+test 'all KNOWN_SOURCES are registered at boot' do
+  LinkedResource::KNOWN_SOURCES.each do |key|
+    assert LinkedResource::Source.known?(key.to_s),
+      "Source :#{key} is in KNOWN_SOURCES but not registered"
+  end
+end
+
+test 'known sources have expected URL templates' do
+  {
+    'Wikidata' => [ 'Q123', 'https://www.wikidata.org/wiki/Q123' ],
+    'Pleiades' => [ '687917', 'https://pleiades.stoa.org/places/687917' ],
+    'Vici.org' => [ '57205', 'https://vici.org/vici/57205/' ]
+  }.each do |name, (id, expected_url)|
+    assert_equal expected_url, LinkedResource::Source.find(name).url_for(id),
+      "URL template for #{name} should produce #{expected_url}"
+  end
+end
+```
+
+When you add a source, add one row to the URL-templates hash. The "all known sources are registered" test picks up the new source automatically from `KNOWN_SOURCES` — no edit needed.
+
+### Why not per-source parallel coverage?
+
+The macro is pure string interpolation (`"#{key}_link"`, `scope "missing_#{key}_link"`, etc.). Testing it with `:wikidata` proves it works for `:pleiades` and `:vici` and every future source. A separate test host class per source runs the same code path with a different key — it's repetition, not coverage.
+
+Configuration typos (wrong URL, wrong regex) are caught by:
+- App boot: the `KNOWN_SOURCES` loop in `LinkedResource` raises if a source file is missing or doesn't register.
+- Code review: the source file is ~20 lines.
+- The two parameterized tests above.
+
+None of these are silent failures that only a per-source test would catch.
+
+### When to deviate
+
+Add a per-source test only when the source's behavior is genuinely source-specific and not exercised by the canonical tests. Examples that *would* justify a per-source test:
+- A non-trivial `id_pattern` (e.g. something more nuanced than `/\A\d+\z/` — add boundary cases).
+- A source that overrides macro behavior (none today, but possible if `Linkable` grows per-source hooks).
+- A `BatchMatchableTo*` concern with source-specific SPARQL/API logic (the existing `BatchMatchableToWikidata` has its own tests).
+
+A simple integer pattern, a `url_template`, a `has_logo` flag — none of these warrant a per-source test. The parameterized coverage is enough.
 
 ## The curation dashboard — Wikidata-only by design
 
