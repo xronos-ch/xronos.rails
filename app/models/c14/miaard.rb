@@ -38,25 +38,6 @@ class C14
       suspected_reservoir_effect
     ].freeze
 
-    REQUIRED_FIELDS = %i[
-      lab_code
-      lab_id
-      f14c
-      f14c_error
-      sample_ids
-      sample_material
-      sample_taxon_id
-      sample_taxon_id_confidence
-      pretreatment_methods
-      pretreatment_method_description
-      pretreatment_method_protocol
-      measurement_method
-      sample_starting_weight
-      pretreatment_yield
-      carbon_proportion
-      suspected_reservoir_effect
-    ].freeze
-
     def self.collection(c14s)
       c14s.map { |c14| new(c14) }
     end
@@ -76,8 +57,8 @@ class C14
         f14c: @source.f14c,
         f14c_error: @source.f14c_error,
         delta_13_c_calculation_method: nil,
-        sample_ids: sample_ids,
-        sample_material: nil,
+        sample_ids: nil,
+        sample_material: @source.sample&.material&.name,
         sample_taxon_id: @source.sample&.gbif_taxon_uri,
         sample_taxon_id_confidence: sample_taxon_id_confidence,
         sample_taxon_scientific_name: @source.sample&.taxon_name,
@@ -103,40 +84,18 @@ class C14
       }
     end
 
-    def missing_required_fields
-      to_h.select { |field, value| REQUIRED_FIELDS.include?(field) && missing?(value) }.keys
-    end
-
-    def completeness_report
-      missing = missing_required_fields
-      {
-        valid_against_current_miaard_required_fields: missing.empty?,
-        exported_fields: to_h.keys,
-        missing_required_fields: missing,
-        derived_fields: derived_fields
-      }
-    end
-
     private
 
     def lab_code
       return nil if @source.lab_id.blank? || @source.lab_id.invalid?
 
-      @source.lab_id.lab_code&.downcase
+      @source.lab_id.lab_code
     end
 
     def lab_id_value
       return nil if @source.lab_id.blank? || @source.lab_id.invalid?
 
       @source.lab_id.lab_number
-    end
-
-    def sample_ids
-      [
-        @source.lab_identifier,
-        "xronos:c14:#{@source.id}",
-        @source.sample&.id && "xronos:sample:#{@source.sample.id}"
-      ].compact
     end
 
     def sample_taxon_id_confidence
@@ -149,16 +108,8 @@ class C14
       case @source.method.to_s.strip.downcase
       when 'ams' then 'AMS'
       when 'pims' then 'PIMS'
-      when 'conventional', 'beta counting', 'gpc', 'lsc' then 'Conventional'
+      when 'conventional' then 'Conventional'
       end
-    end
-
-    def missing?(value)
-      value.nil? || value == '' || value == []
-    end
-
-    def derived_fields
-      %i[f14c f14c_error].select { |field| @source.public_send(field).present? }
     end
   end
 end
