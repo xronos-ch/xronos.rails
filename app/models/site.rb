@@ -21,17 +21,13 @@
 class Site < ApplicationRecord
   include Versioned
   include Supersedable
+  include BatchMatchableToWikidata
 
-  require 'net/http'
-  require 'json'
-  require 'uri'
-    
   # Children
   has_many :site_names, dependent: :destroy
   has_many :contexts
   destroy_async_with_paper_trail :contexts
   has_many :citations, as: :citing, dependent: :destroy_async
-  has_many :lod_links, as: :linkable, dependent: :destroy
 
   # Grandchildren
   has_many :samples, through: :contexts
@@ -56,7 +52,7 @@ class Site < ApplicationRecord
 
   validates :name, presence: true
 
-  accepts_nested_attributes_for :site_names, 
+  accepts_nested_attributes_for :site_names,
     reject_if: :all_blank, allow_destroy: true
 
   include Duplicable
@@ -66,9 +62,13 @@ class Site < ApplicationRecord
 
   include HasIssues
   @issues = [ :missing_coordinates, :invalid_coordinates, :missing_country_code ]
-  
-  include NeedsLods
-  @lods = [ :missing_wikidata_link, :pending_wikidata_link ]
+
+  include Linkable
+  linkable_to :wikidata
+  linkable_to :pleiades
+  linkable_to :vici
+  linkable_to :opencontext
+  linkable_to :idai_gazetteer
 
   include PgSearch::Model
   pg_search_scope :search, 
@@ -110,10 +110,6 @@ class Site < ApplicationRecord
       ISO3166::Country.find_country_by_any_name(country_code)
   end
   
-  def wikidata_link
-    lod_links.where(source: "Wikidata").first
-  end
-
   def country_from_coordinates
     return nil if lat.blank? || lng.blank?
 
@@ -136,38 +132,6 @@ class Site < ApplicationRecord
     end
   end
 
-  def self.wikidata_match_candidates_batch(sites)
-    # Filter for sites without a Wikidata link
-    sites_without_wikidata_link = sites.select { |site| site.lod_links.where(source: "Wikidata").empty? }
-
-    return [] if sites_without_wikidata_link.empty?
-
-    # Prepare the data for SPARQL query
-    site_names = extract_site_names(sites_without_wikidata_link)
-    sparql_query = build_sparql_query(site_names)
-    response = execute_sparql_request(sparql_query)
-    wikidata_results = parse_wikidata_response(response)
-
-    # Iterate through the results and populate lod_links
-    wikidata_results.each do |site_name, matches|
-      site = sites_without_wikidata_link.find { |s| s.name == site_name }
-      next unless site
-
-      matches.each do |match|
-        # Find or create the LOD link for this Wikidata match
-        site.lod_links.find_or_create_by(source: "Wikidata", external_id: match.qid) do |lod_link|
-          lod_link.data = {
-            label: match.label,
-            description: match.description
-          }
-          lod_link.save!
-        end
-      end
-    end
-
-    wikidata_results # Return results for reference
-  end
- 
   def n_c14s
     c14s.count
   end
@@ -215,93 +179,6 @@ class Site < ApplicationRecord
   scope :missing_country_code, -> { where("country_code = '' OR country_code IS NULL") }
   def missing_country_code?
     country_code.blank?
-  end
-  
-  # LODs
-  scope :missing_wikidata_link, -> {
-    where.not(id: LodLink.where(linkable_type: "Site", source: "Wikidata").select(:linkable_id).distinct)
-  }
-  def missing_wikidata_link?
-    wikidata_link.blank?
-  end
-  
-  scope :pending_wikidata_link, -> {
-    joins(:lod_links).where(lod_links: { source: "Wikidata", status: "pending" })
-  }
-  def pending_wikidata_link?
-    wikidata_link&.status == "pending"
-  end
-
-  private
-
-  # Generate a unique cache key for the batch of sites
-  def self.generate_cache_key(sites)
-    site_names = sites.pluck(:name).compact.reject(&:blank?) # Remove nil and blank names
-    "wikidata_match_batch/#{Digest::MD5.hexdigest(site_names.sort.join(','))}"
-  end
-
-  # Extracts names from the sites
-  def self.extract_site_names(sites)
-    sites.pluck(:name).map { |name| "\"#{name}\"@en" }.join(" ")
-  end
-
-  # Builds the SPARQL query
-  def self.build_sparql_query(site_names)
-    <<-SPARQL
-      SELECT ?item ?itemLabel ?itemDescription ?name
-             (CONCAT("https://www.wikidata.org/wiki/", SUBSTR(STR(?item), 32)) AS ?itemURL) WHERE {
-        VALUES ?name { #{site_names} }
-        ?item wdt:P31 wd:Q839954.
-        ?item rdfs:label ?name.
-        SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-      }
-    SPARQL
-  end
-
-  # Executes the SPARQL request
-  def self.execute_sparql_request(sparql_query)
-    url = URI("https://query.wikidata.org/sparql?query=#{URI.encode_www_form_component(sparql_query)}&format=json")
-    request = Net::HTTP::Get.new(url)
-    request['User-Agent'] = 'XRONOS/1.0 (martin.hinz@unibe.ch)'
-
-    Net::HTTP.start(url.hostname, url.port, use_ssl: true, open_timeout: 2, read_timeout: 3) do |http|
-      if Rails.env.development?
-        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      end
-      http.request(request)
-    end
-
-  rescue OpenSSL::SSL::SSLError => e
-    if Rails.env.development?
-      Rails.logger.warn("Wikidata SSL error in dev: #{e.class} - #{e.message}")
-      OpenStruct.new(body: '{"results":{"bindings":[]}}')
-    else
-      raise
-    end
-
-  # ▶ Your new catch-all rescue for typical connectivity problems
-  rescue Net::OpenTimeout, Net::ReadTimeout, SocketError => e
-    Rails.logger.warn "Wikidata lookup failed: #{e.class} – #{e.message}"
-    # Return an empty result so parse_wikidata_response does not explode
-    OpenStruct.new(body: '{"results":{"bindings":[]}}')
-  end
-
-  # Parses the response from Wikidata
-  def self.parse_wikidata_response(response)
-    data = JSON.parse(response.body)
-
-    data["results"]["bindings"]
-      .group_by { |result| result.dig("name", "value") }
-      .transform_values do |matches|
-        matches.map do |match|
-          OpenStruct.new(
-            qid: match.dig("item", "value")&.split("/")&.last&.gsub(/^Q/i, ''),
-            label: match.dig("itemLabel", "value"),
-            description: match.dig("itemDescription", "value"),
-            url: match.dig("itemURL", "value")
-          )
-        end
-      end
   end
   
 end

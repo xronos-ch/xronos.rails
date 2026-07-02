@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: lod_links
+# Table name: linked_resources
 # Database name: primary
 #
 #  id            :bigint           not null, primary key
@@ -15,13 +15,13 @@
 #
 # Indexes
 #
-#  index_lod_links_on_linkable_type_and_linkable_id       (linkable_type,linkable_id)
-#  index_lod_links_on_polymorphic_source_and_external_id  (linkable_type,linkable_id,source,external_id) UNIQUE
+#  index_linked_resources_on_linkable_and_source            (linkable_type,linkable_id,source) UNIQUE
+#  index_linked_resources_on_linkable_type_and_linkable_id  (linkable_type,linkable_id)
 #
 FactoryBot.define do
-  factory :lod_link do
+  factory :linked_resource do
     association :linkable, factory: :site
-    source { "Wikidata" }
-    external_id { Faker::Number.number(digits: 6) }
+    source { 'Wikidata' }
+    external_id { FactoryBot.external_id_for(source) }
   end
 end

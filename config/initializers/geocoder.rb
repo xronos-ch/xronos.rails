@@ -1,3 +1,5 @@
+require Rails.root.join("lib/xronos")
+
 Geocoder.configure(
   # Geocoding options
   # timeout: 3,                 # geocoding service timeout (secs)
@@ -8,7 +10,10 @@ Geocoder.configure(
   # http_proxy: nil,            # HTTP proxy server (user:pass@host:port)
   # https_proxy: nil,           # HTTPS proxy server (user:pass@host:port)
   # api_key: nil,               # API key for geocoding service
-  http_headers: { "User-Agent" => "https://xronos.ch" },
+  http_headers: {
+    "User-Agent" => Xronos::USER_AGENT,
+    "From" => Xronos::CONTACT_EMAIL
+  },
 
   # Exceptions that should not be rescued by default
   # (if you want to implement custom error handling);

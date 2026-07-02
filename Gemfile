@@ -139,6 +139,9 @@ gem 'leaflet-rails'
 # Charts
 gem 'vega'
 
+# Misc
+gem 'regexp-examples'
+
 # Get posts from blog.xronos.ch
 gem 'feedjira'
 gem 'httparty'

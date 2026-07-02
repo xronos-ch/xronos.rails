@@ -51,10 +51,10 @@ class SiteTest < ActiveSupport::TestCase
     assert_dependent_destroy(site, :citations, count: 2)
   end
 
-  test "destroying a site destroys its lod links" do
-    site = create(:site, :with_lod_links, lod_links_count: 2)
+  test "destroying a site destroys its linked resources" do
+    site = create(:site, :with_linked_resources, linked_resources_count: 2)
 
-    assert_dependent_destroy(site, :lod_links, count: 2)
+    assert_dependent_destroy(site, :linked_resources, count: 2)
   end
 
 end

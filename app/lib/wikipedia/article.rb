@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 module Wikipedia
-  USER_AGENT = 'XRONOS <https://xronos.ch>'
-
   module Article
     CACHE_TTL = 7.days
     NIL_CACHE_TTL = 1.hour
@@ -44,7 +42,12 @@ module Wikipedia
     end
 
     def self.client(lang)
-      Wikipedia::Client.new(Wikipedia::Configuration.new(domain: "#{lang}.wikipedia.org"))
+      Wikipedia::Client.new(Wikipedia::Configuration.new(
+        domain: "#{lang}.wikipedia.org",
+        user_agent: Xronos::USER_AGENT,
+        headers: { "From" => Xronos::CONTACT_EMAIL }
+      ))
     end
   end
 end
+

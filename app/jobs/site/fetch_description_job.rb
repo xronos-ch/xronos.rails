@@ -16,6 +16,6 @@ class Site::FetchDescriptionJob < ApplicationJob # rubocop:disable Style/ClassAn
     return unless site
     return unless site.wikidata_link&.approved?
 
-    Site::Description.new(lod_link: site.wikidata_link).data
+    Site::Description.new(linked_resource: site.wikidata_link).data
   end
 end

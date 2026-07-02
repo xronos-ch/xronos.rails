@@ -57,6 +57,9 @@ class C14 < ApplicationRecord
                missing_d13c missing_d13c_error missing_c14_method
                missing_c14_lab_id invalid_lab_id missing_c14_lab]
 
+  include Linkable
+  linkable_to :opencontext
+
   include PgSearch::Model
   pg_search_scope :search,
                   against: :lab_identifier,

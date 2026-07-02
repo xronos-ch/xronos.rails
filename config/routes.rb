@@ -59,7 +59,20 @@ Rails.application.routes.draw do
   resources :taxon_usages, only: [:index, :show]
 
   # External data resources
-  resources :lod_links, except: :index
+  # Note: the curation namespace below is defined first so that
+  # /linked_resources/sites matches the sites dashboard rather than
+  # the show action of the CRUD resource (where 'sites' would be
+  # treated as an :id).
+  namespace :linked_resources do
+    resources :sites, only: :index do
+      collection do
+        get ":issue", action: :index,
+          constraints: lambda { |req| Site.linked_resource_issues.include?(req.params[:issue].to_sym) }
+      end
+    end
+  end
+
+  resources :linked_resources, except: :index
 
   # User management
   devise_for :users, controllers: {
@@ -139,14 +152,6 @@ Rails.application.routes.draw do
   end
   
   # LODs
-  namespace :lods do
-    resources :sites, only: :index do
-      collection do
-        get ":lod", action: :index,
-          constraints: lambda { |req| Site.lods.include?(req.params[:lod].to_sym) }
-      end
-    end
-  end
 
   # API
   namespace :api, defaults: {format: 'json'} do

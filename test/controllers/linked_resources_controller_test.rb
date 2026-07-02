@@ -1,0 +1,165 @@
+# frozen_string_literal: true
+
+require 'test_helper'
+
+# Ensure Devise mappings are loaded before any sign_in call; the test
+# environment does not eager-load routes by default.
+Rails.application.routes.eager_load!
+
+class LinkedResourcesControllerTest < ActionDispatch::IntegrationTest
+  include Devise::Test::IntegrationHelpers
+
+  setup do
+    @site = create(:site)
+    @linked_resource = create(:linked_resource, linkable: @site, source: 'Wikidata', external_id: 'Q12345')
+    @admin = create(:user, :admin)
+  end
+
+  # --- show ---
+
+  test 'show renders the linked_resource partial' do
+    get linked_resource_path(@linked_resource)
+
+    assert_response :success
+    assert_match @linked_resource.external_id, response.body
+    assert_match @linked_resource.source, response.body
+  end
+
+  # --- destroy ---
+
+  test 'destroy as admin removes the record and redirects to the parent' do
+    sign_in @admin
+
+    assert_difference 'LinkedResource.count', -1 do
+      delete linked_resource_path(@linked_resource)
+    end
+    assert_redirected_to @site
+  end
+
+  test 'destroy returns a turbo stream that removes the frame when other linked_resources remain' do
+    create(:linked_resource, linkable: @site, source: 'Pleiades', external_id: '67890')
+    sign_in @admin
+
+    delete linked_resource_path(@linked_resource),
+           headers: { 'Accept' => 'text/vnd.turbo-stream.html, text/html' }
+
+    assert_response :success
+    assert_match(/<turbo-stream action="remove" target="linked_resource_#{@linked_resource.id}">/, response.body)
+  end
+
+  test 'destroy replaces the section with the empty state when the last linked_resource is removed' do
+    sign_in @admin
+
+    delete linked_resource_path(@linked_resource),
+           headers: { 'Accept' => 'text/vnd.turbo-stream.html, text/html' }
+
+    assert_response :success
+    assert_match(/<turbo-stream action="replace" target="site-external-links-content">/, response.body)
+    assert_match 'There is no linked data available', response.body
+  end
+
+  test 'destroy as a non-admin user returns not found' do
+    sign_in create(:user)
+
+    delete linked_resource_path(@linked_resource)
+
+    assert_response :not_found
+    assert LinkedResource.exists?(@linked_resource.id)
+  end
+
+  # --- new ---
+
+  test 'new with a source param pre-fills the source on the form' do
+    sign_in @admin
+    get new_linked_resource_path, params: {
+      linked_resource: { linkable_type: 'Site', linkable_id: @site.id, source: 'Pleiades' }
+    }
+
+    assert_response :success
+    assert_match 'name="linked_resource[source]"', response.body
+    assert_match 'value="Pleiades"', response.body
+  end
+
+  test 'new without a source param returns bad request' do
+    sign_in @admin
+    get new_linked_resource_path
+
+    assert_response :bad_request
+  end
+
+  test 'new with an unknown source returns bad request' do
+    sign_in @admin
+    get new_linked_resource_path, params: {
+      linked_resource: { linkable_type: 'Site', linkable_id: @site.id, source: 'NotASource' }
+    }
+
+    assert_response :bad_request
+  end
+
+  # --- create ---
+
+  test 'create with a source param creates the linked resource with that source' do
+    sign_in @admin
+
+    assert_difference 'LinkedResource.count' do
+      post linked_resources_path, params: {
+        linked_resource: {
+          linkable_type: 'Site', linkable_id: @site.id,
+          source: 'Pleiades', external_id: '999'
+        }
+      }
+    end
+
+    assert_equal 'Pleiades', LinkedResource.last.source
+    assert_response :redirect
+  end
+
+  test 'new silently redirects to the existing link edit form when one of that source already exists' do
+    sign_in @admin
+
+    get new_linked_resource_path, params: {
+      linked_resource: { linkable_type: 'Site', linkable_id: @site.id, source: 'Wikidata' }
+    }
+
+    assert_redirected_to edit_linked_resource_path(@linked_resource)
+  end
+
+  test 'new renders the form when no link of that source exists for the linkable' do
+    sign_in @admin
+
+    get new_linked_resource_path, params: {
+      linked_resource: { linkable_type: 'Site', linkable_id: @site.id, source: 'Pleiades' }
+    }
+
+    assert_response :success
+    assert_match 'name="linked_resource[source]"', response.body
+    assert_match 'value="Pleiades"', response.body
+  end
+
+  test 'create with a duplicate (linkable, source) returns unprocessable entity' do
+    sign_in @admin
+
+    assert_no_difference 'LinkedResource.count' do
+      post linked_resources_path, params: {
+        linked_resource: {
+          linkable_type: 'Site', linkable_id: @site.id,
+          source: 'Wikidata', external_id: 'Q99999'
+        }
+      }
+    end
+
+    assert_response :unprocessable_entity
+  end
+
+  test 'after deleting the only link of a source, a stale new request still creates a new record' do
+    sign_in @admin
+    @linked_resource.destroy
+
+    get new_linked_resource_path, params: {
+      linked_resource: { linkable_type: 'Site', linkable_id: @site.id, source: 'Wikidata' }
+    }
+
+    assert_response :success
+    assert_match 'value="Wikidata"', response.body
+  end
+end
