@@ -56,13 +56,13 @@ module Duplicable
 
     def merge_duplicates(duplicates)
       original = duplicates.first
-      dupes = duplicates.drop(1)
-      dupes.each do |dupe| 
-        dupe.superseded_by = original.id # TODO: why .id here??
-        dupe.revision_comment = "Merged with #{original.model_name.singular}:#{original.id}"
-        dupe.save!
+      duplicates.drop(1).each do |dupe|
+        dupe.supersede!(
+          original,
+          "Merged with #{original.model_name.singular}:#{original.id}"
+        )
       end
-      return original
+      original
     end
 
   end

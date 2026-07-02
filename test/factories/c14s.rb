@@ -1,35 +1,4 @@
-# == Schema Information
-#
-# Table name: c14s
-# Database name: primary
-#
-#  id             :bigint           not null, primary key
-#  bp             :integer
-#  cal_bp         :integer
-#  cal_std        :integer
-#  delta_15n      :float
-#  delta_c13      :float
-#  delta_c13_std  :float
-#  lab_identifier :string
-#  method         :string
-#  std            :integer
-#  superseded_by  :integer
-#  created_at     :datetime         not null
-#  updated_at     :datetime         not null
-#  c14_lab_id     :bigint
-#  sample_id      :bigint
-#
-# Indexes
-#
-#  index_c14s_on_c14_lab_id      (c14_lab_id)
-#  index_c14s_on_lab_identifier  (lab_identifier)
-#  index_c14s_on_method          (method)
-#  index_c14s_on_sample_id       (sample_id)
-#  index_c14s_on_superseded_by   (superseded_by)
-#
-
 FactoryBot.define do
-  
   factory :c14 do
     bp { Faker::Number.number(digits: 4) }
     std { Faker::Number.number(digits: 2) }
@@ -39,16 +8,19 @@ FactoryBot.define do
     delta_c13_std { Faker::Number.decimal(l_digits: 2, r_digits: 1) }
     lab_identifier { "#{ Faker::Address.country_code_long }-#{ Faker::Address.building_number }" }
     add_attribute(:method) {Faker::Hacker.noun}
-    
+
     c14_lab
     sample
 
-    trait :superseded do
+    trait :superseded_by do
       transient do
-        superseded_by_c14 { nil }
+        canonical { nil }
       end
 
-      superseded_by { superseded_by_c14&.id }
+      after(:create) do |c14, evaluator|
+        target = evaluator.canonical || create(:c14, sample: c14.sample)
+        create(:supersession, superseded: c14, superseded_by: target)
+      end
     end
 
     trait :with_citations do
@@ -62,5 +34,5 @@ FactoryBot.define do
     end
 
   end
-  
+
 end

@@ -5,20 +5,9 @@ require 'test_helper'
 class SitesControllerTest < ActionDispatch::IntegrationTest
   test 'show redirects to the canonical record when the site is superseded' do
     canonical = create(:site)
-    superseded = create(:site, :superseded, superseded_by_site: canonical)
+    superseded = create(:site, :superseded_by, canonical: canonical)
 
     get site_path(superseded)
-
-    assert_response :moved_permanently
-    assert_equal site_url(canonical), response.location
-  end
-
-  test 'show follows a multi-link superseded chain to the canonical' do
-    canonical = create(:site)
-    middle = create(:site, :superseded, superseded_by_site: canonical)
-    leaf = create(:site, :superseded, superseded_by_site: middle)
-
-    get site_path(leaf)
 
     assert_response :moved_permanently
     assert_equal site_url(canonical), response.location

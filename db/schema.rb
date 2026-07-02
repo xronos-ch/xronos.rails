@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_02_140000) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_02_150002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -83,12 +83,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_02_140000) do
     t.bigint "sample_id"
     t.string "lab_identifier"
     t.float "delta_15n"
-    t.integer "superseded_by"
     t.index ["c14_lab_id"], name: "index_c14s_on_c14_lab_id"
     t.index ["lab_identifier"], name: "index_c14s_on_lab_identifier"
     t.index ["method"], name: "index_c14s_on_method"
     t.index ["sample_id"], name: "index_c14s_on_sample_id"
-    t.index ["superseded_by"], name: "index_c14s_on_superseded_by"
   end
 
   create_table "cals", force: :cascade do |t|
@@ -284,9 +282,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_02_140000) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.string "short_ref"
-    t.integer "superseded_by"
     t.index ["short_ref"], name: "index_references_on_short_ref"
-    t.index ["superseded_by"], name: "index_references_on_superseded_by"
   end
 
   create_table "samples", force: :cascade do |t|
@@ -347,7 +343,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_02_140000) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.string "country_code"
-    t.integer "superseded_by"
     t.index ["country_code"], name: "index_sites_on_country_code"
     t.index ["name"], name: "index_sites_on_name"
   end
@@ -367,6 +362,31 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_02_140000) do
     t.index ["reference_id"], name: "index_sources_on_reference_id"
   end
 
+  create_table "supersession_events", force: :cascade do |t|
+    t.string "event_type", null: false
+    t.string "superseded_type", null: false
+    t.bigint "superseded_id", null: false
+    t.string "superseded_by_type", null: false
+    t.bigint "superseded_by_id", null: false
+    t.text "comment"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_type", "created_at"], name: "index_supersession_events_on_event_type"
+    t.index ["superseded_by_type", "superseded_by_id", "created_at"], name: "index_supersession_events_on_superseded_by"
+    t.index ["superseded_type", "superseded_id", "created_at"], name: "index_supersession_events_on_superseded"
+  end
+
+  create_table "supersessions", force: :cascade do |t|
+    t.string "superseded_type", null: false
+    t.bigint "superseded_id", null: false
+    t.string "superseded_by_type", null: false
+    t.bigint "superseded_by_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["superseded_by_type", "superseded_by_id"], name: "index_supersessions_on_superseded_by"
+    t.index ["superseded_type", "superseded_id"], name: "index_supersessions_unique_superseded", unique: true
+  end
+
   create_table "taxons", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: nil, null: false
@@ -384,10 +404,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_02_140000) do
     t.datetime "updated_at", precision: nil, null: false
     t.integer "parent_id"
     t.bigint "sample_id"
-    t.integer "superseded_by"
     t.index ["name"], name: "index_typos_on_name"
     t.index ["sample_id"], name: "index_typos_on_sample_id"
-    t.index ["superseded_by"], name: "index_typos_on_superseded_by"
   end
 
   create_table "user_profiles", force: :cascade do |t|

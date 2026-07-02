@@ -18,7 +18,7 @@ class TyposControllerTest < ActionDispatch::IntegrationTest
     site = create(:site)
     sample = create(:sample, context: create(:context, site: site))
     canonical = create(:typo, sample: sample)
-    superseded = create(:typo, :superseded, superseded_by_typo: canonical, sample: sample)
+    superseded = create(:typo, :superseded_by, canonical: canonical, sample: sample)
 
     get typo_path(superseded)
 
@@ -26,12 +26,15 @@ class TyposControllerTest < ActionDispatch::IntegrationTest
     assert_equal site_url(site), response.location
   end
 
-  test 'show follows a multi-link superseded chain to the site of the ultimate canonical' do
+  test 'show follows a re-pointed chain to the site of the ultimate canonical' do
     site = create(:site)
     sample = create(:sample, context: create(:context, site: site))
     canonical = create(:typo, sample: sample)
-    middle = create(:typo, :superseded, superseded_by_typo: canonical, sample: sample)
-    leaf = create(:typo, :superseded, superseded_by_typo: middle, sample: sample)
+    middle = create(:typo, sample: sample)
+    leaf = create(:typo, sample: sample)
+
+    leaf.supersede!(middle)
+    middle.supersede!(canonical)
 
     get typo_path(leaf)
 
