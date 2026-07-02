@@ -4,29 +4,34 @@ require 'test_helper'
 
 class C14sControllerTest < ActionDispatch::IntegrationTest
   test 'downloads a C14 record as MIaaRD JSON' do
-    site = Site.create!(
+    site = create(
+      :site,
       name: 'Test Site',
       lat: 54.323,
       lng: 10.122,
       country_code: 'DE'
     )
 
-    context = Context.create!(
+    context = create(
+      :context,
       name: 'Test Context',
       site: site
     )
 
-    taxon = Taxon.create!(
+    taxon = create(
+      :taxon,
       name: 'Homo sapiens',
       gbif_id: 2_436_436
     )
 
-    sample = Sample.create!(
+    sample = create(
+      :sample,
       context: context,
       taxon: taxon
     )
 
-    c14 = C14.create!(
+    c14 = create(
+      :c14,
       sample: sample,
       lab_identifier: 'OxA-12345',
       bp: 4500,
@@ -50,11 +55,12 @@ class C14sControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'downloads C14 records as a MIaaRD collection' do
-    site = Site.create!(name: 'Test Site')
-    context = Context.create!(site: site)
-    sample = Sample.create!(context: context)
+    site = create(:site, name: 'Test Site')
+    context = create(:context, site: site)
+    sample = create(:sample, context: context)
 
-    C14.create!(
+    create(
+      :c14,
       sample: sample,
       lab_identifier: 'OxA-12345',
       bp: 4500,
@@ -74,18 +80,20 @@ class C14sControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'downloads filtered C14 records as a MIaaRD collection' do
-    site = Site.create!(name: 'Test Site')
-    context = Context.create!(site: site)
-    sample = Sample.create!(context: context)
+    site = create(:site, name: 'Test Site')
+    context = create(:context, site: site)
+    sample = create(:sample, context: context)
 
-    matching = C14.create!(
+    matching = create(
+      :c14,
       sample: sample,
       lab_identifier: 'OxA-12345',
       bp: 4500,
       std: 30
     )
 
-    C14.create!(
+    create(
+      :c14,
       sample: sample,
       lab_identifier: 'Beta-67890',
       bp: 3200,
