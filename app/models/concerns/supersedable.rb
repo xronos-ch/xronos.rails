@@ -4,6 +4,12 @@ module Supersedable
   # pg_search).
   EXCLUDED_REFLECTIONS = %w[versions pg_search_document].freeze
 
+  CHILD_REFLECTIONS = [
+    ActiveRecord::Reflection::HasOneReflection,
+    ActiveRecord::Reflection::HasManyReflection,
+    ActiveRecord::Reflection::HasAndBelongsToManyReflection
+  ].freeze
+
   extend ActiveSupport::Concern
 
   included do # instance methods # rubocop:disable Metrics/BlockLength
@@ -56,9 +62,8 @@ module Supersedable
 
     def reassign_one_to_many(reflection, revision_comment)
       revision_comment ||= default_revision_comment
-      foreign_key = self.class.foreign_key_for_reflection(reflection)
       send(reflection.name).each do |child|
-        child.write_attribute(foreign_key, superseded_by)
+        child.write_attribute(reflection.foreign_key, superseded_by)
         child.revision_comment = revision_comment if child.respond_to?(:revision_comment=)
         child.save!
       end
@@ -80,24 +85,9 @@ module Supersedable
     # Returns the set of reflections whose child records should be
     # reassigned when a record is merged into its canonical target.
     def supersedable_associations
-      eligible = reflections.reject { |k, _v| EXCLUDED_REFLECTIONS.include?(k) }
-      eligible.select { |_k, v| child_association?(v) }
-    end
-
-    def child_association?(reflection)
-      reflection.is_a?(ActiveRecord::Reflection::HasOneReflection) ||
-        reflection.is_a?(ActiveRecord::Reflection::HasManyReflection) ||
-        reflection.is_a?(ActiveRecord::Reflection::HasAndBelongsToManyReflection)
-    end
-
-    def foreign_key_for_reflection(reflection)
-      if reflection.respond_to?(:foreign_key) && reflection.foreign_key
-        reflection.foreign_key.to_s
-      elsif reflection.options.key?(:as)
-        "#{reflection.options[:as]}_id"
-      else
-        "#{model_name.param_key}_id"
-      end
+      reflections
+        .reject { |k, _v| EXCLUDED_REFLECTIONS.include?(k) }
+        .select { |_k, v| CHILD_REFLECTIONS.any? { |klass| v.is_a?(klass) } }
     end
   end
 end

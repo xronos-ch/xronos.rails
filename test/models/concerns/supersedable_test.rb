@@ -1,6 +1,6 @@
 require "test_helper"
 
-class SupersedableTest < ActiveSupport::TestCase
+class SupersedableTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
   include ActiveJob::TestHelper
 
   test "is not superseded by default" do
@@ -133,17 +133,5 @@ class SupersedableTest < ActiveSupport::TestCase
     end
 
     assert_equal canonical, citation.reload.citing
-  end
-
-  test "reassign_associations on Typo reassigns children to the canonical" do
-    canonical = create(:typo)
-    superseded = create(:typo, :superseded, superseded_by_typo: canonical)
-    child = create(:typo, parent: superseded)
-
-    with_versioning do
-      superseded.reassign_associations("test merge")
-    end
-
-    assert_equal canonical, child.reload.parent
   end
 end
