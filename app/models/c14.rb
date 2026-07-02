@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ##
 # c14 class
 #
@@ -40,7 +42,7 @@ class C14 < ApplicationRecord
   belongs_to :c14_lab, optional: true
 
   has_many :citations, as: :citing, dependent: :destroy
-  has_many :references, :through => :citations
+  has_many :references, through: :citations
 
   delegate :context, to: :sample
   delegate :site, to: :sample
@@ -48,17 +50,17 @@ class C14 < ApplicationRecord
   validates :bp, :std, presence: true
   validates_associated :sample
 
-  composed_of :lab_id, mapping: %w(lab_identifier), allow_nil: true
+  composed_of :lab_id, mapping: %w[lab_identifier], allow_nil: true
 
   include HasIssues
-  @issues = [ :missing_c14_age, :very_old_c14, :missing_c14_error, 
-              :missing_d13c, :missing_d13c_error, :missing_c14_method, 
-              :missing_c14_lab_id, :invalid_lab_id, :missing_c14_lab ]
+  @issues = %i[missing_c14_age very_old_c14 missing_c14_error
+               missing_d13c missing_d13c_error missing_c14_method
+               missing_c14_lab_id invalid_lab_id missing_c14_lab]
 
   include PgSearch::Model
-  pg_search_scope :search, 
-    against: :lab_identifier, 
-    using: { tsearch: { prefix: true } } # match partial words
+  pg_search_scope :search,
+                  against: :lab_identifier,
+                  using: { tsearch: { prefix: true } } # match partial words
   multisearchable against: :lab_identifier
 
   acts_as_copy_target # enable CSV exports
@@ -66,19 +68,17 @@ class C14 < ApplicationRecord
   LIBBY_MEAN_LIFE = 8033.0
 
   def self.label
-    "radiocarbon date"
+    'radiocarbon date'
   end
 
   def self.icon
-    "icons/c14.svg"
+    'icons/c14.svg'
   end
 
   def uncal_age
-    unless bp.blank? && std.blank?
-      "#{bp}±#{std} BP"
-    else
-      nil
-    end
+    return if bp.blank? && std.blank?
+
+    "#{bp}±#{std} BP"
   end
 
   def calibration(curve: site.default_c14_curve)
@@ -87,25 +87,28 @@ class C14 < ApplicationRecord
 
   def f14c
     return nil if bp.blank?
+
     Math.exp(-bp.to_f / LIBBY_MEAN_LIFE)
   end
 
   def f14c_error
     return nil if bp.blank? || std.blank?
+
     f14c * std.to_f / LIBBY_MEAN_LIFE
   end
 
   # Issues
-  
+
   scope :missing_c14_age, -> { where(bp: nil) }
   def missing_c14_age?
     bp.blank?
   end
 
-  scope :very_old_c14, -> { where("bp > 50000") }
+  scope :very_old_c14, -> { where('bp > 50000') }
   def very_old_c14?
     return nil if bp.blank?
-    bp > 50000
+
+    bp > 50_000
   end
 
   scope :missing_c14_error, -> { where(std: nil) }
@@ -122,27 +125,26 @@ class C14 < ApplicationRecord
   def missing_d13c_error?
     delta_c13_std.blank?
   end
-  
+
   scope :missing_c14_method, -> { where(method: nil) }
   def missing_c14_method?
     method.blank?
   end
-  
+
   scope :missing_c14_lab_id, -> { where(lab_identifier: nil) }
   def missing_c14_lab_id?
     lab_identifier.blank?
   end
 
-  scope :invalid_lab_id, -> { where("lab_identifier !~* ?", LabId::PATTERN) }
+  scope :invalid_lab_id, -> { where('lab_identifier !~* ?', LabId::PATTERN) }
   def invalid_lab_id?
     return false if lab_id.blank?
+
     lab_id.invalid?
   end
-  
+
   scope :missing_c14_lab, -> { where(c14_lab_id: nil) }
   def missing_c14_lab?
     c14_lab_id.blank?
   end
-  
 end
-

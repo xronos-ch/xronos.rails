@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 class C14sController < ApplicationController
   include Tabulatable
 
   load_and_authorize_resource
 
-  before_action :set_c14, only: [:show, :edit, :update, :destroy]
+  before_action :set_c14, only: %i[show edit update destroy]
   before_action :set_site, only: [:new]
   before_action :set_versions, only: [:show]
 
@@ -11,29 +13,17 @@ class C14sController < ApplicationController
   # GET /c14s.json
   # GET /c14s.csv
   def index
-    @c14s = C14.includes(
-      {
-        sample: [
-          :material,
-          :taxon,
-          { context: :site }
-        ]
-      },
-      :references
-    )
-
-    # filter
-    unless c14_params.blank?
-      @c14_params = c14_params
-      @c14s = @c14s.where(c14_params)
-    end
+    @c14s = C14.includes(sample: [:taxon, { context: :site }])
+    @c14s = @c14s.where(c14_params) unless c14_params.blank?
 
     respond_to do |format|
       format.html do
+        @c14s = @c14s.includes(:references, sample: [:material])
+
         # Sorting is only applied to the interactive HTML table.
         # CSV exports deliberately ignore arbitrary ordering parameters.
-        if params.has_key?(:c14s_order_by)
-          order = { params[:c14s_order_by] => params.fetch(:c14s_order, "asc") }
+        if params.key?(:c14s_order_by)
+          order = { params[:c14s_order_by] => params.fetch(:c14s_order, 'asc') }
           @c14s = @c14s.reorder(order)
         end
 
@@ -44,7 +34,12 @@ class C14sController < ApplicationController
         end
       end
 
-      format.json
+      format.json do
+        if params[:schema] == C14::MIAARD::SCHEMA
+          entries = C14::MIAARD.collection(@c14s.reorder(:id)).map(&:to_h)
+          send_miaard_json({ entries: entries }, 'xronos_c14s_miaard.json')
+        end
+      end
 
       format.csv do
         # Public CSV export remains available, but does not honour pagination
@@ -80,8 +75,19 @@ class C14sController < ApplicationController
   # GET /c14s/1
   # GET /c14s/1.json
   def show
-    @calibration = @c14.calibration
-    @calibration.calibrate if @calibration.present?
+    respond_to do |format|
+      format.html do
+        @calibration = @c14.calibration
+        @calibration.calibrate if @calibration.present?
+      end
+
+      format.json do
+        if params[:schema] == C14::MIAARD::SCHEMA
+          send_miaard_json(C14::MIAARD.new(@c14).to_h,
+                           "xronos_c14_#{@c14.id}_miaard.json")
+        end
+      end
+    end
   end
 
   # GET /c14s/new
@@ -92,8 +98,7 @@ class C14sController < ApplicationController
   end
 
   # GET /c14s/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /c14s
   # POST /c14s.json
@@ -102,7 +107,7 @@ class C14sController < ApplicationController
 
     respond_to do |format|
       if @c14.save
-        format.html { redirect_to @c14, notice: "Radiocarbon date created." }
+        format.html { redirect_to @c14, notice: 'Radiocarbon date created.' }
         format.json { render :show, status: :created, location: @c14 }
       else
         format.html { render :new }
@@ -116,7 +121,7 @@ class C14sController < ApplicationController
   def update
     respond_to do |format|
       if @c14.update(c14_params)
-        format.html { redirect_to @c14, notice: "Radiocarbon date saved." }
+        format.html { redirect_to @c14, notice: 'Radiocarbon date saved.' }
         format.json { render json: @c14, status: :ok }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -132,12 +137,19 @@ class C14sController < ApplicationController
     @c14.destroy
 
     respond_to do |format|
-      format.html { redirect_to c14s_url, notice: "Radiocarbon date deleted." }
+      format.html { redirect_to c14s_url, notice: 'Radiocarbon date deleted.' }
       format.json { head :no_content }
     end
   end
 
   private
+
+  def send_miaard_json(payload, filename)
+    send_data JSON.pretty_generate(payload),
+              type: 'application/json; charset=utf-8',
+              filename: filename,
+              disposition: 'attachment'
+  end
 
   def set_c14
     @c14 = C14.find(params[:id])
@@ -171,12 +183,12 @@ class C14sController < ApplicationController
           :taxon_id,
           :context_id,
           {
-            context_attributes: [
-              :id,
-              :name,
-              :approx_start_time,
-              :approx_end_time,
-              :site_id
+            context_attributes: %i[
+              id
+              name
+              approx_start_time
+              approx_end_time
+              site_id
             ]
           },
           :position_description,
@@ -189,9 +201,9 @@ class C14sController < ApplicationController
       },
       sample: [
         :context_id,
-        contexts: [
+        { contexts: [
           :site_id
-        ]
+        ] }
       ]
     )
   end

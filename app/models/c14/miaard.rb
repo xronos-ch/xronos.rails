@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
-module Miaard
-  class C14Exporter
-    MIAARD_FIELDS = %i[
+class C14
+  class MIAARD
+    SCHEMA = 'miaard'
+
+    FIELDS = %i[
       lab_code
       lab_id
       conventional_age
@@ -55,30 +57,36 @@ module Miaard
       suspected_reservoir_effect
     ].freeze
 
-    def initialize(c14)
-      @c14 = c14
+    def self.collection(c14s)
+      c14s.map { |c14| new(c14) }
     end
 
-    def as_json(*)
-      values = {
+    attr_reader :source
+
+    def initialize(c14)
+      @source = c14
+    end
+
+    def to_h
+      {
         lab_code: lab_code,
-        lab_id: lab_id,
-        conventional_age: c14.bp,
-        conventional_age_error: c14.std,
-        f14c: c14.f14c,
-        f14c_error: c14.f14c_error,
+        lab_id: lab_id_value,
+        conventional_age: @source.bp,
+        conventional_age_error: @source.std,
+        f14c: @source.f14c,
+        f14c_error: @source.f14c_error,
         delta_13_c_calculation_method: nil,
         sample_ids: sample_ids,
         sample_material: nil,
-        sample_taxon_id: sample_taxon_id,
+        sample_taxon_id: @source.sample&.gbif_taxon_uri,
         sample_taxon_id_confidence: sample_taxon_id_confidence,
-        sample_taxon_scientific_name: sample&.taxon_name,
+        sample_taxon_scientific_name: @source.sample&.taxon_name,
         sample_anatomical_part: nil,
         suspected_sample_contamination: nil,
         suspected_sample_contamination_description: nil,
-        sample_location: site&.name,
-        decimal_latitude: site&.lat&.to_f,
-        decimal_longitude: site&.lng&.to_f,
+        sample_location: @source.site&.name,
+        decimal_latitude: @source.site&.lat&.to_f,
+        decimal_longitude: @source.site&.lng&.to_f,
         coordinate_precision: nil,
         pretreatment_methods: nil,
         pretreatment_method_description: nil,
@@ -88,97 +96,69 @@ module Miaard
         pretreatment_yield: nil,
         pretreatment_proportion_yield: nil,
         carbon_proportion: nil,
-        delta_13_c: c14.delta_c13,
-        delta_13_c_error: c14.delta_c13_std,
+        delta_13_c: @source.delta_c13,
+        delta_13_c_error: @source.delta_c13_std,
         delta_13_c_method: nil,
         suspected_reservoir_effect: nil
       }
-
-      MIAARD_FIELDS.index_with { |field| values[field] }
     end
 
     def missing_required_fields
-      as_json.select do |field, value|
-        REQUIRED_FIELDS.include?(field) && missing_value?(value)
-      end.keys
+      to_h.select { |field, value| REQUIRED_FIELDS.include?(field) && missing?(value) }.keys
     end
 
     def completeness_report
+      missing = missing_required_fields
       {
-        valid_against_current_miaard_required_fields: missing_required_fields.empty?,
-        exported_fields: as_json.keys,
-        missing_required_fields: missing_required_fields,
+        valid_against_current_miaard_required_fields: missing.empty?,
+        exported_fields: to_h.keys,
+        missing_required_fields: missing,
         derived_fields: derived_fields
       }
     end
 
     private
 
-    attr_reader :c14
-
-    def sample
-      c14.sample
-    end
-
-    def site
-      c14.site
-    end
-
     def lab_code
-      return nil if c14.lab_id.blank? || c14.lab_id.invalid?
+      return nil if @source.lab_id.blank? || @source.lab_id.invalid?
 
-      c14.lab_id.lab_code&.downcase
+      @source.lab_id.lab_code&.downcase
     end
 
-    def lab_id
-      return nil if c14.lab_id.blank? || c14.lab_id.invalid?
+    def lab_id_value
+      return nil if @source.lab_id.blank? || @source.lab_id.invalid?
 
-      c14.lab_id.lab_number
-    end
-
-    def derived_fields
-      fields = []
-      fields << :f14c if c14.f14c.present?
-      fields << :f14c_error if c14.f14c_error.present?
-      fields
+      @source.lab_id.lab_number
     end
 
     def sample_ids
       [
-        c14.lab_identifier,
-        "xronos:c14:#{c14.id}",
-        sample&.id && "xronos:sample:#{sample.id}"
+        @source.lab_identifier,
+        "xronos:c14:#{@source.id}",
+        @source.sample&.id && "xronos:sample:#{@source.sample.id}"
       ].compact
     end
 
-    def sample_taxon_id
-      gbif_id = sample&.taxon&.try(:gbif_id)
-      return nil if gbif_id.blank?
-
-      ["gbif:#{gbif_id}"]
-    end
-
     def sample_taxon_id_confidence
-      return nil if sample_taxon_id.blank?
+      return nil if @source.sample&.gbif_taxon_uri.blank?
 
       true
     end
 
     def measurement_method
-      case c14.method.to_s.strip.downcase
-      when "ams"
-        "AMS"
-      when "pims"
-        "PIMS"
-      when "conventional", "beta counting", "gpc", "lsc"
-        "Conventional"
-      else
-        nil
+      case @source.method.to_s.strip.downcase
+      when 'ams' then 'AMS'
+      when 'pims' then 'PIMS'
+      when 'conventional', 'beta counting', 'gpc', 'lsc' then 'Conventional'
       end
     end
 
-    def missing_value?(value)
-      value.nil? || value == "" || value == []
+    def missing?(value)
+      value.nil? || value == '' || value == []
+    end
+
+    def derived_fields
+      %i[f14c f14c_error].select { |field| @source.public_send(field).present? }
     end
   end
 end
