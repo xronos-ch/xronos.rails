@@ -2,8 +2,38 @@
 
 require 'test_helper'
 
-class C14sControllerTest < ActionDispatch::IntegrationTest
-  test 'downloads a C14 record as MIaaRD JSON' do
+class C14sControllerTest < ActionDispatch::IntegrationTest # rubocop:disable Metrics/ClassLength
+  test 'show redirects to the canonical record when the C14 is superseded' do
+    site = create(:site)
+    context = create(:context, site: site)
+    sample = create(:sample, context: context)
+    canonical = create(:c14, sample: sample)
+    superseded = create(:c14, :superseded_by, canonical: canonical, sample: sample)
+
+    get c14_path(superseded)
+
+    assert_response :moved_permanently
+    assert_equal c14_url(canonical), response.location
+  end
+
+  test 'show follows a re-pointed chain to the canonical' do
+    site = create(:site)
+    context = create(:context, site: site)
+    sample = create(:sample, context: context)
+    canonical = create(:c14, sample: sample)
+    middle = create(:c14, sample: sample)
+    leaf = create(:c14, sample: sample)
+
+    leaf.supersede!(middle)
+    middle.supersede!(canonical)
+
+    get c14_path(leaf)
+
+    assert_response :moved_permanently
+    assert_equal c14_url(canonical), response.location
+  end
+
+test 'downloads a C14 record as MIaaRD JSON' do
     site = create(
       :site,
       name: 'Test Site',

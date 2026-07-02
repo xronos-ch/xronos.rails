@@ -48,7 +48,7 @@ Rails.application.routes.draw do
   resources :site_types do
     get 'search', on: :collection
   end
-  resources :typos, except: [:show] do
+  resources :typos do
     get 'search', on: :collection
   end
   resources :functional_classifications, only: [:index, :create, :update, :destroy]

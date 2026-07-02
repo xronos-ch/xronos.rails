@@ -1,5 +1,6 @@
 class SitesController < ApplicationController
   include Tabulatable
+  include SupersedableController
 
   load_and_authorize_resource
 

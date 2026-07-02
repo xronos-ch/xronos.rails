@@ -35,6 +35,7 @@
 
 class C14 < ApplicationRecord
   include Versioned
+  include Supersedable
 
   belongs_to :sample
   accepts_nested_attributes_for :sample, reject_if: :all_blank
