@@ -1,12 +1,14 @@
+# frozen_string_literal: true
+
 class XronosDataController < ApplicationController
   def turn_off_lasso
     session[:spatial_lasso_selection] = nil
-    redirect_to request.env["HTTP_REFERER"]
+    redirect_to request.env['HTTP_REFERER']
   end
 
   def reset_manual_table_selection
     session[:manual_table_selection] = nil
-    redirect_to request.env["HTTP_REFERER"]
+    redirect_to request.env['HTTP_REFERER']
   end
 
   def index
@@ -15,11 +17,11 @@ class XronosDataController < ApplicationController
     logger.debug { "Parsed filters: #{@data.filters.inspect}" }
 
     sites_relation = @data.xrons
-                          .select("sites.id", "sites.lng", "sites.lat", "sites.name")
+                          .select('sites.id', 'sites.lng', 'sites.lat', 'sites.name')
                           .distinct
 
     @sites = if unfiltered_request?
-               Rails.cache.fetch(cache_key_for("sites_collection"), expires_in: 10.minutes) do
+               Rails.cache.fetch(cache_key_for('sites_collection'), expires_in: 10.minutes) do
                  sites_relation.to_a
                end
              else
@@ -55,19 +57,21 @@ class XronosDataController < ApplicationController
           head :not_found and return
         end
 
-        render layout: "full_page"
+        render layout: 'full_page'
       end
 
       format.json do
-        if unfiltered_request?
-          json_payload = Rails.cache.fetch(
-            cache_key_for("json"),
-            expires_in: 10.minutes
-          ) do
-            @data.as_json
-          end
-
-          render json: json_payload
+        if params[:schema] == C14::MIAARD::SCHEMA
+          payload = if unfiltered_request?
+                      Rails.cache.fetch(cache_key_for('json_miaard'), expires_in: 10.minutes) do
+                        build_miaard_payload(@data.xrons)
+                      end
+                    else
+                      build_miaard_payload(@data.xrons)
+                    end
+          send_miaard_json(payload, "xronos_data_miaard_#{Date.today}.json")
+        elsif unfiltered_request?
+          send_cached_standard_json
         else
           render json: @data
         end
@@ -76,7 +80,7 @@ class XronosDataController < ApplicationController
       format.geojson do
         geojson = if unfiltered_request?
                     Rails.cache.fetch(
-                      cache_key_for("geojson"),
+                      cache_key_for('geojson'),
                       expires_in: 10.minutes
                     ) do
                       build_geojson_from_sql(sites_sql)
@@ -91,7 +95,7 @@ class XronosDataController < ApplicationController
       format.csv do
         csv_data = if unfiltered_request?
                      Rails.cache.fetch(
-                       cache_key_for("csv"),
+                       cache_key_for('csv'),
                        expires_in: 10.minutes
                      ) do
                        build_csv(@data.xrons)
@@ -101,9 +105,9 @@ class XronosDataController < ApplicationController
                    end
 
         send_data csv_data,
-                  type: "text/csv; charset=utf-8",
+                  type: 'text/csv; charset=utf-8',
                   filename: "xronos_data_#{Date.today}.csv",
-                  disposition: "attachment"
+                  disposition: 'attachment'
       end
     end
   end
@@ -115,7 +119,7 @@ class XronosDataController < ApplicationController
       base_relation = @data.everything.except(:select, :includes, :order)
 
       @total_count = @filtered_count =
-        Rails.cache.fetch(cache_key_for("total_count"), expires_in: 10.minutes) do
+        Rails.cache.fetch(cache_key_for('total_count'), expires_in: 10.minutes) do
           base_relation.distinct.count(:id)
         end
     else
@@ -123,7 +127,7 @@ class XronosDataController < ApplicationController
       total_relation    = @data.everything.except(:select, :includes, :order)
 
       @filtered_count = filtered_relation.distinct.count(:id)
-      @total_count    = Rails.cache.fetch(cache_key_for("total_count"), expires_in: 10.minutes) do
+      @total_count    = Rails.cache.fetch(cache_key_for('total_count'), expires_in: 10.minutes) do
         total_relation.distinct.count(:id)
       end
     end
@@ -139,30 +143,30 @@ class XronosDataController < ApplicationController
 
   def build_geojson_from_sql(sites_sql)
     geojson_sql = <<~SQL.squish
-    (
-      SELECT jsonb_build_object(
-        'type', 'Feature',
-        'geometry', jsonb_build_object(
-          'type', 'Point',
-          'coordinates', jsonb_build_array(lng, lat)
-        ),
-        'properties', jsonb_build_object(
-          'name', name,
-          'id', id
-        )
-      ) AS geojson
-      FROM (#{sites_sql}) AS subquery1
-      WHERE lat IS NOT NULL
-        AND lng IS NOT NULL
-    ) AS subquery2
-  SQL
+      (
+        SELECT jsonb_build_object(
+          'type', 'Feature',
+          'geometry', jsonb_build_object(
+            'type', 'Point',
+            'coordinates', jsonb_build_array(lng, lat)
+          ),
+          'properties', jsonb_build_object(
+            'name', name,
+            'id', id
+          )
+        ) AS geojson
+        FROM (#{sites_sql}) AS subquery1
+        WHERE lat IS NOT NULL
+          AND lng IS NOT NULL
+      ) AS subquery2
+    SQL
 
     Site.connection.exec_query(
       Site
         .select("COALESCE(json_agg(geojson), '[]'::json) AS measurements")
         .from(geojson_sql)
         .to_sql
-    )[0]["measurements"]
+    )[0]['measurements']
   end
 
   def build_csv(xrons_relation)
@@ -170,15 +174,15 @@ class XronosDataController < ApplicationController
     return +"id\n" if ids.empty?
 
     query = <<~SQL.squish
-    COPY (
-      SELECT *
-      FROM data_views
-      WHERE id IN (#{ids.join(", ")})
-    ) TO STDOUT WITH CSV HEADER
-  SQL
+      COPY (
+        SELECT *
+        FROM data_views
+        WHERE id IN (#{ids.join(', ')})
+      ) TO STDOUT WITH CSV HEADER
+    SQL
 
     connection = ActiveRecord::Base.connection.raw_connection
-    csv_data   = +""
+    csv_data   = +''
 
     connection.copy_data(query) do
       while (row = connection.get_copy_data)
@@ -187,6 +191,30 @@ class XronosDataController < ApplicationController
     end
 
     csv_data
+  end
+
+  def build_miaard_payload(xrons_relation)
+    c14s = xrons_relation
+           .includes(sample: [:taxon, { context: :site }])
+           .reorder(:id)
+
+    entries = C14::MIAARD.collection(c14s).map(&:to_h)
+    { entries: entries }
+  end
+
+  def send_miaard_json(payload, filename)
+    send_data JSON.pretty_generate(payload),
+              type: 'application/json; charset=utf-8',
+              filename: filename,
+              disposition: 'attachment'
+  end
+
+  def send_cached_standard_json
+    json_payload = Rails.cache.fetch(cache_key_for('json'), expires_in: 10.minutes) do
+      @data.as_json
+    end
+
+    render json: json_payload
   end
 
   def filter_params

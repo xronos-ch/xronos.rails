@@ -8,12 +8,35 @@
 
   <turbo-frame id="c14s-table">
     <div id="c14s-toolbar" class="d-flex">
-      <div class="ms-auto">
-        <%= link_to bs_icon("download"), c14s_path(format: :csv, **@c14_params.to_h), class: "btn btn-sm btn-outline-primary", title: "Download CSV" %>
+      <div class="ms-auto dropdown">
+        <button class="btn btn-sm btn-outline-primary dropdown-toggle"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                title="Download">
+          <%= bs_icon("download") %>
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li>
+            <%= link_to c14s_path(format: :csv, **@c14_params.to_h),
+                        class: "dropdown-item",
+                        title: "Download CSV" do %>
+              CSV
+            <% end %>
+          </li>
+          <li>
+            <%= link_to c14s_path(format: :json, schema: C14::MIAARD::SCHEMA, c14: @c14_params.to_h),
+                        class: "dropdown-item",
+                        title: "Export the current C14 selection as a MIaaRD JSON collection" do %>
+              MIaaRD JSON
+            <% end %>
+          </li>
+        </ul>
       </div>
     </div>
+
     <%= render "table", c14s: @c14s %>
-    <%== @pagy.series_nav(:bootstrap) %>
   </turbo-frame>
 
   <% if can? :create, C14 %>

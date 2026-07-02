@@ -101,6 +101,16 @@
 			<% end%>
 		</div>
 	  </li>
+        <li>
+          <div class="d-grid gap-2">
+            <%= link_to data_path(format: :json, schema: C14::MIAARD::SCHEMA, filter: @raw_filter_params),
+                        class: "nav-link",
+                        title: "MIaaRD JSON",
+                        download: "data_miaard_#{Date.today}.json" do %>
+              <%= bs_icon("bi bi-filetype-json") %> MIaaRD JSON
+            <% end %>
+          </div>
+        </li>
       </ul>
     </li>
   </ul>

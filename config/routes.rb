@@ -154,5 +154,5 @@ Rails.application.routes.draw do
       resources :data, controller: 'xronos_data'
     end
   end
-  
+
 end
