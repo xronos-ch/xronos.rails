@@ -27,6 +27,14 @@ FactoryBot.define do
 
     after(:create) { |site| site.site_types = [create(:site_type)] }
 
+    trait :superseded do
+      transient do
+        superseded_by_site { nil }
+      end
+
+      superseded_by { superseded_by_site&.id }
+    end
+
     trait :with_site_names do
       transient do
         site_names_count { 2 }

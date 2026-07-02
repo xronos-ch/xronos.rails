@@ -26,4 +26,12 @@ class TypoTest < ActiveSupport::TestCase
     typo = create(:typo, :with_citations, citations_count: 2)
     assert_dependent_destroy(typo, :citations, count: 2)
   end
+
+  test "parent and children associations work" do
+    parent = create(:typo)
+    child = create(:typo, parent: parent)
+
+    assert_includes parent.children, child
+    assert_equal parent, child.parent
+  end
 end

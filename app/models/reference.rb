@@ -29,6 +29,7 @@ class Reference < ApplicationRecord
   validates :short_ref, presence: true
 
   include Versioned
+  include Supersedable
   acts_as_copy_target # enable CSV exports
 
   include HasIssues

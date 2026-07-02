@@ -34,9 +34,10 @@ class Typo < ApplicationRecord
 
   # Internal heirarchy
   belongs_to :parent, class_name: "Typo", optional: true
-  has_many :children, class_name: "Typo", foreign_key: "typo_id"
+  has_many :children, class_name: "Typo", foreign_key: "parent_id"
 
   include Versioned
+  include Supersedable
 
   include PgSearch::Model
   pg_search_scope :search, 

@@ -57,4 +57,13 @@ class SiteTest < ActiveSupport::TestCase
     assert_dependent_destroy(site, :linked_resources, count: 2)
   end
 
+  test "superseded site is hidden from default scope but findable via unscoped" do
+    canonical = create(:site)
+    superseded = create(:site, :superseded, superseded_by_site: canonical)
+
+    assert_includes Site.all, canonical
+    assert_not_includes Site.all, superseded
+    assert_equal superseded, Site.unscoped.find(superseded.id)
+  end
+
 end

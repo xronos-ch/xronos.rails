@@ -43,6 +43,14 @@ FactoryBot.define do
     c14_lab
     sample
 
+    trait :superseded do
+      transient do
+        superseded_by_c14 { nil }
+      end
+
+      superseded_by { superseded_by_c14&.id }
+    end
+
     trait :with_citations do
       transient do
         citations_count { 2 }
