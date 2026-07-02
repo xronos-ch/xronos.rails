@@ -162,7 +162,7 @@ class XronosDataController < ApplicationController
     SQL
 
     Site.connection.exec_query(
-      Site
+      Site.unscoped
         .select("COALESCE(json_agg(geojson), '[]'::json) AS measurements")
         .from(geojson_sql)
         .to_sql

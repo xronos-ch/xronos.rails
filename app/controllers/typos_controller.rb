@@ -1,5 +1,7 @@
-class TyposController < ApplicationController
+class TyposController < ApplicationController # rubocop:disable Metrics/ClassLength
   include Tabulatable
+
+  before_action :redirect_show_to_site, only: :show
 
   load_and_authorize_resource
 
@@ -71,6 +73,13 @@ class TyposController < ApplicationController
     end
   end
 
+  # GET /typos/1
+  # Permanently redirects to the show view of the typo's site. If the
+  # typo is superseded, the redirect target is the site of the canonical
+  # typo it was ultimately superseded by.
+  def show
+  end
+
   # GET /typos/new
   def new
     @typo = Typo.new
@@ -122,6 +131,13 @@ class TyposController < ApplicationController
   end
 
   private
+
+  def redirect_show_to_site
+    typo = Typo.unscoped.find(params[:id])
+    canonical_typo = typo.ultimately_superseded_by
+    site = Site.unscoped.find(canonical_typo.context.site_id)
+    redirect_to site_path(site), status: :moved_permanently
+  end
 
   def set_typo
     @typo = Typo.find(params[:id])
