@@ -8,7 +8,7 @@ class C14sControllerTest < ActionDispatch::IntegrationTest # rubocop:disable Met
     context = create(:context, site: site)
     sample = create(:sample, context: context)
     canonical = create(:c14, sample: sample)
-    superseded = create(:c14, :superseded, superseded_by_c14: canonical, sample: sample)
+    superseded = create(:c14, :superseded_by, canonical: canonical, sample: sample)
 
     get c14_path(superseded)
 
@@ -16,13 +16,16 @@ class C14sControllerTest < ActionDispatch::IntegrationTest # rubocop:disable Met
     assert_equal c14_url(canonical), response.location
   end
 
-  test 'show follows a multi-link superseded chain to the canonical' do
+  test 'show follows a re-pointed chain to the canonical' do
     site = create(:site)
     context = create(:context, site: site)
     sample = create(:sample, context: context)
     canonical = create(:c14, sample: sample)
-    middle = create(:c14, :superseded, superseded_by_c14: canonical, sample: sample)
-    leaf = create(:c14, :superseded, superseded_by_c14: middle, sample: sample)
+    middle = create(:c14, sample: sample)
+    leaf = create(:c14, sample: sample)
+
+    leaf.supersede!(middle)
+    middle.supersede!(canonical)
 
     get c14_path(leaf)
 
@@ -30,7 +33,7 @@ class C14sControllerTest < ActionDispatch::IntegrationTest # rubocop:disable Met
     assert_equal c14_url(canonical), response.location
   end
 
-  test 'downloads a C14 record as MIaaRD JSON' do
+test 'downloads a C14 record as MIaaRD JSON' do
     site = create(
       :site,
       name: 'Test Site',
