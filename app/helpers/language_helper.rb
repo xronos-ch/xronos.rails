@@ -1,4 +1,9 @@
-module SiteNamesHelper
+##
+# Helper methods for multilingual elements
+module LanguageHelper
+
+  ##
+  # Known languages
   def languages
     I18nData
       .languages("EN")
@@ -8,6 +13,8 @@ module SiteNamesHelper
       .invert
   end
 
+  ##
+  # Generate badge for a language
   def language_badge(lang)
     content_tag :span, 
       title: I18nData.languages("EN")[lang],
@@ -15,4 +22,5 @@ module SiteNamesHelper
       lang
     end
   end
+
 end

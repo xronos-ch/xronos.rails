@@ -1,4 +1,6 @@
-module CalibrationsHelper
+##
+# Helper methods for radiocarbon calibration
+module CalibrationHelper
   def calibration_plot(calibration)
     return nil unless calibration.present?
     Vega.lite

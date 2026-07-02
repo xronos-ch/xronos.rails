@@ -1,8 +1,15 @@
-module IssuesHelper
+##
+# Helper methods for data quality issues
+module IssueHelper
+
+  ##
+  # Generate standardised labels for issues (uppercase)
   def issue_label(issue)
     issue.to_s.upcase
   end
 
+  ##
+  # Register of descriptions for particular issues
   def issue_description(issue)
     case issue
     # C14s
@@ -53,9 +60,37 @@ module IssuesHelper
     end
   end
 
+  ##
+  # Generate badge markup for an issue
   def issue_badge(issue)
     content_tag :span, title: issue_description(issue), class: "badge text-bg-warning" do
       issue_label(issue)
+    end
+  end
+
+  #
+  # Taxons
+  #
+
+  ##
+  # Pick a colour based on GBIF match type
+  # 
+  # Possible values are documented at 
+  # http://gbif.github.io/parsers/apidocs/org/gbif/api/model/checklistbank/NameUsageMatch.MatchType.html
+  def colour_from_gbif_match_type(match_type)
+    case match_type
+    when "EXACT"
+      "success"
+    when "AGGREGATE"
+      "warning"
+    when "FUZZY"
+      "warning"
+    when "HIGHERRANK"
+      "warning"
+    when "NONE"
+      "danger"
+    else
+      "danger"
     end
   end
 end

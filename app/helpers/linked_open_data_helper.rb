@@ -1,4 +1,6 @@
-module LodsHelper
+##
+# Helper methods for linked open data
+module LinkedOpenDataHelper
   def lod_label(lod)
     lod.to_s.upcase
   end

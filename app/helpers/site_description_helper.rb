@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 ##
-# Helpers for the Site description partials.
+# Helpers for the Site description partials
 module SiteDescriptionHelper
   ##
   # Returns a CSS Grid layout descriptor for the given image count.
