@@ -1,3 +1,5 @@
+##
+# Helper methods for tables of data
 module DataTableHelper
   def link_to_order_by(label, column, table = controller_name)
     if ordered_by?(column, table)

@@ -1,2 +1,0 @@
-module SiteTypesHelper
-end
