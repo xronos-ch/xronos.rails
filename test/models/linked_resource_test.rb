@@ -17,8 +17,8 @@
 #
 # Indexes
 #
-#  index_linked_resources_on_linkable_type_and_linkable_id       (linkable_type,linkable_id)
-#  index_linked_resources_on_polymorphic_source_and_external_id  (linkable_type,linkable_id,source,external_id) UNIQUE
+#  index_linked_resources_on_linkable_and_source            (linkable_type,linkable_id,source) UNIQUE
+#  index_linked_resources_on_linkable_type_and_linkable_id  (linkable_type,linkable_id)
 #
 require 'test_helper'
 
@@ -41,24 +41,50 @@ class LinkedResourceTest < ActiveSupport::TestCase
     linked_resource = build(:linked_resource, source: 'Wikidata', external_id: 'abc')
     refute linked_resource.valid?
     assert_includes linked_resource.errors[:external_id],
-      'does not match the expected format for Wikidata'
+                    'does not match the expected format for Wikidata'
   end
 
   test 'rejects an unknown source name' do
     linked_resource = build(:linked_resource, source: 'NotASource', external_id: 'Q12345')
     refute linked_resource.valid?
     assert_includes linked_resource.errors[:source],
-      'is not a known linked resource source'
+                    'is not a known linked resource source'
   end
 
   test 'accepts a non-integer id from a source with no id_pattern' do
     LinkedResource::Source.register :freeform_source, name: 'Freeform',
-      url_template: 'https://freeform.example/%{id}'
+                                                      url_template: 'https://freeform.example/%<id>s'
     begin
       linked_resource = build(:linked_resource, source: 'Freeform', external_id: 'anything goes')
       assert linked_resource.valid?
     ensure
       LinkedResource::Source.registry.delete(:freeform_source)
     end
+  end
+
+  test 'rejects two records with the same (linkable, source) but different external_ids' do
+    site = create(:site)
+    create(:linked_resource, linkable: site, source: 'Wikidata', external_id: 'Q111')
+    duplicate = build(:linked_resource, linkable: site, source: 'Wikidata', external_id: 'Q222')
+
+    refute duplicate.valid?
+    assert_includes duplicate.errors[:source], 'has already been taken'
+  end
+
+  test 'allows the same source on a different linkable' do
+    site_a = create(:site)
+    site_b = create(:site)
+    create(:linked_resource, linkable: site_a, source: 'Wikidata', external_id: 'Q111')
+    other = build(:linked_resource, linkable: site_b, source: 'Wikidata', external_id: 'Q111')
+
+    assert other.valid?
+  end
+
+  test 'allows different sources on the same linkable' do
+    site = create(:site)
+    create(:linked_resource, linkable: site, source: 'Wikidata', external_id: 'Q111')
+    other = build(:linked_resource, linkable: site, source: 'Pleiades', external_id: '111')
+
+    assert other.valid?
   end
 end

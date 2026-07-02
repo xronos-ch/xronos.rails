@@ -15,8 +15,8 @@
 #
 # Indexes
 #
-#  index_linked_resources_on_linkable_type_and_linkable_id       (linkable_type,linkable_id)
-#  index_linked_resources_on_polymorphic_source_and_external_id  (linkable_type,linkable_id,source,external_id) UNIQUE
+#  index_linked_resources_on_linkable_and_source            (linkable_type,linkable_id,source) UNIQUE
+#  index_linked_resources_on_linkable_type_and_linkable_id  (linkable_type,linkable_id)
 #
 class LinkedResource < ApplicationRecord
   include Turbo::Broadcastable
@@ -43,17 +43,17 @@ class LinkedResource < ApplicationRecord
   end
 
   validates :source, presence: true
-  validates :source, uniqueness: { scope: [:external_id, :linkable_type, :linkable_id] }
+  validates :source, uniqueness: { scope: %i[linkable_type linkable_id] }
 
   validate :external_id_matches_source_pattern
 
-  enum :status, { pending: "pending", approved: "approved" }
+  enum :status, { pending: 'pending', approved: 'approved' }
 
   belongs_to :linkable, polymorphic: true
 
   # Scopes for filtering matches
-  scope :pending, -> { where(status: "pending") }
-  scope :approved, -> { where(status: "approved") }
+  scope :pending, -> { where(status: 'pending') }
+  scope :approved, -> { where(status: 'approved') }
 
   def external_url
     LinkedResource::Source.find(source)&.url_for(external_id)
@@ -64,9 +64,10 @@ class LinkedResource < ApplicationRecord
   def external_id_matches_source_pattern
     source_obj = LinkedResource::Source.find(source)
     if source_obj.nil?
-      errors.add(:source, "is not a known linked resource source") and return if source.present?
+      errors.add(:source, 'is not a known linked resource source') and return if source.present?
     else
       return if source_obj.valid_id?(external_id)
+
       errors.add(:external_id, "does not match the expected format for #{source_obj.name}")
     end
   end

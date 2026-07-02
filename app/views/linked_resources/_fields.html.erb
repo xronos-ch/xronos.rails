@@ -14,18 +14,3 @@
   <%= f.check_box :status, { class: "form-check-input", id: "status_checkbox", label: "Approve" }, "approved", "pending" %>
 </div>
 
-<% if @linked_resource.source == "Wikidata" && f.object.linkable.present? %>
-  <p>Suggestion from Name:</p>
-  <ul>
-    <% if wikidata_matches_for(f.object.linkable).present? %>
-      <% wikidata_matches_for(f.object.linkable)[f.object.linkable.name]&.each do |match| %>
-        <li>
-          <%= match.qid %>:
-          <%= link_to "#{match.label} (#{match.description})", match.url, target: "_blank" %>
-        </li>
-      <% end %>
-    <% else %>
-      <li>No suggestions available</li>
-    <% end %>
-  </ul>
-<% end %>

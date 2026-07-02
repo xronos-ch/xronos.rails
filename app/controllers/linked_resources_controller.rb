@@ -9,7 +9,12 @@ class LinkedResourcesController < ApplicationController
 
   def new
     source = params.dig(:linked_resource, :source)
+    linkable_type = params.dig(:linked_resource, :linkable_type)
+    linkable_id = params.dig(:linked_resource, :linkable_id)
     head :bad_request and return unless source.present? && LinkedResource::Source.known?(source)
+
+    existing = LinkedResource.find_by(linkable_type: linkable_type, linkable_id: linkable_id, source: source)
+    redirect_to edit_linked_resource_path(existing) and return if existing
 
     @linked_resource = LinkedResource.new(linked_resource_params_from_query)
   end

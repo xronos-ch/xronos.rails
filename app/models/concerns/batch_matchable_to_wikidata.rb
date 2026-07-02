@@ -25,10 +25,9 @@ require 'ostruct'
 # or pass a different +wd:QID+ if matching against a non-archaeological
 # Wikidata class.
 module BatchMatchableToWikidata
-
   extend ActiveSupport::Concern
 
-  ARCHAEOLOGICAL_SITE_WIKIDATA_ID = 'Q839954'.freeze
+  ARCHAEOLOGICAL_SITE_WIKIDATA_ID = 'Q839954'
 
   class_methods do
     # For each record in +sites+ that doesn't yet have a Wikidata link,
@@ -37,7 +36,7 @@ module BatchMatchableToWikidata
     # match. Returns the parsed response grouped by record name.
     def wikidata_match_candidates_batch(sites)
       sites_without_wikidata_link = sites.select do |site|
-        site.linked_resources.where(source: "Wikidata").empty?
+        site.linked_resources.where(source: 'Wikidata').empty?
       end
 
       return [] if sites_without_wikidata_link.empty?
@@ -51,15 +50,19 @@ module BatchMatchableToWikidata
         site = sites_without_wikidata_link.find { |s| s.name == site_name }
         next unless site
 
-        matches.each do |match|
-          site.linked_resources.find_or_create_by(source: "Wikidata", external_id: match.qid) do |linked_resource|
-            linked_resource.data = {
-              label: match.label,
-              description: match.description
-            }
-            linked_resource.save!
-          end
-        end
+        # One link per (linkable, source): if the curator has already attached
+        # a Wikidata link, leave it alone. The matcher's job is to seed new
+        # pending records for sites that have none, not to overwrite
+        # curator decisions.
+        next if site.linked_resources.where(source: 'Wikidata').exists?
+
+        match = matches.first
+        site.linked_resources.create!(
+          source: 'Wikidata',
+          external_id: match.qid,
+          data: { label: match.label, description: match.description },
+          status: 'pending'
+        )
       end
 
       wikidata_results # Return results for reference
@@ -73,7 +76,7 @@ module BatchMatchableToWikidata
 
     # Extracts names from the sites.
     def extract_site_names(sites)
-      sites.pluck(:name).map { |name| "\"#{name}\"@en" }.join(" ")
+      sites.pluck(:name).map { |name| "\"#{name}\"@en" }.join(' ')
     end
 
     # Builds the SPARQL query.
@@ -97,20 +100,14 @@ module BatchMatchableToWikidata
       request['From'] = Xronos::CONTACT_EMAIL
 
       Net::HTTP.start(url.hostname, url.port, use_ssl: true, open_timeout: 2, read_timeout: 3) do |http|
-        if Rails.env.development?
-          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-        end
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE if Rails.env.development?
         http.request(request)
       end
-
     rescue OpenSSL::SSL::SSLError => e
-      if Rails.env.development?
-        Rails.logger.warn("Wikidata SSL error in dev: #{e.class} - #{e.message}")
-        OpenStruct.new(body: '{"results":{"bindings":[]}}')
-      else
-        raise
-      end
+      raise unless Rails.env.development?
 
+      Rails.logger.warn("Wikidata SSL error in dev: #{e.class} - #{e.message}")
+      OpenStruct.new(body: '{"results":{"bindings":[]}}')
     rescue Net::OpenTimeout, Net::ReadTimeout, SocketError => e
       Rails.logger.warn "Wikidata lookup failed: #{e.class} – #{e.message}"
       OpenStruct.new(body: '{"results":{"bindings":[]}}')
@@ -120,15 +117,15 @@ module BatchMatchableToWikidata
     def parse_wikidata_response(response)
       data = JSON.parse(response.body)
 
-      data["results"]["bindings"]
-        .group_by { |result| result.dig("name", "value") }
+      data['results']['bindings']
+        .group_by { |result| result.dig('name', 'value') }
         .transform_values do |matches|
           matches.map do |match|
             OpenStruct.new(
-              qid: match.dig("item", "value")&.split("/")&.last,
-              label: match.dig("itemLabel", "value"),
-              description: match.dig("itemDescription", "value"),
-              url: match.dig("itemURL", "value")
+              qid: match.dig('item', 'value')&.split('/')&.last,
+              label: match.dig('itemLabel', 'value'),
+              description: match.dig('itemDescription', 'value'),
+              url: match.dig('itemURL', 'value')
             )
           end
         end

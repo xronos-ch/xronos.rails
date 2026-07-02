@@ -19,14 +19,13 @@
 #
 
 FactoryBot.define do
-  
   factory :site do
     name { Faker::Verb.unique.base }
     lat { Faker::Address.latitude }
     lng { Faker::Address.longitude }
     country_code { Faker::Address.country_code }
-    
-    after(:create) {|site| site.site_types = [create(:site_type)]}
+
+    after(:create) { |site| site.site_types = [create(:site_type)] }
 
     trait :with_site_names do
       transient do
@@ -44,7 +43,14 @@ FactoryBot.define do
       end
 
       after(:create) do |site, evaluator|
-        create_list(:linked_resource, evaluator.linked_resources_count, linkable: site)
+        # At most one linked_resource per (linkable, source) — cycle through
+        # the available sources so the trait still works at any count.
+        sources = LinkedResource::Source.all.map(&:name)
+        evaluator.linked_resources_count.times do |i|
+          source_name = sources[i % sources.length]
+          create(:linked_resource, linkable: site, source: source_name,
+                                   external_id: FactoryBot.external_id_for(source_name))
+        end
       end
     end
 
@@ -57,7 +63,5 @@ FactoryBot.define do
         create_list(:citation, evaluator.citations_count, citing: c14)
       end
     end
-
   end
-  
 end
