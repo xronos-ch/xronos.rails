@@ -94,15 +94,15 @@ class XronosDataControllerTest < ActionDispatch::IntegrationTest
     refresh_data_views
 
     get data_path(
-      format: :geojson,
-      params: {
-        filter: {
-          sites: {
-            name: ['Only Unmapped GeoJSON Site']
+          format: :geojson,
+          params: {
+            filter: {
+              sites: {
+                name: ['Only Unmapped GeoJSON Site']
+              }
+            }
           }
-        }
-      }
-    )
+        )
 
     assert_response :success
     assert_includes ['application/geo+json', 'application/json'], response.media_type
@@ -122,9 +122,9 @@ class XronosDataControllerTest < ActionDispatch::IntegrationTest
     refresh_data_views
 
     get data_path(
-      format: :json,
-      params: material_filter_params('JSON Charcoal')
-    )
+          format: :json,
+          params: material_filter_params('JSON Charcoal')
+        )
 
     assert_response :success
     assert_equal 'application/json', response.media_type
@@ -148,8 +148,8 @@ class XronosDataControllerTest < ActionDispatch::IntegrationTest
     refresh_data_views
 
     get data_path(
-      params: material_filter_params('HTML Charcoal')
-    )
+          params: material_filter_params('HTML Charcoal')
+        )
 
     assert_response :success
     assert_includes response.body, 'HTML-Included-1'
@@ -169,9 +169,9 @@ class XronosDataControllerTest < ActionDispatch::IntegrationTest
     refresh_data_views
 
     get data_path(
-      format: :csv,
-      params: material_filter_params('CSV Charcoal')
-    )
+          format: :csv,
+          params: material_filter_params('CSV Charcoal')
+        )
 
     assert_response :success
     assert_includes response.media_type, 'text/csv'
@@ -205,9 +205,9 @@ class XronosDataControllerTest < ActionDispatch::IntegrationTest
     refresh_data_views
 
     get data_path(
-      format: :json, schema: C14::MIAARD::SCHEMA,
-      params: material_filter_params('MIaaRD Charcoal')
-    )
+          format: :json, schema: C14::MIAARD::SCHEMA,
+          params: material_filter_params('MIaaRD Charcoal')
+        )
 
     assert_response :success
     assert_equal 'application/json', response.media_type
@@ -217,13 +217,15 @@ class XronosDataControllerTest < ActionDispatch::IntegrationTest
 
     assert_equal 1, entries.length
 
-    body = response.body
-
-    assert_includes body, 'OxA-12345'
-    assert_not_includes body, 'Beta-67890'
-
-    assert_equal 'oxa', entries.first['lab_code']
+    assert_equal 'OxA', entries.first['lab_code']
     assert_equal '12345', entries.first['lab_id']
+    assert_equal 'MIaaRD Charcoal', entries.first['sample_material']
+    assert_nil entries.first['sample_ids']
+
+    exported_lab_ids = entries.map { |entry| [entry['lab_code'], entry['lab_id']] }
+
+    assert_includes exported_lab_ids, ['OxA', '12345']
+    assert_not_includes exported_lab_ids, ['Beta', '67890']
   end
 
   private

@@ -41,7 +41,7 @@ class C14sControllerTest < ActionDispatch::IntegrationTest
 
     json = JSON.parse(response.body)
 
-    assert_equal 'oxa', json['lab_code']
+    assert_equal 'OxA', json['lab_code']
     assert_equal '12345', json['lab_id']
     assert_equal 4500, json['conventional_age']
     assert_equal 30, json['conventional_age_error']
@@ -70,7 +70,7 @@ class C14sControllerTest < ActionDispatch::IntegrationTest
 
     assert json.key?('entries')
     assert json['entries'].any?
-    assert_equal 'oxa', json['entries'].first['lab_code']
+    assert_equal 'OxA', json['entries'].first['lab_code']
   end
 
   test 'downloads filtered C14 records as a MIaaRD collection' do
@@ -93,17 +93,17 @@ class C14sControllerTest < ActionDispatch::IntegrationTest
     )
 
     get c14s_path(
-      format: :json,
-      schema: C14::MIAARD::SCHEMA,
-      c14: { lab_identifier: matching.lab_identifier }
-    )
+          format: :json,
+          schema: C14::MIAARD::SCHEMA,
+          c14: { lab_identifier: matching.lab_identifier }
+        )
 
     assert_response :success
 
     json = JSON.parse(response.body)
 
     assert_equal 1, json['entries'].length
-    assert_equal 'oxa', json['entries'].first['lab_code']
+    assert_equal 'OxA', json['entries'].first['lab_code']
     assert_equal '12345', json['entries'].first['lab_id']
   end
 end
