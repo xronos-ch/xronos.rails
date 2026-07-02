@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_02_100000) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_02_140000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -83,10 +83,12 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_02_100000) do
     t.bigint "sample_id"
     t.string "lab_identifier"
     t.float "delta_15n"
+    t.integer "superseded_by"
     t.index ["c14_lab_id"], name: "index_c14s_on_c14_lab_id"
     t.index ["lab_identifier"], name: "index_c14s_on_lab_identifier"
     t.index ["method"], name: "index_c14s_on_method"
     t.index ["sample_id"], name: "index_c14s_on_sample_id"
+    t.index ["superseded_by"], name: "index_c14s_on_superseded_by"
   end
 
   create_table "cals", force: :cascade do |t|
@@ -282,7 +284,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_02_100000) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.string "short_ref"
+    t.integer "superseded_by"
     t.index ["short_ref"], name: "index_references_on_short_ref"
+    t.index ["superseded_by"], name: "index_references_on_superseded_by"
   end
 
   create_table "samples", force: :cascade do |t|
@@ -380,8 +384,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_02_100000) do
     t.datetime "updated_at", precision: nil, null: false
     t.integer "parent_id"
     t.bigint "sample_id"
+    t.integer "superseded_by"
     t.index ["name"], name: "index_typos_on_name"
     t.index ["sample_id"], name: "index_typos_on_sample_id"
+    t.index ["superseded_by"], name: "index_typos_on_superseded_by"
   end
 
   create_table "user_profiles", force: :cascade do |t|
