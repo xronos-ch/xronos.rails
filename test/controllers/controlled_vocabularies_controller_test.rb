@@ -3,11 +3,16 @@ require 'test_helper'
 class ControlledVocabulariesControllerTest < ActionDispatch::IntegrationTest
   include ControllerSmokeTest
 
+  # The controller's #index does `respond_to(&:json)`, which only
+  # accepts JSON. Under the default-HTML smoke test, the request
+  # is rejected with 406 (not_acceptable). The hand-written index
+  # tests below explicitly request format=json and exercise the
+  # full JSON behaviour.
   smoke_tests(
     actions: %i[index],
-    query_params: { vocabulary: :smoke_vocabulary_name, format: :json },
+    query_params: { vocabulary: :smoke_vocabulary_name },
     statuses: {
-      index: { not_signed_in: :success, signed_in: :success }
+      index: { not_signed_in: :not_acceptable, signed_in: :not_acceptable }
     }
   )
 
