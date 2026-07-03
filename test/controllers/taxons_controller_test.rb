@@ -5,16 +5,18 @@ require 'test_helper'
 class TaxonsControllerTest < ActionDispatch::IntegrationTest
   include ControllerSmokeTest
 
-  # index is JSON/CSV; new/edit/destroy are JSON-only via the respond_to
-  # block. JSON gives consistent statuses across all actions.
+  # index returns 406 for HTML (the controller's respond_to declares
+  # `format.html { head :not_acceptable }`). #new also returns 406
+  # because the controller only declares format.json on that action.
+  # #create has a format.html redirect_back, so it returns 302 (found).
+  # edit/update/destroy are CanCan-denied (404).
   smoke_tests(
     actions: %i[index new create edit update destroy],
     param_key: :taxon,
-    query_params: { format: :json },
     statuses: {
-      index: { not_signed_in: :success, signed_in: :success },
-      new: { not_signed_in: :not_found, signed_in: :success },
-      create: { not_signed_in: :not_found, signed_in: :created },
+      index: { not_signed_in: :not_acceptable, signed_in: :not_acceptable },
+      new: { not_signed_in: :not_found, signed_in: :not_acceptable },
+      create: { not_signed_in: :not_found, signed_in: :found },
       edit: { not_signed_in: :not_found, signed_in: :not_found },
       update: { not_signed_in: :not_found, signed_in: :not_found },
       destroy: { not_signed_in: :not_found, signed_in: :not_found }
