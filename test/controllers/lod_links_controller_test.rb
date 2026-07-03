@@ -6,7 +6,7 @@ class LodLinksControllerTest < ActionDispatch::IntegrationTest
   test 'unauthenticated users cannot create LOD links' do
     site = create(:site)
 
-    assert_no_difference('LODLink.count') do
+    assert_no_difference('LodLink.count') do
       post lod_links_path, params: {
         lod_link: {
           linkable_type: 'Site',
