@@ -54,8 +54,10 @@
 #     statuses: { ... }
 #   )
 #
-# Format: by default, no format is forced; the controller's respond_to
-# decides. To force a format, use:
+# Format: by default, smoke tests request HTML (the natural browser
+# format). This documents the controller's response when accessed
+# without a format override. To test a different format, override
+# `query_params`, e.g.:
 #
 #   query_params: { format: :json }
 module ControllerSmokeTest
@@ -91,7 +93,7 @@ module ControllerSmokeTest
     #   singular_resource: true for singular resources (no :id param).
 
     def smoke_tests(actions: REST_ACTIONS, param_key: nil, parent: nil, statuses: {},
-                    query_params: {}, singular_resource: false, requires_admin: false)
+                    query_params: { format: :html }, singular_resource: false, requires_admin: false)
       validate_actions!(actions)
       @smoke_actions           = actions
       @smoke_param_key         = param_key
