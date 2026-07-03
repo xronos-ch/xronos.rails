@@ -5,15 +5,20 @@ require 'test_helper'
 class FunctionalClassificationsControllerTest < ActionDispatch::IntegrationTest
   include ControllerSmokeTest
 
+  # The controller's #index declares only `format.json` in its
+  # respond_to, so the default-HTML smoke test gets 406. create /
+  # update / destroy have no respond_to at all — they unconditionally
+  # `redirect_to return_location` — so the status is the same
+  # regardless of format.
+  #
   # attributes_for returns assignable + category association objects;
   # the controller's strong params require assignable_type/assignable_id
   # and functional_classification_category_id.
   smoke_tests(
     actions: %i[index create update destroy],
     param_key: :functional_classification,
-    query_params: { format: :json },
     statuses: {
-      index: { not_signed_in: :success, signed_in: :success },
+      index: { not_signed_in: :not_acceptable, signed_in: :not_acceptable },
       create: { not_signed_in: :not_found, signed_in: :found },
       update: { not_signed_in: :not_found, signed_in: :not_found },
       destroy: { not_signed_in: :not_found, signed_in: :not_found }
