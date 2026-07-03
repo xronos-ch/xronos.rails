@@ -26,6 +26,9 @@ class ContextsController < ApplicationController
   # GET /contexts/new
   def new
     @context = Context.new
+    respond_to do |format|
+      format.json { render json: @context }
+    end
   end
 
   # GET /contexts/1/edit
