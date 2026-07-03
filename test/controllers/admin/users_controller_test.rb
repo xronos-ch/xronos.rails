@@ -8,7 +8,7 @@ class Admin::UsersControllerTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
 
   test 'signed-in non-admin users cannot access admin users index' do
-    sign_in create(:user)
+    sign_in create(:user, email: "non-admin-index-#{SecureRandom.hex(8)}@xronos.test"), scope: :user
 
     get admin_users_path
 
@@ -16,12 +16,12 @@ class Admin::UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'signed-in non-admin users cannot create admin users' do
-    sign_in create(:user)
+    sign_in create(:user, email: "non-admin-create-#{SecureRandom.hex(8)}@xronos.test"), scope: :user
 
     assert_no_difference('User.count') do
       post admin_users_path, params: {
         user: {
-          email: 'unauthorized-create@example.test',
+          email: "unauthorized-create-#{SecureRandom.hex(8)}@xronos.test",
           password: 'password',
           password_confirmation: 'password'
         }
@@ -32,7 +32,7 @@ class Admin::UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'admin users can access admin users index' do
-    sign_in create(:user, admin: true), scope: :user
+    sign_in create(:user, admin: true, email: "admin-index-#{SecureRandom.hex(8)}@xronos.test"), scope: :user
 
     get admin_users_path
 
