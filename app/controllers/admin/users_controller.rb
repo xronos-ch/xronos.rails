@@ -1,6 +1,6 @@
 class Admin::UsersController < AdminController
 
-  #load_and_authorize_resource
+  load_and_authorize_resource
 
   before_action :set_user, only: [:edit, :update, :destroy]
   before_action :add_users_breadcrumb
