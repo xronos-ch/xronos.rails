@@ -2,13 +2,13 @@
 
 require 'test_helper'
 
-class LinkedResourcesControllerTest < ActionDispatch::IntegrationTest
-  test 'unauthenticated users cannot create linked resources' do
+class LodLinksControllerTest < ActionDispatch::IntegrationTest
+  test 'unauthenticated users cannot create LOD links' do
     site = create(:site)
 
-    assert_no_difference('LinkedResource.count') do
-      post linked_resources_path, params: {
-        linked_resource: {
+    assert_no_difference('LODLink.count') do
+      post lod_links_path, params: {
+        lod_link: {
           linkable_type: 'Site',
           linkable_id: site.id,
           source: 'Wikidata',
