@@ -2,6 +2,12 @@
 
 ## 1.2.0.9000 [unreleased]
 
+## 1.2.2
+
+- Security hotfix: tightened authorization for mutating controller actions.
+- Disabled unused exposed `measurement_states` routes.
+- Added focused regression tests for unauthorized create/update requests.
+
 ## 1.2.1
 
 * Fixed pagination in context issue show view
