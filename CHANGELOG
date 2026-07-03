@@ -2,6 +2,7 @@
 
 ## 1.2.1.9000 [unreleased]
 
+- **Migrations required** removed the unused MeasurementStates
 - Added OpenContext, Pleiades, Vici.org, and iDAI.gazetteer as potential linked
   record sources for sites and c14s (OpenContext only) (#487)
   - **Migrations required:** Renamed LODLinks to LinkedResources (#372)
