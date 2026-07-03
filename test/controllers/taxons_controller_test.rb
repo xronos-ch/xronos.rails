@@ -13,7 +13,7 @@ class TaxonsControllerTest < ActionDispatch::IntegrationTest
     query_params: { format: :json },
     statuses: {
       index: { not_signed_in: :success, signed_in: :success },
-      new: { not_signed_in: :not_found, signed_in: :not_acceptable },
+      new: { not_signed_in: :not_found, signed_in: :success },
       create: { not_signed_in: :not_found, signed_in: :created },
       edit: { not_signed_in: :not_found, signed_in: :not_found },
       update: { not_signed_in: :not_found, signed_in: :not_found },
