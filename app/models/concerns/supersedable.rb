@@ -49,21 +49,8 @@ module Supersedable
     supersession_events.order(:created_at)
   end
 
-  # Make `self` superseded by `canonical`. Atomic: writes the
-  # SupersessionEvent row and the Supersession row in one transaction,
-  # and reassigns all eligible child associations to the canonical.
-  #
-  # When `self` is being merged, any other records that are currently
-  # superseded by `self` are re-pointed to the new canonical. This
-  # preserves the invariant that every Supersession row points at a
-  # currently-canonical record.
-  #
-  # Preconditions:
-  #   - `canonical` must not be `self`
-  #   - `self` must not already be superseded
-  #   - `canonical` must currently be canonical (not superseded)
-  # The unique index on supersessions.superseded_id is the DB-level
-  # safety net.
+  # Make `self` superseded by `canonical`. Atomic. Child reassociation
+  # is the model's responsibility via `set_callback :merge, :before`.
   def supersede!(canonical, revision_comment = nil) # rubocop:disable Metrics/MethodLength
     raise ArgumentError, "Cannot supersede a record by itself" if canonical == self
     raise 'Record is already superseded' if superseded?
@@ -80,15 +67,10 @@ module Supersedable
         superseded_by: canonical,
         comment: revision_comment
       )
-      reassign_associations!(revision_comment, supersession_state)
     end
   end
 
-  # Restore `self` to canonical. Removes the current Supersession row
-  # and appends a 'restore' event. The re-pointing case (where the
-  # original target was itself superseded after the original merge) is
-  # handled inside `supersede!` at the time the target was superseded,
-  # not here, so this method stays simple.
+  # Restore `self` to canonical. Removes the Supersession row.
   def restore! # rubocop:disable Metrics/MethodLength
     raise 'Not currently superseded' unless superseded?
 
@@ -129,18 +111,6 @@ module Supersedable
   end
 
   private # rubocop:disable Lint/UselessAccessModifier
-
-  def reassign_associations!(revision_comment, supersession_state = nil)
-    supersession_state ||= supersession
-    target_id = supersession_state.superseded_by_id
-    self.class.supersedable_associations.each_value do |reflection|
-      send(reflection.name).each do |child|
-        child.write_attribute(reflection.foreign_key, target_id)
-        child.revision_comment = revision_comment if child.respond_to?(:revision_comment=)
-        child.save!
-      end
-    end
-  end
 
   def re_point_existing_supersessions_to(canonical)
     Supersession

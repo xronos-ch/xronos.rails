@@ -1,13 +1,14 @@
 module Duplicable # rubocop:disable Metrics/ModuleLength
-
   extend ActiveSupport::Concern
 
-  @@duplicable_attrs = []
-
+  # Per-class list of duplicate key attributes. Subclasses inherit and
+  # can reset via `self._duplicable_attrs_list = []`.
   included do # instance methods # rubocop:disable Metrics/BlockLength
+    class_attribute :_duplicable_attrs_list, default: nil
+    self._duplicable_attrs_list = []
 
     def duplicates
-      @@duplicable_attrs.map { |attr|
+      _duplicable_attrs_list.map { |attr|
         where_duplicated(attr)
       }.reduce(:merge)
     end
@@ -15,6 +16,16 @@ module Duplicable # rubocop:disable Metrics/ModuleLength
     def exact_duplicates
       attrs = attributes.with_indifferent_access
       self.class.where(attrs.slice(*duplicable_attrs_without_options))
+    end
+
+    # Oldest non-superseded record with the same duplicate keys.
+    # Returns nil if none found.
+    def find_exact_duplicate
+      keys = duplicable_attrs_without_options
+      self.class.where(keys.index_with { |a| self[a] })
+          .where.not(id: id)
+          .order(:created_at, :id)
+          .first
     end
 
     def is_duplicated?
@@ -104,27 +115,25 @@ module Duplicable # rubocop:disable Metrics/ModuleLength
     def duplicable_attrs_with_options
       self.class.duplicable_attrs_with_options
     end
-
   end
 
   class_methods do # rubocop:disable Metrics/BlockLength
-
     def duplicable(*attrs)
-      @@duplicable_attrs.push(*attrs)
+      _duplicable_attrs_list.concat(attrs)
     end
 
     def duplicable_attrs
-      @@duplicable_attrs
+      _duplicable_attrs_list
     end
 
     def duplicable_attrs_without_options
-      @@duplicable_attrs.map {
+      _duplicable_attrs_list.map {
         |x| x.is_a?(Hash) ? x.keys : x
       }.flatten
     end
 
     def duplicable_attrs_with_options
-      @@duplicable_attrs
+      _duplicable_attrs_list
         .filter { |x| x.is_a?(Hash) }
         .reduce({}, :merge)
     end
@@ -138,18 +147,5 @@ module Duplicable # rubocop:disable Metrics/ModuleLength
 
       self.where(id: duplicated_ids)
     end
-
-    def merge_duplicates(duplicates)
-      original = duplicates.first
-      duplicates.drop(1).each do |dupe|
-        dupe.supersede!(
-          original,
-          "Merged with #{original.model_name.singular}:#{original.id}"
-        )
-      end
-      original
-    end
-
   end
-
 end
