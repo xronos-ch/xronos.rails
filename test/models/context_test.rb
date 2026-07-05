@@ -71,4 +71,69 @@ class ContextTest < ActiveSupport::TestCase
     assert context.valid?
   end
 
+  #
+  # Deduplication
+  #
+  # Context's model-level uniqueness validations and DB unique index
+  # already prevent new duplicates from being created. The Mergeable
+  # framework is here to power Site#reassign_contexts!: when two sites
+  # are merged, contexts that share a name under both sites are
+  # explicitly merged via `merge_into!` to preserve all chronological
+  # data (samples, C14s, typos, functional classifications).
+  #
+  # These tests verify the merge framework's behaviour directly.
+  # find_exact_duplicate detection is covered by the framework's
+  # own tests in test/models/concerns/duplicable_test.rb.
+  #
+
+  test "reassigns samples to the canonical on merge" do
+    canonical = create(:context, site: @site, name: "Trench A")
+    dupe = create(:context, site: @site, name: "Trench B")
+    sample = create(:sample, context: dupe)
+
+    dupe.merge_into!(canonical)
+
+    assert_predicate dupe, :destroyed?
+    assert_equal canonical.id, sample.reload.context_id
+  end
+
+  test "reassigns non-colliding functional_classifications to the canonical on merge" do
+    canonical = create(:context, site: @site, name: "Trench A")
+    dupe = create(:context, site: @site, name: "Trench B")
+    category = create(:functional_classification_category)
+    create(:functional_classification, assignable: dupe, functional_classification_category: category)
+
+    dupe.merge_into!(canonical)
+
+    assert_predicate dupe, :destroyed?
+    assert_equal 0, FunctionalClassification.where(assignable_type: "Context", assignable_id: dupe.id).count
+    assert_equal 1, FunctionalClassification.where(assignable_type: "Context", assignable_id: canonical.id).count
+  end
+
+  test "destroys colliding functional_classifications on merge" do
+    canonical = create(:context, site: @site, name: "Trench A")
+    dupe = create(:context, site: @site, name: "Trench B")
+    category = create(:functional_classification_category)
+    create(:functional_classification, assignable: canonical, functional_classification_category: category)
+    create(:functional_classification, assignable: dupe,      functional_classification_category: category)
+
+    assert_difference "FunctionalClassification.count", -1 do
+      dupe.merge_into!(canonical)
+    end
+
+    # Canonical's classification remains; dupe's collision is destroyed
+    assert_equal 1, FunctionalClassification.where(assignable_type: "Context", assignable_id: canonical.id).count
+    assert_equal 0, FunctionalClassification.where(assignable_type: "Context", assignable_id: dupe.id).count
+  end
+
+  test "hard-destroys the dupe (Context is not Supersedable)" do
+    canonical = create(:context, site: @site, name: "Trench A")
+    dupe = create(:context, site: @site, name: "Trench B")
+
+    dupe.merge_into!(canonical)
+
+    assert_predicate dupe, :destroyed?
+    # The canonical still exists
+    assert Context.exists?(canonical.id)
+  end
 end

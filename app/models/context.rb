@@ -21,6 +21,9 @@
 
 class Context < ApplicationRecord
   include Versioned
+  include Mergeable
+
+  exact_duplicates_on :site_id, name: :nil_matches_nil
 
   FUNCTIONAL_CLASSIFICATION_SUGGESTION_PATTERN =
     "settlement|habitation|occupation|dwelling|village|house|domestic|" \
@@ -47,6 +50,14 @@ class Context < ApplicationRecord
   has_many :functional_classifications,
            as: :assignable,
            dependent: :destroy
+
+  # No `after_save :merge_exact_duplicates`: the model-level
+  # uniqueness validation and DB unique index already prevent new
+  # duplicates. Mergeable is here to power Site#reassign_contexts!
+  # (where we explicitly merge contexts that collide across two
+  # sites being merged).
+  before_merge :reassign_samples!
+  before_merge :reassign_functional_classifications!
 
   acts_as_copy_target # enable CSV exports
 
@@ -138,4 +149,29 @@ class Context < ApplicationRecord
     end
   end
 
+  def reassign_samples!
+    Sample.where(context_id: id).update_all(context_id: merged_into_id)
+  end
+
+  def reassign_functional_classifications!
+    return if merged_into_id.blank?
+    from_id = id
+    to_id   = merged_into_id
+
+    # Destroy collisions first to avoid violating the unique index on
+    # (assignable_type, assignable_id, functional_classification_category_id).
+    canonical_category_ids = FunctionalClassification
+                              .where(assignable_type: "Context", assignable_id: to_id)
+                              .pluck(:functional_classification_category_id)
+    if canonical_category_ids.any?
+      FunctionalClassification
+        .where(assignable_type: "Context", assignable_id: from_id)
+        .where(functional_classification_category_id: canonical_category_ids)
+        .delete_all
+    end
+
+    FunctionalClassification
+      .where(assignable_type: "Context", assignable_id: from_id)
+      .update_all(assignable_id: to_id)
+  end
 end
