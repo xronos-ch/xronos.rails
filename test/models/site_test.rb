@@ -65,4 +65,170 @@ class SiteTest < ActiveSupport::TestCase
     assert_equal superseded, Site.unscoped.find(superseded.id)
   end
 
+  #
+  # Deduplication
+  #
+
+  test "auto-merges on create when all key attrs match" do
+    canonical = create(:site, name: "Anuradhapura", lat: 8.0, lng: 80.0, country_code: "LK")
+    dupe = create(:site, name: "Anuradhapura", lat: 8.0, lng: 80.0, country_code: "LK")
+
+    assert_predicate dupe, :superseded?
+    assert_equal canonical.id, dupe.merged_into_id
+  end
+
+  test "auto-merges on update when an update creates a duplicate" do
+    canonical = create(:site, name: "Anuradhapura", lat: 8.0, lng: 80.0, country_code: "LK")
+    other = create(:site, name: "Sigiriya",      lat: 7.95, lng: 80.75, country_code: "LK")
+
+    other.update!(name: "Anuradhapura", lat: 8.0, lng: 80.0)
+
+    assert_predicate other, :superseded?
+    assert_equal canonical.id, other.merged_into_id
+  end
+
+  test "does not auto-merge when name is unique" do
+    create(:site, name: "Anuradhapura", lat: 8.0, lng: 80.0, country_code: "LK")
+    other = create(:site, name: "Sigiriya", lat: 7.95, lng: 80.75, country_code: "LK")
+
+    assert_not other.superseded?
+    assert_nil other.merged_into_id
+  end
+
+  test "does not auto-merge when name matches but lat differs" do
+    create(:site, name: "Anuradhapura", lat: 8.0, lng: 80.0, country_code: "LK")
+    other = create(:site, name: "Anuradhapura", lat: 7.95, lng: 80.0, country_code: "LK")
+
+    assert_not other.superseded?
+    assert_nil other.merged_into_id
+  end
+
+  test "does not auto-merge when name matches but one has lat and other has nil lat" do
+    create(:site, name: "Anuradhapura", lat: 8.0,  lng: 80.0, country_code: "LK")
+    other = create(:site, name: "Anuradhapura", lat: nil, lng: nil, country_code: nil)
+
+    # nil != 8.0 (strict nil default) — they don't match
+    assert_not other.superseded?
+    assert_nil other.merged_into_id
+  end
+
+  test "auto-merges when all lat/lng/country_code are nil on both sides (nil_matches_nil)" do
+    create(:site, name: "Anuradhapura", lat: nil, lng: nil, country_code: nil)
+    other = create(:site, name: "Anuradhapura", lat: nil, lng: nil, country_code: nil)
+
+    assert_predicate other, :superseded?
+  end
+
+  test "reassigns non-colliding contexts to canonical on merge" do
+    canonical = create(:site)
+    canonical_context = create(:context, site: canonical, name: "Trench A")
+    # Create the dupe with a unique name first to avoid auto-merge
+    # on create. Then attach a child, then update to match.
+    dupe = create(:site)
+    dupe_context = create(:context, site: dupe, name: "Trench B")
+
+    dupe.update!(name: canonical.name, lat: canonical.lat, lng: canonical.lng, country_code: canonical.country_code)
+
+    assert_predicate dupe, :superseded?
+    assert_equal canonical.id, dupe_context.reload.site_id
+    assert_equal canonical.id, canonical_context.reload.site_id
+  end
+
+  test "merges contexts on name collision (uses Context Mergeable)" do
+    canonical = create(:site)
+    canonical_context = create(:context, site: canonical, name: "Trench A")
+    # Create the dupe with a unique name first
+    dupe = create(:site)
+    dupe_context = create(:context, site: dupe, name: "Trench A")
+    sample = create(:sample, context: dupe_context)
+    dupe_context_id = dupe_context.id
+
+    dupe.update!(name: canonical.name, lat: canonical.lat, lng: canonical.lng, country_code: canonical.country_code)
+
+    # The dupe's context is destroyed (merged into the canonical's)
+    assert_not Context.exists?(dupe_context_id)
+    # The canonical's context still exists with the dupe's sample reassigned
+    assert Context.exists?(canonical_context.id)
+    assert_equal canonical_context.id, sample.reload.context_id
+  end
+
+  test "reassigns site_names to canonical on merge" do
+    canonical = create(:site, :with_site_names, site_names_count: 1)
+    dupe = create(:site, :with_site_names, site_names_count: 1)
+    dupe_site_name = dupe.site_names.first
+
+    dupe.update!(name: canonical.name, lat: canonical.lat, lng: canonical.lng, country_code: canonical.country_code)
+
+    assert_predicate dupe, :superseded?
+    assert_equal canonical.id, dupe_site_name.reload.site_id
+  end
+
+  test "reassigns non-colliding citations to canonical on merge" do
+    canonical = create(:site, :with_citations, citations_count: 2)
+    dupe = create(:site, :with_citations, citations_count: 2)
+    dupe_citation_count = dupe.citations.count
+    canonical_citation_count_before = canonical.citations.count
+
+    dupe.update!(name: canonical.name, lat: canonical.lat, lng: canonical.lng, country_code: canonical.country_code)
+
+    assert_predicate dupe, :superseded?
+    assert_equal 0, dupe.citations.count
+    # The dupe's citations have been reassigned to the canonical
+    assert_equal canonical_citation_count_before + dupe_citation_count,
+                 canonical.citations.count
+  end
+
+  test "reassigns non-colliding linked_resources to canonical on merge" do
+    canonical = create(:site)
+    dupe = create(:site)
+    # Use different sources so there's no collision.
+    create(:linked_resource, linkable: canonical, source: "Wikidata", external_id: "Q111")
+    create(:linked_resource, linkable: dupe,      source: "Pleiades",  external_id: "222")
+    dupe_link = dupe.linked_resources.first
+
+    dupe.update!(name: canonical.name, lat: canonical.lat, lng: canonical.lng, country_code: canonical.country_code)
+
+    assert_predicate dupe, :superseded?
+    assert_equal 0, dupe.linked_resources.count
+    # The dupe's link is now on the canonical
+    assert_equal canonical.id, LinkedResource.find(dupe_link.id).linkable_id
+  end
+
+  test "reassigns site_types to canonical on merge (HABTM, AR <<)" do
+    canonical = create(:site)
+    # The site factory assigns one site_type to each site
+    canonical_types = canonical.site_types.to_a
+    dupe = create(:site)
+    dupe_types = dupe.site_types.to_a
+
+    dupe.update!(name: canonical.name, lat: canonical.lat, lng: canonical.lng, country_code: canonical.country_code)
+
+    assert_predicate dupe, :superseded?
+    # Reload canonical to get fresh data (its in-memory site_types
+    # association may be stale).
+    canonical.reload
+    # The canonical retains its original site types
+    canonical_types.each do |site_type|
+      assert_includes canonical.site_types, site_type
+    end
+    # The dupe's site types are now on the canonical
+    dupe_types.each do |site_type|
+      assert_includes canonical.site_types, site_type
+    end
+    # The dupe's join table rows are gone
+    assert_equal 0, dupe.site_types.count
+  end
+
+  test "reassigns functional_classifications to canonical on merge" do
+    canonical = create(:site)
+    dupe = create(:site)
+    category = create(:functional_classification_category)
+    create(:functional_classification, assignable: dupe, functional_classification_category: category)
+
+    dupe.update!(name: canonical.name, lat: canonical.lat, lng: canonical.lng, country_code: canonical.country_code)
+
+    assert_predicate dupe, :superseded?
+    assert_equal 0, FunctionalClassification.where(assignable_type: "Site", assignable_id: dupe.id).count
+    assert_equal 1, FunctionalClassification.where(assignable_type: "Site", assignable_id: canonical.id).count
+  end
 end

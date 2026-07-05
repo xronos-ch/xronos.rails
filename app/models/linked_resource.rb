@@ -59,6 +59,39 @@ class LinkedResource < ApplicationRecord
     LinkedResource::Source.find(source)&.url_for(external_id)
   end
 
+  # Reassign all linked_resources owned by `from` to `to`. Handles the
+  # `(linkable_type, linkable_id, source)` unique index by destroying
+  # any dupe whose source is already present on `to`.
+  #
+  # The `from` record must be a Linkable model. The collision check
+  # is on `source` — if the canonical already has a linked_resource
+  # with the same source (regardless of external_id), the dupe's row
+  # is destroyed. Note: a Site can only have one link per source
+  # (e.g. one Wikidata link), so the canonical's existing link wins.
+  def self.reassign_all_to!(from:, to:)
+    validate_reassign_args!(from, to)
+    from_filter = { linkable_type: from.class.name, linkable_id: from.id }
+    to_filter   = { linkable_type: to.class.name,   linkable_id: to.id }
+
+    destroyed  = destroy_source_collisions(from_filter, to_filter)
+    reassigned = where(from_filter).update_all(linkable_id: to.id)
+
+    { reassigned: reassigned, destroyed_collisions: destroyed }
+  end
+
+  def self.validate_reassign_args!(from, to)
+    raise ArgumentError, "from and to must be the same class" unless from.instance_of?(to.class)
+    raise ArgumentError, "to must be persisted" unless to.persisted?
+    raise ArgumentError, "from and to must be different records" if from.id == to.id
+  end
+
+  def self.destroy_source_collisions(from_filter, to_filter)
+    canonical_sources = where(to_filter).distinct.pluck(:source)
+    return 0 if canonical_sources.empty?
+
+    where(from_filter).where(source: canonical_sources).delete_all
+  end
+
   private
 
   def external_id_matches_source_pattern

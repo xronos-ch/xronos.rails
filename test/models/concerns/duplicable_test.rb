@@ -8,6 +8,15 @@ class DuplicableTest < ActiveSupport::TestCase
   setup do
     OptionTestSite._exact_duplicates_attrs_list = []
     OptionTestSite._potential_duplicates_attrs_list = []
+    # Disable the Mergeable auto-merge callback (inherited from Site)
+    # for this test subclass — these tests assert that records with
+    # identical keys remain in the database.
+    OptionTestSite.skip_callback(:save, :after, :merge_exact_duplicates)
+  end
+
+  teardown do
+    # Re-enable the callback for other tests in the suite.
+    OptionTestSite.set_callback(:save, :after, :merge_exact_duplicates)
   end
 
   #

@@ -21,6 +21,12 @@ class Site < ApplicationRecord
   include Versioned
   include Supersedable
   include BatchMatchableToWikidata
+  include Mergeable
+
+  exact_duplicates_on :name,
+                      lat: :nil_matches_nil,
+                      lng: :nil_matches_nil,
+                      country_code: :nil_matches_nil
 
   # Children
   has_many :site_names, dependent: :destroy
@@ -36,6 +42,9 @@ class Site < ApplicationRecord
 
   # Cousins
   has_and_belongs_to_many :site_types, optional: true
+
+  has_many :linked_resources, as: :linkable, dependent: :destroy
+  has_many :functional_classifications, as: :assignable, dependent: :destroy
 
   composed_of :coordinates,
     mapping: [%w(lng longitude), %w(lat latitude)],
@@ -56,6 +65,15 @@ class Site < ApplicationRecord
 
   include Duplicable
   potential_duplicates_on :name, :lat, :lng, :country_code
+
+  after_save :merge_exact_duplicates
+
+  before_merge :reassign_contexts!
+  before_merge :reassign_site_names!
+  before_merge :reassign_citations!
+  before_merge :reassign_linked_resources!
+  before_merge :reassign_site_types!
+  before_merge :reassign_functional_classifications!
 
   acts_as_copy_target # enable CSV exports
 
@@ -179,5 +197,88 @@ class Site < ApplicationRecord
   def missing_country_code?
     country_code.blank?
   end
-  
+
+  private
+
+  # When two sites are merged, contexts that share a name under both
+  # sites are explicitly merged via the Context Mergeable framework,
+  # preserving all chronological data (samples, C14s, typos, FNs).
+  # The remaining (non-colliding) contexts are then moved to the
+  # canonical site.
+  def reassign_contexts!
+    return if merged_into_id.blank?
+    from_id = id
+    to_id   = merged_into_id
+
+    merge_colliding_contexts(from_id, to_id)
+    merge_nil_name_contexts(from_id, to_id)
+    Context.where(site_id: from_id).update_all(site_id: to_id)
+  end
+
+  # When two sites are merged, contexts that share a name under both
+  # sites are explicitly merged via the Context Mergeable framework,
+  # preserving all chronological data (samples, C14s, typos, FNs).
+  def merge_colliding_contexts(from_id, to_id)
+    Context.where(site_id: to_id).where.not(name: nil).pluck(:name).each do |name|
+      dupe_context = Context.find_by(site_id: from_id, name: name)
+      next unless dupe_context
+
+      canonical_context = Context.find_by(site_id: to_id, name: name)
+      dupe_context.merge_into!(canonical_context)
+    end
+  end
+
+  # Handle nil-name contexts (the :nil_matches_nil case for Context's key).
+  def merge_nil_name_contexts(from_id, to_id)
+    return unless Context.where(site_id: from_id, name: nil).exists? &&
+                  Context.where(site_id: to_id,   name: nil).exists?
+
+    nil_contexts = Context.where(name: nil, site_id: [from_id, to_id]).order(:created_at, :id).to_a
+    nil_contexts[1..].each { |dupe| dupe.merge_into!(nil_contexts.first) }
+  end
+
+  def reassign_site_names!
+    SiteName.where(site_id: id).update_all(site_id: merged_into_id)
+  end
+
+  def reassign_citations!
+    canonical = self.class.find(merged_into_id)
+    Citation.reassign_all_to!(from: self, to: canonical)
+  end
+
+  def reassign_linked_resources!
+    canonical = self.class.find(merged_into_id)
+    LinkedResource.reassign_all_to!(from: self, to: canonical)
+  end
+
+  def reassign_site_types!
+    canonical = self.class.find(merged_into_id)
+    existing_ids = canonical.site_types.pluck(:id)
+    site_types.where.not(id: existing_ids).find_each do |site_type|
+      canonical.site_types << site_type
+    end
+    site_types.clear
+  end
+
+  def reassign_functional_classifications!
+    return if merged_into_id.blank?
+    from_id = id
+    to_id   = merged_into_id
+
+    # Destroy collisions first to avoid violating the unique index on
+    # (assignable_type, assignable_id, functional_classification_category_id).
+    canonical_category_ids = FunctionalClassification
+                              .where(assignable_type: "Site", assignable_id: to_id)
+                              .pluck(:functional_classification_category_id)
+    if canonical_category_ids.any?
+      FunctionalClassification
+        .where(assignable_type: "Site", assignable_id: from_id)
+        .where(functional_classification_category_id: canonical_category_ids)
+        .delete_all
+    end
+
+    FunctionalClassification
+      .where(assignable_type: "Site", assignable_id: from_id)
+      .update_all(assignable_id: to_id)
+  end
 end

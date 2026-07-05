@@ -87,4 +87,87 @@ class LinkedResourceTest < ActiveSupport::TestCase
 
     assert other.valid?
   end
+
+  #
+  # LinkedResource.reassign_all_to!
+  #
+
+  test 'reassign_all_to! moves linked_resources from one Site to another' do
+    canonical = create(:site)
+    dupe      = create(:site)
+    create(:linked_resource, linkable: dupe, source: 'Wikidata', external_id: 'Q111')
+
+    result = LinkedResource.reassign_all_to!(from: dupe, to: canonical)
+
+    assert_equal 1, result[:reassigned]
+    assert_equal 0, result[:destroyed_collisions]
+    assert_equal 0, LinkedResource.where(linkable_type: 'Site', linkable_id: dupe.id).count
+    assert_equal 1, LinkedResource.where(linkable_type: 'Site', linkable_id: canonical.id).count
+  end
+
+  test 'reassign_all_to! destroys collisions on source (a Site has at most one link per source)' do
+    canonical = create(:site)
+    dupe      = create(:site)
+    # Same source on both — dupe's row is destroyed regardless of external_id
+    # (the unique index is on (linkable_type, linkable_id, source), not external_id).
+    create(:linked_resource, linkable: canonical, source: 'Wikidata', external_id: 'Q111')
+    create(:linked_resource, linkable: dupe,      source: 'Wikidata', external_id: 'Q222')
+
+    result = LinkedResource.reassign_all_to!(from: dupe, to: canonical)
+
+    assert_equal 0, result[:reassigned]
+    assert_equal 1, result[:destroyed_collisions]
+    # Canonical's link remains
+    assert_equal 1, LinkedResource.where(linkable_type: 'Site', linkable_id: canonical.id).count
+    # Dupe's link is destroyed (not reassigned)
+    assert_equal 0, LinkedResource.where(linkable_type: 'Site', linkable_id: dupe.id).count
+  end
+
+  test 'reassign_all_to! mixes reassignment and destruction' do
+    canonical = create(:site)
+    dupe      = create(:site)
+    # Wikidata is on the canonical — dupe's Wikidata link (any external_id) is destroyed
+    create(:linked_resource, linkable: canonical, source: 'Wikidata', external_id: 'Q111')
+    create(:linked_resource, linkable: dupe,      source: 'Wikidata', external_id: 'Q222')
+    # Pleiades is unique to the dupe — will be reassigned
+    create(:linked_resource, linkable: dupe,      source: 'Pleiades', external_id: '333')
+
+    result = LinkedResource.reassign_all_to!(from: dupe, to: canonical)
+
+    assert_equal 1, result[:reassigned]
+    assert_equal 1, result[:destroyed_collisions]
+    assert_equal 2, LinkedResource.where(linkable_type: 'Site', linkable_id: canonical.id).count
+    assert_equal 0, LinkedResource.where(linkable_type: 'Site', linkable_id: dupe.id).count
+  end
+
+  test 'reassign_all_to! is a no-op when there are no linked_resources' do
+    canonical = create(:site)
+    dupe      = create(:site)
+
+    assert_no_difference 'LinkedResource.count' do
+      result = LinkedResource.reassign_all_to!(from: dupe, to: canonical)
+      assert_equal 0, result[:reassigned]
+      assert_equal 0, result[:destroyed_collisions]
+    end
+  end
+
+  test 'reassign_all_to! raises when from and to are different classes' do
+    site = create(:site)
+    reference = create(:reference)
+
+    assert_raises(ArgumentError) { LinkedResource.reassign_all_to!(from: site, to: reference) }
+  end
+
+  test 'reassign_all_to! raises when to is not persisted' do
+    site = create(:site)
+    new_site = Site.new
+
+    assert_raises(ArgumentError) { LinkedResource.reassign_all_to!(from: site, to: new_site) }
+  end
+
+  test 'reassign_all_to! raises when from and to are the same record' do
+    site = create(:site)
+
+    assert_raises(ArgumentError) { LinkedResource.reassign_all_to!(from: site, to: site) }
+  end
 end
