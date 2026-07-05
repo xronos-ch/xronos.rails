@@ -154,24 +154,6 @@ class Context < ApplicationRecord
   end
 
   def reassign_functional_classifications!
-    return if merged_into_id.blank?
-    from_id = id
-    to_id   = merged_into_id
-
-    # Destroy collisions first to avoid violating the unique index on
-    # (assignable_type, assignable_id, functional_classification_category_id).
-    canonical_category_ids = FunctionalClassification
-                              .where(assignable_type: "Context", assignable_id: to_id)
-                              .pluck(:functional_classification_category_id)
-    if canonical_category_ids.any?
-      FunctionalClassification
-        .where(assignable_type: "Context", assignable_id: from_id)
-        .where(functional_classification_category_id: canonical_category_ids)
-        .delete_all
-    end
-
-    FunctionalClassification
-      .where(assignable_type: "Context", assignable_id: from_id)
-      .update_all(assignable_id: to_id)
+    FunctionalClassification.reassign_all_to!(from: self, to: canonical)
   end
 end

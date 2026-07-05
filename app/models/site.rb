@@ -242,43 +242,23 @@ class Site < ApplicationRecord
   end
 
   def reassign_citations!
-    canonical = self.class.find(merged_into_id)
     Citation.reassign_all_to!(from: self, to: canonical)
   end
 
   def reassign_linked_resources!
-    canonical = self.class.find(merged_into_id)
     LinkedResource.reassign_all_to!(from: self, to: canonical)
   end
 
   def reassign_site_types!
-    canonical = self.class.find(merged_into_id)
-    existing_ids = canonical.site_types.pluck(:id)
+    canonical_site = canonical
+    existing_ids = canonical_site.site_types.pluck(:id)
     site_types.where.not(id: existing_ids).find_each do |site_type|
-      canonical.site_types << site_type
+      canonical_site.site_types << site_type
     end
     site_types.clear
   end
 
   def reassign_functional_classifications!
-    return if merged_into_id.blank?
-    from_id = id
-    to_id   = merged_into_id
-
-    # Destroy collisions first to avoid violating the unique index on
-    # (assignable_type, assignable_id, functional_classification_category_id).
-    canonical_category_ids = FunctionalClassification
-                              .where(assignable_type: "Site", assignable_id: to_id)
-                              .pluck(:functional_classification_category_id)
-    if canonical_category_ids.any?
-      FunctionalClassification
-        .where(assignable_type: "Site", assignable_id: from_id)
-        .where(functional_classification_category_id: canonical_category_ids)
-        .delete_all
-    end
-
-    FunctionalClassification
-      .where(assignable_type: "Site", assignable_id: from_id)
-      .update_all(assignable_id: to_id)
+    FunctionalClassification.reassign_all_to!(from: self, to: canonical)
   end
 end

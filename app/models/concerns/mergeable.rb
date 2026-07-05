@@ -70,6 +70,12 @@ module Mergeable
     end
   end
 
+  # The canonical record this dupe is being merged into. Available
+  # to `before_merge` callbacks.
+  def canonical
+    self.class.find(merged_into_id)
+  end
+
   protected
 
   # Dispatch to `supersede!` (Supersedable models) or `destroy`.

@@ -151,7 +151,6 @@ class Reference < ApplicationRecord
   private
 
   def reassign_citations!
-    canonical = self.class.find(merged_into_id)
     Citation.reassign_all_to!(from: self, to: canonical)
   end
 
