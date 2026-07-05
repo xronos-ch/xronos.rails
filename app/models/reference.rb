@@ -24,17 +24,28 @@ class Reference < ApplicationRecord
   has_many :c14s, :through => :citations, :source => :citing, :source_type => 'C14'
   has_many :typos, :through => :citations, :source => :citing, :source_type => 'Typo'
 
+  has_many :sources
+
   validates :short_ref, presence: true
 
   include Versioned
   include Supersedable
+  include Mergeable
+
+  exact_duplicates_on :short_ref
+
+  after_save :merge_exact_duplicates
+
+  before_merge :reassign_citations!
+  before_merge :reassign_sources!
+
   acts_as_copy_target # enable CSV exports
 
   include HasIssues
   @issues = [ :mixed_reference, :missing_bibtex, :long_label ]
 
   include PgSearch::Model
-  pg_search_scope :search, 
+  pg_search_scope :search,
     against: [ :short_ref, :bibtex ],
     using: { tsearch: { prefix: true } } # match partial words
   multisearchable against: [ :short_ref, :bibtex ]
@@ -43,7 +54,7 @@ class Reference < ApplicationRecord
     select <<~SQL
       "references".*,
       (
-        SELECT COUNT(citations.id) 
+        SELECT COUNT(citations.id)
         FROM citations
         WHERE reference_id = "references".id
       ) AS citations_count
@@ -116,7 +127,7 @@ class Reference < ApplicationRecord
   def mixed_reference?
     short_ref.match?(DELIM_PATTERN)
   end
-  
+
   scope :missing_bibtex, -> { where(bibtex: nil) }
   def missing_bibtex?
     bibtex.blank?
@@ -138,6 +149,15 @@ class Reference < ApplicationRecord
   end
 
   private
+
+  def reassign_citations!
+    canonical = self.class.find(merged_into_id)
+    Citation.reassign_all_to!(from: self, to: canonical)
+  end
+
+  def reassign_sources!
+    Source.where(reference_id: id).update_all(reference_id: merged_into_id)
+  end
 
   def parse
     if bibtex.present?
