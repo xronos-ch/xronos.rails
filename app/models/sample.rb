@@ -6,6 +6,7 @@
 # Database name: primary
 #
 #  id                   :bigint           not null, primary key
+#  name                 :string
 #  part_of_organism     :text
 #  position_crs         :text
 #  position_description :text
@@ -31,6 +32,8 @@ class Sample < ApplicationRecord
   include HasControlledTerms
 
   controlled_term :part_of_organism, vocabulary: 'part_of_organism'
+
+  before_validation :normalise_name
 
   delegate :site, to: :context
 
@@ -110,5 +113,11 @@ class Sample < ApplicationRecord
     else
       position_crs.blank?
     end
+  end
+
+  private
+
+  def normalise_name
+    self.name = name.to_s.strip.presence
   end
 end

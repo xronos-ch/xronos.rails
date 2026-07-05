@@ -34,7 +34,9 @@
     tom_select_item_template_value: "controlled-vocabulary"
   } %>
 
-<!-- TODO: name? -->
+<%= f.text_field :name, label: "Sample name",
+  help: "Optional. When set, must be unique within this context." %>
+
 <%= f.text_field :position_description, label: "Position" %>
 
 <div class="row">

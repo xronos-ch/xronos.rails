@@ -183,6 +183,7 @@ class C14sController < ApplicationController
           :material_id,
           :taxon_id,
           :context_id,
+          :name,
           {
             context_attributes: %i[
               id

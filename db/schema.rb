@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_02_192104) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_05_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -289,6 +289,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_02_192104) do
     t.decimal "position_z"
     t.text "position_crs"
     t.text "part_of_organism"
+    t.string "name"
     t.index ["context_id"], name: "index_samples_on_context_id"
     t.index ["material_id"], name: "index_samples_on_material_id"
     t.index ["position_crs"], name: "index_samples_on_position_crs"
@@ -423,12 +424,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_02_192104) do
     t.boolean "admin", default: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
-  end
-
-  create_table "verify_models", force: :cascade do |t|
-    t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "versions", force: :cascade do |t|

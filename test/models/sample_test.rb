@@ -4,6 +4,7 @@
 # Database name: primary
 #
 #  id                   :bigint           not null, primary key
+#  name                 :string
 #  part_of_organism     :text
 #  position_crs         :text
 #  position_description :text
@@ -70,5 +71,26 @@ class SampleTest < ActiveSupport::TestCase
     assert_equal term, sample.part_of_organism_term
   end
 
-end
+  test 'name is not constrained to be unique' do
+    context = create(:context)
+    create(:sample, context: context, name: 'Bone 1')
 
+    duplicate = build(:sample, context: context, name: 'Bone 1')
+
+    assert duplicate.valid?
+  end
+
+  test 'name is optional; multiple samples in the same context may have a nil name' do
+    context = create(:context)
+    create(:sample, context: context, name: nil)
+
+    assert build(:sample, context: context, name: nil).valid?
+  end
+
+  test 'whitespace-only name is normalised to nil on save' do
+    sample = build(:sample, name: '   ')
+
+    assert sample.valid?
+    assert_nil sample.name
+  end
+end

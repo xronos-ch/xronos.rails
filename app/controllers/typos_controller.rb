@@ -151,6 +151,7 @@ class TyposController < ApplicationController # rubocop:disable Metrics/ClassLen
       :sample_id,
       sample: [
         :context_id,
+        :name,
         contexts: [
           :site_id
         ]
