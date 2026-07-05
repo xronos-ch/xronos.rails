@@ -36,6 +36,16 @@
 class C14 < ApplicationRecord
   include Versioned
   include Supersedable
+  include Mergeable
+
+  exact_duplicates_on :lab_identifier,
+                      sample_id: :nil_matches_nil,
+                      bp: :nil_matches_nil,
+                      std: :nil_matches_nil,
+                      method: :nil_matches_nil,
+                      delta_15n: :nil_matches_nil,
+                      delta_c13: :nil_matches_nil,
+                      delta_c13_std: :nil_matches_nil
 
   belongs_to :sample
   accepts_nested_attributes_for :sample, reject_if: :all_blank
@@ -52,6 +62,10 @@ class C14 < ApplicationRecord
   validates_associated :sample
 
   composed_of :lab_id, mapping: %w[lab_identifier], allow_nil: true
+
+  after_save :merge_exact_duplicates
+
+  before_merge :reassign_citations!
 
   include HasIssues
   @issues = %i[missing_c14_age very_old_c14 missing_c14_error
@@ -150,5 +164,12 @@ class C14 < ApplicationRecord
   scope :missing_c14_lab, -> { where(c14_lab_id: nil) }
   def missing_c14_lab?
     c14_lab_id.blank?
+  end
+
+  private
+
+  def reassign_citations!
+    canonical = self.class.find(merged_into_id)
+    Citation.reassign_all_to!(from: self, to: canonical)
   end
 end

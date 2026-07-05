@@ -154,7 +154,16 @@ module Duplicable # rubocop:disable Metrics/ModuleLength
     def exact_duplicates_nil_matches_nil
       _exact_duplicates_attrs_list
         .filter { |x| x.is_a?(Hash) }
-        .flat_map { |hash| hash.select { |_, opts| opts.include?(:nil_matches_nil) }.keys }
+        .flat_map { |hash| hash.select { |_, opts| nil_matches_nil?(opts) }.keys }
+    end
+
+    # Accepts either a bare symbol (e.g. `bp: :nil_matches_nil`) or an
+    # array of options (e.g. `bp: [:nil_matches_nil]`).
+    def nil_matches_nil?(opts)
+      return true if opts == :nil_matches_nil
+      return false unless opts.respond_to?(:include?)
+
+      opts.include?(:nil_matches_nil)
     end
 
     # Declare attributes used for potential (fuzzy) duplicate detection.
