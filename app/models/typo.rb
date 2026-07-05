@@ -18,30 +18,13 @@
 #  index_typos_on_sample_id  (sample_id)
 #
 
-class Typo < ApplicationRecord
-  acts_as_copy_target # enable CSV exports
-
-  validates :name, presence: true
-
-  belongs_to :sample
-  delegate :context, to: :sample
-  delegate :site, to: :context
-
-  has_many :citations, as: :citing, dependent: :destroy
-  has_many :references, through: :citations
-
-  include Versioned
-  include Supersedable
-  include Mergeable
-
+class Typo < Chron
   exact_duplicates_on :name,
                       :sample_id,
                       approx_start_time: :nil_matches_nil,
                       approx_end_time: :nil_matches_nil
 
-  after_save :merge_exact_duplicates
-
-  before_merge :reassign_citations!
+  validates :name, presence: true
 
   include PgSearch::Model
   pg_search_scope :search,
@@ -61,11 +44,5 @@ class Typo < ApplicationRecord
     return nil if approx_start_time.blank? && approx_end_time.blank?
 
     "#{approx_start_time}–#{approx_end_time}"
-  end
-
-  private
-
-  def reassign_citations!
-    Citation.reassign_all_to!(from: self, to: canonical)
   end
 end
