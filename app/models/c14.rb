@@ -39,7 +39,7 @@ class C14 < ApplicationRecord
   include Mergeable
 
   exact_duplicates_on :lab_identifier,
-                      sample_id: :nil_matches_nil,
+                      :sample_id,
                       bp: :nil_matches_nil,
                       std: :nil_matches_nil,
                       method: :nil_matches_nil,

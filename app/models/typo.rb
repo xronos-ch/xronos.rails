@@ -35,7 +35,7 @@ class Typo < ApplicationRecord
   include Mergeable
 
   exact_duplicates_on :name,
-                      sample_id: :nil_matches_nil,
+                      :sample_id,
                       approx_start_time: :nil_matches_nil,
                       approx_end_time: :nil_matches_nil
 
