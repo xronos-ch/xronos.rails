@@ -55,7 +55,7 @@ class Site < ApplicationRecord
     reject_if: :all_blank, allow_destroy: true
 
   include Duplicable
-  duplicable :name, :lat, :lng, :country_code
+  potential_duplicates_on :name, :lat, :lng, :country_code
 
   acts_as_copy_target # enable CSV exports
 

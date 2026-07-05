@@ -298,6 +298,14 @@ class TaxonTest < ActiveSupport::TestCase
     assert_equal canonical.id, dupe.merged_into_id
   end
 
+  test "auto-merges on create when both records have nil gbif_id" do
+    canonical = FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: nil)
+    dupe = FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: nil)
+
+    assert_predicate dupe, :destroyed?
+    assert_equal canonical.id, dupe.merged_into_id
+  end
+
   test "auto-merges on update when an update creates a duplicate" do
     canonical = FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: 123)
     other = FactoryBot.create(:taxon, name: "Other", gbif_id: nil)

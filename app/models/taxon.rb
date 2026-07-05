@@ -19,7 +19,7 @@ class Taxon < ApplicationRecord
   include Versioned
   include Mergeable
 
-  duplicable :name, :gbif_id
+  exact_duplicates_on :name, { gbif_id: [:nil_matches_nil] }
 
   has_many :samples
 

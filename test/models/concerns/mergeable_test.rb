@@ -27,7 +27,7 @@ class MergeableTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLen
     self.table_name = 'mergeable_things'
 
     include Duplicable
-    duplicable :name, :category
+    exact_duplicates_on :name, :category
   end
 
   # Same, but with Supersedable's default scope.
@@ -36,7 +36,7 @@ class MergeableTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLen
 
     include Duplicable
     include Supersedable
-    duplicable :name, :category
+    exact_duplicates_on :name, :category
   end
 
   # Peripheral model with auto-merge on save.
@@ -45,7 +45,7 @@ class MergeableTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLen
 
     include Mergeable
 
-    duplicable :name, :category
+    exact_duplicates_on :name, :category
 
     has_many :children,
              class_name: 'MergeableTest::MergeableChild',
@@ -74,7 +74,7 @@ class MergeableTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLen
 
     include Mergeable
 
-    duplicable :name, :category
+    exact_duplicates_on :name, :category
   end
 
   class MergeableChild < ApplicationRecord
@@ -91,7 +91,7 @@ class MergeableTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLen
     include Supersedable
     include Mergeable
 
-    duplicable :name, :category
+    exact_duplicates_on :name, :category
 
     has_many :children,
              class_name: 'MergeableTest::MergeableChild',
@@ -348,21 +348,23 @@ class MergeableTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLen
 
     assert record.respond_to?(:find_exact_duplicate)
     assert record.respond_to?(:exact_duplicates)
-    assert record.respond_to?(:is_duplicated?)
-    assert record.respond_to?(:duplicates)
+    assert record.respond_to?(:is_exact_duplicate?)
+    assert record.respond_to?(:potential_duplicates)
+    assert record.respond_to?(:is_potential_duplicate?)
 
     refute record.respond_to?(:merge_into!)
     refute record.respond_to?(:merge_duplicates!)
-    refute record.respond_to?(:merge_into_existing_duplicate)
+    refute record.respond_to?(:merge_exact_duplicates)
 
-    assert SetupThing.respond_to?(:all_duplicated)
+    assert SetupThing.respond_to?(:exact_duplicates_on)
+    assert SetupThing.respond_to?(:potential_duplicates_on)
     refute SetupThing.respond_to?(:merge_duplicates!)
   end
 
   test 'a model that includes Mergeable gets Duplicable transitively' do
-    assert NoAutoMergeThing.respond_to?(:duplicable)
-    assert NoAutoMergeThing.respond_to?(:duplicable_attrs)
-    assert NoAutoMergeThing.respond_to?(:all_duplicated)
+    assert NoAutoMergeThing.respond_to?(:exact_duplicates_on)
+    assert NoAutoMergeThing.respond_to?(:exact_duplicates_attrs)
+    assert NoAutoMergeThing.respond_to?(:potential_duplicates_on)
     assert NoAutoMergeThing.respond_to?(:merge_duplicates!)
   end
 end
