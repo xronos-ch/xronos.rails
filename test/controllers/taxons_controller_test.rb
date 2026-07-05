@@ -1,8 +1,16 @@
 require "test_helper"
 
+# Ensure Devise mappings are loaded before any sign_in call; the test
+# environment does not eager-load routes by default.
+Rails.application.routes.eager_load!
+
 class TaxonsControllerTest < ActionDispatch::IntegrationTest
+  include Devise::Test::IntegrationHelpers
+
   setup do
     @taxon = FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: 1)
+    @admin = FactoryBot.create(:user, :admin)
+    sign_in @admin
   end
 
   #
@@ -90,5 +98,44 @@ class TaxonsControllerTest < ActionDispatch::IntegrationTest
   end
 
 
+  #
+  # Auto-merge
+  #
+
+  test "create merges a new taxon into an existing duplicate" do
+    # @taxon (created in setup) is the older canonical.
+    assert_equal 1, Taxon.count
+
+    assert_no_difference "Taxon.count" do
+      post taxons_path, params: { taxon: { name: "Quercus robur", gbif_id: 1 } }
+    end
+
+    assert_response :redirect
+    assert_equal 1, Taxon.count
+    assert_equal @taxon.id, Taxon.first.id
+  end
+
+  test "update merges a taxon into an existing duplicate and reassigns samples" do
+    # @taxon is the older canonical; create a younger taxon with a sample.
+    other = FactoryBot.create(:taxon, name: "Fagus sylvatica", gbif_id: 2)
+    sample = FactoryBot.create(:sample, taxon: other)
+    assert_equal 2, Taxon.count
+
+    patch taxon_path(other), params: { taxon: { name: "Quercus robur", gbif_id: 1 } }
+
+    assert_response :redirect
+    assert_equal 1, Taxon.count
+    assert_equal @taxon.id, Taxon.first.id
+    assert_equal @taxon.id, sample.reload.taxon_id
+  end
+
+  test "create with no duplicate creates a new taxon" do
+    assert_difference "Taxon.count", 1 do
+      post taxons_path, params: { taxon: { name: "Pinus sylvestris", gbif_id: 3 } }
+    end
+
+    assert_response :redirect
+    assert_equal 2, Taxon.count
+  end
 
 end
