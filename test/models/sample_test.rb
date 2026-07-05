@@ -26,7 +26,7 @@
 #
 require "test_helper"
 
-class SampleTest < ActiveSupport::TestCase
+class SampleTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
 
   test "destroying a sample destroys its c14s" do
     sample = create(:sample)
@@ -92,5 +92,132 @@ class SampleTest < ActiveSupport::TestCase
 
     assert sample.valid?
     assert_nil sample.name
+  end
+
+  #
+  # Deduplication
+  #
+
+  def blank_attrs(context: nil, name: 'Bone 1')
+    { context: context, name: name, material: nil, taxon: nil,
+      part_of_organism: nil, position_description: nil, position_crs: nil,
+      position_x: nil, position_y: nil, position_z: nil }
+  end
+
+  test 'auto-merges on create when all key attrs match' do
+    context = create(:context)
+    canonical = create(:sample, blank_attrs(context: context))
+    dupe = create(:sample, blank_attrs(context: context))
+
+    assert_predicate dupe, :destroyed?
+    assert_equal canonical.id, dupe.merged_into_id
+  end
+
+  test 'auto-merges on update when an update creates a duplicate' do
+    context = create(:context)
+    canonical = create(:sample, blank_attrs(context: context))
+    other = create(:sample, blank_attrs(context: context, name: 'Bone 2'))
+
+    other.update!(name: 'Bone 1')
+
+    assert_predicate other, :destroyed?
+    assert_equal canonical.id, other.merged_into_id
+  end
+
+  test 'does not auto-merge when a unique sample is created' do
+    context = create(:context)
+    create(:sample, blank_attrs(context: context, name: 'Bone 1'))
+    other = create(:sample, blank_attrs(context: context, name: 'Bone 2'))
+
+    assert_not other.destroyed?
+    assert_nil other.merged_into_id
+  end
+
+  test 'does not auto-merge when name differs' do
+    context = create(:context)
+    create(:sample, blank_attrs(context: context, name: 'Bone 1'))
+    other = create(:sample, blank_attrs(context: context, name: 'Bone 2'))
+
+    assert_not other.destroyed?
+    assert_nil other.merged_into_id
+  end
+
+  test 'does not auto-merge when context differs' do
+    create(:sample, blank_attrs(context: create(:context), name: 'Bone 1'))
+    other = create(:sample, blank_attrs(context: create(:context), name: 'Bone 1'))
+
+    assert_not other.destroyed?
+    assert_nil other.merged_into_id
+  end
+
+  test 'does not auto-merge when material is set on one side and nil on the other' do
+    context = create(:context)
+    material = create(:material)
+    create(:sample, blank_attrs(context: context).merge(material: material))
+    other = create(:sample, blank_attrs(context: context).merge(material: nil))
+
+    # material has :nil_matches_nil, so nil == nil matches but nil != material
+    assert_not other.destroyed?
+    assert_nil other.merged_into_id
+  end
+
+  test 'auto-merges when material is nil on both sides (nil_matches_nil)' do
+    context = create(:context)
+    canonical = create(:sample, blank_attrs(context: context))
+    dupe = create(:sample, blank_attrs(context: context))
+
+    assert_predicate dupe, :destroyed?
+    assert_equal canonical.id, dupe.merged_into_id
+  end
+
+  test 'does not auto-merge when position_x is set on one side and nil on the other' do
+    context = create(:context)
+    create(:sample, blank_attrs(context: context).merge(position_x: 1.5))
+    other = create(:sample, blank_attrs(context: context).merge(position_x: nil))
+
+    assert_not other.destroyed?
+    assert_nil other.merged_into_id
+  end
+
+  test 'reassigns c14s to the canonical sample on merge' do
+    context = create(:context)
+    canonical = create(:sample, blank_attrs(context: context))
+
+    # Skip the auto-merge so we can attach a c14 to the dupe first
+    # (the c14 factory validates the associated sample, which is
+    # frozen after the dupe is hard-destroyed).
+    Sample.skip_callback(:save, :after, :merge_exact_duplicates)
+    begin
+      dupe = create(:sample, blank_attrs(context: context))
+      c14 = create(:c14, sample: dupe)
+    ensure
+      Sample.set_callback(:save, :after, :merge_exact_duplicates)
+    end
+
+    dupe.merge_exact_duplicates
+
+    assert_equal canonical.id, c14.reload.sample_id
+  end
+
+  test 'reassigns typos to the canonical sample on merge' do
+    context = create(:context)
+    canonical = create(:sample, blank_attrs(context: context))
+    dupe = create(:sample, blank_attrs(context: context))
+    typo = create(:typo, sample: dupe)
+
+    dupe.merge_exact_duplicates
+
+    assert_equal canonical.id, typo.reload.sample_id
+  end
+
+  test 'hard-destroys the dupe (Sample is not Supersedable)' do
+    context = create(:context)
+    canonical = create(:sample, blank_attrs(context: context))
+    dupe = create(:sample, blank_attrs(context: context))
+
+    dupe.merge_exact_duplicates
+
+    assert_predicate dupe, :destroyed?
+    assert Sample.exists?(canonical.id)
   end
 end

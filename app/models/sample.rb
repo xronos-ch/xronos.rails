@@ -30,8 +30,19 @@
 class Sample < ApplicationRecord
   include Versioned
   include HasControlledTerms
+  include Mergeable
 
   controlled_term :part_of_organism, vocabulary: 'part_of_organism'
+
+  exact_duplicates_on :name, :context_id,
+                      material_id: :nil_matches_nil,
+                      taxon_id: :nil_matches_nil,
+                      part_of_organism: :nil_matches_nil,
+                      position_description: :nil_matches_nil,
+                      position_crs: :nil_matches_nil,
+                      position_x: :nil_matches_nil,
+                      position_y: :nil_matches_nil,
+                      position_z: :nil_matches_nil
 
   before_validation :normalise_name
 
@@ -61,6 +72,11 @@ class Sample < ApplicationRecord
   # Children
   has_many :c14s, dependent: :destroy
   has_many :typos, dependent: :destroy
+
+  after_save :merge_exact_duplicates
+
+  before_merge :reassign_c14s!
+  before_merge :reassign_typos!
 
   include PgSearch::Model
   pg_search_scope :search,
@@ -119,5 +135,13 @@ class Sample < ApplicationRecord
 
   def normalise_name
     self.name = name.to_s.strip.presence
+  end
+
+  def reassign_c14s!
+    C14.where(sample_id: id).update_all(sample_id: merged_into_id)
+  end
+
+  def reassign_typos!
+    Typo.where(sample_id: id).update_all(sample_id: merged_into_id)
   end
 end
