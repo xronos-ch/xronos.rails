@@ -22,7 +22,7 @@ class Typo < ApplicationRecord
   acts_as_copy_target # enable CSV exports
 
   validates :name, presence: true
-  
+
   belongs_to :sample
   delegate :context, to: :sample
   delegate :site, to: :context
@@ -32,10 +32,20 @@ class Typo < ApplicationRecord
 
   include Versioned
   include Supersedable
+  include Mergeable
+
+  exact_duplicates_on :name,
+                      sample_id: :nil_matches_nil,
+                      approx_start_time: :nil_matches_nil,
+                      approx_end_time: :nil_matches_nil
+
+  after_save :merge_exact_duplicates
+
+  before_merge :reassign_citations!
 
   include PgSearch::Model
-  pg_search_scope :search, 
-    against: :name, 
+  pg_search_scope :search,
+    against: :name,
     using: { tsearch: { prefix: true } } # match partial words
   #multisearchable against: :name # needs to be cleaned up a bit more
 
@@ -49,7 +59,14 @@ class Typo < ApplicationRecord
 
   def age
     return nil if approx_start_time.blank? && approx_end_time.blank?
-    
+
     "#{approx_start_time}–#{approx_end_time}"
+  end
+
+  private
+
+  def reassign_citations!
+    canonical = self.class.find(merged_into_id)
+    Citation.reassign_all_to!(from: self, to: canonical)
   end
 end
