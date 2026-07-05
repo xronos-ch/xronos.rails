@@ -1,7 +1,7 @@
 # Builds on `Duplicable` to add the merge operation. Including
 # `Mergeable` automatically pulls `Duplicable` in. Models handle
 # child reassociation via `before_merge :method`. Auto-merge on
-# save is opt-in via `merge_exact_duplicates_after_save`.
+# save is opt-in via `after_save :merge_exact_duplicates`.
 module Mergeable
   extend ActiveSupport::Concern
 
@@ -12,14 +12,6 @@ module Mergeable
   end
 
   class_methods do
-    # Opt in to automatic merging on save. Idempotent.
-    def merge_exact_duplicates_after_save
-      return if @merge_exact_duplicates_after_save_registered
-
-      after_save :merge_into_existing_duplicate
-      @merge_exact_duplicates_after_save_registered = true
-    end
-
     def before_merge(*methods, &block)
       set_callback :merge, :before, *methods, &block
     end
@@ -61,7 +53,7 @@ module Mergeable
     end
   end
 
-  def merge_into_existing_duplicate
+  def merge_exact_duplicates
     dupe = find_exact_duplicate
     return unless dupe
 

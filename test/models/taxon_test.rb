@@ -286,5 +286,76 @@ class TaxonTest < ActiveSupport::TestCase
     end
   end
 
+  #
+  # Deduplication
+  #
+
+  test "auto-merges on create when an exact duplicate exists" do
+    canonical = FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: 123)
+    dupe = FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: 123)
+
+    assert_predicate dupe, :destroyed?
+    assert_equal canonical.id, dupe.merged_into_id
+  end
+
+  test "auto-merges on update when an update creates a duplicate" do
+    canonical = FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: 123)
+    other = FactoryBot.create(:taxon, name: "Other", gbif_id: nil)
+
+    other.update!(name: "Quercus robur", gbif_id: 123)
+
+    assert_predicate other, :destroyed?
+    assert_equal canonical.id, other.merged_into_id
+  end
+
+  test "does not auto-merge when a unique taxon is created" do
+    FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: 123)
+    other = FactoryBot.create(:taxon, name: "Fagus sylvatica", gbif_id: 456)
+
+    assert_not other.destroyed?
+    assert_nil other.merged_into_id
+  end
+
+  test "does not auto-merge when name matches but gbif_id differs" do
+    FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: 123)
+    other = FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: 456)
+
+    assert_not other.destroyed?
+    assert_nil other.merged_into_id
+  end
+
+  test "does not auto-merge when gbif_id matches but name differs" do
+    FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: 123)
+    other = FactoryBot.create(:taxon, name: "Other", gbif_id: 123)
+
+    assert_not other.destroyed?
+    assert_nil other.merged_into_id
+  end
+
+  test "reassigns samples to the canonical taxon on merge" do
+    canonical = FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: 123)
+    dupe = FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: 123)
+    sample = FactoryBot.create(:sample, taxon: dupe)
+
+    dupe.merge_exact_duplicates
+
+    assert_equal canonical.id, sample.reload.taxon_id
+  end
+
+  test "GBIF sync job for destroyed dupe is a no-op" do
+    canonical = FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: 123)
+    clear_enqueued_jobs
+
+    dupe = FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: 123)
+    assert_predicate dupe, :destroyed?
+
+    # The job was enqueued but the record is gone
+    assert_enqueued_jobs(1, only: SyncTaxonWithGbifJob)
+
+    # When the job runs, it finds no record and does nothing
+    perform_enqueued_jobs
+    # No error raised, no side effects
+  end
+
 end
 

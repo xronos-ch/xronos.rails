@@ -52,7 +52,7 @@ class MergeableTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLen
              foreign_key: :mergeable_thing_id,
              dependent: :destroy
 
-    merge_exact_duplicates_after_save
+    after_save :merge_exact_duplicates
 
     before_merge :reassign_children!
 
@@ -98,7 +98,7 @@ class MergeableTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLen
              foreign_key: :mergeable_thing_id,
              dependent: :destroy
 
-    merge_exact_duplicates_after_save
+    after_save :merge_exact_duplicates
 
     before_merge :reassign_children!
 
@@ -330,7 +330,7 @@ class MergeableTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLen
     assert_equal 1, SupersedableMergeable.where(name: 'foo').count
   end
 
-  test 'a model that includes Mergeable but not the macro does not auto-merge on save' do
+  test 'a model that includes Mergeable but does not opt in to auto-merge does not auto-merge on save' do
     canonical = NoAutoMergeThing.create!(name: 'foo', category: 'a')
     dupe      = NoAutoMergeThing.create!(name: 'foo', category: 'a')
 
@@ -341,25 +341,6 @@ class MergeableTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLen
     dupe.merge_into!(canonical)
     assert_predicate dupe, :destroyed?
     assert_equal canonical.id, dupe.merged_into_id
-  end
-
-  test 'merge_exact_duplicates_after_save is idempotent' do
-    klass = Class.new(ApplicationRecord) do
-      self.table_name = 'mergeable_things'
-      include Duplicable
-      include Mergeable
-      duplicable :name, :category
-
-      merge_exact_duplicates_after_save
-      merge_exact_duplicates_after_save
-      merge_exact_duplicates_after_save
-    end
-
-    klass.create!(name: 'foo', category: 'a')
-    b = klass.create!(name: 'foo', category: 'a')
-
-    assert_predicate b, :destroyed?
-    assert_equal 1, klass.where(name: 'foo').count
   end
 
   test 'a model that includes only Duplicable has detection but not merge methods' do
@@ -383,6 +364,5 @@ class MergeableTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLen
     assert NoAutoMergeThing.respond_to?(:duplicable_attrs)
     assert NoAutoMergeThing.respond_to?(:all_duplicated)
     assert NoAutoMergeThing.respond_to?(:merge_duplicates!)
-    assert NoAutoMergeThing.respond_to?(:merge_exact_duplicates_after_save)
   end
 end
