@@ -6,8 +6,8 @@ class DuplicableTest < ActiveSupport::TestCase
   end
 
   setup do
-    OptionTestSite._exact_duplicates_attrs_list = []
-    OptionTestSite._potential_duplicates_attrs_list = []
+    OptionTestSite.exact_duplicates_attrs_list.clear
+    OptionTestSite.potential_duplicates_attrs_list.clear
     # Disable the Mergeable auto-merge callback (inherited from Site)
     # for this test subclass — these tests assert that records with
     # identical keys remain in the database.
@@ -72,7 +72,7 @@ class DuplicableTest < ActiveSupport::TestCase
       self.table_name = 'sites'
       include Duplicable
     end
-    test_class._exact_duplicates_attrs_list = []
+    test_class.exact_duplicates_attrs_list.clear
     test_class.exact_duplicates_on :name, { country_code: [:nil_matches_nil] }
 
     a = test_class.create!(name: "Same", country_code: "DE")

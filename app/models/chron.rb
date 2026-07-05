@@ -1,16 +1,6 @@
 class Chron < ApplicationRecord
   self.abstract_class = true
 
-  # Each Chron subclass needs its own duplicate-detection attribute
-  # lists; without this hook all subclasses would share the parent's
-  # arrays, and `exact_duplicates_on` calls would accumulate across
-  # them.
-  def self.inherited(subclass)
-    super
-    subclass._exact_duplicates_attrs_list = []
-    subclass._potential_duplicates_attrs_list = []
-  end
-
   include Versioned
   include Supersedable
   include Mergeable

@@ -1,24 +1,74 @@
 module Duplicable # rubocop:disable Metrics/ModuleLength
   extend ActiveSupport::Concern
 
-  # Per-class lists of duplicate-detection attributes.
-  #   _exact_duplicates_attrs_list    -> for `exact_duplicates` / `find_exact_duplicate`
-  #   _potential_duplicates_attrs_list -> for `potential_duplicates` / `is_potential_duplicate?`
-  #
-  # Subclasses inherit the parent's lists and can reset via
-  # `self._exact_duplicates_attrs_list = []` (or the potential equivalent).
+  # Per-class lists of duplicate-detection attributes, held as class
+  # instance variables so each class gets its own (no sharing between
+  # parent and subclasses).
   #
   # Exact duplicates use a conservative nil default (nil != nil) with
   # per-attribute opt-in via the `:nil_matches_nil` option. Potential
   # duplicates use fuzzy matching with per-attribute options (`:ci`,
   # `:null`, `:whitespace`, `:mojibake`).
+  class_methods do # rubocop:disable Metrics/BlockLength
+    def exact_duplicates_attrs_list
+      @exact_duplicates_attrs_list ||= []
+    end
+
+    def potential_duplicates_attrs_list
+      @potential_duplicates_attrs_list ||= []
+    end
+
+    # Declare attributes used for exact duplicate detection.
+    # Default: nil != nil for any attribute. Opt-in per attribute with
+    # `:nil_matches_nil` to make nil == nil for that attribute.
+    def exact_duplicates_on(*attrs)
+      exact_duplicates_attrs_list.concat(attrs)
+    end
+
+    def exact_duplicates_attrs
+      exact_duplicates_attrs_list.flat_map { |x| x.is_a?(Hash) ? x.keys : x }
+    end
+
+    def exact_duplicates_attrs_with_options
+      exact_duplicates_attrs_list
+        .filter { |x| x.is_a?(Hash) }
+        .reduce({}, :merge)
+    end
+
+    # Attributes that have the `:nil_matches_nil` option set.
+    def exact_duplicates_nil_matches_nil
+      exact_duplicates_attrs_list
+        .filter { |x| x.is_a?(Hash) }
+        .flat_map { |hash| hash.select { |_, opts| nil_matches_nil?(opts) }.keys }
+    end
+
+    # Accepts either a bare symbol (e.g. `bp: :nil_matches_nil`) or an
+    # array of options (e.g. `bp: [:nil_matches_nil]`).
+    def nil_matches_nil?(opts)
+      return true if opts == :nil_matches_nil
+      return false unless opts.respond_to?(:include?)
+
+      opts.include?(:nil_matches_nil)
+    end
+
+    # Declare attributes used for potential (fuzzy) duplicate detection.
+    # Options per attribute: `:ci`, `:null`, `:whitespace`, `:mojibake`.
+    def potential_duplicates_on(*attrs)
+      potential_duplicates_attrs_list.concat(attrs)
+    end
+
+    def potential_duplicates_attrs
+      potential_duplicates_attrs_list.flat_map { |x| x.is_a?(Hash) ? x.keys : x }
+    end
+
+    def potential_duplicates_attrs_with_options
+      potential_duplicates_attrs_list
+        .filter { |x| x.is_a?(Hash) }
+        .reduce({}, :merge)
+    end
+  end
+
   included do # instance methods # rubocop:disable Metrics/BlockLength
-    class_attribute :_exact_duplicates_attrs_list, default: nil
-    self._exact_duplicates_attrs_list = []
-
-    class_attribute :_potential_duplicates_attrs_list, default: nil
-    self._potential_duplicates_attrs_list = []
-
     def exact_duplicates
       return self.class.none if exact_duplicates_guarded_by_nil?
 
@@ -129,61 +179,6 @@ module Duplicable # rubocop:disable Metrics/ModuleLength
 
       arel_attr = self.class.arel_table[attr.to_sym]
       self.class.where(arel_attr.matches(val_sans_nonascii))
-    end
-  end
-
-  class_methods do # rubocop:disable Metrics/BlockLength
-    # Declare attributes used for exact duplicate detection.
-    # Default: nil != nil for any attribute. Opt-in per attribute with
-    # `:nil_matches_nil` to make nil == nil for that attribute.
-    def exact_duplicates_on(*attrs)
-      _exact_duplicates_attrs_list.concat(attrs)
-    end
-
-    def exact_duplicates_attrs
-      _exact_duplicates_attrs_list.flat_map { |x| x.is_a?(Hash) ? x.keys : x }
-    end
-
-    def exact_duplicates_attrs_with_options
-      _exact_duplicates_attrs_list
-        .filter { |x| x.is_a?(Hash) }
-        .reduce({}, :merge)
-    end
-
-    # Attributes that have the `:nil_matches_nil` option set.
-    def exact_duplicates_nil_matches_nil
-      _exact_duplicates_attrs_list
-        .filter { |x| x.is_a?(Hash) }
-        .flat_map { |hash| hash.select { |_, opts| nil_matches_nil?(opts) }.keys }
-    end
-
-    # Accepts either a bare symbol (e.g. `bp: :nil_matches_nil`) or an
-    # array of options (e.g. `bp: [:nil_matches_nil]`).
-    def nil_matches_nil?(opts)
-      return true if opts == :nil_matches_nil
-      return false unless opts.respond_to?(:include?)
-
-      opts.include?(:nil_matches_nil)
-    end
-
-    # Declare attributes used for potential (fuzzy) duplicate detection.
-    # Options per attribute: `:ci`, `:null`, `:whitespace`, `:mojibake`.
-    def potential_duplicates_on(*attrs)
-      _potential_duplicates_attrs_list.concat(attrs)
-    end
-
-    def potential_duplicates_attrs_list
-      _potential_duplicates_attrs_list
-    end
-
-    def potential_duplicates_attrs
-      _potential_duplicates_attrs_list.flat_map { |x| x.is_a?(Hash) ? x.keys : x }
-    end
-
-    def potential_duplicates_attrs_with_options
-      _potential_duplicates_attrs_list
-        .filter { |x| x.is_a?(Hash) }
-        .reduce({}, :merge)
     end
   end
 end
