@@ -16,14 +16,23 @@
 class Material < ApplicationRecord
   default_scope { order(name: :asc) }
 
-  include PgSearch::Model
-  pg_search_scope :search, 
-    against: :name, 
-    using: { tsearch: { prefix: true } } # match partial words
+  include Versioned
+  include Mergeable
+
+  exact_duplicates_on :name
 
   has_many :samples, inverse_of: :material
 
   validates :name, presence: true
+
+  after_save :merge_exact_duplicates
+
+  before_merge :reassign_samples!
+
+  include PgSearch::Model
+  pg_search_scope :search,
+    against: :name,
+    using: { tsearch: { prefix: true } } # match partial words
 
   acts_as_copy_target # enable CSV exports
 
@@ -38,4 +47,9 @@ class Material < ApplicationRecord
     end
   end
 
+  private
+
+  def reassign_samples!
+    Sample.where(material_id: id).update_all(material_id: merged_into_id)
+  end
 end
