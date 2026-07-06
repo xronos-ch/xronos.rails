@@ -15,6 +15,7 @@ class SiteTypesController < ApplicationController
         @site_types = @site_types.select(index_csv_template)
         render csv: @site_types
       }
+      format.json
     end
   end
 
@@ -32,11 +33,17 @@ class SiteTypesController < ApplicationController
   # GET /site_types/1
   # GET /site_types/1.json
   def show
+    respond_to do |format|
+      format.json
+    end
   end
 
   # GET /site_types/new
   def new
     @site_type = SiteType.new
+    respond_to do |format|
+      format.json { render json: @site_type }
+    end
   end
 
   # GET /site_types/1/edit

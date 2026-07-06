@@ -2,11 +2,11 @@
 
 require 'test_helper'
 
-class SitesControllerTest < ActionDispatch::IntegrationTest
+class C14LabsControllerTest < ActionDispatch::IntegrationTest
   include ControllerSmokeTest
 
   smoke_tests(
-    param_key: :site,
+    param_key: :c14_lab,
     statuses: {
       index: { not_signed_in: :success, signed_in: :success },
       show: { not_signed_in: :success,  signed_in: :success },
@@ -17,19 +17,4 @@ class SitesControllerTest < ActionDispatch::IntegrationTest
       destroy: { not_signed_in: :not_found, signed_in: :not_found }
     }
   )
-
-  test 'unauthenticated users cannot create sites' do
-    assert_no_difference('Site.count') do
-      post sites_path, params: {
-        site: {
-          name: 'Unauthorized Test Site',
-          lat: 54.323,
-          lng: 10.122,
-          country_code: 'DE'
-        }
-      }
-    end
-
-    assert_not_includes [200, 201, 204], response.status
-  end
 end

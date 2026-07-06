@@ -37,6 +37,5 @@ class User < ApplicationRecord
            foreign_key: :resource_owner_id,
            dependent: :delete_all # or :destroy if you need callbacks
 
-  has_one :user_profile
-           
+  has_one :user_profile, dependent: :destroy
 end

@@ -3,6 +3,34 @@
 require 'test_helper'
 
 class C14sControllerTest < ActionDispatch::IntegrationTest
+  include ControllerSmokeTest
+
+  smoke_tests(
+    param_key: :c14,
+    query_params: { site: :smoke_site_id },
+    statuses: {
+      index: { not_signed_in: :success, signed_in: :success },
+      show: { not_signed_in: :success,  signed_in: :success },
+      new: { not_signed_in: :not_found, signed_in: :success },
+      create: { not_signed_in: :not_found, signed_in: :found },
+      edit: { not_signed_in: :not_found, signed_in: :not_found },
+      update: { not_signed_in: :not_found, signed_in: :not_found },
+      destroy: { not_signed_in: :not_found, signed_in: :not_found }
+    }
+  )
+
+  def smoke_site_id
+    @smoke_site_id ||= create(:site).id
+  end
+
+  # The C14 factory returns association objects; strong params expect
+  # association foreign keys. cal_bp/cal_std are factory-only columns
+  # that the controller's strong params don't permit.
+  def smoke_payload_for(_action)
+    attributes_for(:c14)
+      .except(:c14_lab, :sample, :cal_bp, :cal_std)
+      .merge(c14_lab_id: create(:c14_lab).id, sample_id: create(:sample).id)
+  end
 
   test 'unauthenticated users cannot create c14 records' do
     sample = create(:sample)

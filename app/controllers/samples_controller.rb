@@ -28,6 +28,9 @@ class SamplesController < ApplicationController
   # GET /samples/1
   # GET /samples/1.json
   def show
+    respond_to do |format|
+      format.json
+    end
   end
 
   # GET /samples/new
