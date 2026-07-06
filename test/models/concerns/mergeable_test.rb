@@ -367,4 +367,84 @@ class MergeableTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLen
     assert NoAutoMergeThing.respond_to?(:potential_duplicates_on)
     assert NoAutoMergeThing.respond_to?(:merge_duplicates!)
   end
+
+  #
+  # duplicate_group_scope (used by xronos:deduplicate rake task)
+  #
+
+  test 'duplicate_group_scope returns groups for records sharing exact-duplicate attrs' do
+    create_things(SetupThing, 3, name: 'foo', category: 'a')
+    create_things(SetupThing, 2, name: 'bar', category: 'a')
+
+    groups = MergeableThing.duplicate_group_scope
+                           .pluck(:name, :category, Arel.sql('COUNT(*)'))
+    assert_equal 2, groups.size
+    counts = groups.map(&:last).sort
+    assert_equal [2, 3], counts
+  end
+
+  test 'duplicate_group_scope excludes records with nil in a strict attribute' do
+    # 3 records share (name, category), but with nil name the model
+    # considers them non-duplicates (mirrors
+    # `exact_duplicates_guarded_by_nil?`). The scope must not return
+    # this group.
+    create_things(SetupThing, 3, name: nil, category: 'a')
+
+    groups = MergeableThing.duplicate_group_scope
+                           .pluck(:name, :category, Arel.sql('COUNT(*)'))
+    assert_empty groups
+  end
+
+  test 'duplicate_group_scope honours :nil_matches_nil on optional attributes' do
+    # Add a model with a `:nil_matches_nil` attribute, set up a duplicate
+    # group where the optional column is nil on all records — the scope
+    # should still return the group.
+    ActiveRecord::Schema.define do
+      suppress_messages do
+        create_table :mergeable_things_with_opt, force: true do |t|
+          t.string :name
+          t.string :optional_col
+          t.timestamps
+        end
+      end
+    end
+
+    klass = Class.new(ApplicationRecord) do
+      self.table_name = 'mergeable_things_with_opt'
+      include Mergeable
+      exact_duplicates_on :name, optional_col: :nil_matches_nil
+    end
+
+    klass.create!(name: 'foo', optional_col: nil)
+    klass.create!(name: 'foo', optional_col: nil)
+    klass.create!(name: 'foo', optional_col: nil)
+
+    groups = klass.duplicate_group_scope
+                  .pluck(:name, :optional_col, Arel.sql('COUNT(*)'))
+    assert_equal 1, groups.size
+    assert_equal 3, groups.first.last
+  end
+
+  test 'duplicate_group_scope is a no-op when there are no strict attributes' do
+    ActiveRecord::Schema.define do
+      suppress_messages do
+        create_table :mergeable_all_nil_matches, force: true do |t|
+          t.string :name
+          t.timestamps
+        end
+      end
+    end
+
+    klass = Class.new(ApplicationRecord) do
+      self.table_name = 'mergeable_all_nil_matches'
+      include Mergeable
+      exact_duplicates_on name: :nil_matches_nil
+    end
+
+    klass.create!(name: nil)
+    klass.create!(name: nil)
+
+    groups = klass.duplicate_group_scope.pluck(Arel.sql('COUNT(*)'))
+    assert_equal [2], groups
+  end
 end

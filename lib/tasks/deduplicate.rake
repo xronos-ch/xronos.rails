@@ -27,9 +27,9 @@ namespace :xronos do
     puts
 
     attrs = model_class.exact_duplicates_attrs
+
     duplicate_groups = model_class
-                       .group(*attrs)
-                       .having('COUNT(*) > 1')
+                       .duplicate_group_scope
                        .pluck(*attrs, Arel.sql('COUNT(*)'))
 
     total_groups = duplicate_groups.size

@@ -31,6 +31,29 @@ module Mergeable
       canonical
     end
 
+    # Scope of duplicate groups (GROUP BY exact-duplicate attrs, having
+    # COUNT(*) > 1), used by the `xronos:deduplicate` rake task.
+    #
+    # Mirrors `Duplicable#exact_duplicates_guarded_by_nil?`: records
+    # with `nil` in any strict (non-`:nil_matches_nil`) attribute are
+    # not considered exact duplicates by the model, so the rake task
+    # must not merge them either. The cross-sample path (when present)
+    # handles the `nil` case separately.
+    def duplicate_group_scope
+      attrs = exact_duplicates_attrs
+      strict_attrs = attrs - exact_duplicates_nil_matches_nil
+
+      scope = all
+      unless strict_attrs.empty?
+        clause = strict_attrs
+                 .map { |a| "#{quoted_table_name}.#{connection.quote_column_name(a)} IS NOT NULL" }
+                 .join(' AND ')
+        scope = scope.where(clause)
+      end
+
+      scope.group(*attrs).having('COUNT(*) > 1')
+    end
+
     private
 
     def pick_canonical(records)
