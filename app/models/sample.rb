@@ -131,10 +131,47 @@ class Sample < ApplicationRecord
     end
   end
 
+  # Would self and other_sample be considered exact duplicates if
+  # Sample's `:name` attribute were `:nil_matches_nil`? Used by
+  # Chron's cross-sample merge to detect the case where two otherwise-
+  # duplicate chrons ended up in samples that share context and other
+  # metadata but were both left unnamed.
+  def name_relaxed_duplicate_of?(other_sample)
+    return false unless name_relaxed_duplicate_candidate?(other_sample)
+    return false unless name_relaxed_match?(other_sample)
+
+    relaxed_attrs = self.class.exact_duplicates_attrs - [:name]
+    relaxed_attrs.all? { |a| _exact_duplicate_attr_matches?(a, other_sample) }
+  end
+
   private
 
   def normalise_name
     self.name = name.to_s.strip.presence
+  end
+
+  def name_relaxed_duplicate_candidate?(other_sample)
+    other_sample.is_a?(Sample) && id != other_sample.id
+  end
+
+  # Name must match under the :nil_matches_nil rule: same value, or
+  # both nil. (Strictly more permissive than the existing :name rule,
+  # which uses nil != nil.)
+  def name_relaxed_match?(other_sample)
+    (name.nil? && other_sample.name.nil?) || name == other_sample.name
+  end
+
+  def _exact_duplicate_attr_matches?(attr, other_sample)
+    self_val    = send(attr)
+    other_val   = other_sample.send(attr)
+    options     = self.class.exact_duplicates_attrs_with_options[attr.to_sym]
+    nil_matches = options && self.class.nil_matches_nil?(options)
+
+    if nil_matches
+      (self_val.nil? && other_val.nil?) || self_val == other_val
+    else
+      !self_val.nil? && self_val == other_val
+    end
   end
 
   def reassign_c14s!

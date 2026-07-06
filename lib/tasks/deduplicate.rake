@@ -1,9 +1,9 @@
 namespace :xronos do
-  desc "Merge exact-duplicates of MODEL. " \
-       "Usage: bin/rails \"xronos:deduplicate[Taxon]\""
+  desc 'Merge exact-duplicates of MODEL. ' \
+       'Usage: bin/rails "xronos:deduplicate[Taxon]"'
   task :deduplicate, [:model_name] => :environment do |_t, args|
     model_name = args[:model_name] ||
-      abort("Usage: bin/rails \"xronos:deduplicate[MODEL]\" — provide a model name (e.g. Taxon, Site, C14)")
+                 abort('Usage: bin/rails "xronos:deduplicate[MODEL]" — provide a model name (e.g. Taxon, Site, C14)')
 
     model_class = begin
       model_name.constantize
@@ -13,10 +13,10 @@ namespace :xronos do
 
     abort "#{model_class} does not include Mergeable — nothing to deduplicate" unless model_class.include?(Mergeable)
 
-    dry_run = ENV["DRY_RUN"] != "false"
+    dry_run = ENV['DRY_RUN'] != 'false'
 
-    whodunnit = ENV.fetch("ADMIN_USER_ID") do
-      abort "ADMIN_USER_ID must be set"
+    whodunnit = ENV.fetch('ADMIN_USER_ID') do
+      abort 'ADMIN_USER_ID must be set'
     end
 
     label = model_class.name.pluralize.underscore
@@ -28,9 +28,9 @@ namespace :xronos do
 
     attrs = model_class.exact_duplicates_attrs
     duplicate_groups = model_class
-      .group(*attrs)
-      .having("COUNT(*) > 1")
-      .pluck(*attrs, Arel.sql("COUNT(*)"))
+                       .group(*attrs)
+                       .having('COUNT(*) > 1')
+                       .pluck(*attrs, Arel.sql('COUNT(*)'))
 
     total_groups = duplicate_groups.size
     total_rows   = duplicate_groups.sum { |row| row.last - 1 }
@@ -40,19 +40,19 @@ namespace :xronos do
     puts
 
     if total_groups.zero?
-      puts "No duplicates found. Nothing to do."
+      puts 'No duplicates found. Nothing to do.'
       next
     end
 
     if dry_run
-      puts "Not merging any records because DRY_RUN=false is not set"
+      puts 'Not merging any records because DRY_RUN=false is not set'
       exit
     end
 
     progress = ProgressBar.create(
-      title: "Merging",
+      title: 'Merging',
       total: total_groups,
-      format: "%t |%B| %c/%C (%E)"
+      format: '%t |%B| %c/%C (%E)'
     )
 
     PaperTrail.request(whodunnit: whodunnit) do
@@ -64,13 +64,22 @@ namespace :xronos do
         canonical = records.first
         records[1..].each { |dupe| dupe.merge_into!(canonical) }
         progress.increment
-      rescue => e
+      rescue StandardError => e
         progress.log("FAILED group #{values_hash.inspect}: #{e.class} – #{e.message}")
         progress.increment
       end
     end
 
+    # Cross-record dedup (e.g. Chrons that are duplicates across two
+    # different samples). Opt-in via class method, so other Mergeable
+    # models that lack cross-record detection are unaffected.
+    if model_class.respond_to?(:cross_sample_deduplicate!)
+      puts
+      puts '== Cross-sample dedup =='
+      model_class.cross_sample_deduplicate!
+    end
+
     puts
-    puts "Done."
+    puts 'Done.'
   end
 end

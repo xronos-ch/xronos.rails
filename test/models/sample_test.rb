@@ -24,49 +24,48 @@
 #  index_samples_on_position_crs  (position_crs)
 #  index_samples_on_taxon_id      (taxon_id)
 #
-require "test_helper"
+require 'test_helper'
 
 class SampleTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
-
-  test "destroying a sample destroys its c14s" do
+  test 'destroying a sample destroys its c14s' do
     sample = create(:sample)
     create_list(:c14, 2, sample: sample)
 
     assert_dependent_destroy(sample, :c14s, count: 2)
   end
 
-  test "destroying a sample destroys its typos" do
+  test 'destroying a sample destroys its typos' do
     sample = create(:sample)
     create_list(:typo, 2, sample: sample)
 
     assert_dependent_destroy(sample, :typos, count: 2)
   end
 
-  test "part_of_organism is stored as a free-text string" do
-    sample = create(:sample, part_of_organism: "maize cob")
+  test 'part_of_organism is stored as a free-text string' do
+    sample = create(:sample, part_of_organism: 'maize cob')
 
-    assert_equal "maize cob", sample.reload.part_of_organism
+    assert_equal 'maize cob', sample.reload.part_of_organism
   end
 
-  test "part_of_organism is nullable" do
+  test 'part_of_organism is nullable' do
     sample = create(:sample, part_of_organism: nil)
 
     assert_nil sample.reload.part_of_organism
   end
 
-  test "part_of_organism accepts any string, including values not in any vocabulary" do
-    sample = build(:sample, part_of_organism: "some free-text value (not a known term)")
+  test 'part_of_organism accepts any string, including values not in any vocabulary' do
+    sample = build(:sample, part_of_organism: 'some free-text value (not a known term)')
 
     assert sample.valid?
   end
 
-  test "part_of_organism resolves to a controlled term when the value matches" do
-    vocab = create(:controlled_vocabulary, name: "part_of_organism")
-    term  = create(:controlled_vocabulary_term, vocabulary: vocab, name: "Cranium",
-      ontology_name: "UBERON", ontology_id: "UBERON:0000029")
-    sample = create(:sample, part_of_organism: "Cranium")
+  test 'part_of_organism resolves to a controlled term when the value matches' do
+    vocab = create(:controlled_vocabulary, name: 'part_of_organism')
+    term  = create(:controlled_vocabulary_term, vocabulary: vocab, name: 'Cranium',
+                                                ontology_name: 'UBERON', ontology_id: 'UBERON:0000029')
+    sample = create(:sample, part_of_organism: 'Cranium')
 
-    assert_equal "Cranium", sample.reload.part_of_organism
+    assert_equal 'Cranium', sample.reload.part_of_organism
     assert sample.part_of_organism_controlled?
     assert_equal term, sample.part_of_organism_term
   end
@@ -219,5 +218,107 @@ class SampleTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
 
     assert_predicate dupe, :destroyed?
     assert Sample.exists?(canonical.id)
+  end
+
+  #
+  # name_relaxed_duplicate_of? (used by Chron's cross-sample merge)
+  #
+
+  test '#name_relaxed_duplicate_of? returns true when both names are nil and other attrs match' do
+    context = create(:context)
+    a = create(:sample, name: nil, context: context, material: nil, taxon: nil,
+                        part_of_organism: nil, position_description: nil,
+                        position_crs: nil, position_x: nil, position_y: nil,
+                        position_z: nil)
+    b = create(:sample, name: nil, context: context, material: nil, taxon: nil,
+                        part_of_organism: nil, position_description: nil,
+                        position_crs: nil, position_x: nil, position_y: nil,
+                        position_z: nil)
+
+    assert a.name_relaxed_duplicate_of?(b)
+    assert b.name_relaxed_duplicate_of?(a)
+  end
+
+  test '#name_relaxed_duplicate_of? returns true when names match' do
+    context = create(:context)
+    a = create(:sample, name: 'Bone 1', context: context, material: nil, taxon: nil,
+                        part_of_organism: nil, position_description: nil,
+                        position_crs: nil, position_x: nil, position_y: nil,
+                        position_z: nil)
+    b = create(:sample, name: 'Bone 1', context: context, material: nil, taxon: nil,
+                        part_of_organism: nil, position_description: nil,
+                        position_crs: nil, position_x: nil, position_y: nil,
+                        position_z: nil)
+
+    assert a.name_relaxed_duplicate_of?(b)
+  end
+
+  test '#name_relaxed_duplicate_of? returns false when names differ' do
+    context = create(:context)
+    a = create(:sample, name: 'Bone 1', context: context, material: nil, taxon: nil,
+                        part_of_organism: nil, position_description: nil,
+                        position_crs: nil, position_x: nil, position_y: nil,
+                        position_z: nil)
+    b = create(:sample, name: 'Bone 2', context: context, material: nil, taxon: nil,
+                        part_of_organism: nil, position_description: nil,
+                        position_crs: nil, position_x: nil, position_y: nil,
+                        position_z: nil)
+
+    assert_not a.name_relaxed_duplicate_of?(b)
+  end
+
+  test '#name_relaxed_duplicate_of? returns false when one name is nil and the other is not' do
+    context = create(:context)
+    a = create(:sample, name: 'Bone 1', context: context, material: nil, taxon: nil,
+                        part_of_organism: nil, position_description: nil,
+                        position_crs: nil, position_x: nil, position_y: nil,
+                        position_z: nil)
+    b = create(:sample, name: nil, context: context, material: nil, taxon: nil,
+                        part_of_organism: nil, position_description: nil,
+                        position_crs: nil, position_x: nil, position_y: nil,
+                        position_z: nil)
+
+    assert_not a.name_relaxed_duplicate_of?(b)
+    assert_not b.name_relaxed_duplicate_of?(a)
+  end
+
+  test '#name_relaxed_duplicate_of? returns false when contexts differ' do
+    a = create(:sample, name: nil, context: create(:context), material: nil, taxon: nil,
+                        part_of_organism: nil, position_description: nil,
+                        position_crs: nil, position_x: nil, position_y: nil,
+                        position_z: nil)
+    b = create(:sample, name: nil, context: create(:context), material: nil, taxon: nil,
+                        part_of_organism: nil, position_description: nil,
+                        position_crs: nil, position_x: nil, position_y: nil,
+                        position_z: nil)
+
+    assert_not a.name_relaxed_duplicate_of?(b)
+  end
+
+  test '#name_relaxed_duplicate_of? returns false when one of the other attrs differs' do
+    context = create(:context)
+    a = create(:sample, name: nil, context: context, material: nil, taxon: nil,
+                        part_of_organism: nil, position_description: nil,
+                        position_crs: nil, position_x: nil, position_y: nil,
+                        position_z: nil)
+    b = create(:sample, name: nil, context: context, material: create(:material),
+                        taxon: nil, part_of_organism: nil, position_description: nil,
+                        position_crs: nil, position_x: nil, position_y: nil,
+                        position_z: nil)
+
+    assert_not a.name_relaxed_duplicate_of?(b)
+  end
+
+  test '#name_relaxed_duplicate_of? returns false when compared with a non-Sample' do
+    a = create(:sample, name: nil, context: create(:context))
+
+    assert_not a.name_relaxed_duplicate_of?(nil)
+    assert_not a.name_relaxed_duplicate_of?(a.context)
+  end
+
+  test '#name_relaxed_duplicate_of? returns false when compared with self' do
+    a = create(:sample, name: nil, context: create(:context))
+
+    assert_not a.name_relaxed_duplicate_of?(a)
   end
 end

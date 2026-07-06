@@ -54,9 +54,32 @@ module Mergeable
   end
 
   def merge_exact_duplicates
+    # Guard against re-merging an already-superseded record, e.g. on a
+    # second pass of `cross_sample_deduplicate!` after the first pass
+    # superseded the dupe. `Supersession.exists?` is used instead of
+    # `superseded?` so the `supersession` association cache is not
+    # populated before downstream callbacks (e.g. FactoryBot trait
+    # hooks) have a chance to create the Supersession row.
+    return if respond_to?(:superseded?) && Supersession.exists?(superseded: self)
+
     dupe = find_exact_duplicate
     return unless dupe
 
+    merge_with_duplicate(dupe)
+  end
+
+  # The canonical record this dupe is being merged into. Available
+  # to `before_merge` callbacks.
+  def canonical
+    self.class.find(merged_into_id)
+  end
+
+  protected
+
+  # Merge self into `dupe`, choosing canonical by oldest-first. Shared
+  # by `merge_exact_duplicates` and any subclass callbacks (e.g. Chron's
+  # cross-sample fallback) that need to perform the same dispatch.
+  def merge_with_duplicate(dupe)
     self_at  = created_at || Time.at(0)
     dupe_at  = dupe.created_at || Time.at(0)
 
@@ -69,14 +92,6 @@ module Mergeable
       merge_into!(dupe)
     end
   end
-
-  # The canonical record this dupe is being merged into. Available
-  # to `before_merge` callbacks.
-  def canonical
-    self.class.find(merged_into_id)
-  end
-
-  protected
 
   # Dispatch to `supersede!` (Supersedable models) or `destroy`.
   def perform_merge!(canonical)
