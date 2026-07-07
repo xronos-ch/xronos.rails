@@ -72,6 +72,7 @@ class SupersedableTest < ActiveSupport::TestCase # rubocop:disable Metrics/Class
   test "supersede! is atomic: failure leaves no cache row and no event row" do
     site = create(:site)
     canonical = create(:site)
+
     # Force a failure inside the transaction, after the precondition
     # checks pass. Both the cache and the event log must be
     # unaffected.
@@ -89,7 +90,9 @@ class SupersedableTest < ActiveSupport::TestCase # rubocop:disable Metrics/Class
     b = create(:site)
     c = create(:site)
 
+
     a.supersede!(b)
+
     b.supersede!(c)
 
     a.reload
@@ -106,6 +109,7 @@ class SupersedableTest < ActiveSupport::TestCase # rubocop:disable Metrics/Class
     context = create(:context, site: superseded)
     site_name = create(:site_name, site: superseded)
 
+
     superseded.supersede!(canonical, "test merge")
 
     # The child associations are NOT moved automatically; the model
@@ -119,6 +123,7 @@ class SupersedableTest < ActiveSupport::TestCase # rubocop:disable Metrics/Class
   test "supersede! writes the comment as a SupersessionEvent comment" do
     site = create(:site)
     canonical = create(:site)
+
 
     site.supersede!(canonical, "test merge")
 
@@ -146,6 +151,7 @@ class SupersedableTest < ActiveSupport::TestCase # rubocop:disable Metrics/Class
     canonical = create(:site)
     superseded = create(:site, :superseded_by, canonical: canonical)
 
+
     assert_difference -> { Supersession.count } => -1,
                       -> { SupersessionEvent.count } => 1 do
       superseded.restore!
@@ -158,9 +164,12 @@ class SupersedableTest < ActiveSupport::TestCase # rubocop:disable Metrics/Class
   test "merge_history returns events for this record in created_at order" do
     canonical = create(:site)
     site = create(:site)
+
     site.supersede!(canonical, "first")
+
     site.restore!
     another = create(:site)
+
     site.supersede!(another, "second")
 
     types = site.merge_history.pluck(:event_type)

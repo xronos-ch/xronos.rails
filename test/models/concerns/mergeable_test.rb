@@ -145,6 +145,7 @@ class MergeableTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLen
     canonical = SupersedableMergeable.order(:created_at).first
     dupe      = SupersedableMergeable.order(:created_at).last
 
+
     dupe.supersede!(canonical, 'test setup')
 
     # dupe is hidden by the default scope, so no exact duplicate found.
@@ -257,7 +258,6 @@ class MergeableTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLen
     a, b = create_things(SupersedableSetupThing, 2, name: 'foo', category: 'a')
     canonical = SupersedableMergeable.find(a.id)
     dupe      = SupersedableMergeable.find(b.id)
-
     assert_difference -> { Supersession.count } => 1,
                       -> { SupersessionEvent.count } => 1 do
       dupe.merge_into!(canonical)
@@ -272,6 +272,7 @@ class MergeableTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLen
     canonical = SupersedableMergeable.find(a.id)
     dupe      = SupersedableMergeable.find(b.id)
 
+
     b_child = MergeableChild.create!(mergeable_thing_id: dupe.id, name: 'b-child')
 
     dupe.merge_into!(canonical)
@@ -285,6 +286,7 @@ class MergeableTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLen
     a, b = create_things(SupersedableSetupThing, 2, name: 'foo', category: 'a')
     canonical = SupersedableMergeable.find(a.id)
     dupe      = SupersedableMergeable.find(b.id)
+
 
     dupe.merge_into!(canonical)
 

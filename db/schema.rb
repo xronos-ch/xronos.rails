@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_07_120001) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_07_193908) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -365,9 +365,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_07_120001) do
     t.text "comment"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "whodunnit_user_id", null: false
     t.index ["event_type", "created_at"], name: "index_supersession_events_on_event_type"
     t.index ["superseded_by_type", "superseded_by_id", "created_at"], name: "index_supersession_events_on_superseded_by"
     t.index ["superseded_type", "superseded_id", "created_at"], name: "index_supersession_events_on_superseded"
+    t.index ["whodunnit_user_id"], name: "index_supersession_events_on_whodunnit_user_id"
   end
 
   create_table "supersessions", force: :cascade do |t|
@@ -454,6 +456,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_07_120001) do
   add_foreign_key "oauth_access_tokens", "users", column: "resource_owner_id"
   add_foreign_key "site_names", "sites"
   add_foreign_key "sources", "references"
+  add_foreign_key "supersession_events", "users", column: "whodunnit_user_id"
   add_foreign_key "user_profiles", "users"
 
   create_view "data_views", materialized: true, sql_definition: <<-SQL

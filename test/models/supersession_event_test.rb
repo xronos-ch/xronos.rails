@@ -12,12 +12,18 @@
 #  updated_at         :datetime         not null
 #  superseded_by_id   :bigint           not null
 #  superseded_id      :bigint           not null
+#  whodunnit_user_id  :bigint           not null
 #
 # Indexes
 #
-#  index_supersession_events_on_event_type     (event_type,created_at)
-#  index_supersession_events_on_superseded     (superseded_type,superseded_id,created_at)
-#  index_supersession_events_on_superseded_by  (superseded_by_type,superseded_by_id,created_at)
+#  index_supersession_events_on_event_type         (event_type,created_at)
+#  index_supersession_events_on_superseded         (superseded_type,superseded_id,created_at)
+#  index_supersession_events_on_superseded_by      (superseded_by_type,superseded_by_id,created_at)
+#  index_supersession_events_on_whodunnit_user_id  (whodunnit_user_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (whodunnit_user_id => users.id)
 #
 require 'test_helper'
 

@@ -65,7 +65,8 @@ module Supersedable
         event_type: 'supersede',
         superseded: self,
         superseded_by: canonical,
-        comment: revision_comment
+        comment: revision_comment,
+        whodunnit_user_id: PaperTrail.request.whodunnit&.to_i
       )
     end
   end
@@ -80,7 +81,8 @@ module Supersedable
       SupersessionEvent.create!(
         event_type: 'restore',
         superseded: self,
-        superseded_by: old_target
+        superseded_by: old_target,
+        whodunnit_user_id: PaperTrail.request.whodunnit&.to_i
       )
     end
   ensure

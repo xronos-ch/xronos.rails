@@ -11,14 +11,10 @@ class UserProfilesController < ApplicationController
   # GET /contributors/1 or /contributors/1.json
   def show
     user = @user_profile.user
-    @contribs = PaperTrail::Version
-      .where(whodunnit_user_email: user.email)
-      .reorder(created_at: :desc)
+    @pagy, @contribs = pagy_user_changelog(user)
 
     respond_to do |format|
-      format.html {
-        @pagy, @contribs = pagy(:offset, @contribs)
-      }
+      format.html
       format.json
     end
   end
@@ -71,6 +67,49 @@ class UserProfilesController < ApplicationController
   end
 
   private
+
+    def pagy_user_changelog(user) # rubocop:disable Metrics/MethodLength
+      versions_scope = PaperTrail::Version
+        .select("id, 'Version' AS entry_type, created_at")
+        .where(whodunnit_user_email: user.email)
+
+      events_scope = SupersessionEvent
+        .select("id, 'SupersessionEvent' AS entry_type, created_at")
+        .where(whodunnit_user_id: user.id)
+
+      union_sql = "(#{versions_scope.to_sql}) UNION ALL (#{events_scope.to_sql})"
+
+      total = ActiveRecord::Base.connection.execute(
+        "SELECT COUNT(*) FROM (#{union_sql}) AS changelog"
+      ).first['count'].to_i
+
+      pagy = Pagy.new(count: total, page: params[:page] || 1)
+
+      rows = ActiveRecord::Base.connection.execute(<<~SQL)
+        SELECT entry_type, id
+        FROM (#{union_sql}) AS changelog
+        ORDER BY created_at DESC
+        LIMIT #{pagy.limit} OFFSET #{pagy.offset}
+      SQL
+
+      version_ids = rows.select { |r| r['entry_type'] == 'Version' }.map { |r| r['id'] }
+      event_ids   = rows.select { |r| r['entry_type'] == 'SupersessionEvent' }.map { |r| r['id'] }
+
+      versions = PaperTrail::Version.where(id: version_ids).index_by(&:id)
+      events   = SupersessionEvent.where(id: event_ids)
+                    .includes(:whodunnit_user, :superseded_by)
+                    .index_by(&:id)
+
+      entries = rows.filter_map { |r|
+        case r['entry_type']
+        when 'Version' then versions[r['id']]
+        when 'SupersessionEvent' then events[r['id']]
+        end
+      }
+
+      [pagy, entries]
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_user_profile
       if params[:id]
