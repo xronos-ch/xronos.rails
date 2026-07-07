@@ -40,43 +40,51 @@ namespace :xronos do
     puts
 
     if total_groups.zero?
-      puts 'No duplicates found. Nothing to do.'
-      next
+      # Don't early-return: an empty strict scope can still coexist
+      # with cross-record duplicates (e.g. two chrons in different
+      # samples that match on every other attribute). The cross-sample
+      # pass below is what catches those.
+      puts 'No exact-duplicate groups found.'
     end
 
     if dry_run
       puts 'Not merging any records because DRY_RUN=false is not set'
+      if model_class.respond_to?(:cross_sample_deduplicate!)
+        puts '(cross-sample dedup would also run with DRY_RUN=false)'
+      end
       exit
     end
 
-    progress = ProgressBar.create(
-      title: 'Merging',
-      total: total_groups,
-      format: '%t |%B| %c/%C (%E)'
-    )
-
     PaperTrail.request(whodunnit: whodunnit) do
-      duplicate_groups.each do |*values, _count|
-        values_hash = attrs.zip(values).to_h
-        records = model_class.where(values_hash).order(:created_at, :id).to_a
-        next if records.size < 2
+      unless total_groups.zero?
+        progress = ProgressBar.create(
+          title: 'Merging',
+          total: total_groups,
+          format: '%t |%B| %c/%C (%E)'
+        )
 
-        canonical = records.first
-        records[1..].each { |dupe| dupe.merge_into!(canonical) }
-        progress.increment
-      rescue StandardError => e
-        progress.log("FAILED group #{values_hash.inspect}: #{e.class} – #{e.message}")
-        progress.increment
+        duplicate_groups.each do |*values, _count|
+          values_hash = attrs.zip(values).to_h
+          records = model_class.where(values_hash).order(:created_at, :id).to_a
+          next if records.size < 2
+
+          canonical = records.first
+          records[1..].each { |dupe| dupe.merge_into!(canonical) }
+          progress.increment
+        rescue StandardError => e
+          progress.log("FAILED group #{values_hash.inspect}: #{e.class} – #{e.message}")
+          progress.increment
+        end
       end
-    end
 
-    # Cross-record dedup (e.g. Chrons that are duplicates across two
-    # different samples). Opt-in via class method, so other Mergeable
-    # models that lack cross-record detection are unaffected.
-    if model_class.respond_to?(:cross_sample_deduplicate!)
-      puts
-      puts '== Cross-sample dedup =='
-      model_class.cross_sample_deduplicate!
+      # Cross-record dedup (e.g. Chrons that are duplicates across two
+      # different samples). Opt-in via class method, so other Mergeable
+      # models that lack cross-record detection are unaffected.
+      if model_class.respond_to?(:cross_sample_deduplicate!)
+        puts
+        puts '== Cross-sample dedup =='
+        model_class.cross_sample_deduplicate!
+      end
     end
 
     puts
