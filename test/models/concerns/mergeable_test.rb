@@ -53,6 +53,7 @@ class MergeableTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLen
              dependent: :destroy
 
     after_save :merge_exact_duplicates
+    validate :no_exact_duplicate, on: :create
 
     before_merge :reassign_children!
 
@@ -68,7 +69,10 @@ class MergeableTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLen
     before_merge ->(*) { raise 'boom' }
   end
 
-  # Includes Mergeable but does not opt in to auto-merge.
+  # Includes Mergeable but does not opt in to auto-merge or the
+  # no-duplicate validation, so it is the cleanest baseline for
+  # tests that need to create a duplicate record (e.g. to exercise
+  # the merge callbacks manually).
   class NoAutoMergeThing < ApplicationRecord
     self.table_name = 'mergeable_things'
 
@@ -99,6 +103,7 @@ class MergeableTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLen
              dependent: :destroy
 
     after_save :merge_exact_duplicates
+    validate :no_exact_duplicate, on: :create
 
     before_merge :reassign_children!
 
@@ -291,17 +296,48 @@ class MergeableTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLen
   test 'after_save auto-merges a newly created dupe into the existing canonical' do
     canonical = SetupThing.create!(name: 'foo', category: 'a')
 
-    dupe = MergeableThing.create!(name: 'foo', category: 'a')
+    # Bypass `validate :no_exact_duplicate, on: :create` to exercise
+    # the `after_save :merge_exact_duplicates` callback in isolation.
+    dupe = MergeableThing.new(name: 'foo', category: 'a')
+    dupe.save(validate: false)
 
     assert_predicate dupe, :destroyed?
     assert_equal canonical.id, dupe.merged_into_id
     assert_equal 1, MergeableThing.count
   end
 
-  test 'after_save auto-merges when an update makes the record match an existing one' do
+  test 'create! rejects an exact duplicate before the after_save callback runs' do
+    SetupThing.create!(name: 'foo', category: 'a')
+
+    dupe = MergeableThing.new(name: 'foo', category: 'a')
+    assert_not dupe.valid?
+    assert_predicate dupe.errors[:base], :any?
+  end
+
+  test 'create! error message references the existing record id' do
+    canonical = SetupThing.create!(name: 'foo', category: 'a')
+
+    dupe = MergeableThing.new(name: 'foo', category: 'a')
+    assert_not dupe.valid?
+    assert_match "(##{canonical.id})", dupe.errors[:base].first
+  end
+
+  test 'create! is allowed when no exact duplicate exists' do
+    MergeableThing.create!(name: 'foo', category: 'a')
+    other = MergeableThing.create!(name: 'bar', category: 'a')
+
+    assert_predicate other, :persisted?
+    assert_not other.destroyed?
+    assert_nil other.merged_into_id
+  end
+
+  test 'update! that makes a record a duplicate is still allowed (validation is on: :create only)' do
     a = SetupThing.create!(name: 'foo', category: 'a')
     b = MergeableThing.create!(name: 'bar', category: 'a')
 
+    # The validation is on: :create, so an update that creates a
+    # duplicate is still permitted and the existing after_save
+    # auto-merge handles it.
     b.update!(name: 'foo')
 
     assert_predicate b, :destroyed?
@@ -321,13 +357,24 @@ class MergeableTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLen
   test 'after_save auto-merges a newly created dupe into a Supersedable canonical' do
     canonical = SupersedableSetupThing.create!(name: 'foo', category: 'a')
 
-    dupe = SupersedableMergeable.create!(name: 'foo', category: 'a')
+    # Bypass `validate :no_exact_duplicate, on: :create` to exercise
+    # the `after_save :merge_exact_duplicates` callback in isolation.
+    dupe = SupersedableMergeable.new(name: 'foo', category: 'a')
+    dupe.save(validate: false)
 
     assert_not dupe.destroyed?
     assert dupe.superseded?
     assert_equal canonical.id, dupe.ultimately_superseded_by.id
     assert_equal canonical.id, dupe.merged_into_id
     assert_equal 1, SupersedableMergeable.where(name: 'foo').count
+  end
+
+  test 'SupersedableMergeable.create! rejects an exact duplicate' do
+    SupersedableSetupThing.create!(name: 'foo', category: 'a')
+
+    dupe = SupersedableMergeable.new(name: 'foo', category: 'a')
+    assert_not dupe.valid?
+    assert_predicate dupe.errors[:base], :any?
   end
 
   test 'a model that includes Mergeable but does not opt in to auto-merge does not auto-merge on save' do

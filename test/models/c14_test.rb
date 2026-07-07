@@ -75,9 +75,13 @@ class C14Test < ActiveSupport::TestCase
     canonical = create(:c14, lab_identifier: 'OxA-12345', sample: sample,
                              bp: 3500, std: 30, method: 'AMS',
                              delta_15n: -25.0, delta_c13: -20.0, delta_c13_std: 1.5)
-    dupe = create(:c14, lab_identifier: 'OxA-12345', sample: sample,
-                        bp: 3500, std: 30, method: 'AMS',
-                        delta_15n: -25.0, delta_c13: -20.0, delta_c13_std: 1.5)
+
+    # Bypass `validate :no_exact_duplicate, on: :create` to exercise
+    # the after_save merge path in isolation.
+    dupe = build(:c14, lab_identifier: 'OxA-12345', sample: sample,
+                       bp: 3500, std: 30, method: 'AMS',
+                       delta_15n: -25.0, delta_c13: -20.0, delta_c13_std: 1.5)
+    dupe.save(validate: false)
 
     assert_predicate dupe, :superseded?
     assert_equal canonical.id, dupe.merged_into_id
@@ -134,9 +138,13 @@ class C14Test < ActiveSupport::TestCase
     canonical = create(:c14, lab_identifier: 'OxA-12345', sample: sample,
                              bp: 3500, std: 30, method: nil,
                              delta_15n: nil, delta_c13: nil, delta_c13_std: nil)
-    dupe = create(:c14, lab_identifier: 'OxA-12345', sample: sample,
-                        bp: 3500, std: 30, method: nil,
-                        delta_15n: nil, delta_c13: nil, delta_c13_std: nil)
+
+    # Bypass `validate :no_exact_duplicate, on: :create` to exercise
+    # the after_save merge path in isolation.
+    dupe = build(:c14, lab_identifier: 'OxA-12345', sample: sample,
+                       bp: 3500, std: 30, method: nil,
+                       delta_15n: nil, delta_c13: nil, delta_c13_std: nil)
+    dupe.save(validate: false)
 
     assert_predicate dupe, :superseded?
     assert_equal canonical.id, dupe.merged_into_id
@@ -163,7 +171,7 @@ class C14Test < ActiveSupport::TestCase
                        bp: 3500, std: 30, method: 'AMS',
                        delta_15n: -25.0, delta_c13: -20.0, delta_c13_std: 1.5)
     dupe.citations << build(:citation, reference: reference, citing: dupe)
-    dupe.save!
+    dupe.save(validate: false)
 
     assert_predicate dupe, :superseded?
     assert_equal 0, Citation.where(citing_type: 'C14', citing_id: dupe.id).count
@@ -182,7 +190,7 @@ class C14Test < ActiveSupport::TestCase
                        bp: 3500, std: 30, method: 'AMS',
                        delta_15n: -25.0, delta_c13: -20.0, delta_c13_std: 1.5)
     dupe.citations << build(:citation, reference: reference, citing: dupe)
-    dupe.save!
+    dupe.save(validate: false)
 
     assert_predicate dupe, :superseded?
     # Canonical's citation remains; dupe's collision is destroyed
@@ -210,15 +218,18 @@ class C14Test < ActiveSupport::TestCase
     context = create(:context)
     canonical_sample = create(:sample, nameless_sample_attrs(context: context))
 
-    # Skip the sample auto-merge so the dupe sample persists long enough
-    # to receive a c14; the c14 save will trigger the cross-sample flow.
+    # Skip the sample auto-merge (and the on: :create duplicate
+    # validation) so the dupe sample persists long enough to receive
+    # a c14; the c14 save will trigger the cross-sample flow.
     Sample.skip_callback(:save, :after, :merge_exact_duplicates)
+    Sample.skip_callback(:validate, :before, :no_exact_duplicate, on: :create)
     begin
       dupe_sample = create(:sample, nameless_sample_attrs(context: context))
       canonical = create(:c14, c14_attrs(sample: canonical_sample))
       dupe = create(:c14, c14_attrs(sample: dupe_sample))
     ensure
       Sample.set_callback(:save, :after, :merge_exact_duplicates)
+      Sample.set_callback(:validate, :before, :no_exact_duplicate, on: :create)
     end
 
     assert_predicate dupe_sample, :destroyed?
@@ -232,6 +243,7 @@ class C14Test < ActiveSupport::TestCase
     canonical_sample = create(:sample, nameless_sample_attrs(context: context))
 
     Sample.skip_callback(:save, :after, :merge_exact_duplicates)
+    Sample.skip_callback(:validate, :before, :no_exact_duplicate, on: :create)
     begin
       dupe_sample = create(:sample, nameless_sample_attrs(context: context))
       canonical = create(:c14, c14_attrs(sample: canonical_sample))
@@ -240,6 +252,7 @@ class C14Test < ActiveSupport::TestCase
                           delta_15n: -22.0, delta_c13: -18.0, delta_c13_std: 1.2)
     ensure
       Sample.set_callback(:save, :after, :merge_exact_duplicates)
+      Sample.set_callback(:validate, :before, :no_exact_duplicate, on: :create)
     end
 
     dupe.update!(lab_identifier: 'OxA-12345', bp: 3500, std: 30,
@@ -255,12 +268,14 @@ class C14Test < ActiveSupport::TestCase
     canonical_sample = create(:sample, nameless_sample_attrs(context: context))
 
     Sample.skip_callback(:save, :after, :merge_exact_duplicates)
+    Sample.skip_callback(:validate, :before, :no_exact_duplicate, on: :create)
     begin
       dupe_sample = create(:sample, nameless_sample_attrs(context: context))
       create(:c14, c14_attrs(sample: canonical_sample))
       dupe = create(:c14, c14_attrs(sample: dupe_sample).merge(bp: 4000))
     ensure
       Sample.set_callback(:save, :after, :merge_exact_duplicates)
+      Sample.set_callback(:validate, :before, :no_exact_duplicate, on: :create)
     end
 
     # Cross-sample matches are excluded by the key
@@ -274,12 +289,14 @@ class C14Test < ActiveSupport::TestCase
     canonical_sample = create(:sample, nameless_sample_attrs(context: create(:context)))
 
     Sample.skip_callback(:save, :after, :merge_exact_duplicates)
+    Sample.skip_callback(:validate, :before, :no_exact_duplicate, on: :create)
     begin
       dupe_sample = create(:sample, nameless_sample_attrs(context: create(:context)))
       create(:c14, c14_attrs(sample: canonical_sample))
       dupe = create(:c14, c14_attrs(sample: dupe_sample))
     ensure
       Sample.set_callback(:save, :after, :merge_exact_duplicates)
+      Sample.set_callback(:validate, :before, :no_exact_duplicate, on: :create)
     end
 
     # Different contexts -> not name-relaxed duplicates -> no cross-sample merge
@@ -293,12 +310,14 @@ class C14Test < ActiveSupport::TestCase
     canonical_sample = create(:sample, nameless_sample_attrs(context: context).merge(name: 'Bone 1'))
 
     Sample.skip_callback(:save, :after, :merge_exact_duplicates)
+    Sample.skip_callback(:validate, :before, :no_exact_duplicate, on: :create)
     begin
       dupe_sample = create(:sample, nameless_sample_attrs(context: context))
       create(:c14, c14_attrs(sample: canonical_sample))
       dupe = create(:c14, c14_attrs(sample: dupe_sample))
     ensure
       Sample.set_callback(:save, :after, :merge_exact_duplicates)
+      Sample.set_callback(:validate, :before, :no_exact_duplicate, on: :create)
     end
 
     # Under the hypothetical name: :nil_matches_nil rule, "Bone 1" != nil
@@ -317,9 +336,15 @@ class C14Test < ActiveSupport::TestCase
     create(:c14, c14_attrs(sample: other_sample))
 
     # other_sample is in a different context, so it's not a name-relaxed
-    # duplicate of `sample`. The same-sample merge proceeds; the
-    # cross-sample callback is a no-op.
-    dupe = create(:c14, c14_attrs(sample: sample))
+    # duplicate of `sample`. The same-sample merge would proceed; the
+    # cross-sample callback is a no-op. Bypass the on: :create duplicate
+    # validation to exercise the after_save path in isolation.
+    C14.skip_callback(:validate, :before, :no_exact_duplicate, on: :create)
+    begin
+      dupe = create(:c14, c14_attrs(sample: sample))
+    ensure
+      C14.set_callback(:validate, :before, :no_exact_duplicate, on: :create)
+    end
 
     assert_predicate dupe, :superseded?
     assert_equal canonical.id, dupe.ultimately_superseded_by.id
@@ -333,6 +358,7 @@ class C14Test < ActiveSupport::TestCase
     reference = create(:reference)
 
     Sample.skip_callback(:save, :after, :merge_exact_duplicates)
+    Sample.skip_callback(:validate, :before, :no_exact_duplicate, on: :create)
     begin
       dupe_sample = create(:sample, nameless_sample_attrs(context: context))
       canonical = create(:c14, c14_attrs(sample: canonical_sample))
@@ -342,6 +368,7 @@ class C14Test < ActiveSupport::TestCase
       dupe.save!
     ensure
       Sample.set_callback(:save, :after, :merge_exact_duplicates)
+      Sample.set_callback(:validate, :before, :no_exact_duplicate, on: :create)
     end
 
     assert_predicate dupe, :superseded?
@@ -353,9 +380,11 @@ class C14Test < ActiveSupport::TestCase
     context = create(:context)
     canonical_sample = create(:sample, nameless_sample_attrs(context: context))
 
-    # Skip both sample and c14 auto-merge so the cross-sample duplicates
-    # can be set up without the auto-merge pre-empting the class method.
+    # Skip both sample and c14 auto-merge (and the on: :create
+    # duplicate validation) so the cross-sample duplicates can be
+    # set up without the auto-merge pre-empting the class method.
     Sample.skip_callback(:save, :after, :merge_exact_duplicates)
+    Sample.skip_callback(:validate, :before, :no_exact_duplicate, on: :create)
     C14.skip_callback(:save, :after, :merge_cross_sample_duplicates)
     begin
       dupe_sample = create(:sample, nameless_sample_attrs(context: context))
@@ -364,6 +393,7 @@ class C14Test < ActiveSupport::TestCase
     ensure
       C14.set_callback(:save, :after, :merge_cross_sample_duplicates)
       Sample.set_callback(:save, :after, :merge_exact_duplicates)
+      Sample.set_callback(:validate, :before, :no_exact_duplicate, on: :create)
     end
 
     # Nothing was merged yet

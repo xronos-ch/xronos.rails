@@ -91,6 +91,20 @@ module Mergeable
     self.class.find(merged_into_id)
   end
 
+  # Opt-in via `validate :no_exact_duplicate, on: :create` in the
+  # model. `on: :create` is what keeps the update path free: updates
+  # that turn a record into a duplicate are intentionally allowed
+  # and handled by `after_save :merge_exact_duplicates` (issue #310).
+  def no_exact_duplicate
+    return unless new_record?
+
+    existing = find_exact_duplicate
+    return unless existing
+
+    label = respond_to?(:label) ? label : self.class.name
+    errors.add(:base, "An identical #{label} already exists (##{existing.id})")
+  end
+
   protected
 
   # Shared by `merge_exact_duplicates` and subclass callbacks (e.g.

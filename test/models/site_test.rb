@@ -71,7 +71,11 @@ class SiteTest < ActiveSupport::TestCase
 
   test "auto-merges on create when all key attrs match" do
     canonical = create(:site, name: "Anuradhapura", lat: 8.0, lng: 80.0, country_code: "LK")
-    dupe = create(:site, name: "Anuradhapura", lat: 8.0, lng: 80.0, country_code: "LK")
+
+    # Bypass `validate :no_exact_duplicate, on: :create` to exercise
+    # the after_save merge path in isolation.
+    dupe = build(:site, name: "Anuradhapura", lat: 8.0, lng: 80.0, country_code: "LK")
+    dupe.save(validate: false)
 
     assert_predicate dupe, :superseded?
     assert_equal canonical.id, dupe.merged_into_id
@@ -114,7 +118,11 @@ class SiteTest < ActiveSupport::TestCase
 
   test "auto-merges when all lat/lng/country_code are nil on both sides (nil_matches_nil)" do
     create(:site, name: "Anuradhapura", lat: nil, lng: nil, country_code: nil)
-    other = create(:site, name: "Anuradhapura", lat: nil, lng: nil, country_code: nil)
+
+    # Bypass `validate :no_exact_duplicate, on: :create` to exercise
+    # the after_save merge path in isolation.
+    other = build(:site, name: "Anuradhapura", lat: nil, lng: nil, country_code: nil)
+    other.save(validate: false)
 
     assert_predicate other, :superseded?
   end

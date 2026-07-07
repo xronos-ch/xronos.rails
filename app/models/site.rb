@@ -67,6 +67,7 @@ class Site < ApplicationRecord
   potential_duplicates_on :name, :lat, :lng, :country_code
 
   after_save :merge_exact_duplicates
+  validate :no_exact_duplicate, on: :create
 
   before_merge :reassign_contexts!
   before_merge :reassign_site_names!

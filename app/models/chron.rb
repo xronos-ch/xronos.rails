@@ -19,6 +19,7 @@ class Chron < ApplicationRecord
 
   after_save :merge_exact_duplicates
   after_save :merge_cross_sample_duplicates
+  validate :no_exact_duplicate, on: :create
 
   before_merge :reassign_citations!
 

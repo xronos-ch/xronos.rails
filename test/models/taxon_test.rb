@@ -292,7 +292,11 @@ class TaxonTest < ActiveSupport::TestCase
 
   test "auto-merges on create when an exact duplicate exists" do
     canonical = FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: 123)
-    dupe = FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: 123)
+
+    # Bypass `validate :no_exact_duplicate, on: :create` to exercise
+    # the after_save merge path in isolation.
+    dupe = FactoryBot.build(:taxon, name: "Quercus robur", gbif_id: 123)
+    dupe.save(validate: false)
 
     assert_predicate dupe, :destroyed?
     assert_equal canonical.id, dupe.merged_into_id
@@ -300,7 +304,11 @@ class TaxonTest < ActiveSupport::TestCase
 
   test "auto-merges on create when both records have nil gbif_id" do
     canonical = FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: nil)
-    dupe = FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: nil)
+
+    # Bypass `validate :no_exact_duplicate, on: :create` to exercise
+    # the after_save merge path in isolation.
+    dupe = FactoryBot.build(:taxon, name: "Quercus robur", gbif_id: nil)
+    dupe.save(validate: false)
 
     assert_predicate dupe, :destroyed?
     assert_equal canonical.id, dupe.merged_into_id
@@ -342,7 +350,8 @@ class TaxonTest < ActiveSupport::TestCase
 
   test "reassigns samples to the canonical taxon on merge" do
     canonical = FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: 123)
-    dupe = FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: 123)
+    dupe = FactoryBot.build(:taxon, name: "Quercus robur", gbif_id: 123)
+    dupe.save(validate: false)
     sample = FactoryBot.create(:sample, taxon: dupe)
 
     dupe.merge_exact_duplicates
@@ -354,7 +363,10 @@ class TaxonTest < ActiveSupport::TestCase
     canonical = FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: 123)
     clear_enqueued_jobs
 
-    dupe = FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: 123)
+    # Bypass `validate :no_exact_duplicate, on: :create` to test the
+    # after_save merge + GBIF job interaction in isolation.
+    dupe = FactoryBot.build(:taxon, name: "Quercus robur", gbif_id: 123)
+    dupe.save(validate: false)
     assert_predicate dupe, :destroyed?
 
     # The job was enqueued but the record is gone

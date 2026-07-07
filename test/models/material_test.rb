@@ -49,7 +49,11 @@ class MaterialTest < ActiveSupport::TestCase
 
   test "auto-merges on create when an exact duplicate exists" do
     canonical = FactoryBot.create(:material, name: "Charcoal")
-    dupe = FactoryBot.create(:material, name: "Charcoal")
+
+    # Bypass `validate :no_exact_duplicate, on: :create` to exercise
+    # the after_save merge path in isolation.
+    dupe = FactoryBot.build(:material, name: "Charcoal")
+    dupe.save(validate: false)
 
     assert_predicate dupe, :destroyed?
     assert_equal canonical.id, dupe.merged_into_id
@@ -75,7 +79,8 @@ class MaterialTest < ActiveSupport::TestCase
 
   test "reassigns samples to the canonical material on merge" do
     canonical = FactoryBot.create(:material, name: "Charcoal")
-    dupe = FactoryBot.create(:material, name: "Charcoal")
+    dupe = FactoryBot.build(:material, name: "Charcoal")
+    dupe.save(validate: false)
     sample = FactoryBot.create(:sample, material: dupe)
 
     dupe.merge_exact_duplicates
@@ -85,7 +90,8 @@ class MaterialTest < ActiveSupport::TestCase
 
   test "destroys the dupe (not supersede) since Material is not Supersedable" do
     canonical = FactoryBot.create(:material, name: "Charcoal")
-    dupe = FactoryBot.create(:material, name: "Charcoal")
+    dupe = FactoryBot.build(:material, name: "Charcoal")
+    dupe.save(validate: false)
 
     assert_predicate dupe, :destroyed?
     # The dupe is hard-destroyed (not soft-deleted via Supersession) because

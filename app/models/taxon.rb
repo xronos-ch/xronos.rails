@@ -27,6 +27,7 @@ class Taxon < ApplicationRecord
 
   after_save :enqueue_gbif_sync
   after_save :merge_exact_duplicates
+  validate :no_exact_duplicate, on: :create
 
   before_merge :reassign_samples!
 

@@ -34,8 +34,12 @@ class TypoTest < ActiveSupport::TestCase
     sample = create(:sample)
     canonical = create(:typo, sample: sample, name: 'Roman Iron Age',
                               approx_start_time: -550, approx_end_time: -350)
-    dupe = create(:typo, sample: sample, name: 'Roman Iron Age',
-                         approx_start_time: -550, approx_end_time: -350)
+
+    # Bypass `validate :no_exact_duplicate, on: :create` to exercise
+    # the after_save merge path in isolation.
+    dupe = build(:typo, sample: sample, name: 'Roman Iron Age',
+                        approx_start_time: -550, approx_end_time: -350)
+    dupe.save(validate: false)
 
     assert_predicate dupe, :superseded?
     assert_equal canonical.id, dupe.merged_into_id
@@ -92,8 +96,12 @@ class TypoTest < ActiveSupport::TestCase
     sample = create(:sample)
     canonical = create(:typo, sample: sample, name: 'Undated unit',
                               approx_start_time: nil, approx_end_time: nil)
-    dupe = create(:typo, sample: sample, name: 'Undated unit',
-                         approx_start_time: nil, approx_end_time: nil)
+
+    # Bypass `validate :no_exact_duplicate, on: :create` to exercise
+    # the after_save merge path in isolation.
+    dupe = build(:typo, sample: sample, name: 'Undated unit',
+                        approx_start_time: nil, approx_end_time: nil)
+    dupe.save(validate: false)
 
     assert_predicate dupe, :superseded?
     assert_equal canonical.id, dupe.merged_into_id
@@ -120,7 +128,7 @@ class TypoTest < ActiveSupport::TestCase
     dupe = build(:typo, sample: sample, name: 'Roman Iron Age',
                         approx_start_time: -550, approx_end_time: -350)
     dupe.citations << build(:citation, reference: reference, citing: dupe)
-    dupe.save!
+    dupe.save(validate: false)
 
     assert_predicate dupe, :superseded?
     assert_equal 0, Citation.where(citing_type: 'Typo', citing_id: dupe.id).count
@@ -137,7 +145,7 @@ class TypoTest < ActiveSupport::TestCase
     dupe = build(:typo, sample: sample, name: 'Roman Iron Age',
                         approx_start_time: -550, approx_end_time: -350)
     dupe.citations << build(:citation, reference: reference, citing: dupe)
-    dupe.save!
+    dupe.save(validate: false)
 
     assert_predicate dupe, :superseded?
     # Canonical's citation remains; dupe's collision is destroyed
@@ -164,13 +172,18 @@ class TypoTest < ActiveSupport::TestCase
     context = create(:context)
     canonical_sample = create(:sample, nameless_sample_attrs(context: context))
 
+    # Skip the sample auto-merge (and the on: :create duplicate
+    # validation) so the dupe sample persists long enough to receive
+    # a typo; the typo save will trigger the cross-sample flow.
     Sample.skip_callback(:save, :after, :merge_exact_duplicates)
+    Sample.skip_callback(:validate, :before, :no_exact_duplicate, on: :create)
     begin
       dupe_sample = create(:sample, nameless_sample_attrs(context: context))
       canonical = create(:typo, typo_attrs(sample: canonical_sample))
       dupe = create(:typo, typo_attrs(sample: dupe_sample))
     ensure
       Sample.set_callback(:save, :after, :merge_exact_duplicates)
+      Sample.set_callback(:validate, :before, :no_exact_duplicate, on: :create)
     end
 
     assert_predicate dupe_sample, :destroyed?
@@ -184,12 +197,14 @@ class TypoTest < ActiveSupport::TestCase
     canonical_sample = create(:sample, nameless_sample_attrs(context: context))
 
     Sample.skip_callback(:save, :after, :merge_exact_duplicates)
+    Sample.skip_callback(:validate, :before, :no_exact_duplicate, on: :create)
     begin
       dupe_sample = create(:sample, nameless_sample_attrs(context: context))
       create(:typo, typo_attrs(sample: canonical_sample))
       dupe = create(:typo, typo_attrs(sample: dupe_sample).merge(approx_start_time: -500))
     ensure
       Sample.set_callback(:save, :after, :merge_exact_duplicates)
+      Sample.set_callback(:validate, :before, :no_exact_duplicate, on: :create)
     end
 
     # Cross-sample matches are excluded by the key
@@ -203,12 +218,14 @@ class TypoTest < ActiveSupport::TestCase
     canonical_sample = create(:sample, nameless_sample_attrs(context: create(:context)))
 
     Sample.skip_callback(:save, :after, :merge_exact_duplicates)
+    Sample.skip_callback(:validate, :before, :no_exact_duplicate, on: :create)
     begin
       dupe_sample = create(:sample, nameless_sample_attrs(context: create(:context)))
       create(:typo, typo_attrs(sample: canonical_sample))
       dupe = create(:typo, typo_attrs(sample: dupe_sample))
     ensure
       Sample.set_callback(:save, :after, :merge_exact_duplicates)
+      Sample.set_callback(:validate, :before, :no_exact_duplicate, on: :create)
     end
 
     # Different contexts -> not name-relaxed duplicates -> no cross-sample merge
@@ -226,7 +243,14 @@ class TypoTest < ActiveSupport::TestCase
     other_sample = create(:sample, nameless_sample_attrs(context: context_b))
     create(:typo, typo_attrs(sample: other_sample))
 
-    dupe = create(:typo, typo_attrs(sample: sample))
+    # Bypass the on: :create duplicate validation to exercise the
+    # after_save same-sample merge in isolation.
+    Typo.skip_callback(:validate, :before, :no_exact_duplicate, on: :create)
+    begin
+      dupe = create(:typo, typo_attrs(sample: sample))
+    ensure
+      Typo.set_callback(:validate, :before, :no_exact_duplicate, on: :create)
+    end
 
     assert_predicate dupe, :superseded?
     assert_equal canonical.id, dupe.ultimately_superseded_by.id
@@ -238,7 +262,11 @@ class TypoTest < ActiveSupport::TestCase
     context = create(:context)
     canonical_sample = create(:sample, nameless_sample_attrs(context: context))
 
+    # Skip both sample and typo auto-merge (and the on: :create
+    # duplicate validation) so the cross-sample duplicates can be
+    # set up without the auto-merge pre-empting the class method.
     Sample.skip_callback(:save, :after, :merge_exact_duplicates)
+    Sample.skip_callback(:validate, :before, :no_exact_duplicate, on: :create)
     Typo.skip_callback(:save, :after, :merge_cross_sample_duplicates)
     begin
       dupe_sample = create(:sample, nameless_sample_attrs(context: context))
@@ -247,6 +275,7 @@ class TypoTest < ActiveSupport::TestCase
     ensure
       Typo.set_callback(:save, :after, :merge_cross_sample_duplicates)
       Sample.set_callback(:save, :after, :merge_exact_duplicates)
+      Sample.set_callback(:validate, :before, :no_exact_duplicate, on: :create)
     end
 
     # Nothing was merged yet

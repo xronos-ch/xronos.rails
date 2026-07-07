@@ -99,20 +99,22 @@ class TaxonsControllerTest < ActionDispatch::IntegrationTest
 
 
   #
-  # Auto-merge
+  # Duplicate rejection (issue #310)
   #
 
-  test "create merges a new taxon into an existing duplicate" do
-    # @taxon (created in setup) is the older canonical.
+  test "create rejects an exact duplicate taxon with a validation error" do
+    # @taxon (created in setup) is the older canonical. The create
+    # is rejected by `validate :no_exact_duplicate, on: :create`; no
+    # auto-merge happens on the create path.
     assert_equal 1, Taxon.count
 
     assert_no_difference "Taxon.count" do
-      post taxons_path, params: { taxon: { name: "Quercus robur", gbif_id: 1 } }
+      post taxons_path(format: :json),
+           params: { taxon: { name: "Quercus robur", gbif_id: 1 } }
     end
 
-    assert_response :redirect
+    assert_response :unprocessable_entity
     assert_equal 1, Taxon.count
-    assert_equal @taxon.id, Taxon.first.id
   end
 
   test "update merges a taxon into an existing duplicate and reassigns samples" do

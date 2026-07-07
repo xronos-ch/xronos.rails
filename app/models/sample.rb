@@ -73,6 +73,7 @@ class Sample < ApplicationRecord
   has_many :typos, dependent: :destroy
 
   after_save :merge_exact_duplicates
+  validate :no_exact_duplicate, on: :create
 
   before_merge :reassign_c14s!
   before_merge :reassign_typos!

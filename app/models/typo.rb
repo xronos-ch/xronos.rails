@@ -29,16 +29,16 @@ class Typo < Chron
 
   include PgSearch::Model
   pg_search_scope :search,
-    against: :name,
-    using: { tsearch: { prefix: true } } # match partial words
-  #multisearchable against: :name # needs to be cleaned up a bit more
+                  against: :name,
+                  using: { tsearch: { prefix: true } } # match partial words
+  # multisearchable against: :name # needs to be cleaned up a bit more
 
   def self.label
-    "typological date"
+    'typological date'
   end
 
   def self.icon
-    "icons/typo.svg"
+    'icons/typo.svg'
   end
 
   def age

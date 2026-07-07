@@ -29,7 +29,11 @@ class ReferenceTest < ActiveSupport::TestCase
 
   test "auto-merges on create when an exact duplicate exists" do
     canonical = create(:reference, short_ref: "Bronk Ramsey 2009")
-    dupe = create(:reference, short_ref: "Bronk Ramsey 2009")
+
+    # Bypass `validate :no_exact_duplicate, on: :create` to exercise
+    # the after_save merge path in isolation.
+    dupe = build(:reference, short_ref: "Bronk Ramsey 2009")
+    dupe.save(validate: false)
 
     assert_predicate dupe, :superseded?
     assert_equal canonical.id, dupe.merged_into_id
@@ -62,7 +66,7 @@ class ReferenceTest < ActiveSupport::TestCase
     dupe = build(:reference, short_ref: "Bronk Ramsey 2009")
     dupe.citations << build(:citation, reference: dupe, citing: site_a)
     dupe.citations << build(:citation, reference: dupe, citing: site_b)
-    dupe.save!
+    dupe.save(validate: false)
 
     assert_predicate dupe, :superseded?
     assert_equal 0, Citation.where(reference_id: dupe.id).count
@@ -78,7 +82,7 @@ class ReferenceTest < ActiveSupport::TestCase
 
     dupe = build(:reference, short_ref: "Bronk Ramsey 2009")
     dupe.citations << build(:citation, reference: dupe, citing: site)
-    dupe.save!
+    dupe.save(validate: false)
 
     assert_predicate dupe, :superseded?
     # Canonical's citation remains; dupe's collision is destroyed
@@ -90,7 +94,7 @@ class ReferenceTest < ActiveSupport::TestCase
     canonical = create(:reference, short_ref: "Bronk Ramsey 2009")
     dupe = build(:reference, short_ref: "Bronk Ramsey 2009")
     dupe.sources << build(:source, reference: dupe)
-    dupe.save!
+    dupe.save(validate: false)
 
     assert_predicate dupe, :superseded?
     assert_equal 0, Source.where(reference_id: dupe.id).count

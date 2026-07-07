@@ -12,11 +12,16 @@ class DuplicableTest < ActiveSupport::TestCase
     # for this test subclass — these tests assert that records with
     # identical keys remain in the database.
     OptionTestSite.skip_callback(:save, :after, :merge_exact_duplicates)
+    # Same rationale for `validate :no_exact_duplicate, on: :create`
+    # declared on Site: the tests deliberately create pairs of records
+    # that share every exact-duplicate key.
+    OptionTestSite.skip_callback(:validate, :before, :no_exact_duplicate, on: :create)
   end
 
   teardown do
     # Re-enable the callback for other tests in the suite.
     OptionTestSite.set_callback(:save, :after, :merge_exact_duplicates)
+    OptionTestSite.set_callback(:validate, :before, :no_exact_duplicate, on: :create)
   end
 
   #

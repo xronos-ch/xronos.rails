@@ -106,7 +106,11 @@ class SampleTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
   test 'auto-merges on create when all key attrs match' do
     context = create(:context)
     canonical = create(:sample, blank_attrs(context: context))
-    dupe = create(:sample, blank_attrs(context: context))
+
+    # Bypass `validate :no_exact_duplicate, on: :create` to exercise
+    # the after_save merge path in isolation.
+    dupe = build(:sample, blank_attrs(context: context))
+    dupe.save(validate: false)
 
     assert_predicate dupe, :destroyed?
     assert_equal canonical.id, dupe.merged_into_id
@@ -117,6 +121,9 @@ class SampleTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     canonical = create(:sample, blank_attrs(context: context))
     other = create(:sample, blank_attrs(context: context, name: 'Bone 2'))
 
+    # The validation is on: :create, so updates that turn a record
+    # into a duplicate are still permitted. The after_save auto-merge
+    # then handles it.
     other.update!(name: 'Bone 1')
 
     assert_predicate other, :destroyed?
@@ -163,7 +170,11 @@ class SampleTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
   test 'auto-merges when material is nil on both sides (nil_matches_nil)' do
     context = create(:context)
     canonical = create(:sample, blank_attrs(context: context))
-    dupe = create(:sample, blank_attrs(context: context))
+
+    # Bypass `validate :no_exact_duplicate, on: :create` to exercise
+    # the after_save merge path in isolation.
+    dupe = build(:sample, blank_attrs(context: context))
+    dupe.save(validate: false)
 
     assert_predicate dupe, :destroyed?
     assert_equal canonical.id, dupe.merged_into_id
@@ -182,15 +193,18 @@ class SampleTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     context = create(:context)
     canonical = create(:sample, blank_attrs(context: context))
 
-    # Skip the auto-merge so we can attach a c14 to the dupe first
-    # (the c14 factory validates the associated sample, which is
-    # frozen after the dupe is hard-destroyed).
+    # Skip the auto-merge (and the on: :create duplicate validation)
+    # so we can attach a c14 to the dupe first (the c14 factory
+    # validates the associated sample, which is frozen after the
+    # dupe is hard-destroyed).
     Sample.skip_callback(:save, :after, :merge_exact_duplicates)
+    Sample.skip_callback(:validate, :before, :no_exact_duplicate, on: :create)
     begin
       dupe = create(:sample, blank_attrs(context: context))
       c14 = create(:c14, sample: dupe)
     ensure
       Sample.set_callback(:save, :after, :merge_exact_duplicates)
+      Sample.set_callback(:validate, :before, :no_exact_duplicate, on: :create)
     end
 
     dupe.merge_exact_duplicates
@@ -201,8 +215,16 @@ class SampleTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
   test 'reassigns typos to the canonical sample on merge' do
     context = create(:context)
     canonical = create(:sample, blank_attrs(context: context))
-    dupe = create(:sample, blank_attrs(context: context))
-    typo = create(:typo, sample: dupe)
+
+    # Bypass `validate :no_exact_duplicate, on: :create` so the dupe
+    # sample is created and then the test exercises the merge path.
+    Sample.skip_callback(:validate, :before, :no_exact_duplicate, on: :create)
+    begin
+      dupe = create(:sample, blank_attrs(context: context))
+      typo = create(:typo, sample: dupe)
+    ensure
+      Sample.set_callback(:validate, :before, :no_exact_duplicate, on: :create)
+    end
 
     dupe.merge_exact_duplicates
 
@@ -212,7 +234,15 @@ class SampleTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
   test 'hard-destroys the dupe (Sample is not Supersedable)' do
     context = create(:context)
     canonical = create(:sample, blank_attrs(context: context))
-    dupe = create(:sample, blank_attrs(context: context))
+
+    # Bypass `validate :no_exact_duplicate, on: :create` so the dupe
+    # sample is created and then the test exercises the merge path.
+    Sample.skip_callback(:validate, :before, :no_exact_duplicate, on: :create)
+    begin
+      dupe = create(:sample, blank_attrs(context: context))
+    ensure
+      Sample.set_callback(:validate, :before, :no_exact_duplicate, on: :create)
+    end
 
     dupe.merge_exact_duplicates
 
@@ -231,10 +261,14 @@ class SampleTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
                         part_of_organism: nil, position_description: nil,
                         position_crs: nil, position_x: nil, position_y: nil,
                         position_z: nil)
-    b = create(:sample, name: nil, context: context, material: nil, taxon: nil,
+
+    # Bypass `validate :no_exact_duplicate, on: :create` so the
+    # second sample can be created for the comparison.
+    b = build(:sample, name: nil, context: context, material: nil, taxon: nil,
                         part_of_organism: nil, position_description: nil,
                         position_crs: nil, position_x: nil, position_y: nil,
                         position_z: nil)
+    b.save(validate: false)
 
     assert a.name_relaxed_duplicate_of?(b)
     assert b.name_relaxed_duplicate_of?(a)
@@ -246,10 +280,14 @@ class SampleTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
                         part_of_organism: nil, position_description: nil,
                         position_crs: nil, position_x: nil, position_y: nil,
                         position_z: nil)
-    b = create(:sample, name: 'Bone 1', context: context, material: nil, taxon: nil,
+
+    # Bypass `validate :no_exact_duplicate, on: :create` so the
+    # second sample can be created for the comparison.
+    b = build(:sample, name: 'Bone 1', context: context, material: nil, taxon: nil,
                         part_of_organism: nil, position_description: nil,
                         position_crs: nil, position_x: nil, position_y: nil,
                         position_z: nil)
+    b.save(validate: false)
 
     assert a.name_relaxed_duplicate_of?(b)
   end
