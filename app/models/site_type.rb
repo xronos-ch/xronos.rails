@@ -32,4 +32,8 @@ class SiteType < ApplicationRecord
     "site type"
   end
 
+  def label
+    name
+  end
+
 end

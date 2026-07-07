@@ -118,6 +118,10 @@ class Site < ApplicationRecord
     "Site"
   end
 
+  def label
+    name
+  end
+
   def self.icon
     "icons/site.svg"
   end

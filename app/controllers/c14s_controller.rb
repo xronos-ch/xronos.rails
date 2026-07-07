@@ -10,6 +10,8 @@ class C14sController < ApplicationController
   before_action :set_site, only: [:new]
   before_action :set_versions, only: [:show]
 
+  include MergeableController
+
   # GET /c14s
   # GET /c14s.json
   # GET /c14s.csv

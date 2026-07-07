@@ -6,6 +6,8 @@ class ReferencesController < ApplicationController
 
   before_action :set_reference, only: [:show, :edit, :update, :destroy]
 
+  include MergeableController
+
   # GET /references
   # GET /references.json
   # GET /references.csv

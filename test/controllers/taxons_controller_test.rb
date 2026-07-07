@@ -123,7 +123,7 @@ class TaxonsControllerTest < ActionDispatch::IntegrationTest
     sample = FactoryBot.create(:sample, taxon: other)
     assert_equal 2, Taxon.count
 
-    patch taxon_path(other), params: { taxon: { name: "Quercus robur", gbif_id: 1 } }
+    patch taxon_path(other), params: { taxon: { name: "Quercus robur", gbif_id: 1 }, confirm_merge: true }
 
     assert_response :redirect
     assert_equal 1, Taxon.count

@@ -5,6 +5,8 @@ class TaxonsController < ApplicationController
 
   before_action :set_taxon, only: [:show, :edit, :update, :destroy]
 
+  include MergeableController
+
   # GET /taxons
   # GET /taxons.json
   # GET /taxons.csv

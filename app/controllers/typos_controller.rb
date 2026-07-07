@@ -7,6 +7,8 @@ class TyposController < ApplicationController # rubocop:disable Metrics/ClassLen
 
   before_action :set_typo, only: [:edit, :update, :destroy]
 
+  include MergeableController
+
   # GET /typos
   # GET /typos.json
   # GET /typos.csv
@@ -115,6 +117,7 @@ class TyposController < ApplicationController # rubocop:disable Metrics/ClassLen
       else
         format.html { render :edit }
         format.json { render json: @typo.errors, status: :unprocessable_entity }
+        format.turbo_stream { render :form_update, status: :unprocessable_entity }
       end
     end
   end

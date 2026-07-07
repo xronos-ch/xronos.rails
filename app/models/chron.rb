@@ -33,6 +33,10 @@ class Chron < ApplicationRecord
     raise NotImplementedError, "#{name} must implement .icon"
   end
 
+  def label
+    raise NotImplementedError, "#{name} must implement label"
+  end
+
   # Picked up by `xronos:deduplicate` via `respond_to?`; other
   # Mergeable models are unaffected.
   def self.cross_sample_deduplicate!

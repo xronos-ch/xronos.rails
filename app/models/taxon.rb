@@ -103,6 +103,10 @@ class Taxon < ApplicationRecord
     )
   end
 
+  def label
+    name
+  end
+
   # Tidy up unused taxa when samples are deleted
   def destroy_if_orphaned
     if samples.count == 0

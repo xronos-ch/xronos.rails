@@ -75,6 +75,10 @@ class C14 < Chron
     'icons/c14.svg'
   end
 
+  def label
+    lab_id
+  end
+
   def uncal_age
     return if bp.blank? && std.blank?
 

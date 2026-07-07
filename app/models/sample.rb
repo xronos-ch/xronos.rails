@@ -91,6 +91,10 @@ class Sample < ApplicationRecord
     'sample'
   end
 
+  def label
+    name
+  end
+
   def destroy_material_if_orphaned
     return if material.nil?
 

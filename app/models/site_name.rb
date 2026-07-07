@@ -24,4 +24,11 @@ class SiteName < ApplicationRecord
 
   validates :name, presence: true
 
+  def self.label
+    "site alias"
+  end
+
+  def label
+    name
+  end
 end

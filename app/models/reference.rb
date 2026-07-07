@@ -70,6 +70,10 @@ class Reference < ApplicationRecord
     "icons/reference.svg"
   end
 
+  def label
+    really_short_ref
+  end
+
   def really_short_ref
     if short_ref.length <= MAX_SHORT_REF_LENGTH
       return short_ref

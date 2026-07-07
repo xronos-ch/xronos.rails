@@ -41,6 +41,10 @@ class Typo < Chron
     'icons/typo.svg'
   end
 
+  def label
+    name
+  end
+
   def age
     return nil if approx_start_time.blank? && approx_end_time.blank?
 

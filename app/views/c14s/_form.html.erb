@@ -11,6 +11,9 @@
     </div>
   <% end %>
 
+  <%= render "shared/confirm_merge_warning" if @merge_duplicate %>
+  <%= hidden_field_tag :confirm_merge, "true" if @merge_duplicate %>
+
   <%= render  'fields', f: f %>
 
   <%= content_for :buttons do %>

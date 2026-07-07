@@ -1,0 +1,18 @@
+<%= bootstrap_form_with(model: @site, local: true, id: "siteForm") do |f| %>
+
+  <%= render 'fields', f: f %>
+
+  <section class="my-3">
+    <h2 class="h5">Change summary</h2>
+    <%= render "application/paper_trail/revision_comment_field", f: f %>
+  </section>
+
+  <%= render "shared/confirm_merge_warning" if @merge_duplicate %>
+  <%= hidden_field_tag :confirm_merge, "true" if @merge_duplicate %>
+
+<% end %>
+
+<%= content_for :buttons do %>
+  <%= button_tag "Cancel", type: 'reset', class: 'btn btn-outline-primary', form: "siteForm", data: { "bs-dismiss": "modal" } %>
+  <%= button_tag "Save changes", class: 'btn btn-primary', form: "siteForm" %>
+<% end %>

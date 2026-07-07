@@ -79,6 +79,10 @@ class Context < ApplicationRecord
     "context"
   end
 
+  def label
+    name
+  end
+
   def suggested_functional_classification_category
     return nil if site.blank? || !site.respond_to?(:site_types)
 
