@@ -17,7 +17,7 @@
 FactoryBot.define do
   
   factory :site_type do
-    name { Faker::Name.unique.last_name }
+    sequence(:name) { |n| "Site Type #{n}" }
     description { Faker::Lorem.sentence }
   end
   

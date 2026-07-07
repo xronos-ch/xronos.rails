@@ -35,10 +35,6 @@ class TaxonsControllerTest < ActionDispatch::IntegrationTest
     }
   )
 
-  setup do
-    @taxon = FactoryBot.create(:taxon, name: 'Quercus robur', gbif_id: 1)
-  end
-
   #
   # INDEX
   #

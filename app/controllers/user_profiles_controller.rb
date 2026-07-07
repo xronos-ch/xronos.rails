@@ -83,7 +83,7 @@ class UserProfilesController < ApplicationController
         "SELECT COUNT(*) FROM (#{union_sql}) AS changelog"
       ).first['count'].to_i
 
-      pagy = Pagy.new(count: total, page: params[:page] || 1)
+      pagy = Pagy::Offset.new(count: total, page: params[:page] || 1, limit: Pagy::DEFAULT[:limit], request: request)
 
       rows = ActiveRecord::Base.connection.execute(<<~SQL)
         SELECT entry_type, id

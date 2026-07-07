@@ -23,7 +23,11 @@ class XronosDeduplicateTaskTest < ActiveSupport::TestCase # rubocop:disable Metr
 
   def invoke_dedupe(model_name)
     @dedupe_task.reenable
+    original_stdout = $stdout
+    $stdout = File.new(File::NULL, 'w')
     @dedupe_task.invoke(model_name)
+  ensure
+    $stdout = original_stdout
   end
 
   def nameless_sample_attrs(context:)

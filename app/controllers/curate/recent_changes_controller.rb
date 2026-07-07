@@ -23,7 +23,7 @@ class Curate::RecentChangesController < CurateController
       "SELECT COUNT(*) FROM (#{union_sql}) AS changelog"
     ).first['count'].to_i
 
-    pagy = Pagy.new(count: total, page: params[:page] || 1)
+    pagy = Pagy::Offset.new(count: total, page: params[:page] || 1, limit: Pagy::DEFAULT[:limit], request: request)
 
     rows = ActiveRecord::Base.connection.execute(<<~SQL)
       SELECT entry_type, id
@@ -35,7 +35,7 @@ class Curate::RecentChangesController < CurateController
     version_ids = rows.select { |r| r['entry_type'] == 'Version' }.map { |r| r['id'] }
     event_ids   = rows.select { |r| r['entry_type'] == 'SupersessionEvent' }.map { |r| r['id'] }
 
-    versions = PaperTrail::Version.where(id: version_ids).index_by(&:id)
+    versions = PaperTrail::Version.where(id: version_ids).includes(:item).index_by(&:id)
     events   = SupersessionEvent.where(id: event_ids)
                   .includes(:whodunnit_user, :superseded_by)
                   .index_by(&:id)
