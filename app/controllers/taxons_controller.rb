@@ -33,6 +33,9 @@ class TaxonsController < ApplicationController
   # GET /taxon/new
   def new
     @taxon = Taxon.new
+    respond_to do |format|
+      format.json { render :show, status: :ok, location: @taxon }
+    end
   end
 
   # GET /taxon/1/edit

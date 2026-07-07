@@ -15,6 +15,7 @@ class MaterialsController < ApplicationController
         @materials = @materials.select(index_csv_template)
         render csv: @materials
       }
+      format.json
     end
   end
 
@@ -32,11 +33,17 @@ class MaterialsController < ApplicationController
   # GET /materials/1
   # GET /materials/1.json
   def show
+    respond_to do |format|
+      format.json
+    end
   end
 
   # GET /materials/new
   def new
     @material = Material.new
+    respond_to do |format|
+      format.json { render json: @material }
+    end
   end
 
   # GET /materials/1/edit

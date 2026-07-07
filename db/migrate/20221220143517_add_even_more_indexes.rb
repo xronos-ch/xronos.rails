@@ -8,8 +8,6 @@ class AddEvenMoreIndexes < ActiveRecord::Migration[6.1]
 
     add_index :c14s, :method
     
-    add_index :measurement_states, :name
-
     add_index :references, :short_ref
 
     add_index :samples, :position_crs

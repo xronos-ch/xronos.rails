@@ -1,4 +1,6 @@
-require "test_helper"
+# frozen_string_literal: true
+
+require 'test_helper'
 
 # Ensure Devise mappings are loaded before any sign_in call; the test
 # environment does not eager-load routes by default.
@@ -12,13 +14,37 @@ class TaxonsControllerTest < ActionDispatch::IntegrationTest
     @admin = FactoryBot.create(:user, :admin)
     sign_in @admin
   end
+  
+  include ControllerSmokeTest
+
+  # index returns 406 for HTML (the controller's respond_to declares
+  # `format.html { head :not_acceptable }`). #new also returns 406
+  # because the controller only declares format.json on that action.
+  # #create has a format.html redirect_back, so it returns 302 (found).
+  # edit/update/destroy are CanCan-denied (404).
+  smoke_tests(
+    actions: %i[index new create edit update destroy],
+    param_key: :taxon,
+    statuses: {
+      index: { not_signed_in: :not_acceptable, signed_in: :not_acceptable },
+      new: { not_signed_in: :not_found, signed_in: :not_acceptable },
+      create: { not_signed_in: :not_found, signed_in: :found },
+      edit: { not_signed_in: :not_found, signed_in: :not_found },
+      update: { not_signed_in: :not_found, signed_in: :not_found },
+      destroy: { not_signed_in: :not_found, signed_in: :not_found }
+    }
+  )
+
+  setup do
+    @taxon = FactoryBot.create(:taxon, name: 'Quercus robur', gbif_id: 1)
+  end
 
   #
   # INDEX
   #
 
-  test "index returns all taxons when no query" do
-    FactoryBot.create(:taxon, name: "Fagus sylvatica")
+  test 'index returns all taxons when no query' do
+    FactoryBot.create(:taxon, name: 'Fagus sylvatica')
 
     get taxons_path(format: :json)
 
@@ -28,55 +54,55 @@ class TaxonsControllerTest < ActionDispatch::IntegrationTest
     assert_equal Taxon.count, json.size
   end
 
-  test "index performs local search when q present" do
-    Taxon.create!(name: "Fagus sylvatica")
+  test 'index performs local search when q present' do
+    Taxon.create!(name: 'Fagus sylvatica')
 
-    get taxons_path(format: :json, q: "Fagus")
+    get taxons_path(format: :json, q: 'Fagus')
 
     assert_response :success
 
     json = JSON.parse(response.body)
-    assert json.any? { |t| t["name"] == "Fagus sylvatica" }
+    assert(json.any? { |t| t['name'] == 'Fagus sylvatica' })
   end
 
-  test "index uses GBIF when search_gbif param present" do
+  test 'index uses GBIF when search_gbif param present' do
     stub_request(:get, /api.gbif.org/)
       .to_return(
         status: 200,
         body: {
-          "results" => [
-            { "canonicalName" => "GBIF Taxon", "usageKey" => 999 }
+          'results' => [
+            { 'canonicalName' => 'GBIF Taxon', 'usageKey' => 999 }
           ]
         }.to_json
       )
 
-    get taxons_path(format: :json, q: "GBIF", search_gbif: true)
+    get taxons_path(format: :json, q: 'GBIF', search_gbif: true)
 
     assert_response :success
 
     json = JSON.parse(response.body)
-    assert json.any? { |t| t["name"] == "GBIF Taxon" }
+    assert(json.any? { |t| t['name'] == 'GBIF Taxon' })
   end
 
-  test "index excludes unknown taxons when matched_only param is present" do
-    FactoryBot.create(:taxon, name: "Matched", gbif_id: 1)
-    FactoryBot.create(:taxon, name: "Unmatched", gbif_id: nil)
+  test 'index excludes unknown taxons when matched_only param is present' do
+    FactoryBot.create(:taxon, name: 'Matched', gbif_id: 1)
+    FactoryBot.create(:taxon, name: 'Unmatched', gbif_id: nil)
 
-    get taxons_path(format: :json, q: "match", matched_only: true)
+    get taxons_path(format: :json, q: 'match', matched_only: true)
 
     assert_response :success
 
     json = JSON.parse(response.body)
-    names = json.map { |t| t["name"] }
+    names = json.map { |t| t['name'] }
 
-    assert_includes names, "Matched"
-    assert_not_includes names, "Unmatched"
+    assert_includes names, 'Matched'
+    assert_not_includes names, 'Unmatched'
   end
 
-  test "index limits local results to 5" do
+  test 'index limits local results to 5' do
     10.times { |i| FactoryBot.create(:taxon, name: "Test #{i}") }
 
-    get taxons_path(format: :json, q: "Test")
+    get taxons_path(format: :json, q: 'Test')
 
     assert_response :success
 
@@ -84,19 +110,18 @@ class TaxonsControllerTest < ActionDispatch::IntegrationTest
     assert_operator json.length, :<=, 5
   end
 
-  test "index returns CSV" do
+  test 'index returns CSV' do
     get taxons_path(format: :csv)
 
     assert_response :success
-    assert_includes response.headers["Content-Type"], "text/csv"
+    assert_includes response.headers['Content-Type'], 'text/csv'
   end
 
-  test "index rejects HTML" do
+  test 'index rejects HTML' do
     get taxons_path
 
     assert_response :not_acceptable
   end
-
 
   #
   # Duplicate rejection (issue #310)

@@ -20,8 +20,8 @@ class ApplicationController < ActionController::Base
   end
 
   # Return 404 for unauthorised resources
-  rescue_from CanCan::AccessDenied do |exception|
-    raise ActionController::RoutingError.new('Not Found')
+  rescue_from CanCan::AccessDenied do |_exception|
+    head :not_found
   end
 
   def info_for_paper_trail
