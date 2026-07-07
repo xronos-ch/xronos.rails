@@ -1,5 +1,6 @@
-# Builds on `Duplicable` to add the merge operation. Including
-# `Mergeable` automatically pulls `Duplicable` in. Models handle
+# frozen_string_literal: true
+
+# Builds on `Duplicable` to add the merge operation. Models handle
 # child reassociation via `before_merge :method`. Auto-merge on
 # save is opt-in via `after_save :merge_exact_duplicates`.
 module Mergeable
@@ -8,7 +9,7 @@ module Mergeable
   included do
     include Duplicable
     define_callbacks :merge
-    attr_accessor :merged_into_id # set on the dupe before mutation
+    attr_accessor :merged_into_id
   end
 
   class_methods do
@@ -16,7 +17,6 @@ module Mergeable
       set_callback :merge, :before, *methods, &block
     end
 
-    # Merge a group of duplicate records into one canonical.
     def merge_duplicates!(records, canonical: nil)
       raise ArgumentError, 'no records to merge' if records.empty?
 
@@ -31,14 +31,12 @@ module Mergeable
       canonical
     end
 
-    # Scope of duplicate groups (GROUP BY exact-duplicate attrs, having
-    # COUNT(*) > 1), used by the `xronos:deduplicate` rake task.
-    #
-    # Mirrors `Duplicable#exact_duplicates_guarded_by_nil?`: records
-    # with `nil` in any strict (non-`:nil_matches_nil`) attribute are
-    # not considered exact duplicates by the model, so the rake task
-    # must not merge them either. The cross-sample path (when present)
-    # handles the `nil` case separately.
+    # Group by exact-duplicate attrs, having COUNT(*) > 1. Mirrors
+    # `Duplicable#duplicates_except`'s nil guard: records with `nil`
+    # in any strict (non-`:nil_matches_nil`) attribute are not
+    # exact duplicates, so the rake task must not merge them either.
+    # The cross-sample path (when present) handles the `nil` case
+    # separately.
     def duplicate_group_scope
       attrs = exact_duplicates_attrs
       strict_attrs = attrs - exact_duplicates_nil_matches_nil
@@ -61,7 +59,6 @@ module Mergeable
     end
   end
 
-  # Merge self into canonical. Sets `merged_into_id` before mutating.
   def merge_into!(canonical)
     raise ArgumentError, 'cannot merge into self' if canonical == self
     raise ArgumentError, 'canonical must be persisted' unless canonical&.persisted?
@@ -77,12 +74,10 @@ module Mergeable
   end
 
   def merge_exact_duplicates
-    # Guard against re-merging an already-superseded record, e.g. on a
-    # second pass of `cross_sample_deduplicate!` after the first pass
-    # superseded the dupe. `Supersession.exists?` is used instead of
-    # `superseded?` so the `supersession` association cache is not
-    # populated before downstream callbacks (e.g. FactoryBot trait
-    # hooks) have a chance to create the Supersession row.
+    # `Supersession.exists?` is used (not `superseded?`) so the
+    # `supersession` association cache is not populated before
+    # downstream callbacks (e.g. FactoryBot trait hooks) have a
+    # chance to create the Supersession row.
     return if respond_to?(:superseded?) && Supersession.exists?(superseded: self)
 
     dupe = find_exact_duplicate
@@ -91,22 +86,19 @@ module Mergeable
     merge_with_duplicate(dupe)
   end
 
-  # The canonical record this dupe is being merged into. Available
-  # to `before_merge` callbacks.
+  # Available to `before_merge` callbacks.
   def canonical
     self.class.find(merged_into_id)
   end
 
   protected
 
-  # Merge self into `dupe`, choosing canonical by oldest-first. Shared
-  # by `merge_exact_duplicates` and any subclass callbacks (e.g. Chron's
-  # cross-sample fallback) that need to perform the same dispatch.
+  # Shared by `merge_exact_duplicates` and subclass callbacks (e.g.
+  # Chron's cross-sample fallback).
   def merge_with_duplicate(dupe)
     self_at  = created_at || Time.at(0)
     dupe_at  = dupe.created_at || Time.at(0)
 
-    # self is canonical if it's older (or same age with lower id).
     canonical_is_self = self_at < dupe_at || (self_at == dupe_at && id <= dupe.id)
 
     if canonical_is_self
@@ -116,7 +108,6 @@ module Mergeable
     end
   end
 
-  # Dispatch to `supersede!` (Supersedable models) or `destroy`.
   def perform_merge!(canonical)
     if respond_to?(:supersede!, true)
       comment = respond_to?(:revision_comment) ? revision_comment : nil

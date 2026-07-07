@@ -218,4 +218,21 @@ class DuplicableTest < ActiveSupport::TestCase
 
     refute OptionTestSite.first.is_potential_duplicate?
   end
+
+  #
+  # match_conditions — SQL form of the per-attr nil-handling rule
+  # (see `attr_matches?`).
+  #
+
+  test "match_conditions emits IS NOT DISTINCT FROM for :nil_matches_nil attrs" do
+    OptionTestSite.exact_duplicates_on :name, country_code: :nil_matches_nil
+    quote = ->(c) { c } # pass-through so the assertion is readable
+
+    conds = OptionTestSite.match_conditions(
+      attrs: [:name, :country_code], current_alias: 'c1', other_alias: 'c2', quote: quote
+    )
+
+    assert_equal ['c2.name = c1.name AND c1.name IS NOT NULL',
+                  'c2.country_code IS NOT DISTINCT FROM c1.country_code'], conds
+  end
 end

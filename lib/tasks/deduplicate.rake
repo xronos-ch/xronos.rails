@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :xronos do
   desc 'Merge exact-duplicates of MODEL. ' \
        'Usage: bin/rails "xronos:deduplicate[Taxon]"'
@@ -40,17 +42,16 @@ namespace :xronos do
     puts
 
     if total_groups.zero?
-      # Don't early-return: an empty strict scope can still coexist
-      # with cross-record duplicates (e.g. two chrons in different
-      # samples that match on every other attribute). The cross-sample
-      # pass below is what catches those.
+      # An empty strict scope can still coexist with cross-record
+      # duplicates (e.g. two chrons in different samples matching on
+      # every other attribute). Fall through to the cross-sample pass.
       puts 'No exact-duplicate groups found.'
     end
 
     if dry_run
-      puts 'Not merging any records because DRY_RUN=false is not set'
-      if model_class.respond_to?(:cross_sample_deduplicate!)
-        puts '(cross-sample dedup would also run with DRY_RUN=false)'
+      puts 'Dry run — no records merged. Set DRY_RUN=false to run for real.'
+      if model_class.respond_to?(:cross_sample_pairs)
+        puts "Cross-sample candidates: #{model_class.cross_sample_pairs.size}"
       end
       exit
     end
@@ -71,15 +72,19 @@ namespace :xronos do
           canonical = records.first
           records[1..].each { |dupe| dupe.merge_into!(canonical) }
           progress.increment
+        # Per-group errors are swallowed so a single bad record
+        # doesn't abort a multi-hour batch; logged to the progress
+        # bar so they are still surfaced in the run output.
         rescue StandardError => e
           progress.log("FAILED group #{values_hash.inspect}: #{e.class} – #{e.message}")
           progress.increment
         end
       end
 
-      # Cross-record dedup (e.g. Chrons that are duplicates across two
-      # different samples). Opt-in via class method, so other Mergeable
-      # models that lack cross-record detection are unaffected.
+      # Cross-record dedup (e.g. chrons that are duplicates across two
+      # different samples). Opt-in via class method, so other
+      # Mergeable models that lack cross-record detection are
+      # unaffected.
       if model_class.respond_to?(:cross_sample_deduplicate!)
         puts
         puts '== Cross-sample dedup =='

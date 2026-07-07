@@ -69,7 +69,6 @@ class Sample < ApplicationRecord
   after_destroy :destroy_material_if_orphaned
   after_destroy :destroy_taxon_if_orphaned
 
-  # Children
   has_many :c14s, dependent: :destroy
   has_many :typos, dependent: :destroy
 
@@ -109,7 +108,6 @@ class Sample < ApplicationRecord
     "gbif:#{taxon.gbif_id}"
   end
 
-  # Issues
   scope :missing_material, -> { where(material_id: nil) }
   def missing_material?
     material.blank?
@@ -131,47 +129,37 @@ class Sample < ApplicationRecord
     end
   end
 
-  # Would self and other_sample be considered exact duplicates if
-  # Sample's `:name` attribute were `:nil_matches_nil`? Used by
-  # Chron's cross-sample merge to detect the case where two otherwise-
-  # duplicate chrons ended up in samples that share context and other
-  # metadata but were both left unnamed.
+  # Detects the case where two otherwise-duplicate chrons ended up in
+  # samples that share context and other metadata but were both left
+  # unnamed. The SQL form lives in
+  # `Sample.name_relaxed_duplicate_match_conditions`.
   def name_relaxed_duplicate_of?(other_sample)
-    return false unless name_relaxed_duplicate_candidate?(other_sample)
-    return false unless name_relaxed_match?(other_sample)
+    return false unless other_sample.is_a?(Sample) && id != other_sample.id
+    return false unless name.nil? && other_sample.name.nil? || name == other_sample.name
 
-    relaxed_attrs = self.class.exact_duplicates_attrs - [:name]
-    relaxed_attrs.all? { |a| _exact_duplicate_attr_matches?(a, other_sample) }
+    (self.class.exact_duplicates_attrs - [:name]).all? { |a| attr_matches?(other_sample, a) }
+  end
+
+  # SQL form of `#name_relaxed_duplicate_of?`: every sample
+  # exact-duplicate attr except `:name` must match under
+  # `Duplicable#match_conditions`'s nil rule; `:name` is allowed to
+  # be nil == nil.
+  def self.name_relaxed_duplicate_match_conditions(current_alias:, other_alias:, quote:)
+    conds = match_conditions(
+      attrs: exact_duplicates_attrs - [:name],
+      current_alias: current_alias,
+      other_alias: other_alias,
+      quote: quote
+    )
+    conds << "(#{current_alias}.name IS NULL AND #{other_alias}.name IS NULL " \
+             "OR #{current_alias}.name = #{other_alias}.name)"
+    conds
   end
 
   private
 
   def normalise_name
     self.name = name.to_s.strip.presence
-  end
-
-  def name_relaxed_duplicate_candidate?(other_sample)
-    other_sample.is_a?(Sample) && id != other_sample.id
-  end
-
-  # Name must match under the :nil_matches_nil rule: same value, or
-  # both nil. (Strictly more permissive than the existing :name rule,
-  # which uses nil != nil.)
-  def name_relaxed_match?(other_sample)
-    (name.nil? && other_sample.name.nil?) || name == other_sample.name
-  end
-
-  def _exact_duplicate_attr_matches?(attr, other_sample)
-    self_val    = send(attr)
-    other_val   = other_sample.send(attr)
-    options     = self.class.exact_duplicates_attrs_with_options[attr.to_sym]
-    nil_matches = options && self.class.nil_matches_nil?(options)
-
-    if nil_matches
-      (self_val.nil? && other_val.nil?) || self_val == other_val
-    else
-      !self_val.nil? && self_val == other_val
-    end
   end
 
   def reassign_c14s!

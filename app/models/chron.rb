@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 # Abstract base class for scientific dating records (e.g. C14, Typo).
-# Provides the shared cross-sample chron dedup framework; subclasses
-# declare only the attributes unique to their dating method.
-class Chron < ApplicationRecord # rubocop:disable Metrics/ClassLength
+# Provides the cross-sample dedup framework; subclasses declare only
+# what is unique to their dating method.
+class Chron < ApplicationRecord
   self.abstract_class = true
 
   include Versioned
@@ -32,83 +32,83 @@ class Chron < ApplicationRecord # rubocop:disable Metrics/ClassLength
     raise NotImplementedError, "#{name} must implement .icon"
   end
 
-  # Rake task entry point. Uses a single self-join to find all
-  # cross-sample candidate pairs in one SQL query, then iterates
-  # only those pairs. Picked up by xronos:deduplicate via
-  # `respond_to?(:cross_sample_deduplicate?)` and skipped for other
-  # Mergeable models.
+  # Picked up by `xronos:deduplicate` via `respond_to?`; other
+  # Mergeable models are unaffected.
   def self.cross_sample_deduplicate!
     cross_sample_pairs.each do |chron_id, other_chron_id|
       chron = unscoped.find(chron_id)
-      next unless chron
-      next if chron.superseded?
+      next unless chron && !chron.superseded?
 
       other = unscoped.find(other_chron_id)
-      next unless other
-      next if other.superseded?
-      # Skip stale pairs: a previous iteration may have merged
-      # `other`'s sample into `chron`'s sample (or vice versa),
-      # leaving both chrons in the same sample.
+      next unless other && !other.superseded?
+      # An earlier iteration may have merged `other`'s sample into
+      # `chron`'s sample (or vice versa); the pair is now stale.
       next if chron.sample_id == other.sample_id
 
       chron.merge_cross_sample_duplicates(cross_sample_target_sample: other.sample)
     end
   end
 
-  # Self-join that returns every cross-sample candidate pair
-  # `(chron_id, other_chron_id)` exactly once — the younger chron
-  # (by `(created_at, id)`, matching `Mergeable#merge_with_duplicate`'s
-  # canonicality rule) is on the left. Uses the composite index
-  # `(lab_identifier, sample_id, created_at)` (and the equivalent
-  # for typos) added in db/migrate/2026070712000* for the join key.
   def self.cross_sample_pairs
-    sql = +<<~SQL
+    connection.select_all(cross_sample_pair_sql).map do |r|
+      [r['chron_id'].to_i, r['other_chron_id'].to_i]
+    end
+  end
+
+  # Single self-join returning `(chron_id, other_chron_id)` candidate
+  # pairs for cross-sample dedup, with the younger chron on the left
+  # (matches `Mergeable#merge_with_duplicate`'s canonicality rule).
+  # The chron-side join uses the composite index on
+  # `(lab_identifier, sample_id, created_at)` (or the Typo equivalent)
+  # added in db/migrate/2026070712000*; the sample-side conditions
+  # implement `Sample#name_relaxed_duplicate_of?` so the candidates
+  # are the same set the per-chron callback would find.
+  #
+  # When `for_id:` is given, the query is parameterised to the single
+  # chron (at most one row) and is used by the `after_save` callback.
+  # Both paths share the same `ON`/`WHERE` clauses so the matching
+  # rules live in exactly one place.
+  def self.cross_sample_pair_sql(for_id: nil) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    quote = ->(c) { connection.quote_column_name(c) }
+    chron_attrs  = exact_duplicates_attrs - [:sample_id]
+    chron_strict = chron_attrs - exact_duplicates_nil_matches_nil
+
+    chron_on = match_conditions(
+      attrs: chron_attrs, current_alias: 'c1', other_alias: 'c2', quote: quote
+    ) + [
+      'c2.sample_id != c1.sample_id',
+      'c2.id != c1.id',
+      '(c1.created_at, c1.id) > (c2.created_at, c2.id)'
+    ]
+
+    sample_on = Sample.name_relaxed_duplicate_match_conditions(
+      current_alias: 's1', other_alias: 's2', quote: quote
+    )
+
+    where_clauses = []
+    where_clauses << chron_strict.map { |a| "c1.#{quote.call(a)} IS NOT NULL" }.join(' AND ') unless chron_strict.empty?
+    where_clauses << ActiveRecord::Base.send(:sanitize_sql_for_conditions, ['c1.id = ?', for_id]) if for_id
+    where_sql = where_clauses.empty? ? '' : " WHERE #{where_clauses.join(' AND ')}"
+
+    +<<~SQL
       SELECT c1.id AS chron_id, c2.id AS other_chron_id
       FROM #{table_name} c1
-      INNER JOIN #{table_name} c2 ON #{cross_sample_pairs_on_clause.join(' AND ')}
-        AND (c1.created_at, c1.id) > (c2.created_at, c2.id)
+      INNER JOIN #{table_name} c2 ON #{chron_on.join(' AND ')}
+      INNER JOIN samples s1 ON s1.id = c1.sample_id
+      INNER JOIN samples s2 ON s2.id = c2.sample_id AND #{sample_on.join(' AND ')}#{where_sql}
     SQL
-    where = cross_sample_pairs_where_clause
-    sql << " WHERE #{where}" if where
-
-    connection.select_all(sql).map { |r| [r['chron_id'].to_i, r['other_chron_id'].to_i] }
   end
 
-  # `ON` clause for the cross-sample self-join: per-attr join (strict:
-  # `=`, nil_matches_nil: `IS NOT DISTINCT FROM`) + same-chron /
-  # same-sample exclusions.
-  def self.cross_sample_pairs_on_clause
-    attrs    = exact_duplicates_attrs - [:sample_id]
-    nil_safe = exact_duplicates_nil_matches_nil.to_set
-    q        = ->(c) { connection.quote_column_name(c) }
-    attr_conds = attrs.map do |a|
-      c = q.call(a)
-      nil_safe.include?(a) ? "c2.#{c} IS NOT DISTINCT FROM c1.#{c}" : "c2.#{c} = c1.#{c}"
-    end
-    attr_conds + ['c2.sample_id != c1.sample_id', 'c2.id != c1.id']
-  end
-
-  # `WHERE` clause mirroring the per-row `cross_sample_attr_unmatchable?`
-  # guard: chrons whose strict attrs are NULL can never match.
-  def self.cross_sample_pairs_where_clause
-    strict = (exact_duplicates_attrs - exact_duplicates_nil_matches_nil) - [:sample_id]
-    return nil if strict.empty?
-
-    q = ->(c) { connection.quote_column_name(c) }
-    strict.map { |a| "c1.#{q.call(a)} IS NOT NULL" }.join(' AND ')
-  end
-
-  # Fallback for the case where a chron's duplicate lives in a
-  # different sample because both samples were left unnamed. The two
-  # samples are merged (the older one survives; the younger one's
-  # chrons are reassigned to it), and the chron duplicate is then
-  # detected and merged on the standard same-sample path.
+  # Merge self with the chron in another sample that shares every
+  # exact-duplicate attribute (except sample_id) and whose parent
+  # sample is a name-relaxed duplicate of self.sample. The two
+  # samples are merged first; the chron duplicate is then resolved
+  # on the standard same-sample path.
   #
-  # `cross_sample_target_sample` is an optional pre-computed target
-  # used by `cross_sample_deduplicate!` to skip the per-chron
-  # `find_cross_sample_chron_duplicate_sample` query. It is `nil`
-  # when invoked from the `after_save` callback, in which case the
-  # target is discovered via the per-chron query as before.
+  # `cross_sample_target_sample:` is an optional pre-computed target
+  # supplied by `cross_sample_deduplicate!`; when `nil` (e.g. from the
+  # `after_save` callback) the target is looked up from the same
+  # `cross_sample_pair_sql` query.
   def merge_cross_sample_duplicates(cross_sample_target_sample: nil)
     return if superseded?
 
@@ -131,49 +131,12 @@ class Chron < ApplicationRecord # rubocop:disable Metrics/ClassLength
     Citation.reassign_all_to!(from: self, to: canonical)
   end
 
-  # Find a chron in a different sample that would be a duplicate
-  # except for sample_id, and whose parent sample is a
-  # "name-relaxed" duplicate of self.sample (see
-  # Sample#name_relaxed_duplicate_of?). Returns the parent sample of
-  # the oldest matching chron, or nil if no match.
   def find_cross_sample_chron_duplicate_sample
     return nil if sample_id.nil?
 
-    query = cross_sample_chron_query
-    return nil unless query
+    row = self.class.connection.select_one(self.class.cross_sample_pair_sql(for_id: id))
+    return nil unless row
 
-    match = query.first
-    return nil unless match
-    return nil unless sample.name_relaxed_duplicate_of?(match.sample)
-
-    match.sample
-  end
-
-  def cross_sample_chron_query
-    chron_attrs = cross_sample_chron_attrs
-    query       = base_cross_sample_query
-
-    chron_attrs.each do |attr, val|
-      return nil if cross_sample_attr_unmatchable?(attr, val)
-
-      query = query.where(attr => val)
-    end
-
-    query
-  end
-
-  def cross_sample_chron_attrs
-    attrs = attributes.with_indifferent_access
-    (self.class.exact_duplicates_attrs - [:sample_id]).map(&:to_s).index_with { |a| attrs[a] }
-  end
-
-  def base_cross_sample_query
-    self.class.where.not(id: id)
-        .where.not(sample_id: sample_id)
-        .order(:created_at, :id)
-  end
-
-  def cross_sample_attr_unmatchable?(attr, val)
-    val.nil? && !self.class.exact_duplicates_attrs_with_options[attr.to_sym]
+    self.class.find(row['other_chron_id']).sample
   end
 end

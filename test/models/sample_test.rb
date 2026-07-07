@@ -221,7 +221,8 @@ class SampleTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
   end
 
   #
-  # name_relaxed_duplicate_of? (used by Chron's cross-sample merge)
+  # name_relaxed_duplicate_of? — used by `Chron.cross_sample_pair_sql`
+  # via `Chron.sample_relaxed_duplicate_on_clause`.
   #
 
   test '#name_relaxed_duplicate_of? returns true when both names are nil and other attrs match' do

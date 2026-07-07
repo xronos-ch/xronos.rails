@@ -171,4 +171,21 @@ class XronosDeduplicateTaskTest < ActiveSupport::TestCase # rubocop:disable Metr
 
     assert_equal [], C14.cross_sample_pairs
   end
+
+  test 'C14.cross_sample_pairs excludes pairs whose samples are not name-relaxed duplicates' do
+    # Two C14s in different samples with the same chron attrs, but
+    # the samples are in different contexts — the sample-side filter
+    # (encoding `Sample#name_relaxed_duplicate_of?`) should exclude them.
+    context_a = create(:context)
+    context_b = create(:context)
+    sample_a = create(:sample, nameless_sample_attrs(context: context_a))
+    sample_b = create(:sample, nameless_sample_attrs(context: context_b))
+
+    without_chron_auto_merge(C14) do
+      create(:c14, c14_attrs(sample: sample_a))
+      create(:c14, c14_attrs(sample: sample_b))
+    end
+
+    assert_equal [], C14.cross_sample_pairs
+  end
 end
