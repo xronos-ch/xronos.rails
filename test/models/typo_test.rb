@@ -14,8 +14,9 @@
 #
 # Indexes
 #
-#  index_typos_on_name       (name)
-#  index_typos_on_sample_id  (sample_id)
+#  index_typos_on_name                           (name)
+#  index_typos_on_name_sample_id_and_created_at  (name,sample_id,created_at)
+#  index_typos_on_sample_id                      (sample_id)
 #
 require 'test_helper'
 

@@ -20,10 +20,11 @@
 #
 # Indexes
 #
-#  index_c14s_on_c14_lab_id      (c14_lab_id)
-#  index_c14s_on_lab_identifier  (lab_identifier)
-#  index_c14s_on_method          (method)
-#  index_c14s_on_sample_id       (sample_id)
+#  index_c14s_on_c14_lab_id                               (c14_lab_id)
+#  index_c14s_on_lab_identifier                           (lab_identifier)
+#  index_c14s_on_lab_identifier_sample_id_and_created_at  (lab_identifier,sample_id,created_at)
+#  index_c14s_on_method                                   (method)
+#  index_c14s_on_sample_id                                (sample_id)
 #
 FactoryBot.define do
   factory :c14 do

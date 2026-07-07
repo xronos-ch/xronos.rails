@@ -7,7 +7,7 @@ require 'rake'
 # the wiring between the rake entry point and the model's Mergeable
 # callbacks; the per-model merge logic itself is covered in
 # test/models/c14_test.rb and test/models/typo_test.rb.
-class XronosDeduplicateTaskTest < ActiveSupport::TestCase
+class XronosDeduplicateTaskTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
   setup do
     Rails.application.load_tasks unless Rake::Task.task_defined?('xronos:deduplicate')
     @dedupe_task = Rake::Task['xronos:deduplicate']
@@ -41,6 +41,39 @@ class XronosDeduplicateTaskTest < ActiveSupport::TestCase
   def typo_attrs(sample:)
     { name: 'Roman Iron Age', sample: sample,
       approx_start_time: -550, approx_end_time: -350 }
+  end
+
+  # Run `block` with the chron auto-merge callbacks disabled, so the
+  # caller can set up cross-sample duplicates without the auto-merge
+  # pre-empting the rake task. Pass the chron class to disable (C14
+  # or Typo).
+  def without_chron_auto_merge(chron_class, &block)
+    chron_class.skip_callback(:save, :after, :merge_exact_duplicates)
+    chron_class.skip_callback(:save, :after, :merge_cross_sample_duplicates)
+    Sample.skip_callback(:save, :after, :merge_exact_duplicates)
+    begin
+      block.call
+    ensure
+      chron_class.set_callback(:save, :after, :merge_cross_sample_duplicates)
+      chron_class.set_callback(:save, :after, :merge_exact_duplicates)
+      Sample.set_callback(:save, :after, :merge_exact_duplicates)
+    end
+  end
+
+  # Create three C14s in three different samples, all cross-sample
+  # matches. Returns the three C14s in creation order. Used by the
+  # `C14.cross_sample_pairs` tests.
+  def create_three_cross_sample_c14s
+    context = create(:context)
+    sample_a = create(:sample, nameless_sample_attrs(context: context))
+    sample_b = create(:sample, nameless_sample_attrs(context: context))
+    sample_c = create(:sample, nameless_sample_attrs(context: context))
+
+    without_chron_auto_merge(C14) do
+      [create(:c14, c14_attrs(sample: sample_a)),
+       create(:c14, c14_attrs(sample: sample_b)),
+       create(:c14, c14_attrs(sample: sample_c))]
+    end
   end
 
   test 'C14: cross-sample pass runs even when strict duplicate scope is empty' do
@@ -107,5 +140,35 @@ class XronosDeduplicateTaskTest < ActiveSupport::TestCase
     assert_predicate dupe, :superseded?
     assert_equal canonical.id, dupe.ultimately_superseded_by.id
     assert_nil Sample.find_by(id: dupe_sample.id)
+  end
+
+  test 'C14.cross_sample_pairs returns each candidate pair once with the younger chron on the left' do
+    chron_a, chron_b, chron_c = create_three_cross_sample_c14s
+
+    pairs = C14.cross_sample_pairs
+
+    # Three chrons in three different samples, all cross-sample matches.
+    # The pairs are ordered (younger, older) in (created_at, id) order
+    # to match `Mergeable#merge_with_duplicate`'s canonicality rule.
+    chrons = [chron_a, chron_b, chron_c]
+    expected_pairs = chrons.combination(2).map do |a, b|
+      if a.created_at < b.created_at || (a.created_at == b.created_at && a.id < b.id)
+        [b.id, a.id]
+      else
+        [a.id, b.id]
+      end
+    end
+
+    assert_equal expected_pairs.sort, pairs.sort
+  end
+
+  test 'C14.cross_sample_pairs returns [] when there are no cross-sample candidates' do
+    # Two chrons in the same sample are strict duplicates, not
+    # cross-sample candidates.
+    sample = create(:sample)
+    create(:c14, c14_attrs(sample: sample))
+    create(:c14, c14_attrs(sample: sample).merge(bp: 3501))
+
+    assert_equal [], C14.cross_sample_pairs
   end
 end
