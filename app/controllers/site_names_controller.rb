@@ -1,4 +1,5 @@
 class SiteNamesController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_site
   before_action :set_site_name, only: [:edit, :update, :destroy]
 
