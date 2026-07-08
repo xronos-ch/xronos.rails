@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
 require 'test_helper'
-
-include ControllerSmokeTest
-
 class SitesControllerTest < ActionDispatch::IntegrationTest
+  include ControllerSmokeTest
+
   smoke_tests(
     param_key: :site,
     statuses: {

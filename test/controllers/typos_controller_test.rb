@@ -2,9 +2,10 @@
 
 require 'test_helper'
 
-include ControllerSmokeTest
+class TyposControllerTest < ActionDispatch::IntegrationTest
 
-class TyposControllerTest < ActionDispatch::IntegrationTest  
+  include ControllerSmokeTest
+
   # Typo belongs to Sample via :sample_id. attributes_for returns the
   # Sample object; strong params require :sample_id.
   smoke_tests(
