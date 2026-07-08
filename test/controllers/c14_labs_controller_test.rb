@@ -2,11 +2,11 @@
 
 require 'test_helper'
 
-class ReferencesControllerTest < ActionDispatch::IntegrationTest
+class C14LabsControllerTest < ActionDispatch::IntegrationTest
   include ControllerSmokeTest
 
   smoke_tests(
-    param_key: :reference,
+    param_key: :c14_lab,
     statuses: {
       index: { not_signed_in: :success, signed_in: :success },
       show: { not_signed_in: :success,  signed_in: :success },

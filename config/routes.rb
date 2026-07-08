@@ -34,7 +34,6 @@ Rails.application.routes.draw do
   resources :materials do
     get 'search', on: :collection
   end
-  resources :measurement_states
   resources :references do
     get 'search', on: :collection
   end

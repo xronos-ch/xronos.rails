@@ -5,6 +5,9 @@
 
 <h2>Recent changes</h2>
 
-<%= render "application/paper_trail/version_table", versions: @versions %>
-
-<%== @pagy.series_nav(:bootstrap) %>
+<% if @versions.any? %>
+  <%= render "application/paper_trail/version_table", versions: @versions %>
+  <%== @pagy.series_nav(:bootstrap) %>
+<% else %>
+  <p class="text-muted">No recent changes.</p>
+<% end %>

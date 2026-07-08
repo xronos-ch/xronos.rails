@@ -28,7 +28,7 @@ class SearchesController < ApplicationController
   private
 
   def search_params
-    params.permit(:q, :type, :page)
+    params.permit(:q, :type, :page, :format)
   end
 
   def searchable_types

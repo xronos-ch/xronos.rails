@@ -1,7 +1,8 @@
 # XRONOS Changelog
 
-## 1.2.1.9000 [unreleased]
+## [Unreleased]
 
+- **Migrations required** removed the unused MeasurementStates
 - Added OpenContext, Pleiades, Vici.org, and iDAI.gazetteer as potential linked
   record sources for sites and c14s (OpenContext only) (#487)
   - **Migrations required:** Renamed LODLinks to LinkedResources (#372)
@@ -19,7 +20,7 @@
   - Replacing use of GBIF's deprecated V1 species match API
   - Requests to GBIF are now made asynchronously and do not block page rendering
   - Tests no longer required on requests to GBIF
-- **Migrations required**: added generic representation of controlled 
+- **Migrations required**: added generic representation of controlled
   vocabularies with variant thesauri (#444)
   - Added controlled term attribute `part_of_organism` to samples (#253)
 - Added MIaaRD-shaped JSON export for radiocarbon determinations
@@ -37,16 +38,22 @@
   - Added suggested citation for articles
 - Added OpenGraph metadata with additional metadata for articles (#117)
 - Added Atom and RSS feeds of news articles (#395)
-- **Breaking change:** Environment variable `ADMIN_USER_PASSWORD` is now 
+- **Breaking change:** Environment variable `ADMIN_USER_PASSWORD` is now
   required when seeding a new database
 - Improved test coverage
 
-## 1.2.1
+## [1.2.2] - 2026-07-03
+
+- Security hotfix: tightened authorization for mutating controller actions.
+- Disabled unused exposed `measurement_states` routes.
+- Added focused regression tests for unauthorized create/update requests.
+
+## [1.2.1] - 2026-06-10
 
 - Fixed pagination in context issue show view
 - Fixed bug in context issue show view
 
-## 1.2.0
+## [1.2.0] - 2026-06-10
 
 New features & API changes:
 
@@ -64,9 +71,9 @@ New features & API changes:
     - Added rake task for safe cascading destruction
   - Prevented duplicate citations from being created
     - Migration may fail if there are existing duplicates in the database. If so:
-        DRY_RUN=1 bin/rails xronos:citations:deduplicate 
+        DRY_RUN=1 bin/rails xronos:citations:deduplicate
       checks for existing duplicates that would block this migration. And:
-        bin/rails xronos:citations:deduplicate 
+        bin/rails xronos:citations:deduplicate
       deletes them.
 - Added bundled acknowledgements page rendered from version-controlled Markdown (#359).
 - Added article-specific page titles and meta descriptions for news, about, and documentation articles.
@@ -89,7 +96,7 @@ Maintenance & documentation:
 - XRONOS rake tasks are now prepended with xronos and can be listed with
     bin/rails -T xronos
 
-## 1.1.2 [2026-05-29]
+## [1.1.2] - 2026-05-29
 
 - Removed pagination and sorting from public CSV exports
 - Hardened CSV exports against costly crawler/bot requests
@@ -99,7 +106,7 @@ Maintenance & documentation:
 - Improved performance of recursive site reference loading
 - Refactored XRONOS data response helpers
 
-## 1.1.1 [2025-12-11]
+## [1.1.1] - 2025-12-11
 
 - Opened lean JSON endpoints for C14 labs and C14 dates, returning JSON directly
   from the controller and trimming unnecessary associations from samples
@@ -115,7 +122,7 @@ Maintenance & documentation:
   only joining cals when a calibration filter is actually applied
 - Added MessagePack support and updated Rails to the latest 7.2 release
 
-## 1.1.0 [2024-12-18]
+## [1.1.0] - 2024-12-18
 
 - Introduced the ability to manage and display external linked data (e.g.,
   Wikidata) within the application
@@ -128,7 +135,7 @@ Maintenance & documentation:
 - Added `LONG_LABEL` issue for references (#260)
 - Updated to Ruby 3.3.6 and Rails 7.2
 
-## 1.0.0 [2024-07-30]
+## [1.0.0] - 2024-07-30
 
 First named release. See [the commit log](https://github.com/xronos-ch/xronos.rails/commits/v1.0.0)
 for changes before this point.
