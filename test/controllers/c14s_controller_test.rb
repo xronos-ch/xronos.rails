@@ -2,7 +2,7 @@
 
 require 'test_helper'
 
-class C14sControllerTest < ActionDispatch::IntegrationTest
+class C14sControllerTest < ActionDispatch::IntegrationTest # rubocop:disable Metrics/ClassLength
   include ControllerSmokeTest
 
   smoke_tests(
@@ -30,6 +30,36 @@ class C14sControllerTest < ActionDispatch::IntegrationTest
     attributes_for(:c14)
       .except(:c14_lab, :sample, :cal_bp, :cal_std)
       .merge(c14_lab_id: create(:c14_lab).id, sample_id: create(:sample).id)
+  end
+
+  test 'show redirects to the canonical record when the C14 is superseded' do
+    site = create(:site)
+    context = create(:context, site: site)
+    sample = create(:sample, context: context)
+    canonical = create(:c14, sample: sample)
+    superseded = create(:c14, :superseded_by, canonical: canonical, sample: sample)
+
+    get c14_path(superseded)
+
+    assert_response :moved_permanently
+    assert_equal c14_url(canonical), response.location
+  end
+
+  test 'show follows a re-pointed chain to the canonical' do
+    site = create(:site)
+    context = create(:context, site: site)
+    sample = create(:sample, context: context)
+    canonical = create(:c14, sample: sample)
+    middle = create(:c14, sample: sample)
+    leaf = create(:c14, sample: sample)
+
+    leaf.supersede!(middle)
+    middle.supersede!(canonical)
+
+    get c14_path(leaf)
+
+    assert_response :moved_permanently
+    assert_equal c14_url(canonical), response.location
   end
 
   test 'unauthenticated users cannot create c14 records' do

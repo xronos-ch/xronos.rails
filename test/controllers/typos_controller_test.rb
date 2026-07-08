@@ -25,18 +25,6 @@ class TyposControllerTest < ActionDispatch::IntegrationTest
     attributes_for(:typo).except(:sample).merge(sample_id: create(:sample).id)
   end
 
-  test 'unauthenticated users cannot create typos' do
-    assert_no_difference('Typo.count') do
-      post typos_path, params: {
-        typo: {
-          name: 'Unauthorized Typo'
-        }
-      }
-    end
-
-    assert_not_includes [200, 201, 204], response.status
-  end
-  
   test 'show redirects to the site of the typo' do
     site = create(:site)
     sample = create(:sample, context: create(:context, site: site))
@@ -74,5 +62,17 @@ class TyposControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :moved_permanently
     assert_equal site_url(site), response.location
+  end
+
+  test 'unauthenticated users cannot create typos' do
+    assert_no_difference('Typo.count') do
+      post typos_path, params: {
+        typo: {
+          name: 'Unauthorized Typo'
+        }
+      }
+    end
+
+    assert_not_includes [200, 201, 204], response.status
   end
 end
