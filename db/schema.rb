@@ -335,7 +335,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_02_192104) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.string "country_code"
-    t.integer "superseded_by"
     t.index ["country_code"], name: "index_sites_on_country_code"
     t.index ["name"], name: "index_sites_on_name"
   end
@@ -353,6 +352,31 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_02_192104) do
     t.bigint "reference_id"
     t.index ["name", "version"], name: "index_sources_on_name_and_version", unique: true, where: "(version IS NOT NULL)"
     t.index ["reference_id"], name: "index_sources_on_reference_id"
+  end
+
+  create_table "supersession_events", force: :cascade do |t|
+    t.string "event_type", null: false
+    t.string "superseded_type", null: false
+    t.bigint "superseded_id", null: false
+    t.string "superseded_by_type", null: false
+    t.bigint "superseded_by_id", null: false
+    t.text "comment"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_type", "created_at"], name: "index_supersession_events_on_event_type"
+    t.index ["superseded_by_type", "superseded_by_id", "created_at"], name: "index_supersession_events_on_superseded_by"
+    t.index ["superseded_type", "superseded_id", "created_at"], name: "index_supersession_events_on_superseded"
+  end
+
+  create_table "supersessions", force: :cascade do |t|
+    t.string "superseded_type", null: false
+    t.bigint "superseded_id", null: false
+    t.string "superseded_by_type", null: false
+    t.bigint "superseded_by_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["superseded_by_type", "superseded_by_id"], name: "index_supersessions_on_superseded_by"
+    t.index ["superseded_type", "superseded_id"], name: "index_supersessions_unique_superseded", unique: true
   end
 
   create_table "taxons", force: :cascade do |t|

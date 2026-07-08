@@ -4,6 +4,17 @@ FactoryBot.define do
     association :sample
     sequence(:name) { |n| "Typological unit #{n}" }
 
+    trait :superseded_by do
+      transient do
+        canonical { nil }
+      end
+
+      after(:create) do |typo, evaluator|
+        target = evaluator.canonical || create(:typo, sample: typo.sample)
+        create(:supersession, superseded: typo, superseded_by: target)
+      end
+    end
+
     trait :with_citations do
       transient do
         citations_count { 2 }

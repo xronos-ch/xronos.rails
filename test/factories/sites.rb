@@ -1,23 +1,3 @@
-# == Schema Information
-#
-# Table name: sites
-# Database name: primary
-#
-#  id            :bigint           not null, primary key
-#  country_code  :string
-#  lat           :decimal(, )
-#  lng           :decimal(, )
-#  name          :string
-#  superseded_by :integer
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#
-# Indexes
-#
-#  index_sites_on_country_code  (country_code)
-#  index_sites_on_name          (name)
-#
-
 FactoryBot.define do
   factory :site do
     name { Faker::Verb.unique.base }
@@ -26,6 +6,17 @@ FactoryBot.define do
     country_code { Faker::Address.country_code }
 
     after(:create) { |site| site.site_types = [create(:site_type)] }
+
+    trait :superseded_by do
+      transient do
+        canonical { nil }
+      end
+
+      after(:create) do |site, evaluator|
+        target = evaluator.canonical || create(:site)
+        create(:supersession, superseded: site, superseded_by: target)
+      end
+    end
 
     trait :with_site_names do
       transient do

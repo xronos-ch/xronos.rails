@@ -3,14 +3,13 @@
 # Table name: sites
 # Database name: primary
 #
-#  id            :bigint           not null, primary key
-#  country_code  :string
-#  lat           :decimal(, )
-#  lng           :decimal(, )
-#  name          :string
-#  superseded_by :integer
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
+#  id           :bigint           not null, primary key
+#  country_code :string
+#  lat          :decimal(, )
+#  lng          :decimal(, )
+#  name         :string
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
 #
 # Indexes
 #
@@ -55,6 +54,15 @@ class SiteTest < ActiveSupport::TestCase
     site = create(:site, :with_linked_resources, linked_resources_count: 2)
 
     assert_dependent_destroy(site, :linked_resources, count: 2)
+  end
+
+  test "superseded site is hidden from default scope but findable via unscoped" do
+    canonical = create(:site)
+    superseded = create(:site, :superseded_by, canonical: canonical)
+
+    assert_includes Site.all, canonical
+    assert_not_includes Site.all, superseded
+    assert_equal superseded, Site.unscoped.find(superseded.id)
   end
 
 end
