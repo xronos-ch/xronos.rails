@@ -32,51 +32,53 @@ module Duplicable # rubocop:disable Metrics/ModuleLength
     end
 
     def where_exactly_duplicated(attr)
-        val = attributes.with_indifferent_access[attr]
-        self.class.where({attr => val})
+      val = attributes.with_indifferent_access[attr]
+      self.class.where({ attr => val })
     end
 
     # TODO: document these options
 
     def where_duplicated_with_options(attr_with_options) # rubocop:disable Metrics/MethodLength
-        opts = attr_with_options.values.flatten
-        attr = attr_with_options.keys.first
+      opts = attr_with_options.values.flatten
+      attr = attr_with_options.keys.first
 
-        filters = opts.map { |opt|
-          case opt
-          when :null
-            where_null(attr)
-          when :ci
-            where_ilike(attr)
-          when :whitespace
-            where_whitespace(attr)
-          when :mojibake
-            where_mojibake(attr)
-          else
-            raise "Unknown duplicable option: #{opt}"
-          end
-        }
+      filters = opts.map { |opt|
+        case opt
+        when :null
+          where_null(attr)
+        when :ci
+          where_ilike(attr)
+        when :whitespace
+          where_whitespace(attr)
+        when :mojibake
+          where_mojibake(attr)
+        else
+          raise "Unknown duplicable option: #{opt}"
+        end
+      }
 
-        filters.reduce(where_exactly_duplicated(attr), :or)
+      filters.reduce(where_exactly_duplicated(attr), :or)
     end
 
     def where_null(attr)
-        val = attributes.with_indifferent_access[attr]
-        unless val.nil?
-          self.class.where(attr => nil)
-        else
-          self.class.where("#{attr} IS NOT NULL")
-        end
+      val = attributes.with_indifferent_access[attr]
+      unless val.nil?
+        self.class.where(attr => nil)
+      else
+        self.class.where("#{attr} IS NOT NULL")
+      end
     end
 
     def where_ilike(attr)
-        val = attributes.with_indifferent_access[attr]
-        arel_attr = self.class.arel_table[attr.to_sym]
-        self.class.where(arel_attr.matches(val))
+      val = attributes.with_indifferent_access[attr]
+      arel_attr = self.class.arel_table[attr.to_sym]
+      self.class.where(arel_attr.matches(val))
     end
 
     def where_whitespace(attr)
       val = attributes.with_indifferent_access[attr]
+      return self.class.none unless fuzzy_string_value?(val)
+
       val_sans_whitespace = val.gsub(/\s/, '%')
 
       arel_attr = self.class.arel_table[attr.to_sym]
@@ -85,6 +87,8 @@ module Duplicable # rubocop:disable Metrics/ModuleLength
 
     def where_mojibake(attr)
       val = attributes.with_indifferent_access[attr]
+      return self.class.none unless fuzzy_string_value?(val)
+
       val_sans_nonascii = val.gsub(/[[:^ascii:]]/, '%')
 
       arel_attr = self.class.arel_table[attr.to_sym]
@@ -92,6 +96,10 @@ module Duplicable # rubocop:disable Metrics/ModuleLength
     end
 
     private
+
+    def fuzzy_string_value?(val)
+      val.is_a?(String) && val.present?
+    end
 
     def duplicable_attrs
       self.class.duplicable_attrs
@@ -132,9 +140,9 @@ module Duplicable # rubocop:disable Metrics/ModuleLength
     def all_duplicated
       # Ugly and postgres-specific, but can't find a better way :(
       duplicated_ids = self
-        .group(duplicable_attrs_without_options)
-        .having("COUNT(*) > 1")
-        .select('UNNEST(ARRAY_AGG("id"))')
+                         .group(duplicable_attrs_without_options)
+                         .having("COUNT(*) > 1")
+                         .select('UNNEST(ARRAY_AGG("id"))')
 
       self.where(id: duplicated_ids)
     end
