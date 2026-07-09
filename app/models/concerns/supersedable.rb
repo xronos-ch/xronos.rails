@@ -19,11 +19,7 @@ module Supersedable
     # Default scope: hide records that have a current Supersession row.
     # The unique index on supersessions.superseded_id makes this an
     # index-only subquery.
-<<<<<<< feature/fuzzy-duplicable
-    default_scope { where.not(id: Supersession.select(:superseded_id)) }
-=======
     default_scope { where.not(id: Supersession.where(superseded_type: name).select(:superseded_id)) }
->>>>>>> master
   end
 
   def supersedable?
