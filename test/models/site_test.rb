@@ -223,6 +223,23 @@ class SiteTest < ActiveSupport::TestCase
     assert_equal canonical_context.id, sample.reload.context_id
   end
 
+  test 'merges nil-name contexts when both sites have one' do
+    canonical_site = create(:site)
+    dupe_site = create(:site)
+
+    create(:context, site: canonical_site, name: nil)
+    dupe_ctx = create(:context, site: dupe_site, name: nil)
+
+    sample = create(:sample, context: dupe_ctx)
+
+    dupe_site.update!(name: canonical_site.name, lat: canonical_site.lat, lng: canonical_site.lng,
+                      country_code: canonical_site.country_code)
+
+    nil_contexts = Context.where(site: canonical_site, name: nil)
+    assert_equal 1, nil_contexts.count
+    assert_equal nil_contexts.first.id, sample.reload.context_id
+  end
+
   test 'reassigns site_names to canonical on merge' do
     canonical = create(:site, :with_site_names, site_names_count: 1)
     dupe = create(:site, :with_site_names, site_names_count: 1)
