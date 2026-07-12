@@ -3,6 +3,7 @@
 require 'test_helper'
 
 class TyposControllerTest < ActionDispatch::IntegrationTest
+
   include ControllerSmokeTest
 
   # Typo belongs to Sample via :sample_id. attributes_for returns the
