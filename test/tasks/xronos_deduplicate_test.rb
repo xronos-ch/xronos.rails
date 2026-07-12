@@ -30,6 +30,16 @@ class XronosDeduplicateTaskTest < ActiveSupport::TestCase # rubocop:disable Metr
     $stdout = original_stdout
   end
 
+  def invoke_model_task(task_name)
+    @dedupe_task.reenable
+    Rake::Task[task_name].reenable
+    original_stdout = $stdout
+    $stdout = File.new(File::NULL, 'w')
+    Rake::Task[task_name].invoke
+  ensure
+    $stdout = original_stdout
+  end
+
   def nameless_sample_attrs(context:)
     { context: context, name: nil, material: nil, taxon: nil,
       part_of_organism: nil, position_description: nil, position_crs: nil,
@@ -191,5 +201,27 @@ class XronosDeduplicateTaskTest < ActiveSupport::TestCase # rubocop:disable Metr
     end
 
     assert_equal [], C14.cross_sample_pairs
+  end
+
+  test 'model-specific deduplicate tasks delegate to shared task' do
+    model_tasks = {
+      'xronos:taxons:deduplicate' => :taxon,
+      'xronos:c14s:deduplicate' => :c14,
+      'xronos:contexts:deduplicate' => :context,
+      'xronos:materials:deduplicate' => :material,
+      'xronos:references:deduplicate' => :reference,
+      'xronos:samples:deduplicate' => :sample,
+      'xronos:sites:deduplicate' => :site,
+      'xronos:typos:deduplicate' => :typo
+    }
+
+    with_versioning do
+      model_tasks.each do |task_name, factory_name|
+        create(factory_name)
+        assert_nothing_raised { invoke_model_task(task_name) }
+        Rake::Task[task_name].reenable
+        @dedupe_task.reenable
+      end
+    end
   end
 end
