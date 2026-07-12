@@ -23,7 +23,7 @@ class TyposControllerTest < ActionDispatch::IntegrationTest
   def smoke_payload_for(_action)
     attributes_for(:typo).except(:sample).merge(sample_id: create(:sample).id)
   end
-  
+
   test 'show redirects to the site of the typo' do
     site = create(:site)
     sample = create(:sample, context: create(:context, site: site))

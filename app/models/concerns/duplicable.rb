@@ -188,6 +188,8 @@ module Duplicable # rubocop:disable Metrics/ModuleLength
 
     def where_potential_duplicate_whitespace(attr)
       val = attributes.with_indifferent_access[attr]
+      return self.class.none unless fuzzy_string_value?(val)
+
       val_sans_whitespace = val.gsub(/\s/, '%')
 
       arel_attr = self.class.arel_table[attr.to_sym]
@@ -196,10 +198,18 @@ module Duplicable # rubocop:disable Metrics/ModuleLength
 
     def where_potential_duplicate_mojibake(attr)
       val = attributes.with_indifferent_access[attr]
+      return self.class.none unless fuzzy_string_value?(val)
+
       val_sans_nonascii = val.gsub(/[[:^ascii:]]/, '%')
 
       arel_attr = self.class.arel_table[attr.to_sym]
       self.class.where(arel_attr.matches(val_sans_nonascii))
+    end
+
+    private
+
+    def fuzzy_string_value?(val)
+      val.is_a?(String) && val.present?
     end
   end
 end

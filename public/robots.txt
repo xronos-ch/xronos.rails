@@ -13,6 +13,8 @@ Content-Signal: search=yes,ai-input=no,ai-train=no
 Allow: /
 Disallow: /*order=
 Disallow: /*order_by=
+Disallow: /*.csv
+Disallow: /data*
 
 # AI training / AI assistant / large-scale extraction crawlers
 

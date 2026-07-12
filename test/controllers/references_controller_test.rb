@@ -17,7 +17,7 @@ class ReferencesControllerTest < ActionDispatch::IntegrationTest
       destroy: { not_signed_in: :not_found, signed_in: :not_found }
     }
   )
-  
+
   test 'show redirects to the canonical record when the reference is superseded' do
     canonical = create(:reference)
     superseded = create(:reference, :superseded_by, canonical: canonical)

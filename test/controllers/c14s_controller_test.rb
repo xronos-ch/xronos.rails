@@ -3,7 +3,6 @@
 require 'test_helper'
 
 class C14sControllerTest < ActionDispatch::IntegrationTest # rubocop:disable Metrics/ClassLength
-  
   include ControllerSmokeTest
 
   smoke_tests(
@@ -32,7 +31,7 @@ class C14sControllerTest < ActionDispatch::IntegrationTest # rubocop:disable Met
       .except(:c14_lab, :sample, :cal_bp, :cal_std)
       .merge(c14_lab_id: create(:c14_lab).id, sample_id: create(:sample).id)
   end
-  
+
   test 'show redirects to the canonical record when the C14 is superseded' do
     site = create(:site)
     context = create(:context, site: site)
