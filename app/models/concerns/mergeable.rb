@@ -101,7 +101,7 @@ module Mergeable
     existing = find_exact_duplicate
     return unless existing
 
-    label = respond_to?(:label) ? label : self.class.name
+    label = respond_to?(:label) ? self.label : self.class.name
     errors.add(:base, "An identical #{label} already exists (##{existing.id})")
   end
 
