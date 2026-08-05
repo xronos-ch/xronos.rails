@@ -77,7 +77,7 @@ class ChronThingsController < ApplicationController
   include MergeableController
 
   def update
-    if @chron_thing.update(thing_params)
+    if @chron_thing.update(chron_thing_params)
       render plain: "ok", status: :ok
     else
       render plain: "error", status: :unprocessable_entity
@@ -90,7 +90,7 @@ class ChronThingsController < ApplicationController
     @chron_thing = ChronThing.find(params[:id])
   end
 
-  def thing_params
+  def chron_thing_params
     params.require(:chron_thing).permit(:name, :chron_sample_id)
   end
 end

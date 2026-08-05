@@ -38,8 +38,6 @@ module MergeableController
   end
 
   def merge_check_params
-    controller_name.singularize
-                   .then { |key| params.fetch(key, {}) }
-                   .permit!
+    send("#{controller_name.singularize}_params")
   end
 end
