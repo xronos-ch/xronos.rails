@@ -207,6 +207,7 @@ class XronosDeduplicateTaskTest < ActiveSupport::TestCase # rubocop:disable Metr
     model_tasks = {
       'xronos:taxons:deduplicate' => :taxon,
       'xronos:c14s:deduplicate' => :c14,
+      'xronos:citations:deduplicate' => :citation,
       'xronos:contexts:deduplicate' => :context,
       'xronos:materials:deduplicate' => :material,
       'xronos:references:deduplicate' => :reference,

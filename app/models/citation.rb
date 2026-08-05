@@ -16,6 +16,13 @@
 #
 
 class Citation < ApplicationRecord
+  include Mergeable
+
+  exact_duplicates_on :citing_type, :citing_id, :reference_id
+
+  # No `after_save :merge_exact_duplicates` here. The unique index on
+  # (citing_type, citing_id, reference_id) prevents creation of new
+  # duplicates; the rake task handles the backlog of existing duplicates.
 
   belongs_to :citing, polymorphic: true
   belongs_to :reference
