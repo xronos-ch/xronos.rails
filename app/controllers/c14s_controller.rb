@@ -10,6 +10,8 @@ class C14sController < ApplicationController
   before_action :set_site, only: [:new]
   before_action :set_versions, only: [:show]
 
+  include MergeableController
+
   # GET /c14s
   # GET /c14s.json
   # GET /c14s.csv
@@ -160,11 +162,11 @@ class C14sController < ApplicationController
     @site = Site.find(params[:site])
   end
 
-  # Preload versions with their item for the show view (Bullet fix)
+  # Preload versions and supersession events for the show view
   def set_versions
-    @versions = @c14.versions
-                    .includes(:item)
-                    .order(:created_at, :id)
+    versions = @c14.versions.includes(:item).to_a
+    events   = @c14.supersession_events.includes(:whodunnit_user, :superseded_by).to_a
+    @versions = (versions + events).sort_by(&:created_at)
   end
 
   def c14_params
@@ -183,6 +185,7 @@ class C14sController < ApplicationController
           :material_id,
           :taxon_id,
           :context_id,
+          :name,
           {
             context_attributes: %i[
               id

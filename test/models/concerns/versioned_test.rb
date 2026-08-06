@@ -34,6 +34,14 @@ class VersionedTest < ActiveSupport::TestCase
     end
   end
 
+  teardown do
+    PaperTrail::Version.where(item_type: [
+      "VersionedTest::VersionedParent",
+      "VersionedTest::VersionedChild",
+      "VersionedTest::VersionedSingle"
+    ]).delete_all
+  end
+
   #
   # Test-only models
   #

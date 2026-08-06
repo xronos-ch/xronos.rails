@@ -1,5 +1,11 @@
 namespace :xronos do
   namespace :materials do
+    desc "Merge exact-duplicate materials"
+    task deduplicate: :environment do
+      Rake::Task["xronos:deduplicate"].reenable
+      Rake::Task["xronos:deduplicate"].invoke("Material")
+    end
+
     desc "Destroy materials not associated with any samples"
     task destroy_orphans: :environment do
       # Default to dry-run unless explicitly disabled

@@ -69,6 +69,10 @@ class Source < ApplicationRecord
     abort e.message
   end
 
+  def self.label
+    "data source"
+  end
+
   def label
     version? ? "#{name} (#{version})" : name
   end

@@ -2,7 +2,19 @@
 
 require 'test_helper'
 
+# Ensure Devise mappings are loaded before any sign_in call; the test
+# environment does not eager-load routes by default.
+Rails.application.routes.eager_load!
+
 class TaxonsControllerTest < ActionDispatch::IntegrationTest
+  include Devise::Test::IntegrationHelpers
+
+  setup do
+    @taxon = FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: 1)
+    @admin = FactoryBot.create(:user, :admin)
+    sign_in @admin
+  end
+  
   include ControllerSmokeTest
 
   # index returns 406 for HTML (the controller's respond_to declares
@@ -22,10 +34,6 @@ class TaxonsControllerTest < ActionDispatch::IntegrationTest
       destroy: { not_signed_in: :not_found, signed_in: :not_found }
     }
   )
-
-  setup do
-    @taxon = FactoryBot.create(:taxon, name: 'Quercus robur', gbif_id: 1)
-  end
 
   #
   # INDEX
@@ -110,4 +118,47 @@ class TaxonsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :not_acceptable
   end
+
+  #
+  # Duplicate rejection (issue #310)
+  #
+
+  test "create rejects an exact duplicate taxon with a validation error" do
+    # @taxon (created in setup) is the older canonical. The create
+    # is rejected by `validate :no_exact_duplicate, on: :create`; no
+    # auto-merge happens on the create path.
+    assert_equal 1, Taxon.count
+
+    assert_no_difference "Taxon.count" do
+      post taxons_path(format: :json),
+           params: { taxon: { name: "Quercus robur", gbif_id: 1 } }
+    end
+
+    assert_response :unprocessable_entity
+    assert_equal 1, Taxon.count
+  end
+
+  test "update merges a taxon into an existing duplicate and reassigns samples" do
+    # @taxon is the older canonical; create a younger taxon with a sample.
+    other = FactoryBot.create(:taxon, name: "Fagus sylvatica", gbif_id: 2)
+    sample = FactoryBot.create(:sample, taxon: other)
+    assert_equal 2, Taxon.count
+
+    patch taxon_path(other), params: { taxon: { name: "Quercus robur", gbif_id: 1 }, confirm_merge: true }
+
+    assert_response :redirect
+    assert_equal 1, Taxon.count
+    assert_equal @taxon.id, Taxon.first.id
+    assert_equal @taxon.id, sample.reload.taxon_id
+  end
+
+  test "create with no duplicate creates a new taxon" do
+    assert_difference "Taxon.count", 1 do
+      post taxons_path, params: { taxon: { name: "Pinus sylvestris", gbif_id: 3 } }
+    end
+
+    assert_response :redirect
+    assert_equal 2, Taxon.count
+  end
+
 end

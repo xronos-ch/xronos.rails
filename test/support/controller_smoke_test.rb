@@ -183,6 +183,7 @@ module ControllerSmokeTest
   def perform_smoke_request_as(action, role)
     case role
     when :not_signed_in
+      sign_out(:user)
       perform_smoke_request_for(action)
     when :signed_in
       user = self.class.smoke_requires_admin ? create(:user, :admin) : create(:user)

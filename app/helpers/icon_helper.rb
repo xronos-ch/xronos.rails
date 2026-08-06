@@ -123,4 +123,16 @@ module IconHelper
     bs_icon "check-square", options
   end
 
+  ##
+  # Icon for supersede events (record superseded/merged)
+  def supersede_icon(options = {})
+    bs_icon "arrow-right", options
+  end
+
+  ##
+  # Icon for restore events (record restored from supersession)
+  def restore_icon(options = {})
+    bs_icon "arrow-counterclockwise", options
+  end
+
 end

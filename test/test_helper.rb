@@ -72,6 +72,16 @@ class ActionDispatch::IntegrationTest
   end
 end
 
+# Set PaperTrail whodunnit for all tests that create SupersessionEvents.
+PAPER_TRAIL_WHODUNNIT = begin
+  user = User.find_or_create_by!(email: "paper_trail@xronos.ch") do |u|
+    u.password = "password"
+    u.password_confirmation = "password"
+    u.passphrase = ENV.fetch("REGISTRATION_PASSPHRASE", "xronos")
+  end
+  user.id.to_s
+end
+
 class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
   #fixtures :all
@@ -79,6 +89,10 @@ class ActiveSupport::TestCase
 
   include FactoryBot::Syntax::Methods
   include ActiveJob::TestHelper
+
+  setup do
+    PaperTrail.request.whodunnit = PAPER_TRAIL_WHODUNNIT
+  end
 
   def with_versioning
     was_enabled = PaperTrail.enabled?

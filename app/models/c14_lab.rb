@@ -31,4 +31,8 @@ class C14Lab < ApplicationRecord
     "radiocarbon lab"
   end
 
+  def label
+    name
+  end
+
 end

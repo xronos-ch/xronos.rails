@@ -21,6 +21,9 @@
 
 class Context < ApplicationRecord
   include Versioned
+  include Mergeable
+
+  exact_duplicates_on :site_id, name: :nil_matches_nil
 
   FUNCTIONAL_CLASSIFICATION_SUGGESTION_PATTERN =
     "settlement|habitation|occupation|dwelling|village|house|domestic|" \
@@ -48,6 +51,14 @@ class Context < ApplicationRecord
            as: :assignable,
            dependent: :destroy
 
+  # No `after_save :merge_exact_duplicates`: the model-level
+  # uniqueness validation and DB unique index already prevent new
+  # duplicates. Mergeable is here to power Site#reassign_contexts!
+  # (where we explicitly merge contexts that collide across two
+  # sites being merged).
+  before_merge :reassign_samples!
+  before_merge :reassign_functional_classifications!
+
   acts_as_copy_target # enable CSV exports
 
   include HasIssues
@@ -66,6 +77,10 @@ class Context < ApplicationRecord
 
   def self.label
     "context"
+  end
+
+  def label
+    name
   end
 
   def suggested_functional_classification_category
@@ -138,4 +153,11 @@ class Context < ApplicationRecord
     end
   end
 
+  def reassign_samples!
+    Sample.where(context_id: id).update_all(context_id: merged_into_id)
+  end
+
+  def reassign_functional_classifications!
+    FunctionalClassification.reassign_all_to!(from: self, to: canonical)
+  end
 end

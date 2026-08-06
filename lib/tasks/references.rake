@@ -1,6 +1,12 @@
 namespace :xronos do
   namespace :references do
 
+    desc "Merge exact-duplicate references"
+    task deduplicate: :environment do
+      Rake::Task["xronos:deduplicate"].reenable
+      Rake::Task["xronos:deduplicate"].invoke("Reference")
+    end
+
     desc "Destroy reference by ID"
     task destroy: :environment do
       abort "ID must be set" unless ENV["ID"]

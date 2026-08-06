@@ -3,6 +3,9 @@
 
   <%= render "application/paper_trail/revision_comment_field", f: f %>
 
+  <%= render "shared/confirm_merge_warning" if @merge_duplicate %>
+  <%= hidden_field_tag :confirm_merge, "true" if @merge_duplicate %>
+
   <%= content_for :buttons do %>
     <%= button_tag "Cancel", type: "reset", class: "btn btn-outline-danger", form: "taxonForm", data: { "bs-dismiss": "modal" } %>
     <%= button_tag "Save", class: "btn btn-primary", form: "taxonForm" %>

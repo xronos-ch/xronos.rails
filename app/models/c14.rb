@@ -27,29 +27,27 @@
 #
 # Indexes
 #
-#  index_c14s_on_c14_lab_id      (c14_lab_id)
-#  index_c14s_on_lab_identifier  (lab_identifier)
-#  index_c14s_on_method          (method)
-#  index_c14s_on_sample_id       (sample_id)
+#  index_c14s_on_c14_lab_id                               (c14_lab_id)
+#  index_c14s_on_lab_identifier                           (lab_identifier)
+#  index_c14s_on_lab_identifier_sample_id_and_created_at  (lab_identifier,sample_id,created_at)
+#  index_c14s_on_method                                   (method)
+#  index_c14s_on_sample_id                                (sample_id)
 #
 
-class C14 < ApplicationRecord
-  include Versioned
-  include Supersedable
-
-  belongs_to :sample
-  accepts_nested_attributes_for :sample, reject_if: :all_blank
+class C14 < Chron
+  exact_duplicates_on :lab_identifier,
+                      :sample_id,
+                      bp: :nil_matches_nil,
+                      std: :nil_matches_nil,
+                      method: :nil_matches_nil,
+                      delta_15n: :nil_matches_nil,
+                      delta_c13: :nil_matches_nil,
+                      delta_c13_std: :nil_matches_nil
 
   belongs_to :c14_lab, optional: true
-
-  has_many :citations, as: :citing, dependent: :destroy
-  has_many :references, through: :citations
-
-  delegate :context, to: :sample
-  delegate :site, to: :sample
+  accepts_nested_attributes_for :sample, reject_if: :all_blank
 
   validates :bp, :std, presence: true
-  validates_associated :sample
 
   composed_of :lab_id, mapping: %w[lab_identifier], allow_nil: true
 
@@ -67,8 +65,6 @@ class C14 < ApplicationRecord
                   using: { tsearch: { prefix: true } } # match partial words
   multisearchable against: :lab_identifier
 
-  acts_as_copy_target # enable CSV exports
-
   LIBBY_MEAN_LIFE = 8033.0
 
   def self.label
@@ -77,6 +73,10 @@ class C14 < ApplicationRecord
 
   def self.icon
     'icons/c14.svg'
+  end
+
+  def label
+    lab_id
   end
 
   def uncal_age

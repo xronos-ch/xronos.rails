@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+- **Migrations required:** exact duplicate scientific records are now detected
+  and automatically merged (#309, #515)
+  - Rejects creation of exact duplicate scientific records (#310)
+  - Warns when updating a record will cause it to be merged (#311)
+  - Chrons (C14s and Typos) can merge exact duplicates across unnamed but
+    otherwise identical samples (#516)
+- **Migrations required**: scientific records can now be *superseded*: soft-
+  deleted and replaced by another record, retaining their permalink (#496).
+- **Migrations required**: Added `name` attribute to samples (#371)
 - **Migrations required** removed the unused MeasurementStates
 - Added OpenContext, Pleiades, Vici.org, and iDAI.gazetteer as potential linked
   record sources for sites and c14s (OpenContext only) (#487)

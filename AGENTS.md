@@ -122,6 +122,20 @@ Run rubocop on your code before it is committed. But avoid churn; only fix the s
 - Chrons are primary scientific records (e.g. `C14`, `Typo`, `Dendro`)
 - They represent dated evidence of past human activity
 
+### Chron base class
+
+`C14` and `Typo` (and any future chron) inherit from `Chron`, an abstract
+`ApplicationRecord` (no table, `self.abstract_class = true`). The base class
+provides the shared inclusion chain (`Versioned` / `Supersedable` / `Mergeable`),
+the `belongs_to :sample` association, the polymorphic `citations` association,
+and the standard callbacks (`after_save :merge_exact_duplicates`,
+`before_merge :reassign_citations!`). Subclasses declare only what is unique
+to them: their `exact_duplicates_on` key, their `self.icon`, and their own
+methods.
+
+`Chron` defines `self.label` and `self.icon` as `NotImplementedError`; every
+subclass must implement both.
+
 ### Core Association Chain
 
 Structure:

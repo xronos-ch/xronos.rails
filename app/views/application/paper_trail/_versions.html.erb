@@ -1,34 +1,42 @@
 <div class="accordion" id="versionHistory">
 
-  <% versions = local_assigns[:versions] || item.versions.includes(:item) %>
+  <% entries = local_assigns[:versions] || (item.present? ? combined_changelog(item) : []) %>
 
-  <% versions.reverse_each do |version| %>
+  <% entries.reverse_each do |entry| %>
+    <% is_supersession = entry.is_a?(SupersessionEvent) %>
+    <% prefix = is_supersession ? "se" : "v" %>
+    <% expanded = is_supersession %>
     <div class="accordion-item">
-      <div id="version<%= version.id %>" class="accordion-header">
-        <button class="accordion-button collapsed" 
-                type="button" 
-                <% if version.event == 'create' %>
+      <div id="version<%= prefix %><%= entry.id %>" class="accordion-header">
+        <button class="accordion-button<%= expanded ? '' : ' collapsed' %>"
+                type="button"
+                <% if entry.respond_to?(:event) && entry.event == 'create' %>
                   disabled
                 <% end %>
-                data-bs-toggle="collapse" 
-                data-bs-target="#changeset<%= version.id %>" 
-                aria-expanded="true" 
-                aria-controls="changeset<%= version.id %>">
+                data-bs-toggle="collapse"
+                data-bs-target="#changeset<%= prefix %><%= entry.id %>"
+                aria-expanded="<%= expanded %>"
+                aria-controls="changeset<%= prefix %><%= entry.id %>">
           <div>
             <h3 class="h6">
-              <%= render "application/paper_trail/event", event: version.event %>
-              <%= version.revision_comment.blank? ? "Updated." : md(version.revision_comment) %>
+              <%= render "application/paper_trail/event", event: is_supersession ? entry.event_type : entry.event %>
+              <% if is_supersession %>
+                <%= entry.event_type == "supersede" ? "Superseded by #{entry.superseded_by.label}" : "Restored" %>
+              <% else %>
+                <%= entry.revision_comment.blank? ? "Updated." : md(entry.revision_comment) %>
+              <% end %>
             </h3>
             <p class="small text-muted">
-              <%= render "application/paper_trail/whodunnit", version: version %>
-              <%= version.created_at.to_formatted_s %>
+              <%= render "application/paper_trail/whodunnit", entry: entry %>
+              <%= entry.created_at.to_formatted_s %>
             </p>
           </div>
         </button>
       </div>
-      <div id="changeset<%= version.id %>" class="accordion-collapse collapse" aria-labelledby="version<%= version.id %>" data-bs-parent="#versionHistory">
+      <div id="changeset<%= prefix %><%= entry.id %>" class="accordion-collapse collapse<%= expanded ? ' show' : '' %>"
+           aria-labelledby="version<%= prefix %><%= entry.id %>" data-bs-parent="#versionHistory">
         <div class="accordion-body">
-          <%= render "application/paper_trail/changes", version: version %>
+          <%= render "application/paper_trail/changes", entry: entry %>
         </div>
       </div>
     </div>

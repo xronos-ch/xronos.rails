@@ -99,5 +99,12 @@ namespace :xronos do
       puts
       puts "Done."
     end
+
+
+    desc "Merge exact-duplicate taxons"
+    task deduplicate: :environment do
+      Rake::Task["xronos:deduplicate"].reenable
+      Rake::Task["xronos:deduplicate"].invoke("Taxon")
+    end
   end
 end

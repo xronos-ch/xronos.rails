@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_02_192104) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_07_193908) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -84,6 +84,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_02_192104) do
     t.string "lab_identifier"
     t.float "delta_15n"
     t.index ["c14_lab_id"], name: "index_c14s_on_c14_lab_id"
+    t.index ["lab_identifier", "sample_id", "created_at"], name: "index_c14s_on_lab_identifier_sample_id_and_created_at"
     t.index ["lab_identifier"], name: "index_c14s_on_lab_identifier"
     t.index ["method"], name: "index_c14s_on_method"
     t.index ["sample_id"], name: "index_c14s_on_sample_id"
@@ -289,6 +290,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_02_192104) do
     t.decimal "position_z"
     t.text "position_crs"
     t.text "part_of_organism"
+    t.string "name"
     t.index ["context_id"], name: "index_samples_on_context_id"
     t.index ["material_id"], name: "index_samples_on_material_id"
     t.index ["position_crs"], name: "index_samples_on_position_crs"
@@ -363,9 +365,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_02_192104) do
     t.text "comment"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "whodunnit_user_id", null: false
     t.index ["event_type", "created_at"], name: "index_supersession_events_on_event_type"
     t.index ["superseded_by_type", "superseded_by_id", "created_at"], name: "index_supersession_events_on_superseded_by"
     t.index ["superseded_type", "superseded_id", "created_at"], name: "index_supersession_events_on_superseded"
+    t.index ["whodunnit_user_id"], name: "index_supersession_events_on_whodunnit_user_id"
   end
 
   create_table "supersessions", force: :cascade do |t|
@@ -396,6 +400,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_02_192104) do
     t.datetime "updated_at", precision: nil, null: false
     t.integer "parent_id"
     t.bigint "sample_id"
+    t.index ["name", "sample_id", "created_at"], name: "index_typos_on_name_sample_id_and_created_at"
     t.index ["name"], name: "index_typos_on_name"
     t.index ["sample_id"], name: "index_typos_on_sample_id"
   end
@@ -425,12 +430,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_02_192104) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  create_table "verify_models", force: :cascade do |t|
-    t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "versions", force: :cascade do |t|
     t.string "item_type", null: false
     t.bigint "item_id", null: false
@@ -457,6 +456,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_02_192104) do
   add_foreign_key "oauth_access_tokens", "users", column: "resource_owner_id"
   add_foreign_key "site_names", "sites"
   add_foreign_key "sources", "references"
+  add_foreign_key "supersession_events", "users", column: "whodunnit_user_id"
   add_foreign_key "user_profiles", "users"
 
   create_view "data_views", materialized: true, sql_definition: <<-SQL

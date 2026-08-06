@@ -1,150 +1,243 @@
 require "test_helper"
 
 class DuplicableTest < ActiveSupport::TestCase
-  # Use a disposable subclass so we can exercise the option syntax without
-  # permanently changing the production Site declaration.
+  # Disposable subclass to exercise options without changing production.
   class OptionTestSite < Site
-    def self.duplicable_attrs
-      @@duplicable_attrs
-    end
-
-    def self.duplicable_attrs_without_options
-      @@duplicable_attrs.map { |x| x.is_a?(Hash) ? x.keys : x }.flatten
-    end
-
-    def self.duplicable_attrs_with_options
-      @@duplicable_attrs.filter { |x| x.is_a?(Hash) }.reduce({}, :merge)
-    end
-
-    def self.reset_duplicable_attrs!
-      @@duplicable_attrs = []
-    end
   end
 
   setup do
-    OptionTestSite.reset_duplicable_attrs!
+    OptionTestSite.exact_duplicates_attrs_list.clear
+    OptionTestSite.potential_duplicates_attrs_list.clear
+    # Disable the Mergeable auto-merge callback (inherited from Site)
+    # for this test subclass — these tests assert that records with
+    # identical keys remain in the database.
+    OptionTestSite.skip_callback(:save, :after, :merge_exact_duplicates)
+    # Same rationale for `validate :no_exact_duplicate, on: :create`
+    # declared on Site: the tests deliberately create pairs of records
+    # that share every exact-duplicate key.
+    OptionTestSite.skip_callback(:validate, :before, :no_exact_duplicate, on: :create)
   end
 
-  test "duplicable_attrs returns the declared list" do
-    OptionTestSite.duplicable :name, :country_code
-    assert_equal [:name, :country_code], OptionTestSite.duplicable_attrs
+  teardown do
+    # Re-enable the callback for other tests in the suite.
+    OptionTestSite.set_callback(:save, :after, :merge_exact_duplicates)
+    OptionTestSite.set_callback(:validate, :before, :no_exact_duplicate, on: :create)
   end
 
-  test "duplicable_attrs_without_options flattens hashes to symbol names" do
-    OptionTestSite.duplicable :name, { country_code: [:null] }
-    assert_equal [:name, :country_code], OptionTestSite.duplicable_attrs_without_options
+  #
+  # Exact duplicates
+  #
+
+  test "exact_duplicates_on stores attribute names" do
+    OptionTestSite.exact_duplicates_on :name, :country_code
+    assert_equal [:name, :country_code], OptionTestSite.exact_duplicates_attrs
   end
 
-  test "duplicable_attrs_with_options merges hash declarations into one map" do
-    OptionTestSite.duplicable :name, { country_code: [:null] }
-    assert_equal({ country_code: [:null] }, OptionTestSite.duplicable_attrs_with_options)
+  test "exact_duplicates finds records with identical values" do
+    OptionTestSite.exact_duplicates_on :name, :country_code
+    a = OptionTestSite.create!(name: "Same", country_code: "DE")
+    b = OptionTestSite.create!(name: "Same", country_code: "DE")
+    OptionTestSite.create!(name: "Same", country_code: "FR")
+    OptionTestSite.create!(name: "Other", country_code: "DE")
+
+    assert_includes a.exact_duplicates, b
   end
 
-  test "duplicates intersects (AND) filters across declared attributes" do
-    OptionTestSite.duplicable :name, :country_code
-    site = create(:site, name: "MATCH-NAME", country_code: "DE")
-    # Matches both :name and :country_code — should be in duplicates.
-    both = create(:site, name: "MATCH-NAME", country_code: "DE")
-    # Matches only :name.
-    create(:site, name: "MATCH-NAME", country_code: "FR")
-    # Matches only :country_code.
-    create(:site, name: "OTHER", country_code: "DE")
+  test "exact_duplicates default: nil != nil" do
+    OptionTestSite.exact_duplicates_on :name, :country_code
+    a = OptionTestSite.create!(name: "Same", country_code: nil)
+    b = OptionTestSite.create!(name: "Same", country_code: nil)
 
-    duplicates = site.duplicates.distinct
+    # nil != nil: the two records are not considered duplicates.
+    assert_not_includes a.exact_duplicates, b
+  end
+
+  test "exact_duplicates matches nil values for nil_matches_nil attributes" do
+    OptionTestSite.exact_duplicates_on :name, { country_code: [:nil_matches_nil] }
+    a = OptionTestSite.create!(name: "Same", country_code: nil)
+    b = OptionTestSite.create!(name: "Same", country_code: nil)
+    OptionTestSite.create!(name: "Same", country_code: "DE")
+
+    assert_includes a.exact_duplicates, b
+  end
+
+  test "exact_duplicates still distinguishes nil from non-nil for nil_matches_nil" do
+    OptionTestSite.exact_duplicates_on :name, { country_code: [:nil_matches_nil] }
+    a = OptionTestSite.create!(name: "Same", country_code: nil)
+    OptionTestSite.create!(name: "Same", country_code: "DE")
+
+    # nil matches nil, but nil does NOT match a non-nil value.
+    # `a` (country_code: nil) has no other nil-country_code sibling, so count is 0.
+    assert_equal 0, a.exact_duplicates.count
+  end
+
+  test "exact_duplicates: attributes without nil_matches_nil still use nil != nil" do
+    # Use a model without name validation so we can test nil names.
+    test_class = Class.new(ApplicationRecord) do
+      self.table_name = 'sites'
+      include Duplicable
+    end
+    test_class.exact_duplicates_attrs_list.clear
+    test_class.exact_duplicates_on :name, { country_code: [:nil_matches_nil] }
+
+    a = test_class.create!(name: "Same", country_code: "DE")
+    b = test_class.create!(name: "Same", country_code: "DE")
+    nil_a = test_class.new(name: nil, country_code: "DE")
+    nil_a.save(validate: false)
+    nil_b = test_class.new(name: nil, country_code: "DE")
+    nil_b.save(validate: false)
+
+    # Two records with matching non-nil values ARE duplicates.
+    assert_includes a.exact_duplicates, b
+    # Two records with nil :name (no nil_matches_nil opt-in) are NOT duplicates.
+    assert_not_includes nil_a.exact_duplicates, nil_b
+  end
+
+  test "find_exact_duplicate default: returns nil when an attribute is nil" do
+    OptionTestSite.exact_duplicates_on :name, :country_code
+    OptionTestSite.create!(name: "Same", country_code: nil)
+    OptionTestSite.create!(name: "Same", country_code: nil)
+
+    record = OptionTestSite.find_by(name: "Same", country_code: nil)
+    assert_nil record.find_exact_duplicate
+  end
+
+  test "find_exact_duplicate returns matching record for nil_matches_nil" do
+    OptionTestSite.exact_duplicates_on :name, { country_code: [:nil_matches_nil] }
+    a = OptionTestSite.create!(name: "Same", country_code: nil)
+    OptionTestSite.create!(name: "Same", country_code: nil)
+
+    other = OptionTestSite.where.not(id: a.id).first
+    assert_equal other.id, a.find_exact_duplicate.id
+  end
+
+  test "is_exact_duplicate? returns true when exact duplicates exist" do
+    OptionTestSite.exact_duplicates_on :name
+    site = OptionTestSite.create!(name: "DupName")
+    OptionTestSite.create!(name: "DupName")
+    OptionTestSite.create!(name: "Other")
+
+    assert site.is_exact_duplicate?
+  end
+
+  test "is_exact_duplicate? returns false when no exact duplicates exist" do
+    OptionTestSite.exact_duplicates_on :name
+    OptionTestSite.create!(name: "Unique1")
+    OptionTestSite.create!(name: "Unique2")
+
+    refute OptionTestSite.first.is_exact_duplicate?
+  end
+
+  #
+  # Potential duplicates
+  #
+
+  test "potential_duplicates_on stores attribute names and options" do
+    OptionTestSite.potential_duplicates_on :name, { country_code: [:null] }
+    assert_equal [:name, :country_code], OptionTestSite.potential_duplicates_attrs
+    assert_equal({ country_code: [:null] }, OptionTestSite.potential_duplicates_attrs_with_options)
+  end
+
+  test "potential_duplicates intersects (AND) filters across declared attributes" do
+    OptionTestSite.potential_duplicates_on :name, :country_code
+    site = OptionTestSite.create!(name: "MATCH-NAME", country_code: "DE")
+    both = OptionTestSite.create!(name: "MATCH-NAME", country_code: "DE")
+    OptionTestSite.create!(name: "MATCH-NAME", country_code: "FR")
+    OptionTestSite.create!(name: "OTHER", country_code: "DE")
+
+    duplicates = site.potential_duplicates.distinct
     assert_includes duplicates, both
     assert_equal 2, duplicates.count
   end
 
-  test "duplicates with :whitespace option matches records with whitespace substituted by %" do
-    OptionTestSite.duplicable({ name: [:whitespace] })
-    # Source value contains whitespace; the filter substitutes each space with %.
-    site = create(:site, name: "Camel Case")
-    # Target has a literal % where the source had whitespace, so it matches the pattern.
-    matching = create(:site, name: "Camel%Case")
-    # No space and no % — should NOT match the Camel-Case pattern.
-    nonmatch = create(:site, name: "XyZ")
+  test "potential_duplicates with :whitespace option matches records with whitespace substituted by %" do
+    OptionTestSite.potential_duplicates_on({ name: [:whitespace] })
+    site = OptionTestSite.create!(name: "Camel Case")
+    matching = OptionTestSite.create!(name: "Camel%Case")
+    OptionTestSite.create!(name: "XyZ")
 
-    duplicates = site.duplicates.distinct
+    duplicates = site.potential_duplicates.distinct
     assert_includes duplicates, matching
-    assert_not_includes duplicates, nonmatch
+    assert_not_includes duplicates, OptionTestSite.find_by(name: "XyZ")
   end
 
-  test "duplicates with :mojibake option matches records with non-ASCII substituted by %" do
-    OptionTestSite.duplicable({ name: [:mojibake] })
-    # Source value contains non-ASCII; the filter substitutes it with %.
-    site = create(:site, name: "Cöthen")
-    # Target has a literal % where the source had ö, so it matches the pattern.
-    matching = create(:site, name: "C%then")
-    # No non-ASCII and no % — should NOT match the Cöthen pattern.
-    nonmatch = create(:site, name: "Abc")
+  test "potential_duplicates with :mojibake option matches records with non-ASCII substituted by %" do
+    OptionTestSite.potential_duplicates_on({ name: [:mojibake] })
+    site = OptionTestSite.create!(name: "Cöthen")
+    matching = OptionTestSite.create!(name: "C%then")
+    OptionTestSite.create!(name: "Abc")
 
-    duplicates = site.duplicates.distinct
+    duplicates = site.potential_duplicates.distinct
     assert_includes duplicates, matching
-    assert_not_includes duplicates, nonmatch
+    assert_not_includes duplicates, OptionTestSite.find_by(name: "Abc")
   end
 
-  test "duplicates with :ci option matches records case-insensitively" do
-    OptionTestSite.duplicable({ name: [:ci] })
-    site = create(:site, name: "UPPERCASE")
-    matching = create(:site, name: "uppercase")
-    nonmatch = create(:site, name: "Different")
+  test "potential_duplicates with :ci option matches records case-insensitively" do
+    OptionTestSite.potential_duplicates_on({ name: [:ci] })
+    site = OptionTestSite.create!(name: "UPPERCASE")
+    OptionTestSite.create!(name: "uppercase")
+    OptionTestSite.create!(name: "Different")
 
-    duplicates = site.duplicates.distinct
-    assert_includes duplicates, matching
-    assert_not_includes duplicates, nonmatch
+    duplicates = site.potential_duplicates.distinct
+    assert_equal 2, duplicates.count
+    assert_not_includes duplicates, OptionTestSite.find_by(name: "Different")
   end
 
-  test "duplicates with :null option finds records with attr IS NULL for non-nil attr" do
-    OptionTestSite.duplicable({ country_code: [:null] })
-    site = create(:site, country_code: "DE")
-    null_country = create(:site, country_code: nil)
-    create(:site, country_code: "FR")
+  test "potential_duplicates with :null option finds records with attr IS NULL for non-nil attr" do
+    OptionTestSite.potential_duplicates_on({ country_code: [:null] })
+    site = OptionTestSite.create!(name: "Site1", country_code: "DE")
+    null_country = OptionTestSite.create!(name: "Site2", country_code: nil)
+    OptionTestSite.create!(name: "Site3", country_code: "FR")
 
-    assert_includes site.duplicates, null_country
+    assert_includes site.potential_duplicates, null_country
   end
 
-  test "duplicates with :null option finds records with attr IS NOT NULL for nil attr" do
-    OptionTestSite.duplicable({ country_code: [:null] })
-    null_site = create(:site, country_code: nil)
-    non_null_site = create(:site, country_code: "DE")
+  test "potential_duplicates with :null option finds records with attr IS NOT NULL for nil attr" do
+    OptionTestSite.potential_duplicates_on({ country_code: [:null] })
+    null_site = OptionTestSite.create!(name: "Site1", country_code: nil)
+    non_null_site = OptionTestSite.create!(name: "Site2", country_code: "DE")
 
-    assert_includes null_site.duplicates, non_null_site
+    assert_includes null_site.potential_duplicates, non_null_site
   end
 
-  test "duplicates raises on unknown options" do
-    OptionTestSite.duplicable({ name: [:bogus] })
-    site = create(:site)
+  test "potential_duplicates raises on unknown options" do
+    OptionTestSite.potential_duplicates_on({ name: [:bogus] })
+    site = OptionTestSite.create!(name: "Site1")
 
-    assert_raises(RuntimeError) { site.duplicates }
+    assert_raises(RuntimeError) { site.potential_duplicates }
   end
 
-  test "exact_duplicates finds records with identical values for all attributes" do
-    OptionTestSite.duplicable :name, { country_code: [:ci] }
-    site = create(:site, name: "SameName", country_code: "DE")
-    # Same values exactly — should be found by exact_duplicates.
-    exact = create(:site, name: "SameName", country_code: "DE")
-    # Case-different on country_code — should NOT be found by exact_duplicates,
-    # only by the option-aware duplicates path.
-    create(:site, name: "SameName", country_code: "de")
+  test "is_potential_duplicate? returns true when potential duplicates exist" do
+    OptionTestSite.potential_duplicates_on :name
+    site = OptionTestSite.create!(name: "DupName")
+    OptionTestSite.create!(name: "DupName")
+    OptionTestSite.create!(name: "Other")
 
-    assert_includes site.exact_duplicates, exact
-    assert_equal 2, site.exact_duplicates.count
+    assert site.is_potential_duplicate?
   end
 
-  test "is_duplicated? returns true when exact duplicates exist" do
-    OptionTestSite.duplicable :name
-    site = create(:site, name: "DupName")
-    create(:site, name: "DupName")
-    create(:site, name: "Other")
+  test "is_potential_duplicate? returns false when no potential duplicates exist" do
+    OptionTestSite.potential_duplicates_on :name
+    OptionTestSite.create!(name: "Unique1")
+    OptionTestSite.create!(name: "Unique2")
 
-    assert site.is_duplicated?
+    refute OptionTestSite.first.is_potential_duplicate?
   end
 
-  test "is_duplicated? returns false when no exact duplicates exist" do
-    OptionTestSite.duplicable :name
-    create(:site, name: "Unique1")
-    create(:site, name: "Unique2")
+  #
+  # match_conditions — SQL form of the per-attr nil-handling rule
+  # (see `attr_matches?`).
+  #
 
-    refute Site.first.is_duplicated?
+  test "match_conditions emits IS NOT DISTINCT FROM for :nil_matches_nil attrs" do
+    OptionTestSite.exact_duplicates_on :name, country_code: :nil_matches_nil
+    quote = ->(c) { c } # pass-through so the assertion is readable
+
+    conds = OptionTestSite.match_conditions(
+      attrs: [:name, :country_code], current_alias: 'c1', other_alias: 'c2', quote: quote
+    )
+
+    assert_equal ['c2.name = c1.name AND c1.name IS NOT NULL',
+                  'c2.country_code IS NOT DISTINCT FROM c1.country_code'], conds
   end
 end

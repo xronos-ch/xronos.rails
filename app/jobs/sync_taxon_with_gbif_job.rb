@@ -17,6 +17,8 @@ class SyncTaxonWithGbifJob < ApplicationJob
   def sync_taxon!(taxon)
     ensure_gbif_id! taxon
     enforce_canonical_name! taxon
+    taxon.reload
+    taxon.merge_exact_duplicates
   end
 
   def ensure_gbif_id!(taxon)

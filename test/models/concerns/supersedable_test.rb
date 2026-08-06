@@ -72,6 +72,7 @@ class SupersedableTest < ActiveSupport::TestCase # rubocop:disable Metrics/Class
   test "supersede! is atomic: failure leaves no cache row and no event row" do
     site = create(:site)
     canonical = create(:site)
+
     # Force a failure inside the transaction, after the precondition
     # checks pass. Both the cache and the event log must be
     # unaffected.
@@ -89,7 +90,9 @@ class SupersedableTest < ActiveSupport::TestCase # rubocop:disable Metrics/Class
     b = create(:site)
     c = create(:site)
 
+
     a.supersede!(b)
+
     b.supersede!(c)
 
     a.reload
@@ -100,40 +103,31 @@ class SupersedableTest < ActiveSupport::TestCase # rubocop:disable Metrics/Class
     assert_equal c, b.ultimately_superseded_by
   end
 
-  test "supersede! reassigns child associations to the canonical" do
+  test "supersede! does not reassign child associations (model's responsibility via :merge callback)" do
     canonical = create(:site)
     superseded = create(:site)
     context = create(:context, site: superseded)
-
-    superseded.supersede!(canonical, "test merge")
-
-    assert_equal canonical, context.reload.site
-  end
-
-  test "supersede! reassigns site_names to the canonical" do
-    canonical = create(:site)
-    superseded = create(:site)
     site_name = create(:site_name, site: superseded)
 
+
     superseded.supersede!(canonical, "test merge")
 
-    assert_equal canonical, site_name.reload.site
+    # The child associations are NOT moved automatically; the model
+    # must do that in a `set_callback :merge, :before, …` handler.
+    # This contract test prevents us from re-introducing the magic
+    # by accident.
+    assert_equal superseded, context.reload.site
+    assert_equal superseded, site_name.reload.site
   end
 
   test "supersede! writes the comment as a SupersessionEvent comment" do
     site = create(:site)
     canonical = create(:site)
 
+
     site.supersede!(canonical, "test merge")
 
     assert_equal "test merge", site.supersession_events.last.comment
-  end
-
-  test "reassign_associations! is private" do
-    site = create(:site)
-    assert_no_difference -> { site.contexts.count } do
-      assert_raises(NoMethodError) { site.reassign_associations!("x") }
-    end
   end
 
   test "supersedable_associations excludes versions and pg_search_document" do
@@ -148,38 +142,6 @@ class SupersedableTest < ActiveSupport::TestCase # rubocop:disable Metrics/Class
     assert_includes assoc_names, "site_names"
   end
 
-  test "supersede! reassigns citations on Reference" do
-    canonical = create(:reference)
-    superseded = create(:reference)
-    citation = create(:citation, citing: create(:site), reference: superseded)
-
-    superseded.supersede!(canonical, "test merge")
-
-    assert_equal canonical, citation.reload.reference
-  end
-
-  test "supersede! reassigns citations on C14" do
-    canonical = create(:c14)
-    superseded = create(:c14, sample: canonical.sample)
-
-    superseded.supersede!(canonical, "test merge")
-
-    # The new canonical-side state is asserted by the absence of the
-    # superseded record in default scope; nothing else to check for c14.
-    assert superseded.superseded?
-    assert_equal canonical, superseded.ultimately_superseded_by
-  end
-
-  test "supersede! reassigns citations on Typo" do
-    canonical = create(:typo)
-    superseded = create(:typo, sample: canonical.sample)
-
-    superseded.supersede!(canonical, "test merge")
-
-    assert superseded.superseded?
-    assert_equal canonical, superseded.ultimately_superseded_by
-  end
-
   test "restore! raises if not currently superseded" do
     site = create(:site)
     assert_raises(RuntimeError) { site.restore! }
@@ -188,6 +150,7 @@ class SupersedableTest < ActiveSupport::TestCase # rubocop:disable Metrics/Class
   test "restore! removes the Supersession row and appends a restore event" do
     canonical = create(:site)
     superseded = create(:site, :superseded_by, canonical: canonical)
+
 
     assert_difference -> { Supersession.count } => -1,
                       -> { SupersessionEvent.count } => 1 do
@@ -201,9 +164,12 @@ class SupersedableTest < ActiveSupport::TestCase # rubocop:disable Metrics/Class
   test "merge_history returns events for this record in created_at order" do
     canonical = create(:site)
     site = create(:site)
+
     site.supersede!(canonical, "first")
+
     site.restore!
     another = create(:site)
+
     site.supersede!(another, "second")
 
     types = site.merge_history.pluck(:event_type)

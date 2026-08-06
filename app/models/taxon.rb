@@ -17,12 +17,19 @@
 
 class Taxon < ApplicationRecord
   include Versioned
+  include Mergeable
+
+  exact_duplicates_on :name, { gbif_id: [:nil_matches_nil] }
 
   has_many :samples
 
   validates :name, presence: true
 
-  after_commit :enqueue_gbif_sync
+  after_save :enqueue_gbif_sync
+  after_save :merge_exact_duplicates
+  validate :no_exact_duplicate, on: :create
+
+  before_merge :reassign_samples!
 
   include HasIssues
   @issues = [ :unknown_taxon, :long_taxon ]
@@ -96,6 +103,10 @@ class Taxon < ApplicationRecord
     )
   end
 
+  def label
+    name
+  end
+
   # Tidy up unused taxa when samples are deleted
   def destroy_if_orphaned
     if samples.count == 0
@@ -114,6 +125,12 @@ class Taxon < ApplicationRecord
   def long_taxon?
     return nil if name.blank?
     name.length > 64
+  end
+
+  private
+
+  def reassign_samples!
+    Sample.where(taxon_id: id).update_all(taxon_id: merged_into_id)
   end
 
   private_class_method

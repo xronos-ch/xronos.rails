@@ -141,4 +141,46 @@ class SyncTaxonWithGbifJobTest < ActiveJob::TestCase
 
     assert_equal "Bar", taxon.reload.name
   end
+
+  #
+  # merges duplicates created by gbif_id sync
+  #
+  test "merges duplicates created by gbif_id sync" do
+    existing = FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: 123)
+    new_taxon = FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: nil)
+
+    match = { "diagnostics" => { "matchType" => "EXACT" } }
+    usage = { "key" => "123", "canonicalName" => "Quercus robur" }
+
+    GBIF::Species.stub(:match, match) do
+      GBIF::Species.stub(:accepted_usage, usage) do
+        SyncTaxonWithGbifJob.perform_now(new_taxon.id)
+      end
+    end
+
+    # After the job: the new taxon was destroyed (merged into existing),
+    # so the DB no longer has it, and only the canonical remains.
+    assert_raises(ActiveRecord::RecordNotFound) { Taxon.find(new_taxon.id) }
+    assert_equal 1, Taxon.where(name: "Quercus robur", gbif_id: 123).count
+    assert_equal existing.id, Taxon.where(name: "Quercus robur", gbif_id: 123).first.id
+  end
+
+  #
+  # merges duplicates created by canonical name sync
+  #
+  test "merges duplicates created by canonical name sync" do
+    existing = FactoryBot.create(:taxon, name: "Quercus robur", gbif_id: 123)
+    new_taxon = FactoryBot.create(:taxon, name: "Old name", gbif_id: 123)
+
+    usage = { "key" => "123", "canonicalName" => "Quercus robur" }
+
+    GBIF::Species.stub(:usage, usage) do
+      SyncTaxonWithGbifJob.perform_now(new_taxon.id)
+    end
+
+    # After the job: the new taxon's name was updated to "Quercus robur"
+    # (matching the canonical), so it was merged into existing and destroyed.
+    assert_raises(ActiveRecord::RecordNotFound) { Taxon.find(new_taxon.id) }
+    assert_equal 1, Taxon.where(name: "Quercus robur", gbif_id: 123).count
+  end
 end
