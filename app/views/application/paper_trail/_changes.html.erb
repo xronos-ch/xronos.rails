@@ -28,7 +28,7 @@
   <p>Restored</p>
 <% end %>
 
-<% if entry.respond_to?(:snapshot_id) && entry.snapshot_id.present? && (diff = version_peripheral_diff(entry)).present? %>
+<% if entry.is_a?(PaperTrail::Version) && entry.snapshot_id.present? && (diff = version_peripheral_diff(entry)).present? %>
   <%
     hidden_attrs = %w[id created_at updated_id linkable_id linkable_type site_id]
     parent_class = entry.item_type.constantize

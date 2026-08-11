@@ -431,12 +431,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_07_193908) do
     t.index ["sample_id"], name: "index_typos_on_sample_id"
   end
 
-  create_table "unversioned_children", force: :cascade do |t|
-    t.integer "versioned_parent_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "user_profiles", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
@@ -462,22 +456,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_07_193908) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  create_table "versioned_children", force: :cascade do |t|
-    t.integer "versioned_parent_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
 
-  create_table "versioned_parents", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "versioned_singles", force: :cascade do |t|
-    t.integer "versioned_parent_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
 
   create_table "versions", force: :cascade do |t|
     t.string "item_type", null: false
