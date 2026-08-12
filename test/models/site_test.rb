@@ -319,4 +319,70 @@ class SiteTest < ActiveSupport::TestCase
     assert_equal 0, FunctionalClassification.where(assignable_type: 'Site', assignable_id: dupe.id).count
     assert_equal 1, FunctionalClassification.where(assignable_type: 'Site', assignable_id: canonical.id).count
   end
+
+  #
+  # Peripheral snapshots
+  #
+
+  test "site update creates version with peripheral snapshot" do
+    with_versioning do
+      site = create(:site, name: "original")
+      site.update!(name: "updated")
+
+      version = site.versions.last
+      assert version.snapshot_id.present?,
+        "Expected snapshot_id on site update version"
+    end
+  end
+
+  test "site update snapshot captures peripherals" do
+    with_versioning do
+      site = create(:site, :with_site_names, :with_linked_resources, linked_resources_count: 1)
+      site.update!(name: "renamed")
+
+      version = site.versions.last
+      snapshot = ActiveSnapshot::Snapshot.find(version.snapshot_id)
+
+      site_name_items = snapshot.snapshot_items.where(child_group_name: "site_names")
+      assert_equal site.site_names.count, site_name_items.size,
+        "Expected snapshot to capture site_names"
+
+      linked_resource_items = snapshot.snapshot_items.where(child_group_name: "linked_resources")
+      assert_equal site.linked_resources.count, linked_resource_items.size,
+        "Expected snapshot to capture linked_resources"
+    end
+  end
+
+  test "site name create triggers site version with snapshot" do
+    with_versioning do
+      site = create(:site)
+      create(:site_name, site: site, name: "New Name")
+
+      version = site.versions.reorder(created_at: :desc).first
+      assert version.snapshot_id.present?,
+        "Expected snapshot_id after site_name create"
+
+      snapshot = ActiveSnapshot::Snapshot.find(version.snapshot_id)
+      items = snapshot.snapshot_items.where(child_group_name: "site_names")
+      assert_equal 1, items.size
+      assert_equal "New Name", items.first.object["name"]
+    end
+  end
+
+  test "linked resource create triggers linkable version with snapshot" do
+    with_versioning do
+      site = create(:site)
+      create(:linked_resource, linkable: site, source: "Wikidata", external_id: "Q12345")
+
+      version = site.versions.reorder(created_at: :desc).first
+      assert version.snapshot_id.present?,
+        "Expected snapshot_id after linked_resource create"
+
+      snapshot = ActiveSnapshot::Snapshot.find(version.snapshot_id)
+      items = snapshot.snapshot_items.where(child_group_name: "linked_resources")
+      assert_equal 1, items.size
+      assert_equal "Wikidata", items.first.object["source"]
+      assert_equal "Q12345", items.first.object["external_id"]
+    end
+  end
 end

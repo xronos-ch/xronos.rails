@@ -174,9 +174,19 @@ Core models (scientific data):
 
 Peripheral models (dependent scientific data):
 
-- Examples: `SiteName`, `Taxon`, `Material`
-- Only meaningful in relation to a core model
-- Changes are tracked on the parent core record
+Two types:
+
+**Owned peripherals** (belong to one core record):
+- Examples: `SiteName`, `LinkedResource`, `FunctionalClassification`, `Citation`
+- Only meaningful in relation to a single core record
+- Changes are tracked on the parent core record via snapshots
+- Can be deleted if not referenced
+
+**Shared peripherals** (shared across multiple core records):
+- Examples: `Material`, `Taxon`
+- Meaningful across multiple core records
+- Changes propagate to ALL referencing core records via snapshots
+- No independent versioning (changes tracked via parent snapshots)
 - Can be deleted if not referenced
 
 Non-scientific models:

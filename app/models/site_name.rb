@@ -20,12 +20,16 @@
 #
 
 class SiteName < ApplicationRecord
-  belongs_to :site
+  include Peripheral
+
+  belongs_to :site, touch: true
 
   validates :name, presence: true
 
+  revision_comment_parent :site
+
   def self.label
-    "site alias"
+    "site name"
   end
 
   def label

@@ -19,6 +19,7 @@
 #  index_linked_resources_on_linkable_type_and_linkable_id  (linkable_type,linkable_id)
 #
 class LinkedResource < ApplicationRecord
+  include Peripheral
   include Turbo::Broadcastable
 
   # Each known source is a module under LinkedResource::Sources that
@@ -49,11 +50,17 @@ class LinkedResource < ApplicationRecord
 
   enum :status, { pending: 'pending', approved: 'approved' }
 
-  belongs_to :linkable, polymorphic: true
+  belongs_to :linkable, polymorphic: true, touch: true
+
+  revision_comment_parent :linkable
 
   # Scopes for filtering matches
   scope :pending, -> { where(status: 'pending') }
   scope :approved, -> { where(status: 'approved') }
+
+  def self.label
+    "external link"
+  end
 
   def external_url
     LinkedResource::Source.find(source)&.url_for(external_id)
