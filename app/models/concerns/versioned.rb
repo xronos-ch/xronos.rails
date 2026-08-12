@@ -36,6 +36,18 @@ module Versioned
         )
       end
     end
+
+    ##
+    # DSL for declaring peripheral associations to snapshot
+    # Automatically handles nil values by wrapping in Array and compacting
+    def snapshot_peripherals(*associations)
+      has_snapshot_children do
+        instance = self.class.includes(*associations).find(id)
+        associations.each_with_object({}) do |assoc, hash|
+          hash[assoc] = Array(instance.public_send(assoc)).compact
+        end
+      end
+    end
   end
 
   def self.enqueue(parent:, association:, job:, batch_size:)

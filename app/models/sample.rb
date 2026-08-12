@@ -66,6 +66,8 @@ class Sample < ApplicationRecord
   validates_associated :taxon
   delegate :name, to: :taxon, prefix: true, allow_nil: true
 
+  snapshot_peripherals :material, :taxon
+
   after_destroy :destroy_material_if_orphaned
   after_destroy :destroy_taxon_if_orphaned
 

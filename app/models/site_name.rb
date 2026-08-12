@@ -20,12 +20,13 @@
 #
 
 class SiteName < ApplicationRecord
+  include Peripheral
+
   belongs_to :site, touch: true
 
   validates :name, presence: true
 
-  before_save :set_revision_comment_on_save, if: :site
-  before_destroy :set_revision_comment_on_destroy, if: :site
+  revision_comment_parent :site
 
   def self.label
     "site name"
@@ -33,15 +34,5 @@ class SiteName < ApplicationRecord
 
   def label
     name
-  end
-
-  private
-
-  def set_revision_comment_on_save
-    site.revision_comment = new_record? ? "Added #{self.class.label}." : "Changed #{self.class.label}."
-  end
-
-  def set_revision_comment_on_destroy
-    site.revision_comment = "Removed #{self.class.label}."
   end
 end
