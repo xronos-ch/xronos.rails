@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Peripheral record changes (citations, linked resources, functional
+  classifications, materials, taxa) are now tracked in the version history of
+  core scientific records (C14s, Typos, Contexts, Samples, Sites) (#502)
 - **Migrations required:** exact duplicate scientific records are now detected
   and automatically merged (#309, #515)
   - Rejects creation of exact duplicate scientific records (#310)
