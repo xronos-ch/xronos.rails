@@ -337,7 +337,9 @@ class SiteTest < ActiveSupport::TestCase
 
   test "site update snapshot captures peripherals" do
     with_versioning do
-      site = create(:site, :with_site_names, :with_linked_resources, linked_resources_count: 1)
+      site = create(:site, :with_site_names, :with_linked_resources, :with_citations,
+                    linked_resources_count: 1, citations_count: 1)
+      create(:functional_classification, assignable: site)
       site.update!(name: "renamed")
 
       version = site.versions.last
@@ -350,6 +352,14 @@ class SiteTest < ActiveSupport::TestCase
       linked_resource_items = snapshot.snapshot_items.where(child_group_name: "linked_resources")
       assert_equal site.linked_resources.count, linked_resource_items.size,
         "Expected snapshot to capture linked_resources"
+
+      fc_items = snapshot.snapshot_items.where(child_group_name: "functional_classifications")
+      assert_equal site.functional_classifications.count, fc_items.size,
+        "Expected snapshot to capture functional_classifications"
+
+      citation_items = snapshot.snapshot_items.where(child_group_name: "citations")
+      assert_equal site.citations.count, citation_items.size,
+        "Expected snapshot to capture citations"
     end
   end
 
