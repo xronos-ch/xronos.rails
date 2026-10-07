@@ -9,6 +9,7 @@ export default class extends Controller {
   static targets = ["container", "spinner"]
   static values = {
     baseMap: String,
+    cartoApiKey: String,
     markersData: Array,
     markersUrl: String,
     style: String
@@ -25,8 +26,9 @@ export default class extends Controller {
     )
 
     // Base maps
-    const physical = L.tileLayer.provider("CartoDB.PositronNoLabels")
-    const labelledPhysical = L.tileLayer.provider("CartoDB.Positron")
+    const cartoOptions = { apikey: this.cartoApiKeyValue }
+    const physical = L.tileLayer.provider("CartoDB.PositronNoLabels", cartoOptions)
+    const labelledPhysical = L.tileLayer.provider("CartoDB.Positron", cartoOptions)
     const imagery = L.tileLayer.provider("Esri.WorldImagery")
 
     const baseMaps = {

@@ -1,6 +1,7 @@
 <div class="w-100 h-100" 
      data-controller="map" 
      data-map-target="container"
+     data-map-carto-api-key-value="<%= ENV["CARTO_API_KEY"] %>"
      data-map-markers-url-value="<%= request.original_url %>">
      <div class="spinner-border position-relative top-50 start-50 visually-hidden" 
           style="z-index: 800"

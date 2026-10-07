@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Maps now require a CARTO API key (#524)
 - Peripheral record changes (citations, linked resources, functional
   classifications, materials, taxa) are now tracked in the version history of
   core scientific records (C14s, Typos, Contexts, Samples, Sites) (#502)

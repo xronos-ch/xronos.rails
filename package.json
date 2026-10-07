@@ -13,7 +13,7 @@
 		"bootstrap-icons": "^1.10.5",
 		"easymde": "^2.18.0",
 		"leaflet": "^1.8.0",
-		"leaflet-providers": "^1.13.0",
+		"leaflet-providers": "^4.0.0",
 		"nouislider": "^15.7.0",
 		"supercluster": "^7.1.5",
 		"tom-select": "^2.0.1",

@@ -43,6 +43,8 @@ REGISTRATION_PASSPHRASE=...
 ADMIN_USER_ID=1
 ADMIN_USER_EMAIL=
 ADMIN_USER_PASSWORD=
+# API keys
+CARTO_API_KEY=
 ```
 
 Inside of this directory you can then run
