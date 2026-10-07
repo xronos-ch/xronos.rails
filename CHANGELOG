@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Peripheral record changes (citations, linked resources, functional
+  classifications, materials, taxa) are now tracked in the version history of
+  core scientific records (C14s, Typos, Contexts, Samples, Sites) (#502)
 - **Migrations required:** exact duplicate scientific records are now detected
   and automatically merged (#309, #515)
   - Rejects creation of exact duplicate scientific records (#310)
@@ -40,6 +43,14 @@
 - Made software version visible in page footer and added Zenodo archive link (#436)
 - Removed standalone Typo show view. Typological dates are now only shown
   embedded in Site views (#398)
+- **Migration required:** Peripheral associated records are now
+  snapshotted on Site versions via ActiveSnapshot
+  - Added new tables (snapshots, snapshot_items) and
+    add_snapshot_id_to_versions migration
+  - Site version history now shows a unified diff of both Site
+    changes and peripheral record changes
+- SiteNames and LinkedResources now generate contextual revision comments
+  when added, changed, or removed (e.g. "Added site name.")
 - **Migration required:** Added affiliations to user profiles
 - Added second column to article show views (news and about pages)
   - Showing extended author metadata on news articles

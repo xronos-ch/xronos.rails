@@ -16,6 +16,7 @@
 #
 
 class Citation < ApplicationRecord
+  include Peripheral
   include Mergeable
 
   exact_duplicates_on :citing_type, :citing_id, :reference_id
@@ -24,7 +25,7 @@ class Citation < ApplicationRecord
   # (citing_type, citing_id, reference_id) prevents creation of new
   # duplicates; the rake task handles the backlog of existing duplicates.
 
-  belongs_to :citing, polymorphic: true
+  belongs_to :citing, polymorphic: true, touch: true
   belongs_to :reference
 
   validates :reference,
@@ -36,6 +37,8 @@ class Citation < ApplicationRecord
   acts_as_copy_target # enable CSV exports
 
   after_destroy :destroy_reference_if_orphaned
+
+  revision_comment_parent :citing
 
   def destroy_reference_if_orphaned
     reference.destroy_if_orphaned

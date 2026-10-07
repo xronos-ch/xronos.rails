@@ -258,6 +258,50 @@ class TypoTest < ActiveSupport::TestCase
     assert_not other_sample.destroyed?
   end
 
+  #
+  # Peripheral snapshots
+  #
+
+  test "typo update creates version with peripheral snapshot" do
+    with_versioning do
+      typo = create(:typo, name: "Roman Iron Age")
+      typo.update!(approx_start_time: -600)
+
+      version = typo.versions.last
+      assert version.snapshot_id.present?,
+        "Expected snapshot_id on typo update version"
+    end
+  end
+
+  test "typo update snapshot captures peripherals" do
+    with_versioning do
+      typo = create(:typo, :with_citations, citations_count: 2)
+      typo.update!(approx_start_time: -600)
+
+      version = typo.versions.last
+      snapshot = ActiveSnapshot::Snapshot.find(version.snapshot_id)
+
+      citation_items = snapshot.snapshot_items.where(child_group_name: "citations")
+      assert_equal typo.citations.count, citation_items.size,
+        "Expected snapshot to capture citations"
+    end
+  end
+
+  test "citation create triggers typo version with snapshot" do
+    with_versioning do
+      typo = create(:typo)
+      create(:citation, citing: typo)
+
+      version = typo.versions.reorder(created_at: :desc).first
+      assert version.snapshot_id.present?,
+        "Expected snapshot_id after citation create"
+
+      snapshot = ActiveSnapshot::Snapshot.find(version.snapshot_id)
+      items = snapshot.snapshot_items.where(child_group_name: "citations")
+      assert_equal 1, items.size
+    end
+  end
+
   test '.cross_sample_deduplicate! merges cross-sample duplicates in the existing dataset' do
     context = create(:context)
     canonical_sample = create(:sample, nameless_sample_attrs(context: context))

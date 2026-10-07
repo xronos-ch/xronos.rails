@@ -15,6 +15,8 @@
 #
 
 class SiteType < ApplicationRecord
+  include Peripheral
+
   default_scope { order(name: :asc) }
 
   include PgSearch::Model
@@ -24,9 +26,11 @@ class SiteType < ApplicationRecord
 
   acts_as_copy_target # enable CSV exports
 
-  has_many :sites, inverse_of: :site_type
+  has_and_belongs_to_many :sites
 
   validates :name, presence: true
+
+  touch_referencing_records :sites
 
   def self.label
     "site type"
@@ -35,5 +39,4 @@ class SiteType < ApplicationRecord
   def label
     name
   end
-
 end

@@ -48,6 +48,8 @@ class Site < ApplicationRecord
   has_many :linked_resources, as: :linkable, dependent: :destroy
   has_many :functional_classifications, as: :assignable, dependent: :destroy
 
+  snapshot_peripherals :site_names, :linked_resources, :functional_classifications, :citations, :site_types
+
   composed_of :coordinates,
               mapping: [%w[lng longitude], %w[lat latitude]],
               allow_nil: true,

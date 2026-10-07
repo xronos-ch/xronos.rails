@@ -59,6 +59,8 @@ class C14 < Chron
   include Linkable
   linkable_to :opencontext
 
+  snapshot_peripherals :citations, :linked_resources
+
   include PgSearch::Model
   pg_search_scope :search,
                   against: :lab_identifier,

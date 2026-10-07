@@ -27,6 +27,8 @@ class Typo < Chron
 
   validates :name, presence: true
 
+  snapshot_peripherals :citations
+
   include PgSearch::Model
   pg_search_scope :search,
                   against: :name,

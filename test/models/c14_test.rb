@@ -376,6 +376,66 @@ class C14Test < ActiveSupport::TestCase
     assert_equal 1, Citation.where(citing_type: 'C14', citing_id: canonical.id, reference: reference).count
   end
 
+  #
+  # Peripheral snapshots
+  #
+
+  test "c14 update creates version with peripheral snapshot" do
+    with_versioning do
+      c14 = create(:c14, lab_identifier: "OxA-12345")
+      c14.update!(bp: 4000)
+
+      version = c14.versions.last
+      assert version.snapshot_id.present?,
+        "Expected snapshot_id on c14 update version"
+    end
+  end
+
+  test "c14 update snapshot captures peripherals" do
+    with_versioning do
+      c14 = create(:c14, :with_citations, citations_count: 2)
+      c14.update!(bp: 4000)
+
+      version = c14.versions.last
+      snapshot = ActiveSnapshot::Snapshot.find(version.snapshot_id)
+
+      citation_items = snapshot.snapshot_items.where(child_group_name: "citations")
+      assert_equal c14.citations.count, citation_items.size,
+        "Expected snapshot to capture citations"
+    end
+  end
+
+  test "citation create triggers c14 version with snapshot" do
+    with_versioning do
+      c14 = create(:c14)
+      create(:citation, citing: c14)
+
+      version = c14.versions.reorder(created_at: :desc).first
+      assert version.snapshot_id.present?,
+        "Expected snapshot_id after citation create"
+
+      snapshot = ActiveSnapshot::Snapshot.find(version.snapshot_id)
+      items = snapshot.snapshot_items.where(child_group_name: "citations")
+      assert_equal 1, items.size
+    end
+  end
+
+  test "linked resource create triggers c14 version with snapshot" do
+    with_versioning do
+      c14 = create(:c14)
+      create(:linked_resource, linkable: c14, source: "OpenContext", external_id: "12345678-1234-1234-1234-123456789abc")
+
+      version = c14.versions.reorder(created_at: :desc).first
+      assert version.snapshot_id.present?,
+        "Expected snapshot_id after linked_resource create"
+
+      snapshot = ActiveSnapshot::Snapshot.find(version.snapshot_id)
+      items = snapshot.snapshot_items.where(child_group_name: "linked_resources")
+      assert_equal 1, items.size
+      assert_equal "OpenContext", items.first.object["source"]
+    end
+  end
+
   test '.cross_sample_deduplicate! merges cross-sample duplicates in the existing dataset' do
     context = create(:context)
     canonical_sample = create(:sample, nameless_sample_attrs(context: context))

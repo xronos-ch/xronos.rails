@@ -136,4 +136,49 @@ class ContextTest < ActiveSupport::TestCase
     # The canonical still exists
     assert Context.exists?(canonical.id)
   end
+
+  #
+  # Peripheral snapshots
+  #
+
+  test "context update creates version with peripheral snapshot" do
+    with_versioning do
+      context = create(:context, site: @site, name: "Trench A")
+      context.update!(approx_start_time: -1000)
+
+      version = context.versions.last
+      assert version.snapshot_id.present?,
+        "Expected snapshot_id on context update version"
+    end
+  end
+
+  test "context update snapshot captures peripherals" do
+    with_versioning do
+      context = create(:context, site: @site)
+      create(:functional_classification, assignable: context)
+      context.update!(approx_start_time: -1000)
+
+      version = context.versions.last
+      snapshot = ActiveSnapshot::Snapshot.find(version.snapshot_id)
+
+      fc_items = snapshot.snapshot_items.where(child_group_name: "functional_classifications")
+      assert_equal context.functional_classifications.count, fc_items.size,
+        "Expected snapshot to capture functional_classifications"
+    end
+  end
+
+  test "functional_classification create triggers context version with snapshot" do
+    with_versioning do
+      context = create(:context, site: @site)
+      create(:functional_classification, assignable: context)
+
+      version = context.versions.reorder(created_at: :desc).first
+      assert version.snapshot_id.present?,
+        "Expected snapshot_id after functional_classification create"
+
+      snapshot = ActiveSnapshot::Snapshot.find(version.snapshot_id)
+      items = snapshot.snapshot_items.where(child_group_name: "functional_classifications")
+      assert_equal 1, items.size
+    end
+  end
 end

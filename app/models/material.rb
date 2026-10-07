@@ -14,9 +14,10 @@
 #
 
 class Material < ApplicationRecord
+  include Peripheral
+
   default_scope { order(name: :asc) }
 
-  include Versioned
   include Mergeable
 
   exact_duplicates_on :name
@@ -24,6 +25,8 @@ class Material < ApplicationRecord
   has_many :samples, inverse_of: :material
 
   validates :name, presence: true
+
+  touch_referencing_records :samples
 
   after_save :merge_exact_duplicates
   validate :no_exact_duplicate, on: :create

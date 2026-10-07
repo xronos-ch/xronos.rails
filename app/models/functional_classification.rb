@@ -24,7 +24,9 @@
 #  fk_rails_...  (functional_classification_category_id => functional_classification_categories.id)
 #
 class FunctionalClassification < ApplicationRecord
-  belongs_to :assignable, polymorphic: true
+  include Peripheral
+
+  belongs_to :assignable, polymorphic: true, touch: true
   belongs_to :functional_classification_category
 
   enum :confidence, {
@@ -41,6 +43,8 @@ class FunctionalClassification < ApplicationRecord
             }
 
   validates :confidence, presence: true
+
+  revision_comment_parent :assignable
 
   has_paper_trail
   acts_as_copy_target

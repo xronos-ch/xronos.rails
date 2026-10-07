@@ -3,7 +3,11 @@ module Versioned
   extend ActiveSupport::Concern
 
   included do # instance methods
-    has_paper_trail meta: { revision_comment: :revision_comment }
+    has_paper_trail on: [:create, :update, :destroy, :touch],
+      meta: {
+        revision_comment: :revision_comment,
+        snapshot_id: :create_peripheral_snapshot
+      }
 
     attr_accessor :revision_comment
     #validates :revision_comment, presence: true
@@ -32,6 +36,18 @@ module Versioned
         )
       end
     end
+
+    ##
+    # DSL for declaring peripheral associations to snapshot
+    # Automatically handles nil values by wrapping in Array and compacting
+    def snapshot_peripherals(*associations)
+      has_snapshot_children do
+        instance = self.class.includes(*associations).find(id)
+        associations.each_with_object({}) do |assoc, hash|
+          hash[assoc] = Array(instance.public_send(assoc)).compact
+        end
+      end
+    end
   end
 
   def self.enqueue(parent:, association:, job:, batch_size:)
@@ -45,6 +61,19 @@ module Versioned
       revision_comment: parent.revision_comment,
       batch_size: batch_size
     )
+  end
+
+  def create_peripheral_snapshot
+    return nil unless self.class.respond_to?(:snapshot_children_proc) && self.class.snapshot_children_proc
+
+    snapshot = create_snapshot!(
+      identifier: "v#{self.class.base_class.model_name.singular}:#{id}:#{Time.current.to_f}",
+      metadata: { source: :paper_trail }
+    )
+    snapshot.id
+  rescue => e
+    Rails.logger.warn "Failed to create peripheral snapshot for #{self.class.name}##{id}: #{e.message}"
+    nil
   end
 
   private

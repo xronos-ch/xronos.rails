@@ -16,7 +16,7 @@
 #
 
 class Taxon < ApplicationRecord
-  include Versioned
+  include Peripheral
   include Mergeable
 
   exact_duplicates_on :name, { gbif_id: [:nil_matches_nil] }
@@ -24,6 +24,8 @@ class Taxon < ApplicationRecord
   has_many :samples
 
   validates :name, presence: true
+
+  touch_referencing_records :samples
 
   after_save :enqueue_gbif_sync
   after_save :merge_exact_duplicates
@@ -40,10 +42,6 @@ class Taxon < ApplicationRecord
     using: { tsearch: { prefix: true } } # match partial words
 
   acts_as_copy_target # enable CSV exports
-
-  validates :name, presence: true
-
-  has_many :samples
 
   scope :with_samples_count, -> {
     select <<~SQL

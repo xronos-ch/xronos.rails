@@ -51,6 +51,8 @@ class Context < ApplicationRecord
            as: :assignable,
            dependent: :destroy
 
+  snapshot_peripherals :functional_classifications
+
   # No `after_save :merge_exact_duplicates`: the model-level
   # uniqueness validation and DB unique index already prevent new
   # duplicates. Mergeable is here to power Site#reassign_contexts!

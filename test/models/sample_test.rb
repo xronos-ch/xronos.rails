@@ -360,4 +360,73 @@ class SampleTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
 
     assert_not a.name_relaxed_duplicate_of?(a)
   end
+
+  #
+  # Peripheral snapshots
+  #
+
+  test "sample update creates version with peripheral snapshot" do
+    with_versioning do
+      sample = create(:sample, name: "Bone 1")
+      sample.update!(name: "Bone 2")
+
+      version = sample.versions.last
+      assert version.snapshot_id.present?,
+        "Expected snapshot_id on sample update version"
+    end
+  end
+
+  test "sample update snapshot captures peripherals" do
+    with_versioning do
+      material = create(:material, name: "Bone")
+      taxon = create(:taxon, name: "Bos taurus")
+      sample = create(:sample, material: material, taxon: taxon)
+      sample.update!(name: "Bone 2")
+
+      version = sample.versions.last
+      snapshot = ActiveSnapshot::Snapshot.find(version.snapshot_id)
+
+      material_items = snapshot.snapshot_items.where(child_group_name: "material")
+      assert_equal 1, material_items.size,
+        "Expected snapshot to capture material"
+
+      taxon_items = snapshot.snapshot_items.where(child_group_name: "taxon")
+      assert_equal 1, taxon_items.size,
+        "Expected snapshot to capture taxon"
+    end
+  end
+
+  test "material update triggers sample version with snapshot" do
+    with_versioning do
+      material = create(:material, name: "Bone")
+      sample = create(:sample, material: material)
+      material.update!(name: "Wood")
+
+      version = sample.versions.reorder(created_at: :desc).first
+      assert version.snapshot_id.present?,
+        "Expected snapshot_id after material update"
+
+      snapshot = ActiveSnapshot::Snapshot.find(version.snapshot_id)
+      items = snapshot.snapshot_items.where(child_group_name: "material")
+      assert_equal 1, items.size
+      assert_equal "Wood", items.first.object["name"]
+    end
+  end
+
+  test "taxon update triggers sample version with snapshot" do
+    with_versioning do
+      taxon = create(:taxon, name: "Bos taurus")
+      sample = create(:sample, taxon: taxon)
+      taxon.update!(name: "Sus scrofa")
+
+      version = sample.versions.reorder(created_at: :desc).first
+      assert version.snapshot_id.present?,
+        "Expected snapshot_id after taxon update"
+
+      snapshot = ActiveSnapshot::Snapshot.find(version.snapshot_id)
+      items = snapshot.snapshot_items.where(child_group_name: "taxon")
+      assert_equal 1, items.size
+      assert_equal "Sus scrofa", items.first.object["name"]
+    end
+  end
 end
