@@ -1,5 +1,7 @@
-require "csv"
-require "ruby-progressbar"
+# frozen_string_literal: true
+
+require 'csv'
+require 'ruby-progressbar'
 
 module Xronos
   class ImportRunner
@@ -11,9 +13,9 @@ module Xronos
     end
 
     def self.parse_args!(args)
-      version = args[:version] || abort("Usage: bin/rails \"xronos:import:TASK[version,dir,source_url]\" — provide a version, data directory, and source URL")
-      dir = args[:dir] || abort("Usage: bin/rails \"xronos:import:TASK[version,dir,source_url]\" — provide a version, data directory, and source URL")
-      source_url = args[:source_url] || abort("Usage: bin/rails \"xronos:import:TASK[version,dir,source_url]\" — provide a version, data directory, and source URL")
+      version = args[:version] || abort('Usage: bin/rails "xronos:import:TASK[version,dir,source_url]" — provide a version, data directory, and source URL')
+      dir = args[:dir] || abort('Usage: bin/rails "xronos:import:TASK[version,dir,source_url]" — provide a version, data directory, and source URL')
+      source_url = args[:source_url] || abort('Usage: bin/rails "xronos:import:TASK[version,dir,source_url]" — provide a version, data directory, and source URL')
       abort "Source directory not found: #{dir}" unless Dir.exist?(dir)
 
       [version, dir, source_url]
@@ -26,7 +28,7 @@ module Xronos
       progress = ProgressBar.create(
         title: filename.to_s,
         total: total,
-        format: "%t |%B| %c/%C (%E)",
+        format: '%t |%B| %c/%C (%E)',
         output: @output
       )
 
@@ -41,7 +43,7 @@ module Xronos
       progress = ProgressBar.create(
         title: title.to_s,
         total: total,
-        format: "%t |%B| %c/%C (%E)",
+        format: '%t |%B| %c/%C (%E)',
         output: @output
       )
       enumerable.each do |item|
@@ -60,9 +62,9 @@ module Xronos
     end
 
     def report!
-      all_models = @import.records_created.keys.select { |m|
-        @import.records_created.fetch(m, 0) > 0
-      }.sort
+      all_models = @import.records_created.keys.select do |m|
+        @import.records_created.fetch(m, 0).positive?
+      end.sort
 
       return if all_models.empty?
 
@@ -73,15 +75,15 @@ module Xronos
 
       total = @import.records_created_total
 
-      skipped = @import.records_skipped.reject { |_, v| v == 0 }
+      skipped = @import.records_skipped.reject { |_, v| v.zero? }
 
-      label_width = [rows.map { |r| r[0].length }.max, "Model".length].max
-      num_width  = [total.to_s.length, "Created".length].max
+      label_width = [rows.map { |r| r[0].length }.max, 'Model'.length].max
+      num_width = [total.to_s.length, 'Created'.length].max
 
-      sep = "+-#{"-" * label_width}-+-#{"-" * num_width}-+"
+      sep = "+-#{'-' * label_width}-+-#{'-' * num_width}-+"
 
       puts
-      puts "--- Import complete ---"
+      puts '--- Import complete ---'
       puts
       puts sep
       puts "| #{'Model'.ljust(label_width)} | #{'Created'.rjust(num_width)} |"
@@ -93,15 +95,15 @@ module Xronos
       puts "| #{'Total'.ljust(label_width)} | #{total.to_s.rjust(num_width)} |"
       puts sep
 
-      unless skipped.empty?
-        total_skipped = skipped.values.sum
-        puts
-        puts "Skipped rows: #{total_skipped}"
-        skipped.each do |reason, count|
-          puts "  #{reason}: #{count}"
-        end
-        puts
+      return if skipped.empty?
+
+      total_skipped = skipped.values.sum
+      puts
+      puts "Skipped rows: #{total_skipped}"
+      skipped.each do |reason, count|
+        puts "  #{reason}: #{count}"
       end
+      puts
     end
 
     def cell(row, column)
@@ -111,7 +113,7 @@ module Xronos
     def skip_unless(condition, reason = nil)
       return if condition
 
-      key = reason || "unknown"
+      key = reason || 'unknown'
       @import.records_skipped[key] = @import.records_skipped.fetch(key, 0) + 1
       throw :skip_row
     end
@@ -132,6 +134,17 @@ module Xronos
         increment_created(record.model_name.singular)
       end
 
+      record
+    end
+
+    # Always creates a new record in the given scope, never finding existing ones.
+    # Use when source data implies each row is distinct (e.g. samples without a
+    # shared identifier). Model-level duplicate detection still applies after save.
+    def build_new!(scope, attributes: {}, revision_comment: nil)
+      record = scope.new(attributes)
+      record.revision_comment = revision_comment if record.respond_to?(:revision_comment=)
+      record.save!
+      increment_created(record.model_name.singular)
       record
     end
 

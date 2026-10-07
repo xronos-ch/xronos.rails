@@ -93,6 +93,7 @@ end
 | Method | Purpose |
 |--------|---------|
 | `import!(scope, keys:, attributes: {}, revision_comment: nil)` | Create-only import; finds by merged keys+attributes, creates on miss |
+| `build_new!(scope, attributes: {}, revision_comment: nil)` | Always creates a new record (never finds); use when each row is distinct |
 | `cell(row, column)` | Sanitise CSV cell: strip whitespace, blank → `nil` |
 | `skip_unless(condition, reason)` | Guard clause: `throw :skip_row` unless condition is truthy; counts skipped rows by `reason` in `records_skipped` |
 | `cite_source!(citable)` | Link a citable record to the source's reference (must set `source.reference` first) |
