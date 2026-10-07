@@ -2,65 +2,59 @@
 
 ## [Unreleased]
 
+### Breaking changes
+
 - Maps now require a CARTO API key (#524)
-- Peripheral record changes (citations, linked resources, functional
-  classifications, materials, taxa) are now tracked in the version history of
-  core scientific records (C14s, Typos, Contexts, Samples, Sites) (#502)
+- Environment variable `ADMIN_USER_PASSWORD` is now required when seeding a
+  new database
+
+### New features
+
 - **Migrations required:** exact duplicate scientific records are now detected
-  and automatically merged (#309, #515)
-  - Rejects creation of exact duplicate scientific records (#310)
-  - Warns when updating a record will cause it to be merged (#311)
-  - Chrons (C14s and Typos) can merge exact duplicates across unnamed but
-    otherwise identical samples (#516)
-- **Migrations required**: scientific records can now be *superseded*: soft-
-  deleted and replaced by another record, retaining their permalink (#496).
-- **Migrations required**: Added `name` attribute to samples (#371)
-- **Migrations required** removed the unused MeasurementStates
-- Added OpenContext, Pleiades, Vici.org, and iDAI.gazetteer as potential linked
-  record sources for sites and c14s (OpenContext only) (#487)
-  - **Migrations required:** Renamed LODLinks to LinkedResources (#372)
-  - Public views and controllers for linked resources decoupled from Wikidata
-    specifically (previously the only available linked record source)
-- Added a "Site description" section to site show pages populated via Wikidata
-  - Linked-data panel on site pages no longer fetches supplementary data
-    from Wikidata or Wikipedia on every page load (#479)
+  and automatically merged. Rejects creation of duplicates (#310), warns when
+  an update will cause a merge (#311), and can merge across unnamed but
+  identical samples (#516). (#309, #515)
+- **Migrations required:** scientific records can now be *superseded*:
+  soft-deleted and replaced by another record, retaining their permalink (#496).
+- **Migrations required:** added `name` attribute to samples (#371)
+- **Migrations required:** added OpenContext, Pleiades, Vici.org, and
+  iDAI.gazetteer as linked record sources for sites and c14s (#487). Renamed
+  LODLinks to LinkedResources (#372). Public views/controllers decoupled from
+  Wikidata specifically. Added site description section populated via Wikidata;
+  linked-data panel no longer fetches supplementary data on every page load (#479).
+- **Migrations required:** added admin CLI for importing tabular datasets from
+  CSV and BibTeX, replacing the removed GUI import_tables feature (#341)
+- **Migrations required:** added generic representation of controlled
+  vocabularies with variant thesauri (#444), including controlled term attribute
+  `part_of_organism` on samples (#253)
+- **Migrations required:** peripheral associated records are now snapshotted on
+  Site versions via ActiveSnapshot (#502), including new snapshots and
+  snapshot_items tables. Site version history now shows a unified diff of both
+  Site changes and peripheral record changes. SiteNames and LinkedResources now
+  generate contextual revision comments when added, changed, or removed.
+- **Migrations required:** added affiliations to user profiles
+- Editing taxons now uses the GBIF search API for suggestions (#250), with
+  asynchronous requests that don't block page rendering (#417).
+- Added MIaaRD-shaped JSON export for radiocarbon determinations, including
+  single-record downloads for C14 records and filter-aware collection export
+  from the public data browser. Uses the current MIaaRD `RadiocarbonDate`
+  field structure.
+- Added second column to article show views with extended author metadata on
+  news articles, table of contents on about pages, and suggested citations (#117).
+- Added Atom and RSS feeds of news articles (#395).
+
+### Bug fixes
+
+- Fixed synchronisation of taxons with GBIF by replacing the deprecated V1
+  species match API (#417).
+
+### Other changes
+
+- **Migration required:** removed the unused MeasurementStates.
 - Optimised JavaScript asset pipeline (#217)
-- **Migrations required:** Added admin CLI for importing tabular datasets
-  from CSV and BibTeX, replacing the removed GUI import_tables feature
-  (#341)
-- Editing taxons now makes suggestions using the GBIF search API (#250)
-- Fixed synchronisation of taxons with GBIF (#417)
-  - Replacing use of GBIF's deprecated V1 species match API
-  - Requests to GBIF are now made asynchronously and do not block page rendering
-  - Tests no longer required on requests to GBIF
-- **Migrations required**: added generic representation of controlled
-  vocabularies with variant thesauri (#444)
-  - Added controlled term attribute `part_of_organism` to samples (#253)
-- Added MIaaRD-shaped JSON export for radiocarbon determinations
-  - Added single-record MIaaRD JSON downloads for C14 records
-  - Added filter-aware MIaaRD JSON collection export from the public data browser
-  - Export follows the current MIaaRD `RadiocarbonDate` field structure and uses
-    `null` for MIaaRD fields that XRONOS cannot provide safely
 - Made software version visible in page footer and added Zenodo archive link (#436)
 - Removed standalone Typo show view. Typological dates are now only shown
   embedded in Site views (#398)
-- **Migration required:** Peripheral associated records are now
-  snapshotted on Site versions via ActiveSnapshot
-  - Added new tables (snapshots, snapshot_items) and
-    add_snapshot_id_to_versions migration
-  - Site version history now shows a unified diff of both Site
-    changes and peripheral record changes
-- SiteNames and LinkedResources now generate contextual revision comments
-  when added, changed, or removed (e.g. "Added site name.")
-- **Migration required:** Added affiliations to user profiles
-- Added second column to article show views (news and about pages)
-  - Showing extended author metadata on news articles
-  - Showing table of contents on about pages
-  - Added suggested citation for articles
-- Added OpenGraph metadata with additional metadata for articles (#117)
-- Added Atom and RSS feeds of news articles (#395)
-- **Breaking change:** Environment variable `ADMIN_USER_PASSWORD` is now
-  required when seeding a new database
 - Improved test coverage
 
 ## [1.2.2] - 2026-07-03
