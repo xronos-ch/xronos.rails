@@ -42,7 +42,11 @@ class TightenLinkedResourceUniqueness < ActiveRecord::Migration[8.0]
                  .where(linkable_type: linkable_type, linkable_id: linkable_id, source: source)
                  .order(Arel.sql("CASE WHEN status = 'approved' THEN 0 ELSE 1 END"), updated_at: :desc, id: :asc)
     keeper = duplicates.first
-    duplicates.where.not(id: keeper.id).destroy_all
+    # Use delete_all (not destroy_all): migrations must not depend on model
+    # callbacks. Callbacks on LinkedResource load the parent record, which
+    # may reference tables created by later migrations, and would generate
+    # spurious PaperTrail versions for a data cleanup.
+    duplicates.where.not(id: keeper.id).delete_all
   end
 
   def swap_unique_index
