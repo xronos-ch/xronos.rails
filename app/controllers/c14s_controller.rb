@@ -163,7 +163,16 @@ class C14sController < ApplicationController
   end
 
   def set_c14
-    @c14 = C14.find(params[:id])
+    @c14 = C14.includes(
+      sample: [
+        :material,
+        :taxon,
+        context: [
+          :site,
+          { functional_classifications: :functional_classification_category }
+        ]
+      ]
+    ).find(params[:id])
   end
 
   def set_site
