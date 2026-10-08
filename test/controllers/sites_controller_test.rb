@@ -75,6 +75,9 @@ class SitesControllerTest < ActionDispatch::IntegrationTest
     create_list(:typo, 1, sample: sample)
     create_list(:citation, 3, citing: site)
 
+    # Refresh the materialized view to pick up the new data
+    ActiveRecord::Base.connection.execute('REFRESH MATERIALIZED VIEW sites_with_counts')
+
     get site_path(site)
 
     assert_response :success

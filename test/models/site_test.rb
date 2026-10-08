@@ -328,6 +328,9 @@ class SiteTest < ActiveSupport::TestCase
     create_list(:typo, 2, sample: sample)
     create_list(:citation, 4, citing: site)
 
+    # Refresh the materialized view to pick up the new data
+    ActiveRecord::Base.connection.execute('REFRESH MATERIALIZED VIEW sites_with_counts')
+
     result = Site.with_counts.find(site.id)
 
     assert_equal 3, result.c14s_count
