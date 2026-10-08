@@ -5,20 +5,22 @@
 # Table name: c14s
 # Database name: primary
 #
-#  id             :bigint           not null, primary key
-#  bp             :integer
-#  cal_bp         :integer
-#  cal_std        :integer
-#  delta_15n      :float
-#  delta_c13      :float
-#  delta_c13_std  :float
-#  lab_identifier :string
-#  method         :string
-#  std            :integer
-#  created_at     :datetime         not null
-#  updated_at     :datetime         not null
-#  c14_lab_id     :bigint
-#  sample_id      :bigint
+#  id                    :bigint           not null, primary key
+#  bp                    :integer
+#  cal_bp                :integer
+#  cal_std               :integer
+#  carbon_nitrogen_ratio :float
+#  carbon_proportion     :float
+#  delta_15n             :float
+#  delta_c13             :float
+#  delta_c13_std         :float
+#  lab_identifier        :string
+#  method                :string
+#  std                   :integer
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  c14_lab_id            :bigint
+#  sample_id             :bigint
 #
 # Indexes
 #
@@ -64,6 +66,27 @@ class C14Test < ActiveSupport::TestCase
   test 'returns nil f14c error without conventional radiocarbon age or error' do
     assert_nil C14.new(bp: nil, std: 30).f14c_error
     assert_nil C14.new(bp: 4500, std: nil).f14c_error
+  end
+
+  test 'carbon_proportion accepts nil' do
+    c14 = build(:c14, carbon_proportion: nil)
+    assert c14.valid?
+  end
+
+  test 'carbon_proportion accepts values between 0 and 1' do
+    assert build(:c14, carbon_proportion: 0.0).valid?
+    assert build(:c14, carbon_proportion: 0.5).valid?
+    assert build(:c14, carbon_proportion: 1.0).valid?
+  end
+
+  test 'carbon_proportion rejects values outside 0..1' do
+    c14 = build(:c14, carbon_proportion: -0.1)
+    assert_not c14.valid?
+    assert_includes c14.errors[:carbon_proportion], 'must be greater than or equal to 0'
+
+    c14 = build(:c14, carbon_proportion: 1.1)
+    assert_not c14.valid?
+    assert_includes c14.errors[:carbon_proportion], 'must be less than or equal to 1'
   end
 
   #

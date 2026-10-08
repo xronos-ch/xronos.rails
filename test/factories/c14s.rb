@@ -3,20 +3,22 @@
 # Table name: c14s
 # Database name: primary
 #
-#  id             :bigint           not null, primary key
-#  bp             :integer
-#  cal_bp         :integer
-#  cal_std        :integer
-#  delta_15n      :float
-#  delta_c13      :float
-#  delta_c13_std  :float
-#  lab_identifier :string
-#  method         :string
-#  std            :integer
-#  created_at     :datetime         not null
-#  updated_at     :datetime         not null
-#  c14_lab_id     :bigint
-#  sample_id      :bigint
+#  id                    :bigint           not null, primary key
+#  bp                    :integer
+#  cal_bp                :integer
+#  cal_std               :integer
+#  carbon_nitrogen_ratio :float
+#  carbon_proportion     :float
+#  delta_15n             :float
+#  delta_c13             :float
+#  delta_c13_std         :float
+#  lab_identifier        :string
+#  method                :string
+#  std                   :integer
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  c14_lab_id            :bigint
+#  sample_id             :bigint
 #
 # Indexes
 #
