@@ -142,6 +142,7 @@ class Chron < ApplicationRecord
     row = self.class.connection.select_one(self.class.cross_sample_pair_sql(for_id: id))
     return nil unless row
 
-    self.class.find(row['other_chron_id']).sample
+    other_chron = self.class.unscoped.find(row['other_chron_id'])
+    other_chron.ultimately_superseded_by.sample
   end
 end
