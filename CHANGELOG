@@ -6,8 +6,8 @@
 
 - Links to CSV exports no longer contain meaningless pagination and ordering
   parameters. Requests with these parameters are now rejected as bad requests.
-- **Migrations required:** Improved performance of BibTeX citation rendering, 
-  site index tables and C14 show views.
+- **Migrations required:** Improved performance of data browser, BibTeX 
+  citation rendering, site index tables and C14 show views.
 
 ## [0.3.0] - 2026-10-07
 
