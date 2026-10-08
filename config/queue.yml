@@ -11,6 +11,9 @@ default: &default
     sites_with_counts_refresh:
       class: Sites::RefreshCountsJob
       schedule: "0 * * * *"  # Every hour
+    data_views_refresh:
+      class: RefreshDataViewsJob
+      schedule: "0 0 * * *"  # Daily at midnight
 
 development:
   <<: *default
