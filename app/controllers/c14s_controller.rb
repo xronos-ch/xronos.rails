@@ -17,7 +17,12 @@ class C14sController < ApplicationController
   # GET /c14s.csv
   def index
     @c14s = C14.includes(sample: [:taxon, { context: :site }])
-    @c14s = @c14s.where(c14_params) unless c14_params.blank?
+
+    # filter
+    unless c14_params.blank?
+      @c14_params = c14_params
+      @c14s = @c14s.where(c14_params)
+    end
 
     respond_to do |format|
       format.html do

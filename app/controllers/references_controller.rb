@@ -16,6 +16,7 @@ class ReferencesController < ApplicationController
 
     # filter
     unless reference_params.blank?
+      @reference_params = reference_params
       @references = @references.where(reference_params)
     end
 

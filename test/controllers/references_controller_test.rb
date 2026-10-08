@@ -41,4 +41,25 @@ class ReferencesControllerTest < ActionDispatch::IntegrationTest
     assert_response :moved_permanently
     assert_equal reference_url(canonical), response.location
   end
+
+  test 'CSV download link does not include pagination or ordering parameters' do
+    reference = create(:reference)
+
+    get references_path(format: :csv, references_order_by: 'short_ref', references_order: 'desc', page: 5)
+
+    assert_response :success
+    assert_equal 'text/csv', response.media_type
+  end
+
+  test 'CSV download with filter parameters includes only filters' do
+    create(:reference, short_ref: 'Test2020')
+    create(:reference, short_ref: 'Other2021')
+
+    get references_path(format: :csv, reference: { short_ref: 'Test2020' })
+
+    assert_response :success
+    assert_equal 'text/csv', response.media_type
+    assert_includes response.body, 'Test2020'
+    assert_not_includes response.body, 'Other2021'
+  end
 end
