@@ -320,6 +320,21 @@ class SiteTest < ActiveSupport::TestCase
     assert_equal 1, FunctionalClassification.where(assignable_type: 'Site', assignable_id: canonical.id).count
   end
 
+  test 'with_counts returns correct c14s_count, typos_count, and references_count' do
+    site = create(:site)
+    context = create(:context, site: site)
+    sample = create(:sample, context: context)
+    create_list(:c14, 3, sample: sample)
+    create_list(:typo, 2, sample: sample)
+    create_list(:citation, 4, citing: site)
+
+    result = Site.with_counts.find(site.id)
+
+    assert_equal 3, result.c14s_count
+    assert_equal 2, result.typos_count
+    assert_equal 4, result.references_count
+  end
+
   #
   # Peripheral snapshots
   #

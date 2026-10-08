@@ -66,4 +66,20 @@ class SitesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_equal 'text/csv', response.media_type
   end
+
+  test 'show uses pre-computed counts and does not issue extra COUNT queries' do
+    site = create(:site)
+    context = create(:context, site: site)
+    sample = create(:sample, context: context)
+    create_list(:c14, 2, sample: sample)
+    create_list(:typo, 1, sample: sample)
+    create_list(:citation, 3, citing: site)
+
+    get site_path(site)
+
+    assert_response :success
+    assert_match(/2 radiocarbon dates/, response.body)
+    assert_match(/1 typological classification/, response.body)
+    assert_match(/3 bibliographic references/, response.body)
+  end
 end

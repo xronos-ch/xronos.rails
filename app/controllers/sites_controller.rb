@@ -171,7 +171,7 @@ class SitesController < ApplicationController
   private
 
   def set_site
-    @site = Site.includes(:linked_resources).find(params[:id])
+    @site = Site.with_counts.includes(:linked_resources).find(params[:id])
   end
 
   def site_params

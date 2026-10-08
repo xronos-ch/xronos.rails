@@ -110,7 +110,13 @@ class Site < ApplicationRecord
         JOIN samples ON samples.id = typos.sample_id
         JOIN contexts ON contexts.id = samples.context_id
         WHERE contexts.site_id = sites.id
-      ) AS typos_count
+      ) AS typos_count,
+      (
+        SELECT COUNT(citations.id)#{' '}
+        FROM citations
+        WHERE citations.citing_type = 'Site'
+          AND citations.citing_id = sites.id
+      ) AS references_count
     SQL
   }
 
