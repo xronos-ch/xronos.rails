@@ -1,6 +1,6 @@
 ---
 name: import-tasks
-description: Write xronos:import:* rake tasks using ImportRunner — import external datasets from CSV and BibTeX with provenance tracking and PaperTrail auditing.
+description: Write xronos:import:* rake tasks using ImportRunner — import external datasets from CSV, XLSX, and BibTeX with provenance tracking and PaperTrail auditing.
 license: MIT
 ---
 
@@ -88,7 +88,7 @@ end
 
 ## API Reference
 
-### Available inside blocks (`csv`, `process_enum`) via `instance_exec`
+### Available inside blocks (`csv`, `xlsx`, `process_enum`) via `instance_exec`
 
 | Method | Purpose |
 |--------|---------|
@@ -105,6 +105,7 @@ end
 |--------|---------|
 | `Xronos::ImportRunner.parse_args!(args)` | (class method) Extract `version, dir, source_url` from task args; aborts with usage on missing args or missing dir |
 | `csv(filename, **csv_options, &block)` | Iterate CSV with progress bar; options forwarded to `CSV.foreach` |
+| `xlsx(filename, sheets:, header_row: 1, &block)` | Iterate XLSX sheets with progress bar; `sheets` can be a single name or array; `header_row` defaults to 1; strips HTML tags from headers |
 | `process_enum(enumerable, title:, &block)` | Iterate any enumerable with progress bar |
 | `describe!(whodunnit:, revision_comment:)` | Print pre-import options header |
 | `report!` | Print post-import ASCII table of created records |

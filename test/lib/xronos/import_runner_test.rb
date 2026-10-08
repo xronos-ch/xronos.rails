@@ -4,6 +4,7 @@ require 'test_helper'
 require 'stringio'
 require 'tempfile'
 require 'csv'
+require 'roo'
 
 module Xronos
   class ImportRunnerTest < ActiveSupport::TestCase
@@ -274,6 +275,81 @@ module Xronos
       assert runner.import_record.records_skipped.empty?
     end
 
+    test 'xlsx yields rows from specified sheet' do
+      write_xlsx('data.xlsx', { 'Sheet1' => [%w[Name Lat], %w[Alpha 10.5], %w[Beta 20.3]] })
+
+      rows = []
+      runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
+      runner.xlsx('data.xlsx', sheets: 'Sheet1') { |row| rows << row }
+
+      assert_equal 2, rows.size
+      assert_equal 'Alpha', rows[0]['Name']
+      assert_equal '10.5', rows[0]['Lat'].to_s
+    end
+
+    test 'xlsx iterates multiple sheets' do
+      sheets = {
+        'North' => [%w[Site], %w[A], %w[B]],
+        'South' => [%w[Site], %w[C]]
+      }
+      write_xlsx('data.xlsx', sheets)
+
+      rows = []
+      runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
+      runner.xlsx('data.xlsx', sheets: %w[North South]) { |row| rows << row['Site'] }
+
+      assert_equal %w[A B C], rows
+    end
+
+    test 'xlsx strips HTML tags from headers' do
+      sheets = { 'Data' => [
+        ['<html><b>Name</b></html>', '<sup>14</sup>C age'],
+        %w[Alpha 3000],
+        %w[Beta 4000]
+      ] }
+      write_xlsx('data.xlsx', sheets)
+
+      rows = []
+      runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
+      runner.xlsx('data.xlsx', sheets: 'Data') { |row| rows << row }
+
+      assert_equal 2, rows.size
+      assert_equal 'Alpha', rows[0]['Name']
+      assert_equal '3000', rows[0]['14C age'].to_s
+    end
+
+    test 'xlsx uses specified header_row' do
+      sheets = { 'Data' => [
+        ['Category header', nil],
+        %w[Name Age],
+        %w[Alpha 100],
+        %w[Beta 200]
+      ] }
+      write_xlsx('data.xlsx', sheets)
+
+      rows = []
+      runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
+      runner.xlsx('data.xlsx', sheets: 'Data', header_row: 2) { |row| rows << row }
+
+      assert_equal 2, rows.size
+      assert_equal 'Alpha', rows[0]['Name']
+      assert_equal '100', rows[0]['Age'].to_s
+    end
+
+    test 'xlsx skip_unless works like csv' do
+      write_xlsx('data.xlsx', { 'Sheet1' => [%w[Name BP], %w[Alpha 100], %w[Beta], %w[Gamma 200]] })
+
+      kept = []
+      runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
+      runner.xlsx('data.xlsx', sheets: 'Sheet1') do |row|
+        skip_unless row['BP'], 'missing BP'
+        kept << row['Name']
+      end
+
+      assert_equal %w[Alpha Gamma], kept
+      assert_equal 1, runner.import_record.records_skipped['missing BP']
+    end
+
     private
 
     def write_csv(filename, rows)
@@ -281,6 +357,25 @@ module Xronos
       CSV.open(path, 'w') do |csv|
         rows.each { |row| csv << row }
       end
+    end
+
+    def write_xlsx(filename, sheets_data)
+      path = File.join(@csv_dir, filename)
+      workbook = RubyXL::Workbook.new
+
+      sheets_data.each_with_index do |(sheet_name, rows), idx|
+        sheet = idx.zero? ? workbook[0] : workbook.add_worksheet(sheet_name)
+        sheet.sheet_name = sheet_name if idx.zero?
+
+        rows.each_with_index do |row_data, row_idx|
+          row_data.each_with_index do |cell_value, col_idx|
+            cell = sheet.add_cell(row_idx, col_idx, cell_value)
+            cell.change_number_format(RubyXL::NumberFormat::NUMBER_GENERAL) if cell_value.is_a?(Numeric)
+          end
+        end
+      end
+
+      workbook.write(path)
     end
   end
 end

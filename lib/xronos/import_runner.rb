@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'csv'
+require 'roo'
 require 'ruby-progressbar'
 
 module Xronos
@@ -35,6 +36,34 @@ module Xronos
       CSV.foreach(path, headers: true, **csv_options) do |row|
         catch(:skip_row) { instance_exec(row, &block) }
         progress.increment
+      end
+    end
+
+    def xlsx(filename, sheets:, header_row: 1, &block)
+      path = File.join(@csv_dir, filename.to_s)
+      workbook = Roo::Spreadsheet.open(path)
+      sheets = Array(sheets)
+
+      sheets.each do |sheet_name|
+        sheet = workbook.sheet(sheet_name)
+        headers = sheet.row(header_row).map { |h| h.to_s.gsub(/<[^>]+>/, '') }
+        total = sheet.last_row - header_row
+
+        progress = ProgressBar.create(
+          title: sheet_name.to_s,
+          total: total,
+          format: '%t |%B| %c/%C (%E)',
+          output: @output
+        )
+
+        ((header_row + 1)..sheet.last_row).each do |row_num|
+          row_values = sheet.row(row_num)
+          row_hash = headers.each_with_index.each_with_object({}) do |(header, idx), hash|
+            hash[header] = row_values[idx]
+          end
+          catch(:skip_row) { instance_exec(row_hash, &block) }
+          progress.increment
+        end
       end
     end
 
