@@ -7,6 +7,13 @@ default: &default
       threads: 3
       processes: <%= ENV.fetch("JOB_CONCURRENCY", 1) %>
       polling_interval: 0.1
+  recurring:
+    sites_with_counts_refresh:
+      class: Sites::RefreshCountsJob
+      schedule: "0 * * * *"  # Every hour
+    data_views_refresh:
+      class: RefreshDataViewsJob
+      schedule: "0 0 * * *"  # Daily at midnight
 
 development:
   <<: *default

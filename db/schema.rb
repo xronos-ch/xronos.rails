@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_07_193908) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_08_120001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -456,8 +456,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_07_193908) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-
-
   create_table "versions", force: :cascade do |t|
     t.string "item_type", null: false
     t.bigint "item_id", null: false
@@ -489,8 +487,40 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_07_193908) do
   add_foreign_key "supersession_events", "users", column: "whodunnit_user_id"
   add_foreign_key "user_profiles", "users"
 
+  create_view "sites_with_counts", materialized: true, sql_definition: <<-SQL
+      SELECT sites.id,
+      sites.name,
+      sites.lat,
+      sites.lng,
+      sites.created_at,
+      sites.updated_at,
+      sites.country_code,
+      COALESCE(c14_counts.c14s_count, (0)::bigint) AS c14s_count,
+      COALESCE(typo_counts.typos_count, (0)::bigint) AS typos_count,
+      COALESCE(ref_counts.references_count, (0)::bigint) AS references_count
+     FROM (((sites
+       LEFT JOIN ( SELECT contexts.site_id,
+              count(*) AS c14s_count
+             FROM ((c14s
+               JOIN samples ON ((samples.id = c14s.sample_id)))
+               JOIN contexts ON ((contexts.id = samples.context_id)))
+            GROUP BY contexts.site_id) c14_counts ON ((c14_counts.site_id = sites.id)))
+       LEFT JOIN ( SELECT contexts.site_id,
+              count(*) AS typos_count
+             FROM ((typos
+               JOIN samples ON ((samples.id = typos.sample_id)))
+               JOIN contexts ON ((contexts.id = samples.context_id)))
+            GROUP BY contexts.site_id) typo_counts ON ((typo_counts.site_id = sites.id)))
+       LEFT JOIN ( SELECT citations.citing_id AS site_id,
+              count(*) AS references_count
+             FROM citations
+            WHERE ((citations.citing_type)::text = 'Site'::text)
+            GROUP BY citations.citing_id) ref_counts ON ((ref_counts.site_id = sites.id)));
+  SQL
+  add_index "sites_with_counts", ["id"], name: "index_sites_with_counts_on_id", unique: true
+
   create_view "data_views", materialized: true, sql_definition: <<-SQL
-      SELECT DISTINCT c14s.id,
+      SELECT c14s.id,
       c14s.lab_identifier AS labnr,
       c14s.bp,
       c14s.std,
@@ -502,58 +532,42 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_07_193908) do
       materials.name AS material,
       taxons.name AS species,
       contexts.name AS feature,
-      ( SELECT st.name
-             FROM (((site_types st
-               JOIN site_types_sites sts ON ((st.id = sts.site_type_id)))
-               JOIN contexts ctx ON ((ctx.site_id = sts.site_id)))
-               JOIN samples samp ON ((samp.context_id = ctx.id)))
-            WHERE ((samp.id = samples.id) AND (st.name IS NOT NULL))
-           LIMIT 1) AS feature_type,
+      site_type_lateral.st_name AS feature_type,
       sites.name AS site,
       sites.country_code AS country,
       (sites.lat)::text AS lat,
       (sites.lng)::text AS lng,
-      ( SELECT st.name
-             FROM (((site_types st
-               JOIN site_types_sites sts ON ((st.id = sts.site_type_id)))
-               JOIN contexts ctx ON ((ctx.site_id = sts.site_id)))
-               JOIN samples samp ON ((samp.context_id = ctx.id)))
-            WHERE ((samp.id = samples.id) AND (st.name IS NOT NULL))
-           LIMIT 1) AS site_type,
-      (COALESCE(( SELECT json_agg(json_build_object('periode', tp.name)) AS json_agg
-             FROM (((typos tp
-               JOIN samples sam ON ((tp.sample_id = sam.id)))
-               JOIN contexts contexts_1 ON ((sam.context_id = contexts_1.id)))
-               JOIN samples all_samples ON ((all_samples.context_id = contexts_1.id)))
-            WHERE (all_samples.id = samples.id)), '[]'::json))::jsonb AS periods,
-      (COALESCE(( SELECT json_agg(json_build_object('typochronological_unit', tp.name)) AS json_agg
-             FROM (((typos tp
-               JOIN samples sam ON ((tp.sample_id = sam.id)))
-               JOIN contexts contexts_1 ON ((sam.context_id = contexts_1.id)))
-               JOIN samples all_samples ON ((all_samples.context_id = contexts_1.id)))
-            WHERE (all_samples.id = samples.id)), '[]'::json))::jsonb AS typochronological_units,
-      (COALESCE(( SELECT json_agg(json_build_object('ecochronological_unit', tp.name)) AS json_agg
-             FROM (((typos tp
-               JOIN samples sam ON ((tp.sample_id = sam.id)))
-               JOIN contexts contexts_1 ON ((sam.context_id = contexts_1.id)))
-               JOIN samples all_samples ON ((all_samples.context_id = contexts_1.id)))
-            WHERE (all_samples.id = samples.id)), '[]'::json))::jsonb AS ecochronological_units,
-      (COALESCE(( SELECT json_agg(json_build_object('reference', ref.short_ref)) AS json_agg
-             FROM ("references" ref
-               JOIN citations cit ON ((ref.id = cit.reference_id)))
-            WHERE (((cit.citing_type)::text = 'C14'::text) AND (cit.citing_id = c14s.id))), '[]'::json))::jsonb AS reference
-     FROM (((((((c14s
+      site_type_lateral.st_name AS site_type,
+      (COALESCE(typo_agg.periods, '[]'::json))::jsonb AS periods,
+      (COALESCE(typo_agg.typochronological_units, '[]'::json))::jsonb AS typochronological_units,
+      (COALESCE(typo_agg.ecochronological_units, '[]'::json))::jsonb AS ecochronological_units,
+      (COALESCE(ref_agg.reference, '[]'::json))::jsonb AS reference
+     FROM ((((((((c14s
        LEFT JOIN samples ON ((samples.id = c14s.sample_id)))
        LEFT JOIN materials ON ((materials.id = samples.material_id)))
        LEFT JOIN taxons ON ((taxons.id = samples.taxon_id)))
        LEFT JOIN contexts ON ((contexts.id = samples.context_id)))
        LEFT JOIN sites ON ((sites.id = contexts.site_id)))
-       LEFT JOIN site_types_sites ON ((site_types_sites.site_id = sites.id)))
-       LEFT JOIN site_types ON ((site_types_sites.site_type_id = site_types.id)));
+       LEFT JOIN LATERAL ( SELECT st.name AS st_name
+             FROM (site_types st
+               JOIN site_types_sites sts ON ((st.id = sts.site_type_id)))
+            WHERE ((sts.site_id = sites.id) AND (st.name IS NOT NULL))
+           LIMIT 1) site_type_lateral ON (true))
+       LEFT JOIN LATERAL ( SELECT json_agg(json_build_object('periode', tp.name)) AS periods,
+              json_agg(json_build_object('typochronological_unit', tp.name)) AS typochronological_units,
+              json_agg(json_build_object('ecochronological_unit', tp.name)) AS ecochronological_units
+             FROM (typos tp
+               JOIN samples sam ON ((tp.sample_id = sam.id)))
+            WHERE (sam.context_id = samples.context_id)) typo_agg ON (true))
+       LEFT JOIN LATERAL ( SELECT json_agg(json_build_object('reference', ref.short_ref)) AS reference
+             FROM ("references" ref
+               JOIN citations cit ON ((ref.id = cit.reference_id)))
+            WHERE (((cit.citing_type)::text = 'C14'::text) AND (cit.citing_id = c14s.id))) ref_agg ON (true));
   SQL
+  add_index "data_views", ["bp"], name: "index_data_views_on_bp"
   add_index "data_views", ["country"], name: "index_data_views_on_country"
   add_index "data_views", ["feature"], name: "index_data_views_on_feature"
-  add_index "data_views", ["id"], name: "index_data_views_on_id"
+  add_index "data_views", ["id"], name: "index_data_views_on_id", unique: true
   add_index "data_views", ["labnr"], name: "index_data_views_on_labnr"
   add_index "data_views", ["material"], name: "index_data_views_on_material"
   add_index "data_views", ["site"], name: "index_data_views_on_site"

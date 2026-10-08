@@ -193,4 +193,43 @@ class C14sControllerTest < ActionDispatch::IntegrationTest # rubocop:disable Met
     assert_equal 'OxA', json['entries'].first['lab_code']
     assert_equal '12345', json['entries'].first['lab_id']
   end
+
+  test 'CSV export rejects pagination and ordering parameters' do
+    site = create(:site)
+    context = create(:context, site: site)
+    sample = create(:sample, context: context)
+    create(:c14, sample: sample, lab_identifier: 'Test-001')
+
+    get c14s_path(format: :csv, c14s_order_by: 'bp', c14s_order: 'desc', page: 5)
+
+    assert_response :bad_request
+  end
+
+  test 'CSV export works without pagination and ordering parameters' do
+    site = create(:site)
+    context = create(:context, site: site)
+    sample = create(:sample, context: context)
+    create(:c14, sample: sample, lab_identifier: 'Test-001')
+
+    get c14s_path(format: :csv)
+
+    assert_response :success
+    assert_equal 'text/csv', response.media_type
+  end
+
+  test 'CSV download with filter parameters includes only filters' do
+    site = create(:site)
+    context = create(:context, site: site)
+    sample = create(:sample, context: context)
+
+    matching = create(:c14, sample: sample, lab_identifier: 'Matching-001')
+    create(:c14, sample: sample, lab_identifier: 'Other-002')
+
+    get c14s_path(format: :csv, c14: { lab_identifier: matching.lab_identifier })
+
+    assert_response :success
+    assert_equal 'text/csv', response.media_type
+    assert_includes response.body, 'Matching-001'
+    assert_not_includes response.body, 'Other-002'
+  end
 end

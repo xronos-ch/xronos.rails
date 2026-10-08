@@ -17,7 +17,12 @@ class C14sController < ApplicationController
   # GET /c14s.csv
   def index
     @c14s = C14.includes(sample: [:taxon, { context: :site }])
-    @c14s = @c14s.where(c14_params) unless c14_params.blank?
+
+    # filter
+    unless c14_params.blank?
+      @c14_params = c14_params
+      @c14s = @c14s.where(c14_params)
+    end
 
     respond_to do |format|
       format.html do
@@ -47,6 +52,9 @@ class C14sController < ApplicationController
       format.csv do
         # Public CSV export remains available, but does not honour pagination
         # or arbitrary sorting parameters from crawlers/bots.
+        validate_csv_params!
+        return if performed?
+
         @c14s = @c14s.reorder(:id).select(index_csv_template)
         render csv: @c14s
       end
@@ -155,7 +163,16 @@ class C14sController < ApplicationController
   end
 
   def set_c14
-    @c14 = C14.find(params[:id])
+    @c14 = C14.includes(
+      sample: [
+        :material,
+        :taxon,
+        context: [
+          :site,
+          { functional_classifications: :functional_classification_category }
+        ]
+      ]
+    ).find(params[:id])
   end
 
   def set_site

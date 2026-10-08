@@ -11,6 +11,17 @@ module Tabulatable
         nil
       end
     end
+
+    def validate_csv_params!
+      disallowed = params.keys.select { |k|
+        k.to_s.end_with?('_page', '_order', '_order_by')
+      }
+
+      if disallowed.any?
+        Rails.logger.warn "CSV request rejected - disallowed params: #{disallowed.join(', ')}"
+        head :bad_request
+      end
+    end
   end
 
   class_methods do

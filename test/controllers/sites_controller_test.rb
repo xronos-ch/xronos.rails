@@ -49,4 +49,40 @@ class SitesControllerTest < ActionDispatch::IntegrationTest
 
     assert_not_includes [200, 201, 204], response.status
   end
+
+  test 'CSV export rejects pagination and ordering parameters' do
+    create(:site, name: 'Test Site')
+
+    get sites_path(format: :csv, sites_order_by: 'name', sites_order: 'desc', page: 5)
+
+    assert_response :bad_request
+  end
+
+  test 'CSV export works without pagination and ordering parameters' do
+    create(:site, name: 'Test Site')
+
+    get sites_path(format: :csv)
+
+    assert_response :success
+    assert_equal 'text/csv', response.media_type
+  end
+
+  test 'show uses pre-computed counts and does not issue extra COUNT queries' do
+    site = create(:site)
+    context = create(:context, site: site)
+    sample = create(:sample, context: context)
+    create_list(:c14, 2, sample: sample)
+    create_list(:typo, 1, sample: sample)
+    create_list(:citation, 3, citing: site)
+
+    # Refresh the materialized view to pick up the new data
+    ActiveRecord::Base.connection.execute('REFRESH MATERIALIZED VIEW sites_with_counts')
+
+    get site_path(site)
+
+    assert_response :success
+    assert_match(/2 radiocarbon dates/, response.body)
+    assert_match(/1 typological classification/, response.body)
+    assert_match(/3 bibliographic references/, response.body)
+  end
 end

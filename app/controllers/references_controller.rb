@@ -16,6 +16,7 @@ class ReferencesController < ApplicationController
 
     # filter
     unless reference_params.blank?
+      @reference_params = reference_params
       @references = @references.where(reference_params)
     end
 
@@ -30,10 +31,13 @@ class ReferencesController < ApplicationController
         @pagy, @references = pagy(:countish, @references)
       }
       format.json
-      format.csv {
+      format.csv do
+        validate_csv_params!
+        return if performed?
+
         @references = @references.select(index_csv_template)
         render csv: @references
-      }
+      end
     end
   end
 
