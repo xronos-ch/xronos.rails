@@ -1,7 +1,7 @@
 class LabId
   attr_reader :lab_identifier, :lab_code, :lab_number
 
-  PATTERN = '^([[:alpha:]\(\)\/]{1,8})[ -\u2010\u2013_#\.\+](\d*[A-Z]?)$'
+  PATTERN = '^([[:alpha:]\(\)\/]{1,8})[ \-\u2010\u2013_#\.\+](\d*[A-Z]?)$'
 
   def initialize(lab_identifier)
     @lab_identifier = lab_identifier
