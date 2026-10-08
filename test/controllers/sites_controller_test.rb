@@ -49,4 +49,21 @@ class SitesControllerTest < ActionDispatch::IntegrationTest
 
     assert_not_includes [200, 201, 204], response.status
   end
+
+  test 'CSV export rejects pagination and ordering parameters' do
+    create(:site, name: 'Test Site')
+
+    get sites_path(format: :csv, sites_order_by: 'name', sites_order: 'desc', page: 5)
+
+    assert_response :bad_request
+  end
+
+  test 'CSV export works without pagination and ordering parameters' do
+    create(:site, name: 'Test Site')
+
+    get sites_path(format: :csv)
+
+    assert_response :success
+    assert_equal 'text/csv', response.media_type
+  end
 end

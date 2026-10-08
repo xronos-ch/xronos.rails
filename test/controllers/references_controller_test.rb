@@ -42,10 +42,18 @@ class ReferencesControllerTest < ActionDispatch::IntegrationTest
     assert_equal reference_url(canonical), response.location
   end
 
-  test 'CSV download link does not include pagination or ordering parameters' do
+  test 'CSV export rejects pagination and ordering parameters' do
     reference = create(:reference)
 
     get references_path(format: :csv, references_order_by: 'short_ref', references_order: 'desc', page: 5)
+
+    assert_response :bad_request
+  end
+
+  test 'CSV export works without pagination and ordering parameters' do
+    reference = create(:reference)
+
+    get references_path(format: :csv)
 
     assert_response :success
     assert_equal 'text/csv', response.media_type

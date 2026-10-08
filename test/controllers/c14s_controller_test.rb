@@ -194,13 +194,24 @@ class C14sControllerTest < ActionDispatch::IntegrationTest # rubocop:disable Met
     assert_equal '12345', json['entries'].first['lab_id']
   end
 
-  test 'CSV download link does not include pagination or ordering parameters' do
+  test 'CSV export rejects pagination and ordering parameters' do
     site = create(:site)
     context = create(:context, site: site)
     sample = create(:sample, context: context)
     create(:c14, sample: sample, lab_identifier: 'Test-001')
 
     get c14s_path(format: :csv, c14s_order_by: 'bp', c14s_order: 'desc', page: 5)
+
+    assert_response :bad_request
+  end
+
+  test 'CSV export works without pagination and ordering parameters' do
+    site = create(:site)
+    context = create(:context, site: site)
+    sample = create(:sample, context: context)
+    create(:c14, sample: sample, lab_identifier: 'Test-001')
+
+    get c14s_path(format: :csv)
 
     assert_response :success
     assert_equal 'text/csv', response.media_type
