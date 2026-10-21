@@ -9,6 +9,9 @@ LEFT JOIN (
   FROM c14s
   JOIN samples ON samples.id = c14s.sample_id
   JOIN contexts ON contexts.id = samples.context_id
+  WHERE c14s.id NOT IN (
+    SELECT superseded_id FROM supersessions WHERE superseded_type = 'C14'
+  )
   GROUP BY contexts.site_id
 ) c14_counts ON c14_counts.site_id = sites.id
 LEFT JOIN (
@@ -16,6 +19,9 @@ LEFT JOIN (
   FROM typos
   JOIN samples ON samples.id = typos.sample_id
   JOIN contexts ON contexts.id = samples.context_id
+  WHERE typos.id NOT IN (
+    SELECT superseded_id FROM supersessions WHERE superseded_type = 'Typo'
+  )
   GROUP BY contexts.site_id
 ) typo_counts ON typo_counts.site_id = sites.id
 LEFT JOIN (
