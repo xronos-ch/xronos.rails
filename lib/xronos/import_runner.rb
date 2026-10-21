@@ -166,6 +166,7 @@ module Xronos
 
     def succeed!
       @import.update!(success: true)
+      Sites::RefreshCountsJob.perform_later
     end
 
     def import_record

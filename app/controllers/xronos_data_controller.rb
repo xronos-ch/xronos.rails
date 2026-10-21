@@ -170,14 +170,13 @@ class XronosDataController < ApplicationController
   end
 
   def build_csv(xrons_relation)
-    ids = xrons_relation.reorder(nil).pluck(:id)
-    return +"id\n" if ids.empty?
+    ids_subquery = xrons_relation.reorder(nil).select(:id).to_sql
 
     query = <<~SQL.squish
       COPY (
         SELECT *
         FROM data_views
-        WHERE id IN (#{ids.join(', ')})
+        WHERE id IN (#{ids_subquery})
       ) TO STDOUT WITH CSV HEADER
     SQL
 

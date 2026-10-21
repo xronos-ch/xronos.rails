@@ -116,15 +116,28 @@ class Reference < ApplicationRecord
   end
 
   def render_citation
-    return short_ref if parse.blank?
+    @rendered_citation ||= begin
+      return short_ref if parse.blank?
 
-    cp = CiteProc::Processor.new style: 'chicago-author-date', format: 'html', locale: 'en'
-    cp.import parse.to_citeproc
+      cp = CiteProc::Processor.new style: 'chicago-author-date', format: 'html', locale: 'en'
+      cp.import parse.to_citeproc
 
-    html = parse['@entry, @meta_content'].map do |e|
-      cp.render :citation, id: e.key
+      html = parse['@entry, @meta_content'].map do |e|
+        cp.render :citation, id: e.key
+      end
+      html.join.delete('()').html_safe
     end
-    html.join.delete('()').html_safe
+  end
+
+  def parse
+    @parse ||= if bibtex.present?
+      BibTeX.parse bibtex, filter: :latex
+    else
+      bib = BibTeX::Entry.new
+      bib.type = :misc
+      bib.key = short_ref
+      bib
+    end
   end
 
   # Issues
@@ -161,17 +174,6 @@ class Reference < ApplicationRecord
 
   def reassign_sources!
     Source.where(reference_id: id).update_all(reference_id: merged_into_id)
-  end
-
-  def parse
-    if bibtex.present?
-      BibTeX.parse bibtex, filter: :latex
-    else
-      bib = BibTeX::Entry.new
-      bib.type = :misc
-      bib.key = short_ref
-      return bib
-    end
   end
 
 end

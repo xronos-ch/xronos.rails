@@ -47,6 +47,9 @@ class TyposController < ApplicationController # rubocop:disable Metrics/ClassLen
       format.csv do
         # Public CSV export remains available, but does not honour pagination
         # or arbitrary sorting parameters from crawlers/bots.
+        validate_csv_params!
+        return if performed?
+
         @typos = @typos.reorder(:id).select(index_csv_template)
         render csv: @typos
       end

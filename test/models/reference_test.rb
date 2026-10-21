@@ -100,4 +100,26 @@ class ReferenceTest < ActiveSupport::TestCase
     assert_equal 0, Source.where(reference_id: dupe.id).count
     assert_equal 1, Source.where(reference_id: canonical.id).count
   end
+
+  #
+  # Memoization
+  #
+
+  test 'render_citation is memoized' do
+    reference = create(:reference)
+
+    result1 = reference.render_citation
+    result2 = reference.render_citation
+
+    assert_same result1, result2
+  end
+
+  test 'parse is memoized' do
+    reference = create(:reference, bibtex: '@article{test2024, title={Test}}')
+
+    result1 = reference.parse
+    result2 = reference.parse
+
+    assert_same result1, result2
+  end
 end

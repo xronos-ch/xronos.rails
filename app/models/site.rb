@@ -95,23 +95,8 @@ class Site < ApplicationRecord
   multisearchable against: :name
 
   scope :with_counts, lambda {
-    select <<~SQL
-      sites.*,
-      (
-        SELECT COUNT(c14s.id)#{' '}
-        FROM c14s
-        JOIN samples ON samples.id = c14s.sample_id
-        JOIN contexts ON contexts.id = samples.context_id
-        WHERE contexts.site_id = sites.id
-      ) AS c14s_count,
-      (
-        SELECT COUNT(typos.id)#{' '}
-        FROM typos
-        JOIN samples ON samples.id = typos.sample_id
-        JOIN contexts ON contexts.id = samples.context_id
-        WHERE contexts.site_id = sites.id
-      ) AS typos_count
-    SQL
+    joins("LEFT JOIN sites_with_counts ON sites_with_counts.id = sites.id")
+      .select("sites.*, sites_with_counts.c14s_count, sites_with_counts.typos_count, sites_with_counts.references_count")
   }
 
   def self.label

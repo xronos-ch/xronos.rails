@@ -92,6 +92,8 @@ namespace :xronos do
       end
     end
 
+    Sites::RefreshCountsJob.perform_later
+
     puts
     puts 'Done.'
   end

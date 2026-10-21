@@ -37,6 +37,9 @@ class SitesController < ApplicationController
       format.csv do
         # Public CSV export remains available, but does not honour pagination
         # or arbitrary sorting parameters from crawlers/bots.
+        validate_csv_params!
+        return if performed?
+
         @sites = @sites.reorder(:id).select(index_csv_template)
         render csv: @sites
       end
@@ -168,7 +171,7 @@ class SitesController < ApplicationController
   private
 
   def set_site
-    @site = Site.includes(:linked_resources).find(params[:id])
+    @site = Site.with_counts.includes(:linked_resources).find(params[:id])
   end
 
   def site_params

@@ -320,6 +320,45 @@ class SiteTest < ActiveSupport::TestCase
     assert_equal 1, FunctionalClassification.where(assignable_type: 'Site', assignable_id: canonical.id).count
   end
 
+  test 'with_counts returns correct c14s_count, typos_count, and references_count' do
+    site = create(:site)
+    context = create(:context, site: site)
+    sample = create(:sample, context: context)
+    create_list(:c14, 3, sample: sample)
+    create_list(:typo, 2, sample: sample)
+    create_list(:citation, 4, citing: site)
+
+    # Refresh the materialized view to pick up the new data
+    ActiveRecord::Base.connection.execute('REFRESH MATERIALIZED VIEW sites_with_counts')
+
+    result = Site.with_counts.find(site.id)
+
+    assert_equal 3, result.c14s_count
+    assert_equal 2, result.typos_count
+    assert_equal 4, result.references_count
+  end
+
+  test 'with_counts excludes superseded chron records' do
+    site = create(:site)
+    context = create(:context, site: site)
+    sample = create(:sample, context: context)
+    c14s = create_list(:c14, 3, sample: sample)
+    typos = create_list(:typo, 2, sample: sample)
+
+    canonical_c14 = create(:c14, sample: sample)
+    c14s.each { |c| c.supersede!(canonical_c14) }
+
+    canonical_typo = create(:typo, sample: sample)
+    typos.each { |t| t.supersede!(canonical_typo) }
+
+    ActiveRecord::Base.connection.execute('REFRESH MATERIALIZED VIEW sites_with_counts')
+
+    result = Site.with_counts.find(site.id)
+
+    assert_equal 1, result.c14s_count
+    assert_equal 1, result.typos_count
+  end
+
   #
   # Peripheral snapshots
   #
