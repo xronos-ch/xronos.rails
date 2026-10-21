@@ -28,6 +28,7 @@ namespace :xronos do
 
         begin
           runner.describe!(whodunnit: admin_user_id, revision_comment: revision_comment)
+          runner.suppress_merges!
 
           # Phase 0: Source reference
           source_ref = runner.import!(Reference,
@@ -125,11 +126,14 @@ namespace :xronos do
             end
           end
 
+          runner.deduplicate_chrons!
           runner.succeed!
           runner.report!
         rescue StandardError => e
           runner.import_record.update!(error: "#{e.class}: #{e.message}")
           raise
+        ensure
+          runner.restore_merges!
         end
       end
     end

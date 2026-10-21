@@ -6,6 +6,36 @@ require 'ruby-progressbar'
 
 module Xronos
   class ImportRunner
+    # Chron and Sample callbacks whose auto-merge behaviour would
+    # destroy the parent a script is holding. Suppressed for the
+    # duration of `with_merges_suppressed`; restored unconditionally
+    # (including on exception) so the process state is never leaked.
+    #
+    # Note: the chron list is explicit (not `Chron.subclasses`) because
+    # the rake process may not have eager-loaded subclasses yet; new
+    # chron subclasses must be added here.
+    MERGE_CALLBACKS = [
+      [Sample, :save, :after, :merge_exact_duplicates],
+      [C14,    :save, :after, :merge_exact_duplicates],
+      [C14,    :save, :after, :merge_cross_sample_duplicates],
+      [Typo,   :save, :after, :merge_exact_duplicates],
+      [Typo,   :save, :after, :merge_cross_sample_duplicates]
+    ].freeze
+
+    @merges_suppressed = false
+
+    class << self
+      attr_accessor :merges_suppressed
+
+      def suppress_callbacks!
+        MERGE_CALLBACKS.each { |model, kind, chain, method| model.skip_callback(kind, chain, method) }
+      end
+
+      def restore_callbacks!
+        MERGE_CALLBACKS.each { |model, kind, chain, method| model.set_callback(kind, chain, method) }
+      end
+    end
+
     def initialize(source, csv_dir:, output: $stderr)
       @source = source
       @csv_dir = csv_dir
@@ -88,6 +118,75 @@ module Xronos
       puts "Whodunnit: #{whodunnit}"
       puts "Revision comment: #{revision_comment}"
       puts
+    end
+
+    # Run a block with chron/sample auto-merge callbacks suppressed.
+    # Safe to nest. Callbacks are restored even if the block raises,
+    # so the process never leaks suppressed state between runs.
+    #
+    # During the block, chrons created on name-relaxed duplicate
+    # samples no longer trigger sample destruction, which means the
+    # script's in-memory sample references stay valid across all
+    # child creations (citations, typos, etc.) in the same row.
+    #
+    # Pair with `deduplicate_chrons!` after the block to resolve the
+    # deferred merges with the existing audited cross-sample
+    # machinery. Must be called within the task's PaperTrail.request
+    # block so all resulting SupersessionEvents carry the correct
+    # whodunnit.
+    #
+    # For non-block callers, use `suppress_merges!` /
+    # `restore_merges!` with an explicit `ensure` (see the rake
+    # tasks for an example).
+    def with_merges_suppressed
+      if self.class.merges_suppressed
+        yield
+      else
+        suppress_merges!
+        begin
+          yield
+        ensure
+          restore_merges!
+        end
+      end
+    end
+
+    # Suppress chron/sample auto-merge callbacks. Pair with
+    # `restore_merges!` inside an `ensure` so the process never
+    # leaks suppressed state. No-op if already suppressed (reentrant).
+    def suppress_merges!
+      return if self.class.merges_suppressed
+
+      self.class.suppress_callbacks!
+      self.class.merges_suppressed = true
+    end
+
+    # Restore the suppressed merge callbacks. Safe to call without a
+    # prior suppress (idempotent).
+    def restore_merges!
+      return unless self.class.merges_suppressed
+
+      self.class.restore_callbacks!
+      self.class.merges_suppressed = false
+    end
+
+    # Resolve the chron duplicates that accumulated during a
+    # `with_merges_suppressed` run. Runs `cross_sample_deduplicate!`
+    # for each chron subclass; same-sample exact duplicates cannot
+    # exist at this point (each chron lands on a per-row fresh sample,
+    # and `no_exact_duplicate` would have raised otherwise), and
+    # cross-sample merges resolve their own chron-level duplicates
+    # internally. Must be called within the task's PaperTrail.request
+    # block so all resulting SupersessionEvents carry the correct
+    # whodunnit.
+    def deduplicate_chrons!
+      puts 'Deduplicating chrons...'
+      [C14, Typo].each do |klass|
+        pairs = klass.cross_sample_pairs.size
+        next if pairs.zero?
+
+        klass.cross_sample_deduplicate!
+      end
     end
 
     def report!

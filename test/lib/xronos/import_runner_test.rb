@@ -350,7 +350,106 @@ module Xronos
       assert_equal 1, runner.import_record.records_skipped['missing BP']
     end
 
+    test 'with_merges_suppressed prevents cross-sample sample destruction inside the block' do
+      context = create(:context)
+      canonical = create(:sample, nameless_attrs(context: context))
+      canonical_c14 = create(:c14, c14_attrs(sample: canonical))
+
+      dupe = create(:sample, nameless_attrs(context: context))
+      runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
+
+      runner.with_merges_suppressed do
+        dupe_c14 = runner.import!(dupe.c14s,
+                                  keys: { lab_identifier: canonical_c14.lab_identifier },
+                                  attributes: c14_attrs(sample: dupe).except(:lab_identifier),
+                                  revision_comment: 'test')
+        # With suppression, the cross-sample merge has not fired:
+        # dupe is still alive and the new c14 is not yet superseded.
+        assert_not dupe.destroyed?, 'sample was destroyed despite suppression'
+        assert_not dupe_c14.superseded?, 'c14 was superseded despite suppression'
+        assert_equal dupe.id, dupe_c14.sample_id
+      end
+    end
+
+    test 'with_merges_suppressed restores callbacks after the block' do
+      runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
+      runner.with_merges_suppressed {}
+      assert_not Xronos::ImportRunner.merges_suppressed
+
+      context = create(:context)
+      s1 = create(:sample, nameless_attrs(context: context))
+      c1 = create(:c14, c14_attrs(sample: s1))
+
+      Sample.skip_callback(:save, :after, :merge_exact_duplicates)
+      Sample.skip_callback(:validate, :before, :no_exact_duplicate, on: :create)
+      begin
+        s2 = create(:sample, nameless_attrs(context: context))
+        c2 = create(:c14, c14_attrs(sample: s2).merge(lab_identifier: c1.lab_identifier))
+        assert_predicate s2, :destroyed?
+        assert_predicate c2.reload, :superseded?
+      ensure
+        Sample.set_callback(:save, :after, :merge_exact_duplicates)
+        Sample.set_callback(:validate, :before, :no_exact_duplicate, on: :create)
+      end
+    end
+
+    test 'with_merges_suppressed restores callbacks even when the block raises' do
+      runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
+      assert_raises(RuntimeError) do
+        runner.with_merges_suppressed { raise 'boom' }
+      end
+      assert_not Xronos::ImportRunner.merges_suppressed
+    end
+
+    test 'with_merges_suppressed is idempotent for nested calls' do
+      runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
+      runner.with_merges_suppressed do
+        runner.with_merges_suppressed do
+          assert Xronos::ImportRunner.merges_suppressed
+        end
+        # Inner call must not have restored callbacks mid-way.
+        assert Xronos::ImportRunner.merges_suppressed
+      end
+      assert_not Xronos::ImportRunner.merges_suppressed
+    end
+
+    test 'deduplicate_chrons! resolves deferred cross-sample duplicates with no orphans' do
+      context = create(:context)
+      canonical = create(:sample, nameless_attrs(context: context))
+      _canonical_typo = create(:typo, sample: canonical, name: 'Neolithic')
+      dupe = create(:sample, nameless_attrs(context: context))
+
+      runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
+      runner.with_merges_suppressed do
+        runner.import!(dupe.typos,
+                       keys: { name: 'Neolithic' },
+                       revision_comment: 'test')
+        assert_not dupe.destroyed?
+      end
+
+      runner.deduplicate_chrons!
+
+      # dupe was merged (physical destroy) into canonical.
+      assert_nil Sample.unscoped.find_by(id: dupe.id),
+                 'dupe sample should have been physically merged'
+      # No typos should have a dangling sample_id.
+      orphaned = Typo.left_outer_joins(:sample).where(samples: { id: nil })
+      assert_equal 0, orphaned.count, "orphaned typos: #{orphaned.map(&:id)}"
+    end
+
     private
+
+    def nameless_attrs(context:)
+      { context: context, name: nil, material: nil, taxon: nil,
+        part_of_organism: nil, position_description: nil, position_crs: nil,
+        position_x: nil, position_y: nil, position_z: nil }
+    end
+
+    def c14_attrs(sample:)
+      { lab_identifier: "OxA-#{sample.id}-#{SecureRandom.hex(3)}",
+        sample: sample, bp: 3500, std: 30, method: 'AMS',
+        delta_15n: -25.0, delta_c13: -20.0, delta_c13_std: 1.5 }
+    end
 
     def write_csv(filename, rows)
       path = File.join(@csv_dir, filename)

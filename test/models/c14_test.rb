@@ -38,6 +38,16 @@ class C14Test < ActiveSupport::TestCase
     assert_dependent_destroy(c14, :citations, count: 2)
   end
 
+  test 'is invalid when its sample has been merged away' do
+    sample = create(:sample)
+    sample.destroy
+    c14 = build(:c14, sample: sample)
+
+    assert_not c14.valid?
+    assert(c14.errors[:sample].any? { |m| /was merged/.match?(m) })
+    assert_raises(ActiveRecord::RecordInvalid) { c14.save! }
+  end
+
   test 'calculates f14c from conventional radiocarbon age' do
     c14 = C14.new(bp: 4500)
 

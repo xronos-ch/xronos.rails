@@ -8,6 +8,8 @@ license: MIT
 
 Import tasks are **create-only**. They never update existing records — any variation in source data produces a new record (matched across all keys + attributes). Duplicate resolution is handled separately.
 
+Chron and sample auto-merge callbacks are suppressed for the duration of the import; any duplicates that would normally resolve as records are created instead resolve at the end via `deduplicate_chrons!`. This means a script's in-memory references to samples and chrons stay valid across every child creation in a row (citations, typos, etc.), and no parent is destroyed mid-row.
+
 ## Workflow
 
 ### 1. Understand the source data
@@ -56,6 +58,7 @@ namespace :xronos do
 
         begin
           runner.describe!(whodunnit: admin_user_id, revision_comment: revision_comment)
+          runner.suppress_merges!
 
           # Phase 0: Source reference
           source_ref = runner.import!(Reference,
@@ -74,11 +77,14 @@ namespace :xronos do
 
           # === Import data phases here (use csv/process_enum with instance_exec blocks) ===
 
+          runner.deduplicate_chrons!
           runner.succeed!
           runner.report!
         rescue => e
           runner.import_record.update!(error: "#{e.class}: #{e.message}")
           raise
+        ensure
+          runner.restore_merges!
         end
       end
     end
@@ -108,6 +114,10 @@ end
 | `xlsx(filename, sheets:, header_row: 1, &block)` | Iterate XLSX sheets with progress bar; `sheets` can be a single name or array; `header_row` defaults to 1; strips HTML tags from headers |
 | `process_enum(enumerable, title:, &block)` | Iterate any enumerable with progress bar |
 | `describe!(whodunnit:, revision_comment:)` | Print pre-import options header |
+| `suppress_merges!` | Suppress chron/sample auto-merge callbacks; pair with `restore_merges!` inside an `ensure` |
+| `restore_merges!` | Restore the suppressed callbacks (idempotent) |
+| `with_merges_suppressed { ... }` | Block form of `suppress_merges!`/`restore_merges!`; restores on exception and is reentrant |
+| `deduplicate_chrons!` | Resolve the chron duplicates that accumulated during a suppressed run via the existing cross-sample machinery; must run within the task's `PaperTrail.request` block |
 | `report!` | Print post-import ASCII table of created records |
 | `succeed!` | Mark import as successful, persist counters |
 
