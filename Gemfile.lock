@@ -103,7 +103,7 @@ GEM
       actionview
       activesupport
       i18n
-    brotli (0.6.0)
+    brotli (0.9.2)
     builder (3.3.0)
     bullet (8.0.0)
       activesupport (>= 3.0.0)
@@ -610,7 +610,7 @@ DEPENDENCIES
   xmpp4r
 
 RUBY VERSION
-   ruby 3.3.6p108
+   ruby 3.3.13p207
 
 BUNDLED WITH
    2.5.1
