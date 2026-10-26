@@ -1,6 +1,6 @@
 # XRONOS Changelog
 
-## Unreleased
+## [1.3.1] - 2026-10-26
 
 ### Bug fixes
 
@@ -11,7 +11,7 @@
 - Links to CSV exports no longer contain meaningless pagination and ordering
   parameters. Requests with these parameters are now rejected as bad requests.
 
-## [0.3.0] - 2026-10-07
+## [1.3.0] - 2026-10-07
 
 ### Breaking changes
 
