@@ -2,6 +2,14 @@ require "test_helper"
 
 class CitableTest < ActiveSupport::TestCase
   setup do
+    # Mirror the real environments, where the seeded admin user (see
+    # db/seeds/users.rb) always exists at ADMIN_USER_ID. Tests that
+    # exercise the "admin not found" fallback override this with with_env.
+    @previous_admin_user_id = ENV["ADMIN_USER_ID"]
+    admin_email = ENV.fetch("ADMIN_USER_EMAIL", "admin@xronos.ch")
+    admin = User.find_by(email: admin_email) || create(:user, :admin, email: admin_email)
+    ENV["ADMIN_USER_ID"] = admin.id.to_s
+
     ActiveRecord::Schema.define do
       suppress_messages do
         create_table :citable_models, force: true do |t|
@@ -10,6 +18,10 @@ class CitableTest < ActiveSupport::TestCase
         end
       end
     end
+  end
+
+  teardown do
+    ENV["ADMIN_USER_ID"] = @previous_admin_user_id
   end
 
   class CitableModel < ApplicationRecord
@@ -97,7 +109,10 @@ class CitableTest < ActiveSupport::TestCase
 
     PaperTrail.request(whodunnit: user.id) do
       record = CitableModel.create!(name: "Test")
-      assert_equal [{ "family" => "Smith", "given" => "Alice" }], record.citation['author']
+      assert_equal [
+        { "family" => "Smith", "given" => "Alice" },
+        { "literal" => "XRONOS Core Team" }
+      ], record.citation['author']
     end
   end
 
@@ -107,7 +122,19 @@ class CitableTest < ActiveSupport::TestCase
 
     PaperTrail.request(whodunnit: user.id) do
       record = CitableModel.create!(name: "Test")
-      assert_equal [{ "literal" => "XRONOS contributors" }], record.citation['author']
+      assert_equal [{ "literal" => "XRONOS Core Team" }], record.citation['author']
+    end
+  end
+
+  test "citation author falls back to XRONOS contributors when there is no admin user" do
+    user = create(:user)
+    user.user_profile.update!(full_name: nil)
+
+    with_env("ADMIN_USER_ID" => "0") do
+      PaperTrail.request(whodunnit: user.id) do
+        record = CitableModel.create!(name: "Test")
+        assert_equal [{ "literal" => "XRONOS contributors" }], record.citation['author']
+      end
     end
   end
 
@@ -130,7 +157,8 @@ class CitableTest < ActiveSupport::TestCase
       assert_equal [
         { "family" => "Zebra", "given" => "Zara" },
         { "family" => "Smith", "given" => "Alice" },
-        { "family" => "Brown", "given" => "Bob" }
+        { "family" => "Brown", "given" => "Bob" },
+        { "literal" => "XRONOS Core Team" }
       ], record.citation['author']
     end
   end
@@ -206,7 +234,8 @@ class CitableTest < ActiveSupport::TestCase
       end
       assert_equal [
         { "family" => "Smith", "given" => "Alice" },
-        { "family" => "Brown", "given" => "Bob" }
+        { "family" => "Brown", "given" => "Bob" },
+        { "literal" => "XRONOS Core Team" }
       ], record.citation['author']
     end
   end
@@ -231,7 +260,7 @@ class CitableTest < ActiveSupport::TestCase
       record = CitableModel.create!(name: "Test")
       user.user_profile.delete
       User.where(id: user.id).delete_all
-      assert_equal [{ "literal" => "XRONOS contributors" }], record.citation['author']
+      assert_equal [{ "literal" => "XRONOS Core Team" }], record.citation['author']
     end
   end
 
@@ -251,7 +280,7 @@ class CitableTest < ActiveSupport::TestCase
     PaperTrail.request(whodunnit: 1) do
       record = CitableModel.create!(name: "Test")
       bib = record.format_bibtex
-      assert_includes bib, "author = {{XRONOS contributors}}"
+      assert_includes bib, "author = {{XRONOS Core Team}}"
     end
   end
 
