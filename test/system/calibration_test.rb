@@ -11,19 +11,27 @@ class CalibrationTest < ApplicationSystemTestCase
     assert_selector "div.vega-embed"
   end
 
-  test "does not show calibration for date with bp too low" do
+  test "shows calibration for date at the young end of the curve" do
     c14 = create(:c14, bp: 170, std: 170)
+
+    visit c14_path(c14)
+
+    assert_selector "div.vega-embed"
+  end
+
+  test "does not show calibration for date with bp too low" do
+    c14 = create(:c14, bp: -50, std: 20)
 
     visit c14_path(c14)
 
     assert_text "Can not be calculated"
   end
 
-  test "shows calibration for date with bp too high" do
+  test "does not show calibration for date with bp too high" do
     c14 = create(:c14, bp: 100_000, std: 1_000)
 
     visit c14_path(c14)
 
-    assert_selector "div.vega-embed"
+    assert_text "Can not be calculated"
   end
 end

@@ -71,7 +71,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential libboost-program-options-dev
+          sudo apt-get install -y build-essential
 
       - name: Build calibrator
         run: bin/build_calibrator
