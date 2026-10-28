@@ -4,7 +4,6 @@
 # Database name: primary
 #
 #  id         :bigint           not null, primary key
-#  bibtex     :text
 #  csl        :jsonb
 #  doi        :string
 #  short_ref  :string
