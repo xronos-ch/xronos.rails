@@ -47,6 +47,7 @@ module Citable
     bib.year      = citation.dig("issued", "date-parts", 0, 0)
     bib.publisher = citation["container-title"]
     bib.url       = citation["URL"]
+    bib.urldate   = format_urldate_for_bibtex
     bib.author    = Array(citation["author"]).map { |a|
       if a["literal"]
         # Double braces protect the literal name from name parsing
@@ -93,6 +94,14 @@ module Citable
   end
 
   private
+
+  def format_urldate_for_bibtex
+    parts = citation.dig("accessed", "date-parts", 0)
+    return nil unless parts
+
+    year, month, day = parts
+    "#{year}-#{format('%02d', month)}-#{format('%02d', day)}"
+  end
 
   def citation_key
     "xronos_#{model_name.singular}_#{id}"
