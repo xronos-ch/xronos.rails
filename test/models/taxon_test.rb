@@ -377,5 +377,27 @@ class TaxonTest < ActiveSupport::TestCase
     # No error raised, no side effects
   end
 
+  #
+  # touch_referencing_records with revision_comment (#526)
+  #
+
+  test "user-supplied revision_comment propagates to referencing samples" do
+    taxon = FactoryBot.create(:taxon, name: "Quercus robur")
+    sample = FactoryBot.create(:sample, taxon: taxon)
+
+    taxon.update!(name: "Quercus petraea", revision_comment: "Fixed spelling")
+
+    assert_equal "Fixed spelling", sample.reload.versions.last.revision_comment
+  end
+
+  test "default comment used when revision_comment is blank" do
+    taxon = FactoryBot.create(:taxon, name: "Quercus robur")
+    sample = FactoryBot.create(:sample, taxon: taxon)
+
+    taxon.update!(name: "Quercus petraea")
+
+    assert_equal "Changed taxon.", sample.reload.versions.last.revision_comment
+  end
+
 end
 
