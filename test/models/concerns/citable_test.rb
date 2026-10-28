@@ -3,11 +3,13 @@ require "test_helper"
 class CitableTest < ActiveSupport::TestCase
   setup do
     # Mirror the real environments, where the seeded admin user (see
-    # db/seeds/users.rb) always exists at ADMIN_USER_ID. Tests that
-    # exercise the "admin not found" fallback override this with with_env.
+    # db/seeds/users.rb) always exists at ADMIN_USER_ID, named from
+    # ADMIN_USER_NAME. Tests that exercise the "admin not found" fallback
+    # override this with with_env.
     @previous_admin_user_id = ENV["ADMIN_USER_ID"]
     admin_email = ENV.fetch("ADMIN_USER_EMAIL", "admin@xronos.ch")
     admin = User.find_by(email: admin_email) || create(:user, :admin, email: admin_email)
+    admin.user_profile.update!(full_name: "Test Admin Team")
     ENV["ADMIN_USER_ID"] = admin.id.to_s
 
     ActiveRecord::Schema.define do
@@ -111,7 +113,7 @@ class CitableTest < ActiveSupport::TestCase
       record = CitableModel.create!(name: "Test")
       assert_equal [
         { "family" => "Smith", "given" => "Alice" },
-        { "literal" => "XRONOS Core Team" }
+        { "literal" => "Test Admin Team" }
       ], record.citation['author']
     end
   end
@@ -122,7 +124,7 @@ class CitableTest < ActiveSupport::TestCase
 
     PaperTrail.request(whodunnit: user.id) do
       record = CitableModel.create!(name: "Test")
-      assert_equal [{ "literal" => "XRONOS Core Team" }], record.citation['author']
+      assert_equal [{ "literal" => "Test Admin Team" }], record.citation['author']
     end
   end
 
@@ -158,12 +160,12 @@ class CitableTest < ActiveSupport::TestCase
         { "family" => "Zebra", "given" => "Zara" },
         { "family" => "Smith", "given" => "Alice" },
         { "family" => "Brown", "given" => "Bob" },
-        { "literal" => "XRONOS Core Team" }
+        { "literal" => "Test Admin Team" }
       ], record.citation['author']
     end
   end
 
-  test "admin user (ADMIN_USER_ID) is always cited as the role label, even when they contribute" do
+  test "admin user (ADMIN_USER_ID) is cited by their display name, even when they contribute" do
     admin = create(:user)
     admin.user_profile.update!(full_name: "Zara Admin")
     creator = create(:user)
@@ -177,7 +179,7 @@ class CitableTest < ActiveSupport::TestCase
         end
         assert_equal [
           { "family" => "Smith", "given" => "Alice" },
-          { "literal" => "XRONOS Core Team" }
+          { "literal" => "Zara Admin" }
         ], record.citation['author']
       end
     end
@@ -185,6 +187,7 @@ class CitableTest < ActiveSupport::TestCase
 
   test "admin is appended as the last author even when not a contributor" do
     admin = create(:user)
+    admin.user_profile.update!(full_name: "Zara Admin")
     creator = create(:user)
     creator.user_profile.update!(full_name: "Alice Smith")
 
@@ -193,13 +196,13 @@ class CitableTest < ActiveSupport::TestCase
         record = CitableModel.create!(name: "Test")
         assert_equal [
           { "family" => "Smith", "given" => "Alice" },
-          { "literal" => "XRONOS Core Team" }
+          { "literal" => "Zara Admin" }
         ], record.citation['author']
       end
     end
   end
 
-  test "admin appears as the last author even when not a contributor and has no real name" do
+  test "admin without a real name is excluded from the author list" do
     admin = create(:user)
     admin.user_profile.update!(full_name: nil)
     creator = create(:user)
@@ -209,8 +212,7 @@ class CitableTest < ActiveSupport::TestCase
       PaperTrail.request(whodunnit: creator.id) do
         record = CitableModel.create!(name: "Test")
         assert_equal [
-          { "family" => "Smith", "given" => "Alice" },
-          { "literal" => "XRONOS Core Team" }
+          { "family" => "Smith", "given" => "Alice" }
         ], record.citation['author']
       end
     end
@@ -235,19 +237,19 @@ class CitableTest < ActiveSupport::TestCase
       assert_equal [
         { "family" => "Smith", "given" => "Alice" },
         { "family" => "Brown", "given" => "Bob" },
-        { "literal" => "XRONOS Core Team" }
+        { "literal" => "Test Admin Team" }
       ], record.citation['author']
     end
   end
 
-  test "admin user without a real name is included as the XRONOS placeholder" do
+  test "citation falls back to XRONOS contributors when the admin user has no real name" do
     admin = create(:user)
     admin.user_profile.update!(full_name: nil)
 
     with_env("ADMIN_USER_ID" => admin.id.to_s) do
       PaperTrail.request(whodunnit: admin.id) do
         record = CitableModel.create!(name: "Test")
-        assert_equal [{ "literal" => "XRONOS Core Team" }], record.citation['author']
+        assert_equal [{ "literal" => "XRONOS contributors" }], record.citation['author']
       end
     end
   end
@@ -260,7 +262,7 @@ class CitableTest < ActiveSupport::TestCase
       record = CitableModel.create!(name: "Test")
       user.user_profile.delete
       User.where(id: user.id).delete_all
-      assert_equal [{ "literal" => "XRONOS Core Team" }], record.citation['author']
+      assert_equal [{ "literal" => "Test Admin Team" }], record.citation['author']
     end
   end
 
@@ -273,14 +275,14 @@ class CitableTest < ActiveSupport::TestCase
   end
 
   test "format_bibtex double-braces literal authors" do
-    # The {{XRONOS contributors}} and {{XRONOS Core Team}} entries
+    # The {{XRONOS contributors}} and {{Test Admin Team}} entries
     # are institutional names; BibTeX needs double braces to keep
     # them as a single literal value (single braces only protect
     # against name-part inversion, not against further parsing).
     PaperTrail.request(whodunnit: 1) do
       record = CitableModel.create!(name: "Test")
       bib = record.format_bibtex
-      assert_includes bib, "author = {{XRONOS Core Team}}"
+      assert_includes bib, "author = {{Test Admin Team}}"
     end
   end
 

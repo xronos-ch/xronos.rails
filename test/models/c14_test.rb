@@ -542,13 +542,13 @@ class C14Test < ActiveSupport::TestCase
     assert_includes bib, "OxA-12345 (radiocarbon date)"
   end
 
-  test "format_bibtex double-braces the XRONOS Core Team admin author" do
+  test "format_bibtex double-braces the admin author literal" do
     admin = create(:user)
     admin.user_profile.update!(full_name: "Zara Admin")
     with_env("ADMIN_USER_ID" => admin.id.to_s) do
       c14 = create(:c14, lab_identifier: "OxA-12345")
       bib = c14.format_bibtex
-      assert_includes bib, "{{XRONOS Core Team}}"
+      assert_includes bib, "{{Zara Admin}}"
     end
   end
 

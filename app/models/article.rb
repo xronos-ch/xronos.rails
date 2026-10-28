@@ -83,7 +83,7 @@ class Article < ApplicationRecord
 
   def author_name
     if about_section? or user.user_profile.blank? or user.user_profile.full_name.blank?
-      "XRONOS Core Team"
+      User.default&.display_name || "XRONOS"
     else
       user.user_profile.full_name
     end

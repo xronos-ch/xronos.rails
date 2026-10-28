@@ -1,10 +1,6 @@
 module Citable
   extend ActiveSupport::Concern
 
-  # CSL name entry for the default (admin) user, representing the
-  # project as a whole rather than an individual.
-  ADMIN_AUTHOR_NAME = { "literal" => "XRONOS Core Team" }.freeze
-
   included do
     include Rails.application.routes.url_helpers
   end
@@ -110,15 +106,16 @@ module Citable
   # Author ordering:
   # 1. Record creator, unless that is the default user
   # 2. Contributors except the creator and default user, alphabetically
-  # 3. The default user (ADMIN_USER_ID)
+  # 3. The default user (ADMIN_USER_ID), cited as a literal name since it
+  #    may be an institution rather than a person
   #
-  # Contributors without a display name are omitted.
+  # Contributors (including the default user) without a display name are omitted.
   def citation_authors
     admin_id = ENV["ADMIN_USER_ID"].to_i
     ids = versions.collect(&:whodunnit).compact.map(&:to_i).uniq
     contributor_users = User.includes(:user_profile).where(id: ids).select(&:has_real_name?)
 
-    admin = User.find_by(id: admin_id)
+    admin = User.default
     creator_id = versions.where(event: "create").first&.whodunnit&.to_i
 
     creator = contributor_users.find { |u| u.id == creator_id && u.id != admin_id }
@@ -127,7 +124,7 @@ module Citable
     names = []
     names << csl_name(creator) if creator
     names.concat others.sort_by { |u| u.display_name.downcase }.map { |u| csl_name(u) }
-    names << ADMIN_AUTHOR_NAME if admin
+    names << { "literal" => admin.display_name } if admin&.has_real_name?
 
     return [{ "literal" => "XRONOS contributors" }] if names.empty?
 
