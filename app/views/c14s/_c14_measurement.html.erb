@@ -1,15 +1,42 @@
-<dl class="row">
+<dl class="row mb-0">
 
-  <dt>Age <small>(uncal BP)</small></dt>
-  <dd class="font-monospace"><%= c14.bp %></dd>
+  <dt class="col-12 col-lg-4">Lab identifier</dt>
+  <dd class="col-12 col-lg-8 font-monospace">
+    <%= c14.lab_identifier.present? ? c14.lab_identifier : na_value %>
+  </dd>
 
-  <dt>Error <small>(±)</small></dt>
-  <dd class="font-monospace"><%= c14.std %></dd>
+  <dt class="col-12 col-lg-4">Laboratory</dt>
+  <dd class="col-12 col-lg-8">
+    <%= c14.c14_lab&.name || na_value %>
+  </dd>
 
-  <dt>Lab</dt>
-  <dd><%= c14.c14_lab.present? ? c14.c14_lab.name : na_value %></dd>
+  <dt class="col-12 col-lg-4">Method</dt>
+  <dd class="col-12 col-lg-8">
+    <%= c14.method.present? ? c14.method : na_value %>
+  </dd>
 
-  <dt>Method</dt>
-  <dd><%= c14.method.present? ? c14.method : na_value %></dd>
+  <dt class="col-12 col-lg-4"><sup>14</sup>C age</dt>
+  <dd class="col-12 col-lg-8 font-monospace mb-0">
+    <%= c14.uncal_age || na_value %>
+  </dd>
+  <dd class="col-12 col-lg-8 offset-lg-4">
+    <small class="text-body-secondary">
+      Conventional radiocarbon age (CRA), uncalibrated <sup>14</sup>C years Before Present
+    </small>
+  </dd>
+
+  <dt class="col-12 col-lg-4">&delta;<sup>13</sup>C</dt>
+  <dd class="col-12 col-lg-8 font-monospace">
+    <% if c14.delta_c13.present? %>
+      <%= c14.delta_c13 %><% if c14.delta_c13_std.present? %>&plusmn;<%= c14.delta_c13_std %><% end %>&permil;
+    <% else %>
+      <%= na_value %>
+    <% end %>
+  </dd>
+
+  <dt class="col-12 col-lg-4">&delta;<sup>15</sup>N</dt>
+  <dd class="col-12 col-lg-8 font-monospace">
+    <%= c14.delta_15n.present? ? "#{c14.delta_15n} &permil;" : na_value %>
+  </dd>
 
 </dl>

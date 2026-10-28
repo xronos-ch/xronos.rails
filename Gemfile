@@ -5,7 +5,7 @@ git_source(:github) { |repo| 'https://github.com/#{repo}.git' }
 # CORE ------------------------------------------------------------------------
 
 # Ruby on Rails
-ruby '3.3.13'
+ruby '3.3.12'
 gem 'rails', '~> 8.0.0'
 
 # Database for Active Record
