@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_08_163201) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_28_134336) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -277,6 +277,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_08_163201) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.string "short_ref"
+    t.jsonb "csl"
+    t.string "doi"
+    t.index ["doi"], name: "index_references_on_doi"
     t.index ["short_ref"], name: "index_references_on_short_ref"
   end
 

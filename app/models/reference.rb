@@ -5,12 +5,15 @@
 #
 #  id         :bigint           not null, primary key
 #  bibtex     :text
+#  csl        :jsonb
+#  doi        :string
 #  short_ref  :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
 # Indexes
 #
+#  index_references_on_doi        (doi)
 #  index_references_on_short_ref  (short_ref)
 #
 
