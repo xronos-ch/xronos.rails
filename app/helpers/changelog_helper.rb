@@ -1,4 +1,8 @@
 module ChangelogHelper
+  # Attributes omitted from peripheral snapshot diffs: internal timestamps and
+  # foreign keys that duplicate information already shown elsewhere.
+  HIDDEN_ATTRS = %w[id created_at updated_at linkable_id linkable_type site_id].freeze
+
   def combined_changelog(item)
     versions = item.versions.includes(:item).to_a
     events = item.respond_to?(:supersession_events) \
@@ -24,10 +28,14 @@ module ChangelogHelper
       from = ActiveSnapshot::Snapshot.includes(:snapshot_items).find_by(id: previous.snapshot_id)
       return nil unless from
 
-      ActiveSnapshot::Snapshot.diff(from, current).map do |entry|
+      diff = ActiveSnapshot::Snapshot.diff(from, current).map do |entry|
         si = current.snapshot_items.find { |item| item.item_id == entry[:item_id] && item.item_type == entry[:item_type] }
         si ||= from.snapshot_items.find { |item| item.item_id == entry[:item_id] && item.item_type == entry[:item_type] }
         entry.merge(child_group_name: si&.child_group_name)
+      end
+      diff.reject do |entry|
+        entry[:action] == :update &&
+          entry[:changes].keys.all? { |attr| HIDDEN_ATTRS.include?(attr.to_s) }
       end
     else
       current.snapshot_items.map { |item|
