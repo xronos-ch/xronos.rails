@@ -489,38 +489,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_08_163201) do
   add_foreign_key "supersession_events", "users", column: "whodunnit_user_id"
   add_foreign_key "user_profiles", "users"
 
-  create_view "sites_with_counts", materialized: true, sql_definition: <<-SQL
-      SELECT sites.id,
-      sites.name,
-      sites.lat,
-      sites.lng,
-      sites.created_at,
-      sites.updated_at,
-      sites.country_code,
-      COALESCE(c14_counts.c14s_count, (0)::bigint) AS c14s_count,
-      COALESCE(typo_counts.typos_count, (0)::bigint) AS typos_count,
-      COALESCE(ref_counts.references_count, (0)::bigint) AS references_count
-     FROM (((sites
-       LEFT JOIN ( SELECT contexts.site_id,
-              count(*) AS c14s_count
-             FROM ((c14s
-               JOIN samples ON ((samples.id = c14s.sample_id)))
-               JOIN contexts ON ((contexts.id = samples.context_id)))
-            GROUP BY contexts.site_id) c14_counts ON ((c14_counts.site_id = sites.id)))
-       LEFT JOIN ( SELECT contexts.site_id,
-              count(*) AS typos_count
-             FROM ((typos
-               JOIN samples ON ((samples.id = typos.sample_id)))
-               JOIN contexts ON ((contexts.id = samples.context_id)))
-            GROUP BY contexts.site_id) typo_counts ON ((typo_counts.site_id = sites.id)))
-       LEFT JOIN ( SELECT citations.citing_id AS site_id,
-              count(*) AS references_count
-             FROM citations
-            WHERE ((citations.citing_type)::text = 'Site'::text)
-            GROUP BY citations.citing_id) ref_counts ON ((ref_counts.site_id = sites.id)));
-  SQL
-  add_index "sites_with_counts", ["id"], name: "index_sites_with_counts_on_id", unique: true
-
   create_view "data_views", materialized: true, sql_definition: <<-SQL
       SELECT c14s.id,
       c14s.lab_identifier AS labnr,
@@ -575,5 +543,43 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_08_163201) do
   add_index "data_views", ["site"], name: "index_data_views_on_site"
   add_index "data_views", ["site_type"], name: "index_data_views_on_site_type"
   add_index "data_views", ["species"], name: "index_data_views_on_species"
+
+  create_view "sites_with_counts", materialized: true, sql_definition: <<-SQL
+      SELECT sites.id,
+      sites.name,
+      sites.lat,
+      sites.lng,
+      sites.created_at,
+      sites.updated_at,
+      sites.country_code,
+      COALESCE(c14_counts.c14s_count, (0)::bigint) AS c14s_count,
+      COALESCE(typo_counts.typos_count, (0)::bigint) AS typos_count,
+      COALESCE(ref_counts.references_count, (0)::bigint) AS references_count
+     FROM (((sites
+       LEFT JOIN ( SELECT contexts.site_id,
+              count(*) AS c14s_count
+             FROM ((c14s
+               JOIN samples ON ((samples.id = c14s.sample_id)))
+               JOIN contexts ON ((contexts.id = samples.context_id)))
+            WHERE (NOT (c14s.id IN ( SELECT supersessions.superseded_id
+                     FROM supersessions
+                    WHERE ((supersessions.superseded_type)::text = 'C14'::text))))
+            GROUP BY contexts.site_id) c14_counts ON ((c14_counts.site_id = sites.id)))
+       LEFT JOIN ( SELECT contexts.site_id,
+              count(*) AS typos_count
+             FROM ((typos
+               JOIN samples ON ((samples.id = typos.sample_id)))
+               JOIN contexts ON ((contexts.id = samples.context_id)))
+            WHERE (NOT (typos.id IN ( SELECT supersessions.superseded_id
+                     FROM supersessions
+                    WHERE ((supersessions.superseded_type)::text = 'Typo'::text))))
+            GROUP BY contexts.site_id) typo_counts ON ((typo_counts.site_id = sites.id)))
+       LEFT JOIN ( SELECT citations.citing_id AS site_id,
+              count(*) AS references_count
+             FROM citations
+            WHERE ((citations.citing_type)::text = 'Site'::text)
+            GROUP BY citations.citing_id) ref_counts ON ((ref_counts.site_id = sites.id)));
+  SQL
+  add_index "sites_with_counts", ["id"], name: "sites_with_counts_id_idx", unique: true
 
 end
