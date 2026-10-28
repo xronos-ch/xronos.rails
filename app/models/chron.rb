@@ -20,6 +20,7 @@ class Chron < ApplicationRecord
   after_save :merge_exact_duplicates
   after_save :merge_cross_sample_duplicates
   validate :no_exact_duplicate, on: :create
+  validate :sample_must_not_be_destroyed
 
   before_merge :reassign_citations!
 
@@ -136,12 +137,19 @@ class Chron < ApplicationRecord
     Citation.reassign_all_to!(from: self, to: canonical)
   end
 
+  def sample_must_not_be_destroyed
+    return unless sample&.destroyed?
+
+    errors.add(:sample, 'was merged into another sample — reload and retry')
+  end
+
   def find_cross_sample_chron_duplicate_sample
     return nil if sample_id.nil?
 
     row = self.class.connection.select_one(self.class.cross_sample_pair_sql(for_id: id))
     return nil unless row
 
-    self.class.find(row['other_chron_id']).sample
+    other_chron = self.class.unscoped.find(row['other_chron_id'])
+    other_chron.ultimately_superseded_by.sample
   end
 end

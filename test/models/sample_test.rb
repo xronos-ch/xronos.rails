@@ -216,13 +216,16 @@ class SampleTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     context = create(:context)
     canonical = create(:sample, blank_attrs(context: context))
 
-    # Bypass `validate :no_exact_duplicate, on: :create` so the dupe
-    # sample is created and then the test exercises the merge path.
+    # Bypass the auto-merge (and the on: :create duplicate validation)
+    # so the dupe sample is created and then the test exercises the
+    # merge path explicitly.
+    Sample.skip_callback(:save, :after, :merge_exact_duplicates)
     Sample.skip_callback(:validate, :before, :no_exact_duplicate, on: :create)
     begin
       dupe = create(:sample, blank_attrs(context: context))
       typo = create(:typo, sample: dupe)
     ensure
+      Sample.set_callback(:save, :after, :merge_exact_duplicates)
       Sample.set_callback(:validate, :before, :no_exact_duplicate, on: :create)
     end
 

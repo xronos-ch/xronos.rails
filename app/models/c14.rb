@@ -10,20 +10,22 @@
 # Table name: c14s
 # Database name: primary
 #
-#  id             :bigint           not null, primary key
-#  bp             :integer
-#  cal_bp         :integer
-#  cal_std        :integer
-#  delta_15n      :float
-#  delta_c13      :float
-#  delta_c13_std  :float
-#  lab_identifier :string
-#  method         :string
-#  std            :integer
-#  created_at     :datetime         not null
-#  updated_at     :datetime         not null
-#  c14_lab_id     :bigint
-#  sample_id      :bigint
+#  id                    :bigint           not null, primary key
+#  bp                    :integer
+#  cal_bp                :integer
+#  cal_std               :integer
+#  carbon_nitrogen_ratio :float
+#  carbon_proportion     :float
+#  delta_15n             :float
+#  delta_c13             :float
+#  delta_c13_std         :float
+#  lab_identifier        :string
+#  method                :string
+#  std                   :integer
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  c14_lab_id            :bigint
+#  sample_id             :bigint
 #
 # Indexes
 #
@@ -48,6 +50,7 @@ class C14 < Chron
   accepts_nested_attributes_for :sample, reject_if: :all_blank
 
   validates :bp, :std, presence: true
+  validates :carbon_proportion, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 1 }, allow_nil: true
 
   composed_of :lab_id, mapping: %w[lab_identifier], allow_nil: true
 

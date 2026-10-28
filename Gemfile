@@ -105,6 +105,9 @@ gem 'bibtex-ruby'
 gem 'citeproc-ruby'
 gem 'csl-styles'
 
+# XLSX spreadsheet reading (for import tasks)
+gem 'roo'
+
 # Session store backed by an Active Record class to avoid cookie overflow with 
 # lasso
 gem 'activerecord-session_store'
@@ -211,6 +214,9 @@ group :test do
 
   # Unit testing
   gem 'minitest'
+
+  # XLSX writing for tests
+  gem 'rubyXL'
 
   # Schema testing
   gem 'json-schema'
