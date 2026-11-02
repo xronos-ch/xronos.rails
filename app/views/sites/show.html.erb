@@ -3,9 +3,9 @@
 
 <main class="container my-5">
 
-  <% cache [@site, "site_header_v1"] do %>
-    <%= render "header", site: @site %>
+  <%= render "header", site: @site %>
 
+  <% cache [@site, "site_header_v2"] do %>
     <section id="site-types" class="my-5">
       <dt><%= "Site type".pluralize(@site.site_types.count) %></dt>
       <dd>
