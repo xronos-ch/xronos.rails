@@ -9,8 +9,12 @@ admin.assign_attributes(
   passphrase: ENV["REGISTRATION_PASSPHRASE"]
 )
 
-# Ensure profile exists
+# Ensure profile exists. ADMIN_USER_NAME only initialises the name; later
+# changes via the UI must stick.
 admin.build_user_profile unless admin.user_profile
+if admin.user_profile.full_name.blank? && ENV["ADMIN_USER_NAME"].present?
+  admin.user_profile.full_name = ENV["ADMIN_USER_NAME"]
+end
 
 admin.save!
 

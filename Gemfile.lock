@@ -618,7 +618,7 @@ DEPENDENCIES
   xmpp4r
 
 RUBY VERSION
-   ruby 3.3.13p207
+   ruby 3.3.12p206
 
 BUNDLED WITH
    2.5.1

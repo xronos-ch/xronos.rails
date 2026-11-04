@@ -3,7 +3,7 @@
     <% unless change.first == "updated_at" %>
       <div class="d-flex">
         <dt><%= change.first.humanize %>:</dt>
-        <dd class="flex-grow-1 ms-3">
+        <dd class="flex-grow-1 ms-3 mb-0">
           <%= change.second.first.present? ? change.second.first : na_value %>
           &rarr;
           <%= change.second.second.present? ? change.second.second : na_value %>
@@ -30,14 +30,12 @@
 
 <% if entry.is_a?(PaperTrail::Version) && entry.snapshot_id.present? && (diff = version_peripheral_diff(entry)).present? %>
   <%
-    hidden_attrs = %w[id created_at updated_id linkable_id linkable_type site_id]
+    hidden_attrs = ChangelogHelper::HIDDEN_ATTRS
     parent_class = entry.item_type.constantize
     groups = {}
     diff.each do |change|
       key = change[:child_group_name] || change[:item_type]
       groups[key] ||= { entries: [] }
-
-      next if change[:action] == :update && change[:changes].none? { |attr, _| !hidden_attrs.include?(attr.to_s) }
 
       groups[key][:entries] << change
     end

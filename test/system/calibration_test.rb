@@ -24,7 +24,7 @@ class CalibrationTest < ApplicationSystemTestCase
 
     visit c14_path(c14)
 
-    assert_text "Can not be calculated"
+    assert_no_selector "div.vega-embed"
   end
 
   test "does not show calibration for date with bp too high" do
@@ -32,6 +32,6 @@ class CalibrationTest < ApplicationSystemTestCase
 
     visit c14_path(c14)
 
-    assert_text "Can not be calculated"
+    assert_no_selector "div.vega-embed"
   end
 end

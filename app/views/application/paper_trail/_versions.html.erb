@@ -1,45 +1,42 @@
-<div class="accordion" id="versionHistory">
+<% entries = local_assigns[:versions] || (item.present? ? combined_changelog(item) : []) %>
 
-  <% entries = local_assigns[:versions] || (item.present? ? combined_changelog(item) : []) %>
-
+<ol class="timeline">
   <% entries.reverse_each do |entry| %>
     <% is_supersession = entry.is_a?(SupersessionEvent) %>
-    <% prefix = is_supersession ? "se" : "v" %>
-    <% expanded = is_supersession %>
-    <div class="accordion-item">
-      <div id="version<%= prefix %><%= entry.id %>" class="accordion-header">
-        <button class="accordion-button<%= expanded ? '' : ' collapsed' %>"
-                type="button"
-                <% if entry.respond_to?(:event) && entry.event == 'create' %>
-                  disabled
-                <% end %>
-                data-bs-toggle="collapse"
-                data-bs-target="#changeset<%= prefix %><%= entry.id %>"
-                aria-expanded="<%= expanded %>"
-                aria-controls="changeset<%= prefix %><%= entry.id %>">
-          <div>
-            <h3 class="h6">
-              <%= render "application/paper_trail/event", event: is_supersession ? entry.event_type : entry.event %>
-              <% if is_supersession %>
-                <%= entry.event_type == "supersede" ? "Superseded by #{entry.superseded_by.label}" : "Restored" %>
-              <% else %>
-                <%= entry.revision_comment.blank? ? "Updated." : md(entry.revision_comment) %>
-              <% end %>
-            </h3>
-            <p class="small text-muted">
-              <%= render "application/paper_trail/whodunnit", entry: entry %>
-              <%= entry.created_at.to_formatted_s %>
-            </p>
-          </div>
-        </button>
-      </div>
-      <div id="changeset<%= prefix %><%= entry.id %>" class="accordion-collapse collapse<%= expanded ? ' show' : '' %>"
-           aria-labelledby="version<%= prefix %><%= entry.id %>" data-bs-parent="#versionHistory">
-        <div class="accordion-body">
-          <%= render "application/paper_trail/changes", entry: entry %>
+    <li class="timeline-item" id="version-<%= is_supersession ? "se" : "v" %><%= entry.id %>">
+      <span class="timeline-marker"></span>
+      <div class="timeline-body">
+        <div class="d-flex align-items-baseline gap-2 small">
+          <%= render "application/paper_trail/event", event: is_supersession ? entry.event_type : entry.event %>
+          <span class="font-monospace text-body-secondary">
+            <%= entry.created_at.strftime("%F %H:%M") %>
+          </span>
+          <%= render "application/paper_trail/whodunnit", entry: entry %>
         </div>
+        <% if is_supersession %>
+          <details class="timeline-changes" open>
+            <summary title="Show/hide changes">
+              <%= entry.event_type == "supersede" ? "Superseded by #{entry.superseded_by.label}" : "Restored" %>
+            </summary>
+            <%= render "application/paper_trail/changes", entry: entry %>
+          </details>
+        <% elsif entry.event == "create" %>
+          <div class="small">
+            <%= entry.revision_comment.blank? ? "Updated." : md(entry.revision_comment) %>
+          </div>
+        <% elsif entry.changeset.any? { |c| c.first != "updated_at" } || (entry.snapshot_id.present? && version_peripheral_diff(entry).present?) %>
+          <details class="timeline-changes">
+            <summary title="Show/hide changes">
+              <%= entry.revision_comment.blank? ? "Updated." : md(entry.revision_comment) %>
+            </summary>
+            <%= render "application/paper_trail/changes", entry: entry %>
+          </details>
+        <% else %>
+          <div class="small">
+            <%= entry.revision_comment.blank? ? "Updated." : md(entry.revision_comment) %>
+          </div>
+        <% end %>
       </div>
-    </div>
+    </li>
   <% end %>
-
-</div>
+</ol>
