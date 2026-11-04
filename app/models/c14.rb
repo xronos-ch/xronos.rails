@@ -37,6 +37,8 @@
 #
 
 class C14 < Chron
+  include Citable
+
   exact_duplicates_on :lab_identifier,
                       :sample_id,
                       bp: :nil_matches_nil,
@@ -155,5 +157,11 @@ class C14 < Chron
   scope :missing_c14_lab, -> { where(c14_lab_id: nil) }
   def missing_c14_lab?
     c14_lab_id.blank?
+  end
+
+  private
+
+  def citation_title
+    lab_id.to_s.presence || "C14 record ##{id}"
   end
 end

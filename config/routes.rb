@@ -26,6 +26,7 @@ Rails.application.routes.draw do
       get 'calibrate_multi'
       get 'calibrate_sum'
     end
+    resource :citation, only: :show, controller: "c14/citation"
   end
   resources :c14_labs
   resources :contexts

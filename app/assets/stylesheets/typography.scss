@@ -1,5 +1,48 @@
 @use 'bootstrap/scss/bootstrap' as *;
 
+// Responsive heading-size utilities (Bootstrap has no built-in responsive variants
+// of its .h1–.h6 classes, so we define them here following the same naming pattern).
+@media (min-width: 992px) {
+	.h5-lg {
+		font-size: 1.25rem;
+	}
+}
+
+// Heading that sits on the top border of a box, like a <legend> on a <fieldset>.
+// Composed entirely of Bootstrap utilities via @extend — no custom rules.
+.legend {
+	@extend .h6;
+	@extend .fw-semibold;
+	@extend .position-absolute;
+	@extend .top-0;
+	@extend .start-0;
+	@extend .translate-middle-y;
+	@extend .bg-body;
+	@extend .px-2;
+	@extend .ms-2;
+	@extend .m-0;
+}
+
+// Box with a dark border and padding sized to accommodate a .legend on its
+// top edge. Composed of Bootstrap utilities.
+.section-with-legend {
+	@extend .border;
+	@extend .border-dark;
+	@extend .p-3;
+	@extend .pt-4;
+}
+
+// Inner content area of a .section-with-legend. Semantic class with no
+// default styles; provides a hook for future content-area styling.
+.section-body {
+}
+
+// Breadcrumb with a chevron separator (overrides Bootstrap's default "/" via the
+// --bs-breadcrumb-divider CSS variable).
+.breadcrumb-chevron {
+	--bs-breadcrumb-divider: "›";
+}
+
 .dl-inline dt:before {
 	content: "";
 	display: block;
@@ -30,3 +73,4 @@
 	background: $primary;
 	color: $light;
 }
+

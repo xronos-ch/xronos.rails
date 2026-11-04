@@ -1,0 +1,64 @@
+@use 'bootstrap/scss/bootstrap' as *;
+
+.timeline {
+	list-style: none;
+	padding-left: 1.5rem;
+	position: relative;
+	margin-bottom: 0;
+}
+
+.timeline::before {
+	content: "";
+	position: absolute;
+	left: 11px;
+	top: 0;
+	bottom: 0;
+	width: 2px;
+	background-color: $dark;
+}
+
+.timeline-item {
+	position: relative;
+	padding-bottom: 1rem;
+}
+
+.timeline-marker {
+	position: absolute;
+	left: -16px;
+	top: 6px;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background-color: $dark;
+}
+
+.timeline-changes {
+	@extend .small;
+
+	summary {
+		@extend .text-body-secondary;
+		cursor: pointer;
+	}
+}
+
+// Mask the line above the first marker
+.timeline-item:first-child::before {
+	content: "";
+	position: absolute;
+	left: -13px;
+	top: 0;
+	width: 2px;
+	height: 10px;
+	background-color: $body-bg;
+}
+
+// Mask the line below the last marker
+.timeline-item:last-child::after {
+	content: "";
+	position: absolute;
+	left: -13px;
+	top: 10px;
+	bottom: 0;
+	width: 2px;
+	background-color: $body-bg;
+}
