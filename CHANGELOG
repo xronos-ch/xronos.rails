@@ -12,6 +12,7 @@
 - Added new configuration variable ADMIN_USER_NAME
 - Made it possible to pass revision comments from peripheral models to their
   parent(s). Fixes editing taxons (#526).
+- Fixed site header controls being incorrectly cached across users (#474).
 
 ## [1.3.1] - 2026-10-26
 
