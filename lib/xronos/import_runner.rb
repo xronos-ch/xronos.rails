@@ -253,7 +253,7 @@ module Xronos
     # variants, without ever silently overwriting existing data.
     def import!(scope, keys:, attributes: {}, revision_comment: nil)
       find_attrs = keys.merge(attributes)
-      record = scope.find_or_initialize_by(find_attrs)
+      record = find_record(scope, find_attrs) || scope.new(find_attrs)
 
       if record.new_record?
         record.assign_attributes(find_attrs)
@@ -263,6 +263,27 @@ module Xronos
       end
 
       record
+    end
+
+    # Finds a record by the combined set of identity keys and attributes.
+    # json(b) attributes are compared semantically (`= ?::jsonb`): a plain
+    # `where(attr: value)` would treat a Ruby Array as an SQL IN-list rather
+    # than a single JSON value.
+    def find_record(scope, find_attrs)
+      model = scope.is_a?(Class) ? scope : scope.klass
+
+      find_attrs.reduce(scope) do |relation, (attr, value)|
+        if !value.nil? && json_column?(model, attr)
+          relation.where("#{model.connection.quote_column_name(attr)} = ?::jsonb", value.to_json)
+        else
+          relation.where(attr => value)
+        end
+      end.first
+    end
+
+    def json_column?(model, attr)
+      column = model.columns_hash[attr.to_s]
+      column && %i[json jsonb].include?(column.type)
     end
 
     # Always creates a new record in the given scope, never finding existing ones.

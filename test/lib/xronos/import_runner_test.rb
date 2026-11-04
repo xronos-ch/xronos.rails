@@ -150,6 +150,29 @@ module Xronos
       assert_equal 1, runner.import_record.records_created['site']
     end
 
+    test 'import! with a CSL reference round-trips and does not duplicate' do
+      runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
+
+      csl = [{
+        'id' => 'Morales2023',
+        'type' => 'article-journal',
+        'author' => [{ 'family' => 'Morales', 'given' => 'Jacob' }],
+        'title' => '14Canarias',
+        'issued' => { 'date-parts' => [[2023]] },
+        'DOI' => '10.5334/joad.105'
+      }]
+
+      ref_a = runner.import!(Reference, keys: { short_ref: '14Canarias' },
+                                        attributes: { csl: csl })
+      ref_b = runner.import!(Reference, keys: { short_ref: '14Canarias' },
+                                        attributes: { csl: csl })
+
+      assert_equal ref_a.id, ref_b.id
+      assert_equal csl, ref_a.reload.csl
+      assert_equal '10.5334/joad.105', ref_a.doi
+      assert_equal 1, runner.import_record.records_created['reference']
+    end
+
     test 'import! works with association scope' do
       runner = Xronos::ImportRunner.new(@source, csv_dir: @csv_dir, output: @output)
       site = create(:site, name: 'Test')
