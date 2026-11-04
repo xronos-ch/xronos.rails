@@ -12,4 +12,14 @@ class Issues::ReferencesControllerTest < ActionDispatch::IntegrationTest # ruboc
       index: { not_signed_in: :redirect, signed_in: :success }
     }
   )
+
+  test 'long_label issue page renders' do
+    sign_in create(:user)
+    create(:reference, short_ref: 'An extremely long reference label exceeding thirty characters')
+
+    get '/issues/references/long_label'
+
+    assert_response :success
+    assert_includes response.body, 'An extremely long reference label exceeding thirty characters'
+  end
 end

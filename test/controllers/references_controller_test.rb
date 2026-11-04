@@ -98,4 +98,16 @@ class ReferencesControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, 'Kipfer2000'
     assert_not_includes response.body, 'Other2021'
   end
+
+  test 'show as JSON includes the CSL data and DOI, but not the search index column' do
+    reference = create(:reference)
+
+    get reference_path(reference, format: :json)
+
+    assert_response :success
+    body = JSON.parse(response.body)
+    assert_equal reference.csl, body['csl']
+    assert_equal reference.doi, body['doi']
+    assert_not_includes body.keys, 'searchable'
+  end
 end
