@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'bibtex'
-
 namespace :xronos do
   namespace :import do
     desc 'Import RDCA (Radiocarbon Databank for Chinese Archaeology)'
@@ -43,7 +41,7 @@ namespace :xronos do
           reference
         }
 
-        # Helper to parse reference abbreviations into BibTeX fields
+        # Helper to parse reference abbreviations into CSL fields
         inst_keywords = /Institute|Laboratory|Museum|University|Panel|Group|Project|CASS|XICRA|YPICRA|GPICRA|XUARM|Commission|CAQR/i
         year_re = /,\s*(\d{4}[a-z]?)\s/
         year_etal_re = /et al\.\s+(\d{4}[a-z]?)\s/
@@ -79,22 +77,22 @@ namespace :xronos do
                     [author_str]
                   end
 
-          bibtex_authors = names.map do |str|
+          csl_authors = names.map do |str|
             str = str.strip
             if str.match?(/\A[A-Z]{2,}/)
-              "{#{str}}"
+              { "literal" => str }
             else
               m = str.match(/\A([A-ZÀ-ž][a-zà-ž''-]+)\s+([A-Z]+)\z/)
               if m
                 initials = m[2].chars.map { |c| "#{c}." }.join(' ')
-                "#{m[1]}, #{initials}"
+                { "family" => m[1], "given" => initials }
               else
-                "{#{str}}"
+                { "literal" => str }
               end
             end
-          end.join(' and ')
+          end
 
-          { author: bibtex_authors, year: year, venue: venue }
+          { author: csl_authors, year: year, venue: venue }
         }
 
         begin
@@ -105,17 +103,27 @@ namespace :xronos do
           source_ref = runner.import!(Reference,
                                       keys: { short_ref: 'RDCA' },
                                       attributes: {
-                                        bibtex: <<~BIB.chomp
-                                          @article{Qiu2025,
-                                            author = {Qiu, Menghan and Du, Linyao and Staff, Richard and Yan, Ziyun and Yan, Tingting and Cao, Huihui and Gosden, Chris and Liu, Ruiliang and Dong, Guanghui},
-                                            title = {Chronology of early China: A radiocarbon databank for Chinese archaeology},
-                                            journal = {Scientific Data},
-                                            year = {2025},
-                                            volume = {12},
-                                            pages = {1665},
-                                            doi = {10.1038/s41597-025-05956-z}
-                                          }
-                                        BIB
+                                        csl: [{
+                                          "id" => "Qiu2025",
+                                          "type" => "article-journal",
+                                          "author" => [
+                                            { "family" => "Qiu", "given" => "Menghan" },
+                                            { "family" => "Du", "given" => "Linyao" },
+                                            { "family" => "Staff", "given" => "Richard" },
+                                            { "family" => "Yan", "given" => "Ziyun" },
+                                            { "family" => "Yan", "given" => "Tingting" },
+                                            { "family" => "Cao", "given" => "Huihui" },
+                                            { "family" => "Gosden", "given" => "Chris" },
+                                            { "family" => "Liu", "given" => "Ruiliang" },
+                                            { "family" => "Dong", "given" => "Guanghui" }
+                                          ],
+                                          "title" => "Chronology of early China: A radiocarbon databank for Chinese archaeology",
+                                          "container-title" => "Scientific Data",
+                                          "issued" => { "date-parts" => [[2025]] },
+                                          "volume" => "12",
+                                          "page" => "1665",
+                                          "DOI" => "10.1038/s41597-025-05956-z"
+                                        }]
                                       },
                                       revision_comment: revision_comment)
           source.update!(reference: source_ref)
@@ -136,22 +144,24 @@ namespace :xronos do
 
             parsed = parse_ref_abbrev.call(abbrev)
 
-            bibtex_lines = ["@misc{#{abbrev.gsub(/[^a-zA-Z0-9_]/, '_')},"]
-            bibtex_lines << "  author = {#{parsed[:author]}}," if parsed && parsed[:author].present?
+            csl_item = {
+              "id" => abbrev.gsub(/[^a-zA-Z0-9_]/, '_'),
+              "type" => "misc"
+            }
+            csl_item["author"] = parsed[:author] if parsed && parsed[:author].present?
             if title_zh
-              bibtex_lines << "  title = {#{title_zh}},"
-              bibtex_lines << "  title-english = {#{title_en}}," if title_en
-              bibtex_lines << '  language = {Chinese},'
+              csl_item["title"] = title_zh
+              csl_item["title-english"] = title_en if title_en
+              csl_item["language"] = "zh"
             elsif title_en
-              bibtex_lines << "  title = {#{title_en}},"
+              csl_item["title"] = title_en
             end
-            bibtex_lines << "  year = {#{year}}," if year
-            bibtex_lines << "  doi = {#{doi}}," if doi
-            bibtex_lines << '}'
+            csl_item["issued"] = { "date-parts" => [[year.to_i]] } if year.to_s.match?(/\A\d{4}/)
+            csl_item["DOI"] = doi if doi
 
             reference = runner.import!(Reference,
                                        keys: { short_ref: abbrev },
-                                       attributes: { bibtex: bibtex_lines.join("\n") },
+                                       attributes: { csl: [csl_item] },
                                        revision_comment: revision_comment)
             ref_index[abbrev] = reference
           end
@@ -194,11 +204,15 @@ namespace :xronos do
           }
 
           missing_refs.each do |abbrev, attrs|
-            bibtex = "@misc{#{abbrev.gsub(/[^a-zA-Z0-9_]/,
-                                          '_')},\n  title = {#{attrs[:title]}},\n  year = {#{attrs[:year]}}\n}"
+            csl_item = {
+              "id" => abbrev.gsub(/[^a-zA-Z0-9_]/, '_'),
+              "type" => "misc",
+              "title" => attrs[:title],
+              "issued" => { "date-parts" => [[attrs[:year]]] }
+            }
             reference = runner.import!(Reference,
                                        keys: { short_ref: abbrev },
-                                       attributes: { bibtex: bibtex },
+                                       attributes: { csl: [csl_item] },
                                        revision_comment: revision_comment)
             ref_index[abbrev] = reference
           end

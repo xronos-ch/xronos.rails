@@ -11,6 +11,7 @@
 		"@rails/activestorage": "^6.1.4-1",
 		"bootstrap": "^5.3.8",
 		"bootstrap-icons": "^1.13.1",
+		"citation-js": "^0.6",
 		"easymde": "^2.18.0",
 		"leaflet": "^1.8.0",
 		"leaflet-providers": "^4.0.0",

@@ -28,7 +28,7 @@ After mapping known columns to XRONOS models, list any unused columns to the use
 Follow the skeleton below. Every task takes three required arguments: `[version, dir, source_url]`.
 
 ### 5. Cite the source
-Create a bibliographic reference for the source dataset itself (Phase 0 in the skeleton, using BibTeX provided by the source authors). Store it on the `Source` record, then call `cite_source!(record)` after creating each citable record.
+Create a bibliographic reference for the source dataset itself (Phase 0 in the skeleton). References are stored as **CSL JSON** — the `csl` attribute holds an *array of CSL items*. Hand-build the item from the citation provided by the source authors. If the source ships a `.bib` file (e.g. for bulk reference imports), convert with `BibTeX.parse(file, filter: :latex)` and use `attributes: { csl: [entry.to_citeproc] }` per entry — `Entry#to_citeproc` returns a single item *hash*, so wrap it in an array. Store the reference on the `Source` record, then call `cite_source!(record)` after creating each citable record.
 
 ## Skeleton
 
@@ -63,13 +63,18 @@ namespace :xronos do
           # Phase 0: Source reference
           source_ref = runner.import!(Reference,
             keys: { short_ref: "MyDataset" },
-            attributes: { bibtex: <<~BIB.chomp
-              @article{Author2023,
-                author = {Author, A. and Author, B.},
-                title  = {Title},
-                doi    = {10.xxxx/xxxxx}
-              }
-            BIB
+            attributes: {
+              csl: [{
+                "id" => "Author2023",
+                "type" => "article-journal",
+                "author" => [
+                  { "family" => "Author", "given" => "A." },
+                  { "family" => "Author", "given" => "B." }
+                ],
+                "title" => "Title",
+                "issued" => { "date-parts" => [[2023]] },
+                "DOI" => "10.xxxx/xxxxx"
+              }]
             },
             revision_comment: revision_comment
           )
@@ -98,7 +103,7 @@ end
 
 | Method | Purpose |
 |--------|---------|
-| `import!(scope, keys:, attributes: {}, revision_comment: nil)` | Create-only import; finds by merged keys+attributes, creates on miss |
+| `import!(scope, keys:, attributes: {}, revision_comment: nil)` | Create-only import; finds by merged keys+attributes (json(b) attributes are compared semantically), creates on miss |
 | `build_new!(scope, attributes: {}, revision_comment: nil)` | Always creates a new record (never finds); use when each row is distinct |
 | `cell(row, column)` | Sanitise CSV cell: strip whitespace, blank → `nil` |
 | `skip_unless(condition, reason)` | Guard clause: `throw :skip_row` unless condition is truthy; counts skipped rows by `reason` in `records_skipped` |

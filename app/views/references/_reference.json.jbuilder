@@ -1,2 +1,2 @@
-json.extract! reference, :id, :short_ref, :bibtex, :created_at, :updated_at
+json.extract! reference, :id, :short_ref, :csl, :doi, :created_at, :updated_at
 

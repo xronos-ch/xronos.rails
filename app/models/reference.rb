@@ -4,19 +4,27 @@
 # Database name: primary
 #
 #  id         :bigint           not null, primary key
-#  bibtex     :text
+#  csl        :jsonb
+#  doi        :string
+#  searchable :tsvector
 #  short_ref  :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
 # Indexes
 #
-#  index_references_on_short_ref  (short_ref)
+#  index_references_on_doi         (doi)
+#  index_references_on_searchable  (searchable) USING gin
+#  index_references_on_short_ref   (short_ref)
 #
 
 class Reference < ApplicationRecord
   DELIM_PATTERN = '[;,]'
   MAX_SHORT_REF_LENGTH = 30
+
+  # Value of the "schema" query param selecting the CSL-JSON representation
+  # of a record (mirrors C14::MIAARD::SCHEMA)
+  CSL_SCHEMA = "csl"
 
   has_many :citations, dependent: :destroy
 
@@ -29,6 +37,9 @@ class Reference < ApplicationRecord
   validates :short_ref, presence: true
 
   include Versioned
+  # searchable is a derived index column; exclude it from versioning
+  # (must be a string: PT stringifies :skip only at has_paper_trail time)
+  paper_trail_options[:skip] = ["searchable"]
   include Supersedable
   include Mergeable
 
@@ -37,19 +48,21 @@ class Reference < ApplicationRecord
   after_save :merge_exact_duplicates
   validate :no_exact_duplicate, on: :create
 
+  before_save :extract_doi_from_csl
+
   before_merge :reassign_citations!
   before_merge :reassign_sources!
 
   acts_as_copy_target # enable CSV exports
 
   include HasIssues
-  @issues = [ :mixed_reference, :missing_bibtex, :long_label ]
+  @issues = [ :mixed_reference, :long_label ]
 
   include PgSearch::Model
   pg_search_scope :search,
-    against: [ :short_ref, :bibtex ],
-    using: { tsearch: { prefix: true } } # match partial words
-  multisearchable against: [ :short_ref, :bibtex ]
+    against: [ :short_ref, :csl ],
+    using: { tsearch: { prefix: true, tsvector_column: :searchable } } # match partial words
+  multisearchable against: [ :short_ref, :searchable_csl ]
 
   scope :with_citations_count, -> {
     select <<~SQL
@@ -91,52 +104,55 @@ class Reference < ApplicationRecord
     "ref-" + CGI.escape(short_ref)
   end
 
+  def csl_items
+    Array(csl)
+  end
+
+  # Keys prefixed with "_" are internal (e.g. the "_raw_bibtex" QA leftovers
+  # from the BibTeX backfill) and must not leak into exported formats.
+  def csl_items_for_export
+    csl_items.map { |item| item.reject { |key, _| key.start_with?("_") } }
+  end
+
   def format_bibtex
-    parse.to_s
+    CitationJs.convert(csl_items_for_export, "bibtex")
+  end
+
+  def format_ris
+    CitationJs.convert(csl_items_for_export, "ris")
   end
 
   def format_yaml
-    parse.to_yaml
+    csl_items_for_export.to_yaml
   end
 
   def format_json
-    parse.to_json
+    csl_items_for_export.to_json
   end
 
   def render
-    return "No bibliographic information available." if parse.blank?
+    return "No bibliographic information available." if csl_items.blank?
 
     cp = CiteProc::Processor.new style: 'apa', format: 'html', locale: 'en'
-    cp.import parse.to_citeproc
+    cp.import csl_items
 
-    html = parse['@entry, @meta_content'].map do |e|
-      cp.render :bibliography, id: e.key
+    html = csl_items.map do |item|
+      cp.render :bibliography, id: item["id"]
     end
     html.join.html_safe
   end
 
   def render_citation
     @rendered_citation ||= begin
-      return short_ref if parse.blank?
+      return short_ref if csl_items.blank?
 
       cp = CiteProc::Processor.new style: 'chicago-author-date', format: 'html', locale: 'en'
-      cp.import parse.to_citeproc
+      cp.import csl_items
 
-      html = parse['@entry, @meta_content'].map do |e|
-        cp.render :citation, id: e.key
+      html = csl_items.map do |item|
+        cp.render :citation, id: item["id"]
       end
       html.join.delete('()').html_safe
-    end
-  end
-
-  def parse
-    @parse ||= if bibtex.present?
-      BibTeX.parse bibtex, filter: :latex
-    else
-      bib = BibTeX::Entry.new
-      bib.type = :misc
-      bib.key = short_ref
-      bib
     end
   end
 
@@ -144,11 +160,6 @@ class Reference < ApplicationRecord
   scope :mixed_reference, -> { where("short_ref ~* ?", DELIM_PATTERN) }
   def mixed_reference?
     short_ref.match?(DELIM_PATTERN)
-  end
-
-  scope :missing_bibtex, -> { where(bibtex: nil) }
-  def missing_bibtex?
-    bibtex.blank?
   end
 
   scope :long_label, -> { where("LENGTH(short_ref) > ?", MAX_SHORT_REF_LENGTH) }
@@ -167,6 +178,37 @@ class Reference < ApplicationRecord
   end
 
   private
+
+  def extract_doi_from_csl
+    doi = csl_items.filter_map { |item| item["DOI"].presence }.first
+    self.doi = normalize_doi(doi)
+  end
+
+  def normalize_doi(doi)
+    return nil if doi.blank?
+
+    doi.strip
+       .sub(/\Ahttps?:\/\/doi\.org\//i, "")
+       .sub(/\Adoi:/i, "")
+       .strip
+       .downcase
+       .presence
+  end
+
+  # Content copied into the global multisearch index (pg_search_documents):
+  # CSL values only — no keys, and no internal ("_"-prefixed) keys via
+  # csl_items_for_export.
+  def searchable_csl
+    csl_items_for_export.flat_map { |item| csl_values(item) }.join(" ")
+  end
+
+  def csl_values(node)
+    case node
+    when Hash then node.flat_map { |_, value| csl_values(value) }
+    when Array then node.flat_map { |value| csl_values(value) }
+    else node.to_s
+    end
+  end
 
   def reassign_citations!
     Citation.reassign_all_to!(from: self, to: canonical)

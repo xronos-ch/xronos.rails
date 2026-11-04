@@ -36,44 +36,69 @@
 
   </header>
 
-  <div class="mt-3">
-    <%= render "shared/record_metadata", record: @reference %>
+  <div class="mb-5">
+    <%= render "shared/record_toolbar", record: @reference,
+          downloads: [
+            { name: "JSON",     path: reference_path(@reference, format: :json) },
+            { name: "CSL-JSON", path: reference_path(@reference, format: :json, schema: Reference::CSL_SCHEMA) },
+            { name: "CSL-YAML", path: reference_path(@reference, format: :yaml) },
+            { name: "BibTeX",   path: reference_path(@reference, format: :bib) },
+            { name: "RIS",      path: reference_path(@reference, format: :ris) }
+          ] %>
   </div>
 
-  <div class="mt-3 mb-5">
-    <%= render "shared/record_toolbar", record: @reference, downloads: [] %>
-  </div>
+  <div class="row g-4">
 
-  <section id="reference-details" class="my-5">
-    <%= render "bibliography", references: [@reference] %>
-  </section>
+    <div class="col-12 col-lg-8">
 
-  <section id="reference-citations" class="my-5">
-    <h2>Citing records</h2>
-    <% c = @citations_count %>
-    <p>There <%= c > 1 ? 'are' : 'is' %> <%= c %> <%= 'record'.pluralize(c) %>
-        in XRONOS that <%= c > 1 ? 'cite' : 'cites' %> this reference.</p>
+      <section id="reference-bibliography" class="section-with-legend position-relative">
+        <h2 class="legend">
+          <%= bs_icon "card-list", class: "me-1" %>Bibliographic data
+        </h2>
+        <div class="section-body">
+          <%= render "csl_data", reference: @reference %>
+        </div>
+      </section>
 
-    <% if @sites.present? %>
-      <div class="my-5">
-        <h3>
-          <%= xr_icon Site, {}, style: "height: 1.75rem; vertical-align: top;" %>
-          <%= Site.label.humanize.pluralize %>
-          <small class="text-muted">(<%= @pagy_sites.count %>)</small>
-        </h3>
-        <turbo-frame id="reference-sites-table">
-          <%= render "sites/table", sites: @sites %>
-          <% unless @pagy_sites.pages <= 1 %>
-            <%== @pagy_sites.series_nav(:bootstrap) %>
+      <section id="reference-citations" class="section-with-legend mt-5 position-relative">
+        <h2 class="legend">
+          <%= bs_icon "quote", class: "me-1" %>Citing records
+          <span class="badge text-bg-info ms-1"><%= @citations_count %></span>
+        </h2>
+        <div class="section-body">
+          <% c = @citations_count %>
+          <p>There <%= c > 1 ? 'are' : 'is' %> <%= c %> <%= 'record'.pluralize(c) %>
+              in XRONOS that <%= c > 1 ? 'cite' : 'cites' %> this reference.</p>
+
+          <% if @sites.present? %>
+            <h3>
+              <%= xr_icon Site, {}, style: "height: 1.75rem; vertical-align: top;" %>
+              <%= Site.label.humanize.pluralize %>
+              <small class="text-muted">(<%= @pagy_sites.count %>)</small>
+            </h3>
+            <turbo-frame id="reference-sites-table">
+              <%= render "sites/table", sites: @sites %>
+              <% unless @pagy_sites.pages <= 1 %>
+                <%== @pagy_sites.series_nav(:bootstrap) %>
+              <% end %>
+            </turbo-frame>
           <% end %>
-        </turbo-frame>
-      </div>
-    <% end %>
-  </section>
+        </div>
+      </section>
 
-  <section id="reference-changelog" class="my-5">
-    <h2>Changelog</h2>
-    <%= render "application/paper_trail/versions", item: @reference %>
-  </section>
+    </div>
+
+    <aside class="col-lg-4">
+      <div>
+        <%= render "shared/record_metadata", record: @reference %>
+      </div>
+
+      <section id="reference-changelog" class="mt-5">
+        <h2 class="h5-lg">Changelog</h2>
+        <%= render "application/paper_trail/versions", item: @reference %>
+      </section>
+    </aside>
+
+  </div>
 
 </main>

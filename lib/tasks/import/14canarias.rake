@@ -34,17 +34,21 @@ namespace :xronos do
           source_ref = runner.import!(Reference,
                                       keys: { short_ref: '14Canarias' },
                                       attributes: {
-                                        bibtex: <<~BIB.chomp
-                                          @article{Morales2023,
-                                            author = {Morales, Jacob and Rodr{\'\i}guez, Amelia and Delgado, Tania},
-                                            title = {{14Canarias}: A radiocarbon database for the Canary Islands},
-                                            journal = {Journal of Open Archaeology Data},
-                                            year = {2023},
-                                            volume = {11},
-                                            pages = {1--7},
-                                            doi = {10.5334/joad.105}
-                                          }
-                                        BIB
+                                        csl: [{
+                                          "id" => "Morales2023",
+                                          "type" => "article-journal",
+                                          "author" => [
+                                            { "family" => "Morales", "given" => "Jacob" },
+                                            { "family" => "Rodríguez", "given" => "Amelia" },
+                                            { "family" => "Delgado", "given" => "Tania" }
+                                          ],
+                                          "title" => "14Canarias: A radiocarbon database for the Canary Islands",
+                                          "container-title" => "Journal of Open Archaeology Data",
+                                          "issued" => { "date-parts" => [[2023]] },
+                                          "volume" => "11",
+                                          "page" => "1–7",
+                                          "DOI" => "10.5334/joad.105"
+                                        }]
                                       },
                                       revision_comment: revision_comment)
           source.update!(reference: source_ref)
@@ -67,11 +71,11 @@ namespace :xronos do
 
           # Phase 2: References
           bibtex_key_map = {} # BibTeX key -> Reference
-          bib = BibTeX.parse(File.read(File.join(dir, '14CanariasREF.bib')))
+          bib = BibTeX.parse(File.read(File.join(dir, '14CanariasREF.bib')), filter: :latex)
           runner.process_enum(bib.each_entry, title: '14CanariasREF.bib') do |entry|
             reference = import!(Reference,
                                 keys: { short_ref: entry.key },
-                                attributes: { bibtex: entry.to_s },
+                                attributes: { csl: [entry.to_citeproc] },
                                 revision_comment: revision_comment)
             bibtex_key_map[entry.key] = reference
           end

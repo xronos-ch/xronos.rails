@@ -1,0 +1,31 @@
+<% items = reference.csl_items %>
+
+<% if items.blank? %>
+
+  <p>There is no bibliographic data available for this reference.</p>
+
+<% else %>
+
+  <% items.each_with_index do |item, i| %>
+
+    <% if items.size > 1 %>
+      <h3 class="h6<%= " mt-4" if i > 0 %>">Item <%= i + 1 %></h3>
+    <% end %>
+
+    <dl class="row mb-0">
+      <% csl_display_fields(item).each do |key| %>
+        <dt class="col-12 col-lg-4"><%= csl_field_label(key) %></dt>
+        <dd class="col-12 col-lg-8">
+          <%= csl_field_value(key, item[key]).presence || na_value %>
+        </dd>
+      <% end %>
+    </dl>
+
+  <% end %>
+
+<% end %>
+
+<p class="small text-body-secondary mt-3 mb-0">
+  Bibliographic data is structured according to the
+  <a href="https://docs.citationstyles.org/en/stable/specification.html">Citation Style Language (CSL) Specification</a>.
+</p>
