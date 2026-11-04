@@ -4,7 +4,7 @@
 
 <% else %>
 
-  <ul class="nav nav-tabs justify-content-end" id="bibliographyTabs" role="tablist">
+  <ul class="nav nav-pills justify-content-end" id="bibliographyTabs" role="tablist">
     <li class="nav-item" role="presentation">
       <button class="nav-link active" id="biblio-text-tab" data-bs-toggle="tab" data-bs-target="#biblio-text" type="button" role="tab" aria-controls="biblio-text" aria-selected="true">Text</button>
     </li>
@@ -21,7 +21,7 @@
 
   <div class="tab-content" id="bibliographyTabsContent">
 
-    <div class="tab-pane fade show active p-3 border border-top-0" id="biblio-text" role="tabpanel" aria-labelledby="biblio-text-tab" tabindex="-1">
+    <div class="tab-pane fade show active p-3" id="biblio-text" role="tabpanel" aria-labelledby="biblio-text-tab" tabindex="-1">
       <ul class="list-unstyled mb-0">
         <% for ref in references %>
           <li id="<%= ref.anchor %>">
@@ -32,15 +32,15 @@
       </ul>
     </div>
 
-    <div class="tab-pane fade p-3 border border-top-0" id="biblio-bibtex" role="tabpanel" aria-labelledby="biblio-bibtex-tab" tabindex="0">
+    <div class="tab-pane fade p-3" id="biblio-bibtex" role="tabpanel" aria-labelledby="biblio-bibtex-tab" tabindex="0">
       <pre class="mb-0"><code class="p-0"><% for ref in references %><%= ref.format_bibtex %><% end %></code></pre>
     </div>
 
-    <div class="tab-pane fade p-3 border border-top-0" id="biblio-json" role="tabpanel" aria-labelledby="biblio-json-tab" tabindex="0">
+    <div class="tab-pane fade p-3" id="biblio-json" role="tabpanel" aria-labelledby="biblio-json-tab" tabindex="0">
       <pre class="mb-0"><code class="p-0"><% for ref in references %><%= ref.format_json %><% end %></code></pre>
     </div>
 
-    <div class="tab-pane fade p-3 border border-top-0" id="biblio-yaml" role="tabpanel" aria-labelledby="biblio-yaml-tab" tabindex="0">
+    <div class="tab-pane fade p-3" id="biblio-yaml" role="tabpanel" aria-labelledby="biblio-yaml-tab" tabindex="0">
       <pre class="mb-0"><code class="p-0"><% for ref in references %><%= ref.format_yaml %><% end %></code></pre>
     </div>
 

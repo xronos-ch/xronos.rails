@@ -39,10 +39,11 @@ POSTGRES_USER=...
 POSTGRES_PASSWORD=...
 # Passphrase the users must know to register
 REGISTRATION_PASSPHRASE=...
-# Default admin user (for bulk changes etc.)
+# Default admin user seeded into the database (for bulk changes etc.)
 ADMIN_USER_ID=1
 ADMIN_USER_EMAIL=
 ADMIN_USER_PASSWORD=
+ADMIN_USER_NAME=XRONOS Core Team
 # API keys
 CARTO_API_KEY=
 ```

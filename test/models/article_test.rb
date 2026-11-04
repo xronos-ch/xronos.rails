@@ -94,6 +94,44 @@ class ArticleTest < ActiveSupport::TestCase
     assert_not article.scheduled?
   end
 
+  # --- author_name ---
+
+  test "about article is bylined with the default user's display name" do
+    admin = create(:user)
+    admin.user_profile.update!(full_name: "XRONOS Core Team")
+    article = create(:article, :about)
+
+    with_env("ADMIN_USER_ID" => admin.id.to_s) do
+      assert_equal "XRONOS Core Team", article.author_name
+    end
+  end
+
+  test "news article by a named author is bylined with the author's name" do
+    article = create(:article, :news)
+    article.user.user_profile.update!(full_name: "Alice Smith")
+
+    assert_equal "Alice Smith", article.author_name
+  end
+
+  test "news article by a nameless author is bylined with the default user's display name" do
+    admin = create(:user)
+    admin.user_profile.update!(full_name: "XRONOS Core Team")
+    article = create(:article, :news)
+    article.user.user_profile.update!(full_name: nil)
+
+    with_env("ADMIN_USER_ID" => admin.id.to_s) do
+      assert_equal "XRONOS Core Team", article.author_name
+    end
+  end
+
+  test "author_name falls back to XRONOS when the default user has no name" do
+    article = create(:article, :about)
+
+    with_env("ADMIN_USER_ID" => "0") do
+      assert_equal "XRONOS", article.author_name
+    end
+  end
+
   # --- Sections ---
 
   test "news article has section news" do
@@ -194,6 +232,16 @@ class ArticleTest < ActiveSupport::TestCase
     variant = article.splash.variant(:og)
 
     assert variant.present?
+  end
+
+  private
+
+  def with_env(vars)
+    previous = vars.keys.to_h { |k| [k, ENV[k]] }
+    vars.each { |k, v| ENV[k] = v }
+    yield
+  ensure
+    previous.each { |k, v| ENV[k] = v }
   end
 
 end

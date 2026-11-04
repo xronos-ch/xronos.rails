@@ -5,7 +5,14 @@
 - Fixed radiocarbon date creation with existing, new or unnamed site contexts,
   visible validation errors and return navigation. Defaults to the general site
   context, with searchable context selection and creation (#520).
-
+- Redesigned the radiocarbon date show view:
+  - Clearer two-column layout and page header with a copyable permalink
+  - Export options (JSON, MIaaRD JSON) are now visible in the UI
+  - Changelog is now shown as a compact timeline
+  - Adjusted site and reference show pages for consistency
+- Added suggested citation for radiocarbon dates to show view
+  - Exportable as BibTeX, CSL-JSON, YAML, RIS
+- Added new configuration variable ADMIN_USER_NAME
 - Made it possible to pass revision comments from peripheral models to their
   parent(s). Fixes editing taxons (#526).
 
