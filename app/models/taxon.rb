@@ -27,6 +27,8 @@ class Taxon < ApplicationRecord
 
   touch_referencing_records :samples
 
+  attr_accessor :revision_comment
+
   after_save :enqueue_gbif_sync
   after_save :merge_exact_duplicates
   validate :no_exact_duplicate, on: :create

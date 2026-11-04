@@ -10,6 +10,8 @@
 - Added suggested citation for radiocarbon dates to show view
   - Exportable as BibTeX, CSL-JSON, YAML, RIS
 - Added new configuration variable ADMIN_USER_NAME
+- Made it possible to pass revision comments from peripheral models to their
+  parent(s). Fixes editing taxons (#526).
 
 ## [1.3.1] - 2026-10-26
 

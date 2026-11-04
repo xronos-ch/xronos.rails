@@ -152,6 +152,13 @@ class TaxonsControllerTest < ActionDispatch::IntegrationTest
     assert_equal @taxon.id, sample.reload.taxon_id
   end
 
+  test "update with revision_comment succeeds (issue #526)" do
+    patch taxon_path(@taxon), params: { taxon: { name: "Quercus petraea", revision_comment: "Fixed spelling" } }
+
+    assert_response :redirect
+    assert_equal "Quercus petraea", @taxon.reload.name
+  end
+
   test "create with no duplicate creates a new taxon" do
     assert_difference "Taxon.count", 1 do
       post taxons_path, params: { taxon: { name: "Pinus sylvestris", gbif_id: 3 } }

@@ -28,9 +28,9 @@ module Peripheral
     def touch_referencing_records(association_name)
       after_save :touch_referencing_records_with_revision_comment
       before_destroy :touch_referencing_records_with_revision_comment
-
       define_method(:touch_referencing_records_with_revision_comment) do
-        comment = new_record? ? "Added #{self.class.label}." : "Changed #{self.class.label}."
+        comment = (respond_to?(:revision_comment) && revision_comment.presence) ||
+                  (new_record? ? "Added #{self.class.label}." : "Changed #{self.class.label}.")
         public_send(association_name).find_each do |record|
           next unless record.respond_to?(:revision_comment=)
           record.revision_comment = comment
