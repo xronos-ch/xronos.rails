@@ -6,14 +6,16 @@
 #  id         :bigint           not null, primary key
 #  csl        :jsonb
 #  doi        :string
+#  searchable :tsvector
 #  short_ref  :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
 # Indexes
 #
-#  index_references_on_doi        (doi)
-#  index_references_on_short_ref  (short_ref)
+#  index_references_on_doi         (doi)
+#  index_references_on_searchable  (searchable) USING gin
+#  index_references_on_short_ref   (short_ref)
 #
 FactoryBot.define do
   factory :reference do

@@ -6,14 +6,16 @@
 #  id         :bigint           not null, primary key
 #  csl        :jsonb
 #  doi        :string
+#  searchable :tsvector
 #  short_ref  :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
 # Indexes
 #
-#  index_references_on_doi        (doi)
-#  index_references_on_short_ref  (short_ref)
+#  index_references_on_doi         (doi)
+#  index_references_on_searchable  (searchable) USING gin
+#  index_references_on_short_ref   (short_ref)
 #
 
 class Reference < ApplicationRecord
@@ -31,6 +33,9 @@ class Reference < ApplicationRecord
   validates :short_ref, presence: true
 
   include Versioned
+  # searchable is a derived index column; exclude it from versioning
+  # (must be a string: PT stringifies :skip only at has_paper_trail time)
+  paper_trail_options[:skip] = ["searchable"]
   include Supersedable
   include Mergeable
 
@@ -51,9 +56,9 @@ class Reference < ApplicationRecord
 
   include PgSearch::Model
   pg_search_scope :search,
-    against: [ :short_ref, :bibtex ],
-    using: { tsearch: { prefix: true } } # match partial words
-  multisearchable against: [ :short_ref ]
+    against: [ :short_ref, :csl ],
+    using: { tsearch: { prefix: true, tsvector_column: :searchable } } # match partial words
+  multisearchable against: [ :short_ref, :searchable_csl ]
 
   scope :with_citations_count, -> {
     select <<~SQL
@@ -184,6 +189,21 @@ class Reference < ApplicationRecord
   # from the BibTeX backfill) and must not leak into exported formats.
   def csl_items_for_export
     csl_items.map { |item| item.reject { |key, _| key.start_with?("_") } }
+  end
+
+  # Content copied into the global multisearch index (pg_search_documents):
+  # CSL values only — no keys, and no internal ("_"-prefixed) keys via
+  # csl_items_for_export.
+  def searchable_csl
+    csl_items_for_export.flat_map { |item| csl_values(item) }.join(" ")
+  end
+
+  def csl_values(node)
+    case node
+    when Hash then node.flat_map { |_, value| csl_values(value) }
+    when Array then node.flat_map { |value| csl_values(value) }
+    else node.to_s
+    end
   end
 
   def reassign_citations!

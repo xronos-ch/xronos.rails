@@ -6,14 +6,16 @@
 #  id         :bigint           not null, primary key
 #  csl        :jsonb
 #  doi        :string
+#  searchable :tsvector
 #  short_ref  :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
 # Indexes
 #
-#  index_references_on_doi        (doi)
-#  index_references_on_short_ref  (short_ref)
+#  index_references_on_doi         (doi)
+#  index_references_on_searchable  (searchable) USING gin
+#  index_references_on_short_ref   (short_ref)
 #
 require "test_helper"
 
@@ -234,6 +236,84 @@ class ReferenceTest < ActiveSupport::TestCase
 
   test 'missing_bibtex is not registered as an issue' do
     assert_not_includes Reference.issues, :missing_bibtex
+  end
+
+  #
+  # Search
+  #
+
+  test 'search matches on the label' do
+    reference = create(:reference, short_ref: 'Kipfer2000')
+
+    assert_includes Reference.search('Kipfer2000'), reference
+  end
+
+  test 'search matches on CSL content' do
+    reference = create(:reference, short_ref: 'Xyz1999', csl: [journal_article])
+
+    assert_includes Reference.search('Doe'), reference
+    assert_includes Reference.search('Test'), reference
+  end
+
+  test 'search matches on CSL numeric values (e.g. publication year)' do
+    reference = create(:reference, short_ref: 'Xyz1999', csl: [journal_article])
+
+    assert_includes Reference.search('2020'), reference
+  end
+
+  test 'search supports prefix matching' do
+    reference = create(:reference, short_ref: 'Kipfer2000')
+
+    assert_includes Reference.search('Kipf'), reference
+  end
+
+  test 'search does not match on CSL keys' do
+    reference = create(:reference, short_ref: 'Xyz1999', csl: [journal_article])
+
+    assert_not_includes Reference.search('family'), reference
+    assert_not_includes Reference.search('container'), reference
+  end
+
+  test 'search ranks label matches above CSL content matches' do
+    label_match = create(:reference, short_ref: 'Kipfer2000')
+    create(:reference, short_ref: 'Xyz1999',
+           csl: [journal_article.merge('container-title' => 'Kipfer Studies')])
+
+    assert_equal label_match, Reference.search('Kipfer').first
+  end
+
+  test 'multisearch document includes the label and CSL values' do
+    reference = create(:reference, short_ref: 'Kipfer2000', csl: [journal_article])
+    document = PgSearch::Document.find_by(searchable: reference)
+
+    assert_includes document.content, 'Kipfer2000'
+    assert_includes document.content, 'Test Article'
+    assert_includes document.content, '2020'
+  end
+
+  test 'multisearch document does not include CSL keys' do
+    reference = create(:reference, csl: [journal_article])
+    document = PgSearch::Document.find_by(searchable: reference)
+
+    assert_not_includes document.content, 'container-title'
+    assert_not_includes document.content, 'date-parts'
+  end
+
+  test 'multisearch document omits internal QA keys' do
+    reference = create(:reference, csl: [journal_article.merge('_raw_bibtex' => '@misc{raw junk}')])
+    document = PgSearch::Document.find_by(searchable: reference)
+
+    assert_not_includes document.content, 'raw junk'
+  end
+
+  #
+  # Versioning
+  #
+
+  test 'derived search index column is not tracked in versions' do
+    reference = create(:reference)
+
+    assert_not_includes reference.versions.first.object_changes.keys, 'searchable'
   end
 
   private

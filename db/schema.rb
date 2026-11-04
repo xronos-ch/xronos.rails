@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_28_150522) do
+ActiveRecord::Schema[8.0].define(version: 2026_11_04_135239) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -278,7 +278,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_28_150522) do
     t.string "short_ref"
     t.jsonb "csl"
     t.string "doi"
+    t.virtual "searchable", type: :tsvector, as: "(setweight(to_tsvector('simple'::regconfig, (COALESCE(short_ref, ''::character varying))::text), 'A'::\"char\") || setweight(jsonb_to_tsvector('simple'::regconfig, COALESCE(csl, 'null'::jsonb), '[\"string\", \"numeric\"]'::jsonb), 'B'::\"char\"))", stored: true
     t.index ["doi"], name: "index_references_on_doi"
+    t.index ["searchable"], name: "index_references_on_searchable", using: :gin
     t.index ["short_ref"], name: "index_references_on_short_ref"
   end
 

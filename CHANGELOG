@@ -2,6 +2,10 @@
 
 ## [1.3.1.9000] - unreleased
 
+- **Migrations required**: Bibliographic data is now stored as CSL JSON instead
+  of BibTeX.
+  - **Requires rebuild of PgSearch index for references after deployment:**
+    `PgSearch::Multisearch.rebuild(Reference)`
 - Redesigned the radiocarbon date show view:
   - Clearer two-column layout and page header with a copyable permalink
   - Export options (JSON, MIaaRD JSON) are now visible in the UI

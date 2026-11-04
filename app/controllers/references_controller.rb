@@ -35,7 +35,9 @@ class ReferencesController < ApplicationController
         validate_csv_params!
         return if performed?
 
-        @references = @references.select(index_csv_template)
+        # Replace (not append to) the select list, so the template fully
+        # controls the exported columns
+        @references = @references.reselect(index_csv_template) if index_csv_template
         render csv: @references
       end
     end

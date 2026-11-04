@@ -59,6 +59,18 @@ class ReferencesControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'text/csv', response.media_type
   end
 
+  test 'CSV export excludes the internal search index column' do
+    create(:reference)
+
+    get references_path(format: :csv)
+
+    assert_response :success
+    header = response.body.lines.first
+    assert_includes header, 'short_ref'
+    assert_includes header, 'csl'
+    assert_not_includes header, 'searchable'
+  end
+
   test 'CSV download with filter parameters includes only filters' do
     create(:reference, short_ref: 'Test2020')
     create(:reference, short_ref: 'Other2021')
@@ -74,5 +86,16 @@ class ReferencesControllerTest < ActionDispatch::IntegrationTest
   # csl is not part of the strong params (structured editing comes later)
   def smoke_payload_for(_action)
     attributes_for(:reference).except(:csl)
+  end
+
+  test 'search filters references by query' do
+    create(:reference, short_ref: 'Kipfer2000')
+    create(:reference, short_ref: 'Other2021', csl: nil)
+
+    get search_references_path(q: 'Kipfer')
+
+    assert_response :success
+    assert_includes response.body, 'Kipfer2000'
+    assert_not_includes response.body, 'Other2021'
   end
 end
