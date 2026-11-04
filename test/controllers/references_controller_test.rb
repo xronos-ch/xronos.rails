@@ -70,4 +70,9 @@ class ReferencesControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, 'Test2020'
     assert_not_includes response.body, 'Other2021'
   end
+
+  # csl is not part of the strong params (structured editing comes later)
+  def smoke_payload_for(_action)
+    attributes_for(:reference).except(:csl)
+  end
 end

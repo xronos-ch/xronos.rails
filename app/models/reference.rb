@@ -39,19 +39,21 @@ class Reference < ApplicationRecord
   after_save :merge_exact_duplicates
   validate :no_exact_duplicate, on: :create
 
+  before_save :extract_doi_from_csl
+
   before_merge :reassign_citations!
   before_merge :reassign_sources!
 
   acts_as_copy_target # enable CSV exports
 
   include HasIssues
-  @issues = [ :mixed_reference, :missing_bibtex, :long_label ]
+  @issues = [ :mixed_reference, :long_label ]
 
   include PgSearch::Model
   pg_search_scope :search,
     against: [ :short_ref, :bibtex ],
     using: { tsearch: { prefix: true } } # match partial words
-  multisearchable against: [ :short_ref, :bibtex ]
+  multisearchable against: [ :short_ref ]
 
   scope :with_citations_count, -> {
     select <<~SQL
@@ -93,52 +95,49 @@ class Reference < ApplicationRecord
     "ref-" + CGI.escape(short_ref)
   end
 
+  def csl_items
+    Array(csl)
+  end
+
   def format_bibtex
-    parse.to_s
+    CitationJs.convert(csl_items_for_export, "bibtex")
+  end
+
+  def format_ris
+    CitationJs.convert(csl_items_for_export, "ris")
   end
 
   def format_yaml
-    parse.to_yaml
+    csl_items.to_yaml
   end
 
   def format_json
-    parse.to_json
+    csl_items.to_json
   end
 
   def render
-    return "No bibliographic information available." if parse.blank?
+    return "No bibliographic information available." if csl_items.blank?
 
     cp = CiteProc::Processor.new style: 'apa', format: 'html', locale: 'en'
-    cp.import parse.to_citeproc
+    cp.import csl_items
 
-    html = parse['@entry, @meta_content'].map do |e|
-      cp.render :bibliography, id: e.key
+    html = csl_items.map do |item|
+      cp.render :bibliography, id: item["id"]
     end
     html.join.html_safe
   end
 
   def render_citation
     @rendered_citation ||= begin
-      return short_ref if parse.blank?
+      return short_ref if csl_items.blank?
 
       cp = CiteProc::Processor.new style: 'chicago-author-date', format: 'html', locale: 'en'
-      cp.import parse.to_citeproc
+      cp.import csl_items
 
-      html = parse['@entry, @meta_content'].map do |e|
-        cp.render :citation, id: e.key
+      html = csl_items.map do |item|
+        cp.render :citation, id: item["id"]
       end
       html.join.delete('()').html_safe
-    end
-  end
-
-  def parse
-    @parse ||= if bibtex.present?
-      BibTeX.parse bibtex, filter: :latex
-    else
-      bib = BibTeX::Entry.new
-      bib.type = :misc
-      bib.key = short_ref
-      bib
     end
   end
 
@@ -146,11 +145,6 @@ class Reference < ApplicationRecord
   scope :mixed_reference, -> { where("short_ref ~* ?", DELIM_PATTERN) }
   def mixed_reference?
     short_ref.match?(DELIM_PATTERN)
-  end
-
-  scope :missing_bibtex, -> { where(bibtex: nil) }
-  def missing_bibtex?
-    bibtex.blank?
   end
 
   scope :long_label, -> { where("LENGTH(short_ref) > ?", MAX_SHORT_REF_LENGTH) }
@@ -169,6 +163,28 @@ class Reference < ApplicationRecord
   end
 
   private
+
+  def extract_doi_from_csl
+    doi = csl_items.filter_map { |item| item["DOI"].presence }.first
+    self.doi = normalize_doi(doi)
+  end
+
+  def normalize_doi(doi)
+    return nil if doi.blank?
+
+    doi.strip
+       .sub(/\Ahttps?:\/\/doi\.org\//i, "")
+       .sub(/\Adoi:/i, "")
+       .strip
+       .downcase
+       .presence
+  end
+
+  # Keys prefixed with "_" are internal (e.g. the "_raw_bibtex" QA leftovers
+  # from the BibTeX backfill) and must not leak into exported formats.
+  def csl_items_for_export
+    csl_items.map { |item| item.reject { |key, _| key.start_with?("_") } }
+  end
 
   def reassign_citations!
     Citation.reassign_all_to!(from: self, to: canonical)

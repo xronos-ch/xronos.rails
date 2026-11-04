@@ -34,8 +34,6 @@ module IssueHelper
     # References
     when :mixed_reference
       "Reference potentially combines multiple sources"
-    when :missing_bibtex
-      "No bibliographical information recorded"
     # Samples
     when :missing_material
       "Sample material is not recorded"

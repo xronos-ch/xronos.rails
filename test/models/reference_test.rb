@@ -116,12 +116,137 @@ class ReferenceTest < ActiveSupport::TestCase
     assert_same result1, result2
   end
 
-  test 'parse is memoized' do
-    reference = create(:reference, bibtex: '@article{test2024, title={Test}}')
+  #
+  # Rendering
+  #
 
-    result1 = reference.parse
-    result2 = reference.parse
+  test 'render generates an APA bibliography from CSL' do
+    reference = create(:reference, csl: [journal_article])
 
-    assert_same result1, result2
+    assert_includes reference.render, 'Doe'
+    assert_includes reference.render, 'Test Article'
+    assert_includes reference.render, '2020'
+  end
+
+  test 'render returns a placeholder when CSL is empty' do
+    reference = create(:reference, csl: nil)
+
+    assert_equal 'No bibliographic information available.', reference.render
+  end
+
+  test 'render_citation generates an inline citation from CSL' do
+    reference = create(:reference, csl: [journal_article])
+
+    assert_includes reference.render_citation, 'Doe'
+    assert_includes reference.render_citation, '2020'
+  end
+
+  test 'render_citation falls back to short_ref when CSL is empty' do
+    reference = create(:reference, short_ref: 'Doe2020', csl: nil)
+
+    assert_equal 'Doe2020', reference.render_citation
+  end
+
+  #
+  # Formatting
+  #
+
+  test 'format_json returns the CSL items as JSON' do
+    reference = create(:reference, csl: [journal_article])
+
+    assert_equal [journal_article], JSON.parse(reference.format_json)
+  end
+
+  test 'format_yaml returns the CSL items as YAML' do
+    reference = create(:reference, csl: [journal_article])
+
+    assert_equal [journal_article], YAML.safe_load(reference.format_yaml)
+  end
+
+  test 'format_bibtex converts CSL to BibTeX' do
+    reference = create(:reference, csl: [journal_article])
+
+    assert_includes reference.format_bibtex, 'Doe, Jane'
+    assert_includes reference.format_bibtex, '2020'
+  end
+
+  test 'format_ris converts CSL to RIS' do
+    reference = create(:reference, csl: [journal_article])
+
+    assert_includes reference.format_ris, 'TY  - JOUR'
+    assert_includes reference.format_ris, 'AU  - Doe, Jane'
+  end
+
+  test 'export formats omit internal QA keys' do
+    reference = create(:reference, csl: [journal_article.merge('_raw_bibtex' => '@misc{raw junk}')])
+
+    assert_not_includes reference.format_bibtex, 'raw junk'
+    assert_not_includes reference.format_ris, 'raw junk'
+  end
+
+  #
+  # DOI extraction
+  #
+
+  test 'doi is extracted from CSL on save' do
+    reference = create(:reference, csl: [journal_article])
+
+    assert_equal '10.1234/test', reference.doi
+  end
+
+  test 'doi extraction strips URL prefixes and downcases' do
+    reference = create(:reference, csl: [journal_article.merge('DOI' => ' https://doi.org/10.1234/ABC ')])
+
+    assert_equal '10.1234/abc', reference.doi
+  end
+
+  test 'doi extraction strips the doi: prefix' do
+    reference = create(:reference, csl: [journal_article.merge('DOI' => 'doi:10.1234/X')])
+
+    assert_equal '10.1234/x', reference.doi
+  end
+
+  test 'doi is nil when CSL has no DOI' do
+    reference = create(:reference, :without_doi)
+
+    assert_nil reference.doi
+  end
+
+  test 'doi is taken from the first item with a DOI' do
+    reference = create(:reference, csl: [
+      journal_article.except('DOI'),
+      journal_article.merge('id' => 'second', 'DOI' => '10.5678/second')
+    ])
+
+    assert_equal '10.5678/second', reference.doi
+  end
+
+  test 'doi is re-extracted when CSL changes' do
+    reference = create(:reference, csl: [journal_article])
+    reference.update!(csl: [journal_article.except('DOI')])
+
+    assert_nil reference.doi
+  end
+
+  #
+  # Issues
+  #
+
+  test 'missing_bibtex is not registered as an issue' do
+    assert_not_includes Reference.issues, :missing_bibtex
+  end
+
+  private
+
+  def journal_article
+    {
+      'id' => 'doe2020',
+      'type' => 'article-journal',
+      'author' => [{ 'family' => 'Doe', 'given' => 'Jane' }],
+      'title' => 'Test Article',
+      'container-title' => 'Test Journal',
+      'issued' => { 'date-parts' => [[2020]] },
+      'DOI' => '10.1234/test'
+    }
   end
 end
