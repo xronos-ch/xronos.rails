@@ -1,0 +1,33 @@
+<% context = f.object.context %>
+<% named_contexts = context.site.contexts.where.not(name: nil).order(:name) %>
+<% selected = context.persisted? && context.name.present? ? context.id.to_s : "" %>
+<% options = [["General site context", ""]] + named_contexts.map { |item| [item.name, item.id.to_s] } %>
+<% if context.new_record? && context.name.present? %>
+  <% selected = "new:#{context.name}" %>
+  <% options << [context.name, selected] %>
+<% end %>
+
+<div data-controller="context-choice">
+  <%= f.hidden_field :context_id, value: selected.start_with?("new:") ? "" : selected,
+    data: { context_choice_target: "contextId" } %>
+  <%= label_tag "c14_context_choice", "Context", class: "visually-hidden" %>
+  <%= select_tag "context_choice", options_for_select(options, selected),
+    id: "c14_context_choice", class: "form-select",
+    data: { context_choice_target: "select" }, aria: { describedby: "c14_context_help" } %>
+  <div class="form-text mb-3" id="c14_context_help" data-context-choice-target="help">
+    Optional: select or add a more specific context.
+  </div>
+  <%= f.fields_for :context, context, include_id: false do |ff| %>
+    <%= ff.hidden_field :site_id %>
+    <%= ff.hidden_field :name, data: { context_choice_target: "name" } %>
+    <fieldset data-context-choice-target="fields" <%= "disabled hidden" unless selected.start_with?("new:") %>>
+      <details <%= "open" if context.approx_start_time.present? || context.approx_end_time.present? %>>
+        <summary class="text-body-secondary mb-3">More context details</summary>
+        <div class="row">
+          <div class="col"><%= ff.number_field :approx_start_time, label: "Dated from", prepend: "c.", append: "cal BP" %></div>
+          <div class="col"><%= ff.number_field :approx_end_time, label: "Dated to", prepend: "c.", append: "cal BP" %></div>
+        </div>
+      </details>
+    </fieldset>
+  <% end %>
+</div>

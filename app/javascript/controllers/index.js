@@ -7,6 +7,9 @@ import { application } from "./application"
 import ArticleEditorController from "./article_editor_controller"
 application.register("article-editor", ArticleEditorController)
 
+import ContextChoiceController from "./context_choice_controller"
+application.register("context-choice", ContextChoiceController)
+
 import FlashController from "./flash_controller"
 application.register("flash", FlashController)
 

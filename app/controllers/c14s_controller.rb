@@ -103,6 +103,7 @@ class C14sController < ApplicationController
 
   # GET /c14s/new
   def new
+    @return_to = request.referer
     @context = @site.contexts.build
     @sample  = @context.samples.build
     @c14     = @sample.c14s.build
@@ -114,15 +115,22 @@ class C14sController < ApplicationController
   # POST /c14s
   # POST /c14s.json
   def create
-    @c14 = C14.new(c14_params)
+    attributes = c14_params
+    sample_attributes = attributes[:sample_attributes]
+    sample_attributes.delete(:context_attributes) if sample_attributes && sample_attributes[:context_id].present?
+    @c14 = C14.new(attributes)
 
     respond_to do |format|
       if @c14.save
-        format.html { redirect_to @c14, notice: 'Radiocarbon date created.' }
+        format.html do
+          redirect_to url_from(params[:return_to]) || url_from(request.referer) || @c14,
+                      notice: 'Radiocarbon date created.'
+        end
         format.json { render :show, status: :created, location: @c14 }
       else
-        format.html { render :new }
+        format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @c14.errors, status: :unprocessable_entity }
+        format.turbo_stream { render :form_update, status: :unprocessable_entity }
       end
     end
   end

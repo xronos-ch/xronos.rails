@@ -1,7 +1,11 @@
-<h2 class="h5">Context</h5>
+<h2 class="h5">Context</h2>
 
-<%= f.fields_for :context, @c14.context do |ff| %>
-  <%= render "contexts/fields", f: ff %>
+<% if @c14.new_record? && @c14.context&.site %>
+  <%= render "contexts/choice", f: f %>
+<% else %>
+  <%= f.fields_for :context, @c14.context do |ff| %>
+    <%= render "contexts/fields", f: ff %>
+  <% end %>
 <% end %>
 
 <h2 class="h5">Sample</h5>

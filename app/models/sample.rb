@@ -89,6 +89,18 @@ class Sample < ApplicationRecord
   include HasIssues
   @issues = %i[missing_material missing_taxon missing_crs]
 
+  # A blank context represents the site itself and must be shared by its samples.
+  def context_attributes=(attributes)
+    attributes = attributes.with_indifferent_access
+    existing = reusable_unnamed_context(attributes) if new_record?
+    if existing
+      self.context = existing
+      return
+    end
+
+    super
+  end
+
   def self.label
     'sample'
   end
@@ -164,6 +176,13 @@ class Sample < ApplicationRecord
   end
 
   private
+
+  def reusable_unnamed_context(attributes)
+    return unless attributes[:id].blank? && attributes[:site_id].present? && attributes[:name].blank?
+    return unless attributes.except(:site_id, :name).values.all?(&:blank?)
+
+    Context.find_by(site_id: attributes[:site_id], name: nil)
+  end
 
   def normalise_name
     self.name = name.to_s.strip.presence
