@@ -48,7 +48,7 @@ class Sample < ApplicationRecord
 
   delegate :site, to: :context
 
-  belongs_to :context, optional: true
+  belongs_to :context, optional: false
   accepts_nested_attributes_for :context, reject_if: proc { |attributes|
     attributes.all? do |key, value|
       key == '_destroy' || value.blank? || (value.is_a?(Hash) && value.values.all?(&:blank?))
