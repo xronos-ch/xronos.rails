@@ -12,7 +12,7 @@
   </dd>
 
   <% last_editor_id = record.versions.last&.whodunnit %>
-  <dt class="col-12 col-lg-4">Updated</dt>
+  <dt class="col-12 col-lg-4">Last updated</dt>
   <dd class="col-12 col-lg-8">
     <% if last_editor_id.present? %>
       By <%= render "users/user", user: User.find_by(id: last_editor_id) %> on <%= record.updated_at.strftime("%F") %>

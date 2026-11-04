@@ -110,4 +110,72 @@ class ReferencesControllerTest < ActionDispatch::IntegrationTest
     assert_equal reference.doi, body['doi']
     assert_not_includes body.keys, 'searchable'
   end
+
+  test 'show renders the structured bibliographic data' do
+    reference = create(:reference)
+
+    get reference_path(reference)
+
+    assert_response :success
+    assert_includes response.body, 'Bibliographic data'
+    assert_includes response.body, reference.csl_items.first['title']
+  end
+
+  test 'show as JSON with the csl schema downloads the CSL items as an attachment' do
+    reference = create(:reference)
+
+    get reference_path(reference, format: :json, schema: 'csl')
+
+    assert_response :success
+    assert_equal 'application/json', response.media_type
+    assert_match 'attachment', response.headers['Content-Disposition']
+    assert_includes response.headers['Content-Disposition'], "xronos_reference_#{reference.id}_csl.json"
+    assert_equal reference.csl_items_for_export, JSON.parse(response.body)
+  end
+
+  test 'show as JSON with the csl schema omits internal QA keys' do
+    reference = create(:reference)
+    reference.csl = [ reference.csl.first.merge('_raw_bibtex' => '@misc{raw junk}') ]
+    reference.save!
+
+    get reference_path(reference, format: :json, schema: 'csl')
+
+    assert_not_includes response.body, 'raw junk'
+  end
+
+  test 'show as BibTeX downloads the reference as an attachment' do
+    reference = create(:reference)
+
+    get reference_path(reference, format: :bib)
+
+    assert_response :success
+    assert_equal 'application/x-bibtex', response.media_type
+    assert_match 'attachment', response.headers['Content-Disposition']
+    assert_includes response.headers['Content-Disposition'], "xronos_reference_#{reference.id}.bib"
+    assert_includes response.body, '@'
+  end
+
+  test 'show as YAML downloads the reference as an attachment' do
+    reference = create(:reference)
+
+    get reference_path(reference, format: :yaml)
+
+    assert_response :success
+    assert_equal 'text/yaml', response.media_type
+    assert_match 'attachment', response.headers['Content-Disposition']
+    assert_includes response.headers['Content-Disposition'], "xronos_reference_#{reference.id}.yml"
+    assert_equal reference.csl_items_for_export, YAML.safe_load(response.body)
+  end
+
+  test 'show as RIS downloads the reference as an attachment' do
+    reference = create(:reference)
+
+    get reference_path(reference, format: :ris)
+
+    assert_response :success
+    assert_equal 'application/x-research-info-systems', response.media_type
+    assert_match 'attachment', response.headers['Content-Disposition']
+    assert_includes response.headers['Content-Disposition'], "xronos_reference_#{reference.id}.ris"
+    assert_includes response.body, 'TY  -'
+  end
 end

@@ -184,6 +184,8 @@ class ReferenceTest < ActiveSupport::TestCase
 
     assert_not_includes reference.format_bibtex, 'raw junk'
     assert_not_includes reference.format_ris, 'raw junk'
+    assert_not_includes reference.format_json, 'raw junk'
+    assert_not_includes reference.format_yaml, 'raw junk'
   end
 
   #

@@ -22,6 +22,10 @@ class Reference < ApplicationRecord
   DELIM_PATTERN = '[;,]'
   MAX_SHORT_REF_LENGTH = 30
 
+  # Value of the "schema" query param selecting the CSL-JSON representation
+  # of a record (mirrors C14::MIAARD::SCHEMA)
+  CSL_SCHEMA = "csl"
+
   has_many :citations, dependent: :destroy
 
   has_many :sites, :through => :citations, :source => :citing, :source_type => 'Site'
@@ -104,6 +108,12 @@ class Reference < ApplicationRecord
     Array(csl)
   end
 
+  # Keys prefixed with "_" are internal (e.g. the "_raw_bibtex" QA leftovers
+  # from the BibTeX backfill) and must not leak into exported formats.
+  def csl_items_for_export
+    csl_items.map { |item| item.reject { |key, _| key.start_with?("_") } }
+  end
+
   def format_bibtex
     CitationJs.convert(csl_items_for_export, "bibtex")
   end
@@ -113,11 +123,11 @@ class Reference < ApplicationRecord
   end
 
   def format_yaml
-    csl_items.to_yaml
+    csl_items_for_export.to_yaml
   end
 
   def format_json
-    csl_items.to_json
+    csl_items_for_export.to_json
   end
 
   def render
@@ -183,12 +193,6 @@ class Reference < ApplicationRecord
        .strip
        .downcase
        .presence
-  end
-
-  # Keys prefixed with "_" are internal (e.g. the "_raw_bibtex" QA leftovers
-  # from the BibTeX backfill) and must not leak into exported formats.
-  def csl_items_for_export
-    csl_items.map { |item| item.reject { |key, _| key.start_with?("_") } }
   end
 
   # Content copied into the global multisearch index (pg_search_documents):

@@ -67,13 +67,51 @@ class ReferencesController < ApplicationController
 
   # GET /references/1
   # GET /references/1.json
+  # GET /references/1.json?schema=csl
+  # GET /references/1.bib
+  # GET /references/1.yaml
+  # GET /references/1.ris
   def show
     # @reference is already set by load_and_authorize_resource + set_reference
 
-    @citations_count = @reference.citations.count
+    respond_to do |format|
+      format.html do
+        @citations_count = @reference.citations.count
 
-    @sites = @reference.sites.distinct.with_counts
-    @pagy_sites, @sites = pagy(:countish, @sites, page_param: :sites_page)
+        @sites = @reference.sites.distinct.with_counts
+        @pagy_sites, @sites = pagy(:countish, @sites, page_param: :sites_page)
+      end
+
+      format.json do
+        if params[:schema] == Reference::CSL_SCHEMA
+          send_data JSON.pretty_generate(@reference.csl_items_for_export),
+                    type: "application/json; charset=utf-8",
+                    filename: "xronos_reference_#{@reference.id}_csl.json",
+                    disposition: "attachment"
+        end
+      end
+
+      format.bibtex do
+        send_data @reference.format_bibtex,
+                  type: "application/x-bibtex; charset=utf-8",
+                  filename: "xronos_reference_#{@reference.id}.bib",
+                  disposition: "attachment"
+      end
+
+      format.yaml do
+        send_data @reference.format_yaml,
+                  type: "text/yaml; charset=utf-8",
+                  filename: "xronos_reference_#{@reference.id}.yml",
+                  disposition: "attachment"
+      end
+
+      format.ris do
+        send_data @reference.format_ris,
+                  type: "application/x-research-info-systems; charset=utf-8",
+                  filename: "xronos_reference_#{@reference.id}.ris",
+                  disposition: "attachment"
+      end
+    end
   end
 
   # GET /references/new
