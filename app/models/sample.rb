@@ -92,13 +92,13 @@ class Sample < ApplicationRecord
   # A blank context represents the site itself and must be shared by its samples.
   def context_attributes=(attributes)
     attributes = attributes.with_indifferent_access
-    existing = reusable_unnamed_context(attributes) if new_record?
+    existing = reusable_unnamed_context(attributes)
     if existing
       self.context = existing
-      return
+      attributes = attributes.except(:name, :site_id).merge(id: existing.id)
     end
 
-    super
+    super(attributes)
   end
 
   def self.label
@@ -179,7 +179,6 @@ class Sample < ApplicationRecord
 
   def reusable_unnamed_context(attributes)
     return unless attributes[:id].blank? && attributes[:site_id].present? && attributes[:name].blank?
-    return unless attributes.except(:site_id, :name).values.all?(&:blank?)
 
     Context.find_by(site_id: attributes[:site_id], name: nil)
   end

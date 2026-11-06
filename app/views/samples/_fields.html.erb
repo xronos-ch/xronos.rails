@@ -1,6 +1,6 @@
 <h2 class="h5">Context</h2>
 
-<% if @c14.new_record? && @c14.context&.site %>
+<% if @c14.context&.site %>
   <%= render "contexts/choice", f: f %>
 <% else %>
   <%= f.fields_for :context, @c14.context do |ff| %>

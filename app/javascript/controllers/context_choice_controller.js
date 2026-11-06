@@ -2,9 +2,12 @@ import { Controller } from "@hotwired/stimulus"
 import TomSelect from "tom-select"
 
 export default class extends Controller {
-  static targets = ["select", "contextId", "name", "fields", "help"]
+  static targets = ["select", "contextId", "name", "startTime", "endTime"]
+
+  static values = { contexts: Object }
 
   connect() {
+    this.currentValue = this.selectTarget.value
     this.select = new TomSelect(this.selectTarget, {
       maxItems: 1,
       plugins: ["dropdown_input"],
@@ -23,7 +26,7 @@ export default class extends Controller {
       render: {
         option_create: (data, escape) => `<div class="create">Create “${escape(data.input.trim())}”</div>`
       },
-      onChange: () => this.update()
+      onChange: () => { if (this.select) this.change() }
     })
     this.update()
   }
@@ -37,10 +40,24 @@ export default class extends Controller {
     const isNew = value.startsWith("new:")
     this.contextIdTarget.value = isNew ? "" : value
     this.nameTarget.value = isNew ? value.slice(4) : ""
-    this.fieldsTarget.disabled = !isNew
-    this.fieldsTarget.hidden = !isNew
-    this.helpTarget.textContent = isNew
-      ? "New context · will be created when you save."
-      : "Optional: select or add a more specific context."
+  }
+
+  change() {
+    this.contextsValue = {
+      ...this.contextsValue,
+      [this.currentValue]: {
+        startTime: this.startTimeTarget.value,
+        endTime: this.endTimeTarget.value,
+        editable: !this.startTimeTarget.readOnly
+      }
+    }
+    const value = this.selectTarget.value
+    const dates = this.contextsValue[value] || { startTime: "", endTime: "", editable: true }
+    this.startTimeTarget.value = dates.startTime ?? ""
+    this.endTimeTarget.value = dates.endTime ?? ""
+    this.startTimeTarget.readOnly = !dates.editable
+    this.endTimeTarget.readOnly = !dates.editable
+    this.currentValue = value
+    this.update()
   }
 }
