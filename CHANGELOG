@@ -2,6 +2,8 @@
 
 ## [1.3.1.9000] - unreleased
 
+- Fixed context selection and creation in radiocarbon date forms, including
+  editing context dates, visible validation errors and return navigation (#520).
 - Redesigned the radiocarbon date show view:
   - Clearer two-column layout and page header with a copyable permalink
   - Export options (JSON, MIaaRD JSON) are now visible in the UI

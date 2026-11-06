@@ -27,6 +27,13 @@
 require 'test_helper'
 
 class SampleTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
+  test 'context is required' do
+    sample = build(:sample, context: nil)
+
+    assert_not sample.valid?
+    assert_includes sample.errors[:context], 'must exist'
+  end
+
   test 'destroying a sample destroys its c14s' do
     sample = create(:sample)
     create_list(:c14, 2, sample: sample)

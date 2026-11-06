@@ -10,6 +10,9 @@ application.register("article-editor", ArticleEditorController)
 import ClipboardController from "./clipboard_controller"
 application.register("clipboard", ClipboardController)
 
+import ContextChoiceController from "./context_choice_controller"
+application.register("context-choice", ContextChoiceController)
+
 import FlashController from "./flash_controller"
 application.register("flash", FlashController)
 

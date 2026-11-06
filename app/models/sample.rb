@@ -48,7 +48,7 @@ class Sample < ApplicationRecord
 
   delegate :site, to: :context
 
-  belongs_to :context, optional: true
+  belongs_to :context, optional: false
   accepts_nested_attributes_for :context, reject_if: proc { |attributes|
     attributes.all? do |key, value|
       key == '_destroy' || value.blank? || (value.is_a?(Hash) && value.values.all?(&:blank?))
@@ -88,6 +88,18 @@ class Sample < ApplicationRecord
 
   include HasIssues
   @issues = %i[missing_material missing_taxon missing_crs]
+
+  # A blank context represents the site itself and must be shared by its samples.
+  def context_attributes=(attributes)
+    attributes = attributes.with_indifferent_access
+    existing = reusable_unnamed_context(attributes)
+    if existing
+      self.context = existing
+      attributes = attributes.except(:name, :site_id).merge(id: existing.id)
+    end
+
+    super(attributes)
+  end
 
   def self.label
     'sample'
@@ -164,6 +176,12 @@ class Sample < ApplicationRecord
   end
 
   private
+
+  def reusable_unnamed_context(attributes)
+    return unless attributes[:id].blank? && attributes[:site_id].present? && attributes[:name].blank?
+
+    Context.find_by(site_id: attributes[:site_id], name: nil)
+  end
 
   def normalise_name
     self.name = name.to_s.strip.presence
