@@ -103,6 +103,7 @@ class C14sController < ApplicationController
 
   # GET /c14s/new
   def new
+    @return_to = request.referer
     @context = @site.contexts.build
     @sample  = @context.samples.build
     @c14     = @sample.c14s.build
@@ -115,14 +116,19 @@ class C14sController < ApplicationController
   # POST /c14s.json
   def create
     @c14 = C14.new(c14_params)
+    authorize_context_changes
 
     respond_to do |format|
       if @c14.save
-        format.html { redirect_to @c14, notice: 'Radiocarbon date created.' }
+        format.html do
+          redirect_to url_from(params[:return_to]) || url_from(request.referer) || @c14,
+                      notice: 'Radiocarbon date created.'
+        end
         format.json { render :show, status: :created, location: @c14 }
       else
-        format.html { render :new }
+        format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @c14.errors, status: :unprocessable_entity }
+        format.turbo_stream { render :form_update, status: :unprocessable_entity }
       end
     end
   end
@@ -130,8 +136,11 @@ class C14sController < ApplicationController
   # PATCH/PUT /c14s/1
   # PATCH/PUT /c14s/1.json
   def update
+    @c14.assign_attributes(c14_params)
+    authorize_context_changes
+
     respond_to do |format|
-      if @c14.update(c14_params)
+      if @c14.save
         format.html { redirect_to @c14, notice: 'Radiocarbon date saved.' }
         format.json { render json: @c14, status: :ok }
       else
@@ -186,6 +195,20 @@ class C14sController < ApplicationController
     @versions = (versions + events).sort_by(&:created_at)
   end
 
+  def authorize_context_changes
+    context = @c14.sample&.context
+    authorize! :update, context if context&.persisted? && context.changed?
+  end
+
+  def normalize_context_selection(attributes)
+    sample = attributes[:sample_attributes]
+    return unless sample && sample[:context_id].present? && sample[:context_attributes]
+
+    sample[:context_attributes] = sample[:context_attributes]
+                                  .slice(:approx_start_time, :approx_end_time)
+                                  .merge(id: sample[:context_id])
+  end
+
   def c14_params
     params.fetch(:c14, {}).permit(
       :lab_identifier,
@@ -226,6 +249,6 @@ class C14sController < ApplicationController
           :site_id
         ] }
       ]
-    )
+    ).tap { |attributes| normalize_context_selection(attributes) }
   end
 end
