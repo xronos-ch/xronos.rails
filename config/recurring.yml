@@ -19,3 +19,6 @@ production:
   data_views_refresh:
     class: RefreshDataViewsJob
     schedule: every day at midnight
+  trim_sessions:
+    class: Sessions::TrimJob
+    schedule: every 3 minutes
