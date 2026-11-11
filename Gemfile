@@ -213,7 +213,7 @@ end
 group :test do
 
   # Unit testing
-  gem 'minitest'
+  gem "minitest", "~> 5.26"
 
   # XLSX writing for tests
   gem 'rubyXL'
