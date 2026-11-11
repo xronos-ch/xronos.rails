@@ -5,9 +5,9 @@
   <dt class="col-12 col-lg-4">Created</dt>
   <dd class="col-12 col-lg-8">
     <% if creator_id.present? %>
-      By <%= render "users/user", user: User.find_by(id: creator_id) %> on <%= record.created_at.strftime("%F") %>
+      By <%= render "users/user", user: User.find_by(id: creator_id) %> on <%= time_tag record.created_at.to_date, format: "%F" %>
     <% else %>
-      on <%= record.created_at.strftime("%F") %>
+      on <%= time_tag record.created_at.to_date, format: "%F" %>
     <% end %>
   </dd>
 
@@ -15,9 +15,9 @@
   <dt class="col-12 col-lg-4">Updated</dt>
   <dd class="col-12 col-lg-8">
     <% if last_editor_id.present? %>
-      By <%= render "users/user", user: User.find_by(id: last_editor_id) %> on <%= record.updated_at.strftime("%F") %>
+      By <%= render "users/user", user: User.find_by(id: last_editor_id) %> on <%= time_tag record.updated_at.to_date, format: "%F" %>
     <% else %>
-      on <%= record.updated_at.strftime("%F") %>
+      on <%= time_tag record.updated_at.to_date, format: "%F" %>
     <% end %>
   </dd>
 
