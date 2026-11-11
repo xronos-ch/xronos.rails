@@ -2,6 +2,8 @@
 
 ## [1.3.1.9000] - unreleased
 
+- Reduce image download sizes on the homepage and in articles by serving
+  WebP (#220).
 - Fixed context selection and creation in radiocarbon date forms, including
   editing context dates, visible validation errors and return navigation (#520).
 - Redesigned the radiocarbon date show view:
