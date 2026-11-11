@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     services:
       postgres:
@@ -68,13 +68,11 @@ jobs:
       - name: Install JavaScript dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential
-
       - name: Build calibrator
-        run: bin/build_calibrator
+        run: |
+          g++ --version
+          make --version
+          bin/build_calibrator
 
       - name: Prepare database
         run: bin/rails db:test:prepare
