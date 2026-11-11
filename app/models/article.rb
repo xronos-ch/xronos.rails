@@ -28,13 +28,18 @@ class Article < ApplicationRecord
   has_one_attached :splash
 
   has_one_attached :splash do |attachable|
-    attachable.variant :card, resize_to_fill: [1320, 160]
-    attachable.variant :xs,   resize_to_fill: [576, 320]
-    attachable.variant :sm,   resize_to_fill: [768, 320]
-    attachable.variant :md,   resize_to_fill: [992, 320]
-    attachable.variant :lg,   resize_to_fill: [1200, 320]
-    attachable.variant :xl,   resize_to_fill: [1400, 320]
-    attachable.variant :xxl,  resize_to_fill: [2500, 320]
+    {
+      card: [1320, 160],
+      xs: [576, 320],
+      sm: [768, 320],
+      md: [992, 320],
+      lg: [1200, 320],
+      xl: [1400, 320],
+      xxl: [2500, 320]
+    }.each do |name, dimensions|
+      attachable.variant name, resize_to_fill: dimensions
+      attachable.variant :"#{name}_webp", resize_to_fill: dimensions, format: :webp
+    end
     attachable.variant :og, resize_to_fill: [1200, 630, { gravity: "center" }]
   end
 

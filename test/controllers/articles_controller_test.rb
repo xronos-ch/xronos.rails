@@ -19,6 +19,28 @@ class ArticlesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test 'news cards offer WebP with an image fallback' do
+    article = create(:article, :published, section: 'news')
+    attach_splash(article)
+
+    get news_url
+
+    assert_response :success
+    html = Nokogiri::HTML5(response.body)
+    assert html.at_css('article picture source[type="image/webp"][srcset]')
+    assert html.at_css('article picture img[src]')
+  end
+
+  test 'article headers offer WebP at the existing breakpoints' do
+    article = create(:article, :published)
+    attach_splash(article)
+
+    get article_path(section: article.section, slug: article.slug)
+
+    assert_response :success
+    assert_equal 6, response.body.scan('type("image/webp")').size
+  end
+
   # --- Atom and RSS feeds ---
 
   test 'atom feed returns success and correct content type' do
@@ -114,5 +136,14 @@ class ArticlesControllerTest < ActionDispatch::IntegrationTest
 
     assert_includes response.body, 'rel="self"'
     assert_includes response.body, 'rel="next"'
+  end
+
+  private
+
+  def attach_splash(article)
+    path = Rails.root.join('app/assets/images/hero_image.jpg')
+    File.open(path) do |image|
+      article.splash.attach(io: image, filename: path.basename.to_s, content_type: 'image/jpeg')
+    end
   end
 end
