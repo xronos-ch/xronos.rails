@@ -20,5 +20,9 @@ production:
     class: RefreshDataViewsJob
     schedule: every day at midnight
   trim_sessions:
-    class: Sessions::TrimJob
-    schedule: every 3 minutes
+    command: |-
+      days = Integer(ENV.fetch("SESSION_DAYS_TRIM_THRESHOLD", "7"), 10)
+      raise ArgumentError, "SESSION_DAYS_TRIM_THRESHOLD must be positive" unless days.positive?
+      system({ "SESSION_DAYS_TRIM_THRESHOLD" => days.to_s },
+             Rails.root.join("bin/rails").to_s, "db:sessions:trim", exception: true)
+    schedule: "30 3 * * *"
