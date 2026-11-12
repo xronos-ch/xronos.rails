@@ -17,6 +17,18 @@ class ArticlesControllerTest < ActionDispatch::IntegrationTest
     article = create(:article, :published)
     get article_path(section: article.section, slug: article.slug)
     assert_response :success
+    published_date = article.published_at.to_date.iso8601
+    assert_dom "time[datetime='#{published_date}']", text: published_date
+  end
+
+  test 'home page renders a machine-readable news card date' do
+    article = create(:article, :published)
+    published_date = article.published_at.to_date
+
+    get root_path
+
+    assert_response :success
+    assert_dom "article.card time[datetime='#{published_date.iso8601}']", text: published_date.to_formatted_s
   end
 
   # --- Atom and RSS feeds ---
