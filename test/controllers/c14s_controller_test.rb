@@ -32,6 +32,19 @@ class C14sControllerTest < ActionDispatch::IntegrationTest # rubocop:disable Met
       .merge(c14_lab_id: create(:c14_lab).id, sample_id: create(:sample).id)
   end
 
+  test 'show renders machine-readable record dates and revision timestamps' do
+    c14 = with_versioning { create(:c14) }.reload
+    revision = c14.versions.find_by!(event: 'create')
+
+    get c14_path(c14)
+
+    assert_response :success
+    created_date = c14.created_at.to_date.iso8601
+    assert_dom "aside dl time[datetime='#{created_date}']", text: created_date
+    assert_dom "#version-v#{revision.id} time[datetime='#{revision.created_at.iso8601}']",
+                  text: revision.created_at.strftime('%F %H:%M')
+  end
+
   test 'show redirects to the canonical record when the C14 is superseded' do
     site = create(:site)
     context = create(:context, site: site)

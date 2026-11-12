@@ -19,6 +19,18 @@ class Admin::ArticlesControllerTest < ActionDispatch::IntegrationTest # rubocop:
     }
   )
 
+  test 'index renders machine-readable publication times' do
+    sign_in create(:user, :admin)
+    published = create(:article, :published)
+    scheduled = create(:article, :scheduled)
+
+    get admin_articles_path
+
+    assert_response :success
+    assert_dom ".text-success time[datetime='#{published.published_at.iso8601}']", text: published.published_at.to_s
+    assert_dom ".text-warning time[datetime='#{scheduled.published_at.iso8601}']", text: scheduled.published_at.to_s
+  end
+
   def smoke_payload_for(_action)
     attributes_for(:article).except(:user).merge(user_id: create(:user).id)
   end

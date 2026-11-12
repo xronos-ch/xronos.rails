@@ -52,6 +52,7 @@ class Sites::DescriptionsControllerTest < ActionDispatch::IntegrationTest # rubo
     assert_match '<turbo-frame', @response.body
     assert_match "id=\"#{ActionView::RecordIdentifier.dom_id(@site, :description)}\"", @response.body
     assert_match 'site-description-content', @response.body
+    assert_dom "figcaption time[datetime='2026-06-30']", text: '30 June 2026'
   end
 
   test 'show returns 404 when the site is missing' do

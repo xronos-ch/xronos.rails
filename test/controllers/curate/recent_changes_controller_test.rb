@@ -36,7 +36,7 @@ class Curate::RecentChangesControllerTest < ActionDispatch::IntegrationTest # ru
 
     superseded = create(:site)
     canonical = create(:site)
-    SupersessionEvent.create!(
+    event = SupersessionEvent.create!(
       event_type: 'supersede',
       superseded: superseded,
       superseded_by: canonical,
@@ -48,6 +48,7 @@ class Curate::RecentChangesControllerTest < ActionDispatch::IntegrationTest # ru
     assert_response :success
     assert_includes response.body, 'Created test site'
     assert_includes response.body, 'Superseded by'
+    assert_dom "td time[datetime='#{event.created_at.iso8601}']", text: event.created_at.to_s
   end
 
   test 'index paginates mixed changelog entries' do
