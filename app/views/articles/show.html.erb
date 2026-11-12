@@ -89,9 +89,9 @@
       <div class="small text-body-secondary">
         <p class="mb-3">
           <% if @article.news_section? %>
-            Published <%= @article.published_at.present? ? @article.published_at.strftime("%F") : "draft" %>
+            Published <%= @article.published_at.present? ? time_tag(@article.published_at.to_date, format: "%F") : "draft" %>
           <% else %>
-            Last updated <%= @article.updated_at.strftime("%F") %>
+            Last updated <%= time_tag @article.updated_at.to_date, format: "%F" %>
           <% end %>
         </p>
 
