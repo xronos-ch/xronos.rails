@@ -15,6 +15,7 @@ class ArticlesController < ApplicationController
 
     respond_to do |format|
       format.html {
+        @articles = @articles.preload(user: :user_profile, splash_attachment: :blob)
         @pagy, @articles = pagy(:offset, @articles, limit: feed_limit)
       }
       format.atom {

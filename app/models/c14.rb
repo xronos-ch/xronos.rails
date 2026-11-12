@@ -82,6 +82,26 @@ class C14 < Chron
     'icons/c14.svg'
   end
 
+  def self.calibrations_for(dates)
+    keys_by_date = dates.to_h do |date|
+      [date, [date.bp, date.std, date.site.default_c14_curve.to_s]]
+    end
+    return {} if keys_by_date.empty?
+
+    calibrations = Calibration.where(
+      [:c14_age, :c14_error, :c14_curve] => keys_by_date.values.uniq
+    ).index_by do |calibration|
+      [calibration.c14_age, calibration.c14_error, calibration.c14_curve]
+    end
+
+    keys_by_date.to_h do |date, key|
+      calibration = calibrations.fetch(key) do
+        calibrations[key] = date.calibration(curve: key.last)
+      end
+      [date, calibration]
+    end
+  end
+
   def label
     lab_id
   end

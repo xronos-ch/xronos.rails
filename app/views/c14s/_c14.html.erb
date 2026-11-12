@@ -10,7 +10,7 @@
       <%= link_to c14.lab_identifier, c14 %>
     </h1>
     <h2 class="card-subtitle h6 mb-2 text-body-secondary">
-      <%= c14.site.site_names.pluck(:name).join(", ") %>
+      <%= c14.site.site_names.map(&:name).join(", ") %>
     </h2>
 
     <p class="card-text">
@@ -26,7 +26,7 @@
                 class: "card-link fw-semibold",
                 title: Reference.label.humanize.pluralize do %>
       <%= xr_icon Reference, {}, { style: "width: auto; height: 1.1rem;" } %>
-      <%= c14.references.count %>
+      <%= local_assigns.fetch(:counts, {}).fetch(:references) { c14.references.count } %>
     <% end %>
 
     <%= link_to c14_path(c14, format: :json, schema: C14::MIAARD::SCHEMA),

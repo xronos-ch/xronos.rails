@@ -86,12 +86,7 @@ class SitesController < ApplicationController
     end
 
     # Base relation for Typos
-    typos_scope = @site.typos.includes(
-      :references,
-      sample: [
-        { context: :site }
-      ]
-    )
+    typos_scope = @site.typos.includes(:references, sample: :context)
 
     # Optional ordering for Typos
     if params.key?(:typos_order_by)
@@ -172,7 +167,9 @@ class SitesController < ApplicationController
   private
 
   def set_site
-    @site = Site.with_counts.includes(:linked_resources).find(params[:id])
+    scope = Site.with_counts
+    scope = scope.includes(:linked_resources) unless action_name == 'show' && request.format.json?
+    @site = scope.find(params[:id])
   end
 
   def set_versions

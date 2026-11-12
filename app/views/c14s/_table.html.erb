@@ -34,6 +34,7 @@
   </thead>
 
   <tbody>
+    <% calibrations = C14.calibrations_for(c14s) %>
     <% c14s.each do |c14| %>
       <tr>
         <% unless controller_name == "sites" %>
@@ -46,7 +47,8 @@
         <td><%= c14.method.present? ? c14.method : na_value %></td>
         <td class="text-end font-monospace"><%= c14.uncal_age ? c14.uncal_age : na_value %></td>
 		<td class="text-end font-monospace">
-			<%= c14.calibration&.range&.join("–") ? "#{c14.calibration.range.join("–")} cal BP" : na_value %>
+			<% range = calibrations.fetch(c14)&.range %>
+			<%= range ? "#{range.join("–")} cal BP" : na_value %>
 		</td>
 		<td class="text-end small"><%= render "references/citations", references: c14.references %></td>
         <% if can? :manage, C14 %>
