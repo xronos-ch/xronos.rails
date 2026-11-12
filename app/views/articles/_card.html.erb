@@ -24,7 +24,8 @@
       <% if article.draft? %>
         draft
       <% else %>
-        <%= article.published_at.to_date.to_formatted_s %>
+        <% published_date = article.published_at.to_date %>
+        <%= time_tag published_date, published_date.to_formatted_s %>
       <% end %>
     </div>
     <div>

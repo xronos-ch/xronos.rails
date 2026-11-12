@@ -24,7 +24,7 @@
                     <%= bs_icon "caret-right", title: "Show/hide changes" %>
             </button>
           </td>
-          <td><%= entry.created_at %></td>
+          <td><%= time_tag entry.created_at, entry.created_at.to_s if entry.created_at %></td>
           <td><%= render "application/paper_trail/whodunnit", entry: entry %></td>
           <td>
             <% if is_supersession %>

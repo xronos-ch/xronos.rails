@@ -8,9 +8,7 @@
       <div class="timeline-body">
         <div class="d-flex align-items-baseline gap-2 small">
           <%= render "application/paper_trail/event", event: is_supersession ? entry.event_type : entry.event %>
-          <span class="font-monospace text-body-secondary">
-            <%= entry.created_at.strftime("%F %H:%M") %>
-          </span>
+          <%= time_tag entry.created_at, format: "%F %H:%M", class: "font-monospace text-body-secondary" %>
           <%= render "application/paper_trail/whodunnit", entry: entry %>
         </div>
         <% if is_supersession %>
