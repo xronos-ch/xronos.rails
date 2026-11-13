@@ -21,11 +21,6 @@ Rails.application.routes.draw do
   # Primary data resources
   resources :c14s do
     get 'search', on: :collection
-    member do
-      get 'calibrate'
-      get 'calibrate_multi'
-      get 'calibrate_sum'
-    end
     resource :citation, only: :show, controller: "c14/citation"
   end
   resources :c14_labs
@@ -92,17 +87,10 @@ Rails.application.routes.draw do
   mount MissionControl::Jobs::Engine, at: "/admin/jobs"
 
   # Data browser
-  get 'data/index'
-  post 'data/index'
   get "/data" => "xronos_data#index"
 
   # Search
   get "search" => "searches#index"
-
-  # Data filter controls
-  get '/resetfilter', to: 'xronos_data#reset_filter_session_variable'
-  get '/turn_off_lasso', to: 'xronos_data#turn_off_lasso'
-  get '/reset_manual_table_selection', to: 'xronos_data#reset_manual_table_selection'
 
   # Curation backend
   get "/curate" => "curate#index"

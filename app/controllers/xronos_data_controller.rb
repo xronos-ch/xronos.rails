@@ -1,16 +1,6 @@
 # frozen_string_literal: true
 
 class XronosDataController < ApplicationController
-  def turn_off_lasso
-    session[:spatial_lasso_selection] = nil
-    redirect_to request.env['HTTP_REFERER']
-  end
-
-  def reset_manual_table_selection
-    session[:manual_table_selection] = nil
-    redirect_to request.env['HTTP_REFERER']
-  end
-
   def index
     @data              = XronosData.new(filter_params, select_params)
     @raw_filter_params = filter_params

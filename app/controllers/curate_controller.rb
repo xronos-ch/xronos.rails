@@ -7,8 +7,4 @@ class CurateController < ApplicationController
     @n_dendro = 0
     @n_typo = Typo.count
   end
-
-  def import
-    render "import", layout: "curate"
-  end
 end
