@@ -33,26 +33,20 @@
       height: 20rem;
       width: 100%;
       z-index: -1;
-      background-image: url('<%= url_for(@article.splash.variant(:xs)) %>');
       background-size: cover;
       background-position: center center;
     }
 
-    @media (min-width: 576px)  { 
-      .article-hero:before { background-image: url('<%= url_for(@article.splash.variant(:sm)) %>'); }
-    }
-    @media (min-width: 768px)  { 
-      .article-hero:before { background-image: url('<%= url_for(@article.splash.variant(:md)) %>'); }
-    }
-    @media (min-width: 992px)  { 
-      .article-hero:before { background-image: url('<%= url_for(@article.splash.variant(:lg)) %>'); }
-    }
-    @media (min-width: 1200px) { 
-      .article-hero:before { background-image: url('<%= url_for(@article.splash.variant(:xl)) %>'); }
-    }
-    @media (min-width: 1400px) { 
-      .article-hero:before { background-image: url('<%= url_for(@article.splash.variant(:xxl)) %>'); }
-    }
+    <% { xs: nil, sm: 576, md: 768, lg: 992, xl: 1200, xxl: 1400 }.each do |size, min_width| %>
+      <% fallback_url = url_for(@article.splash.variant(size)) %>
+      <% webp_url = url_for(@article.splash.variant(:"#{size}_webp")) %>
+      <% if min_width %>@media (min-width: <%= min_width %>px) {<% end %>
+      .article-hero:before {
+        background-image: url('<%= fallback_url %>');
+        background-image: image-set(url('<%= webp_url %>') type("image/webp"), url('<%= fallback_url %>'));
+      }
+      <% if min_width %>}<% end %>
+    <% end %>
   </style>
 <% end %>
 
