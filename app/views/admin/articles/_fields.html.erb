@@ -15,7 +15,7 @@
 
 <%= f.text_area :body, label_as_placeholder: true, 
   label: "Body text. Styling with **Markdown** is supported.",
-  data: { controller: "markdown-editor", markdown_editor_target: "field" } %>
+  data: { controller: "markdown-editor", markdown_editor_target: "field", markdown_editor_toolbar_value: markdown_toolbar.to_json } %>
 
 <div>
   <label for="basic-url" class="form-label">Location</label>
@@ -30,6 +30,9 @@
         action: "article-editor#touchSlug"
       }
     %>
+    <%= button_tag bs_icon("arrow-clockwise"), type: "button", class: "btn btn-info",
+      title: "Regenerate slug from title", aria: { label: "Regenerate slug" },
+      data: { action: "article-editor#updateSlug" } %>
   </div>
 </div>
 

@@ -9,12 +9,7 @@ export default class extends Controller {
 		if (this.slugTarget.value != '') {
 			this.slugHasBeenTouched = true
 		}
-		this.addSlugifyButton()
   }
-
-	disconnect() {
-		this.removeSlugifyButton()
-	}
 
 	inputTitle() {
 		if (!this.slugHasBeenTouched) {
@@ -40,18 +35,4 @@ export default class extends Controller {
 			.replace(/^-+|-+$/g, '')
 	}
 
-	addSlugifyButton() {
-		let slugifyBtn = document.createElement("button")
-		slugifyBtn.type = "button"
-		slugifyBtn.title = "Regenerate slug from title"
-		slugifyBtn.classList.add('btn')
-		slugifyBtn.classList.add('btn-info')
-		slugifyBtn.dataset.action = "article-editor#updateSlug"
-		slugifyBtn.innerHTML = '<i class="bi-arrow-clockwise"></i><span class="visually-hidden">Regenerate slug</span>'
-		this.slugTarget.parentElement.append(slugifyBtn)
-	}
-
-	removeSlugifyButton() {
-		// TO DO
-	}
 }

@@ -2,77 +2,25 @@
 # Helper methods for rendering icons
 module IconHelper
 
-  #
-  # XRONOS icons
-  #
-
-  ##
-  # Render XRONOS icons as SVGs
   def xr_icon(model, options = {}, html_options = {})
-    icon = model.icon
+    filename = options.key?(:light) ? model.icon.sub(/\.svg\z/, '-light.svg') : model.icon
+    attributes = html_options.except(:alt)
+    label = html_options.fetch(:alt) { model.label }
 
-    if options.has_key?(:light)
-      icon = icon.split(".")
-      icon = icon[0] + "-light." + icon[1]
-    end
-
-    unless html_options.has_key?(:alt)
-      html_options[:alt] = model.label
-    end
-
-    # Set intrinsic dimensions (actual display dimensions assumed to be set by CSS!)
-    html_options[:width] = 72
-    html_options[:height] = 72
-
-    image_tag icon, html_options
+    embedded_svg(filename, attributes, label: label)
   end
 
-  #
-  # Simple Icons <https://simpleicons.org/>
-  #
-
-  ##
-  # Render Simple Icon as an embedded SVG
   def simple_icon(slug)
-    content_tag :span, class: "svg-icon svg-baseline" do
-      embedded_svg "simple_icons/#{slug}.svg", 
-        height: 32, 
-        role: "graphics-symbol", 
-        class: "simple-icon"
-    end
+    embedded_svg("simple_icons/#{slug}.svg", class: 'simple-icon')
   end
 
-  ##
-  # Embed an SVG directly in rendered markup
-  # adapted from https://blog.cloud66.com/using-svgs-in-a-rails-stack
-  def embedded_svg(filename, options = {})
-    assets = Rails.application.assets
-
-    asset = assets.load_path.find(filename)
-
-    if asset
-      #file = asset.source.force_encoding("UTF-8")
-      doc = Nokogiri::HTML::DocumentFragment.parse asset.content
-      svg = doc.at_css "svg"
-      options.each {|attr, value| svg[attr.to_s] = value}
-      #svg["class"] = options[:class] if options[:class].present?
-    else
-      doc = "<!-- SVG #{filename} not found -->"
-    end
-
-    raw doc
-  end
-
-
-  #
-  # Bootstrap icons
-  #
-
-  ##
-  # Render Bootstrap icon with embedded font
   def bs_icon(icon, options = {})
-    classes = ["bi-#{icon}"].append(options.delete(:class)).compact
-    content_tag :i, "", options.merge(class: classes)
+    return ''.html_safe unless icon.to_s.match?(/\A[a-z0-9-]+\z/)
+
+    path = Rails.root.join('node_modules/bootstrap-icons/icons', "#{icon}.svg")
+    return ''.html_safe unless path.file?
+
+    render_icon_svg(path.read, options)
   end
 
   ##
@@ -135,4 +83,72 @@ module IconHelper
     bs_icon "arrow-counterclockwise", options
   end
 
+  def embedded_svg(filename, options = {}, label: nil, **attributes)
+    asset = Rails.application.assets.load_path.find(filename)
+    return ''.html_safe unless asset
+
+    render_icon_svg(asset.content, options.merge(attributes), label: label)
+  end
+
+  def markdown_toolbar
+    [
+      ['toggleBold', 'type-bold', 'Bold'],
+      ['toggleItalic', 'type-italic', 'Italic'],
+      ['toggleStrikethrough', 'type-strikethrough', 'Strikethrough'],
+      '|',
+      ['toggleHeadingSmaller', 'hash', 'Heading'],
+      ['toggleHeadingSmaller', 'caret-down-fill', 'Heading Smaller'],
+      ['toggleHeadingBigger', 'caret-up-fill', 'Heading Bigger'],
+      ['toggleHeading1', 'type-h1', 'Heading 1'],
+      ['toggleHeading2', 'type-h2', 'Heading 2'],
+      ['toggleHeading3', 'type-h3', 'Heading 3'],
+      '|',
+      ['toggleCodeBlock', 'code-slash', 'Code'],
+      ['toggleBlockquote', 'chat-quote', 'Quote'],
+      ['toggleOrderedList', 'list-ol', 'Ordered List'],
+      ['toggleUnorderedList', 'list-ul', 'Unordered List'],
+      '|',
+      ['cleanBlock', 'x-circle', 'Clean Block'],
+      ['drawLink', 'link-45deg', 'Insert Link'],
+      ['drawImage', 'file-image', 'Insert Image'],
+      ['drawImage', 'cloud-upload', 'Upload Image'],
+      ['drawTable', 'table', 'Insert Table'],
+      ['drawHorizontalRule', 'dash-lg', 'Insert Horizontal Rule'],
+      '|',
+      ['togglePreview', 'eye-fill', 'Preview'],
+      ['toggleSideBySide', 'layout-text-sidebar-reverse', 'Side by Side'],
+      ['toggleFullScreen', 'arrows-fullscreen', 'Fullscreen'],
+      '|',
+      ['guide', 'info-circle', 'Markdown Guide'],
+      ['undo', 'arrow-counterclockwise', 'Undo'],
+      ['redo', 'arrow-clockwise', 'Redo']
+    ].map do |item|
+      next item if item == '|'
+
+      action, icon, title = item
+      { action: action, icon: icon, title: title, svg: bs_icon(icon) }
+    end
+  end
+
+  private
+
+  def render_icon_svg(source, options, label: nil)
+    svg = Nokogiri::XML.fragment(source).element_children.find { |node| node.name == 'svg' }
+    return ''.html_safe unless svg
+
+    label ||= options[:title] || svg.element_children.find { |node| node.name == 'title' }&.text
+    svg['width'] = '1em'
+    svg['height'] = '1em'
+    svg['class'] = class_names('app-icon', options[:class])
+    if label.present?
+      svg['role'] = 'img'
+      svg['aria-label'] = label
+    else
+      svg.remove_attribute('role')
+      svg['aria-hidden'] = 'true'
+    end
+
+    options.except(:class).each { |name, value| svg[name.to_s.tr('_', '-')] = value.to_s unless value.nil? }
+    svg.to_xml.html_safe
+  end
 end
