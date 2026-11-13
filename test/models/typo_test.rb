@@ -9,7 +9,6 @@
 #  name              :string
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
-#  parent_id         :integer
 #  sample_id         :bigint
 #
 # Indexes
