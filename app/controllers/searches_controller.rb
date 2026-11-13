@@ -1,7 +1,7 @@
 class SearchesController < ApplicationController
 
   def index
-    @results = PgSearch.multisearch(search_params[:q])
+    @results = PgSearch.multisearch(search_params[:q]).merge(visible_search_documents)
 
     @n_results = @results.count
     @n_sites = @results.where(searchable_type: "Site").count
@@ -26,6 +26,13 @@ class SearchesController < ApplicationController
   end
 
   private
+
+  def visible_search_documents
+    documents = PgSearch::Document.all
+    searchable_types.map do |type|
+      documents.where(searchable_type: type, searchable_id: type.constantize.select(:id))
+    end.reduce(:or)
+  end
 
   def search_params
     params.permit(:q, :type, :page, :format)
