@@ -68,7 +68,7 @@
   <% if @site.wikidata_link&.approved? %>
     <section id="site-description" class="bg-white p-3 my-5 border rounded shadow-sm">
       <h3 class="text-muted mb-3">
-        <i class="bi-card-text"></i> Site description
+        <%= bs_icon "card-text" %> Site description
       </h3>
 
       <%= turbo_frame_tag dom_id(@site, :description),
@@ -83,7 +83,7 @@
 
   <section id="site-external-links" class="bg-white p-3 my-5 border rounded shadow-sm">
     <h3 class="text-muted mb-3">
-      <i class="bi-link-45deg"></i> Linked Data
+      <%= bs_icon "link-45deg" %> Linked Data
     </h3>
 
     <%= render "external_links", site: @site %>

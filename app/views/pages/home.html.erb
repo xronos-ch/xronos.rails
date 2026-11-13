@@ -25,7 +25,7 @@
     <div class="row">
 
       <div class="col-sm-6 col-lg-3 my-3">
-        <%= xr_icon Site, { light: true }, { class: "d-block mx-auto mb-2", style: "width: 5rem;" } %>
+        <%= xr_icon Site, { light: true }, { class: "d-block mx-auto mb-2", style: "width: 5rem; height: auto;" } %>
         <a href="/sites" class="display-5 link-secondary text-decoration-none" title="Browse sites">
           <%= number_with_delimiter(cached_site_count)%>
         </a>
@@ -33,7 +33,7 @@
       </div>
 
       <div class="col-sm-6 col-lg-3 my-3">
-        <%= xr_icon C14, { light: true }, { class: "d-block mx-auto mb-2", style: "width: 5rem;" } %>
+        <%= xr_icon C14, { light: true }, { class: "d-block mx-auto mb-2", style: "width: 5rem; height: auto;" } %>
         <a href="/c14s" class="display-5 link-secondary text-decoration-none" title="Browse radiocarbon dates">
           <%= number_with_delimiter(cached_c14_count)%>
         </a>
@@ -41,7 +41,7 @@
       </div>
 
       <div class="col-sm-6 col-lg-3 my-3">
-        <%= xr_icon Typo, { light: true }, { class: "d-block mx-auto mb-2", style: "width: 5rem;" } %>
+        <%= xr_icon Typo, { light: true }, { class: "d-block mx-auto mb-2", style: "width: 5rem; height: auto;" } %>
         <a href="/typos" class="display-5 link-secondary text-decoration-none" title="Browse typological dates">
           <%= number_with_delimiter(cached_typo_count)%>
         </a>
@@ -53,7 +53,7 @@
           Coming soon!
           <%= bs_icon "cone-striped" %>
         </span>
-        <%= image_tag "icons/dendro.svg", { class: "d-block mx-auto mb-2", style: "width: 5rem;" } %>
+        <%= embedded_svg "icons/dendro.svg", class: "d-block mx-auto mb-2", style: "width: 5rem; height: auto;" %>
         <a href="#" class="display-5 link-dark text-decoration-none">
           —
         </a>

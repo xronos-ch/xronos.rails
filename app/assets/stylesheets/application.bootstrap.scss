@@ -19,7 +19,6 @@
 	$card-border-color: $card-border-color,
 	$card-cap-bg: $card-cap-bg
 );
-@use 'bootstrap-icons/font/bootstrap-icons' as *;
 
 // Library stylesheets (moved from JavaScript CSS imports)
 @use 'nouislider/dist/nouislider';
