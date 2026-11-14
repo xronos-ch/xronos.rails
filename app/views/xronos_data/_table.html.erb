@@ -14,7 +14,9 @@
     </thead>
 
     <tbody>
+      <% calibrations = C14.calibrations_for(@xrons) %>
       <% @xrons.each do |x| %>
+        <% calibration = calibrations.fetch(x) %>
         <tr>
           <td><!-- <%= x.id %> --></td>
           <td><%= x.lab_identifier.present? ? (link_to x.lab_identifier, x, target: :_top) : na_value %></td>
@@ -27,7 +29,7 @@
             <td><%= na_value %></td>
           <% end %>
           <td><%= x.bp %>±<%= x.std %></td>
-          <td><%= x.calibration.taq %>-<%= x.calibration.tpq %></td>
+          <td><%= calibration.taq %>-<%= calibration.tpq %></td>
         </tr>
       <% end %>
     </tbody>

@@ -22,7 +22,7 @@
       class: "card-link fw-semibold",
       title: Citation.label.humanize.pluralize do %>
       <%= xr_icon Citation, {}, { style: "width: auto; height: 1.1rem;" } %>
-      <%= reference.citations.count %>
+      <%= local_assigns.fetch(:counts, {}).fetch(:citations) { reference.citations.count } %>
     <% end %>
   </div>
 

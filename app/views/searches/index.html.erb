@@ -43,7 +43,7 @@
     <div class="row g-3 row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5">
       <% @results.each do |result| %>
         <div class="col">
-          <%= render result.searchable %>
+          <%= render result.searchable, counts: @card_counts.fetch(result.searchable, {}) %>
         </div>
       <% end %>
     </div>
