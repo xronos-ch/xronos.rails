@@ -3,6 +3,11 @@
 
   <a class="nav-link  <%= active_class(curate_path) %>" href="/curate" <%= active_aria(curate_path) %>>Dashboard</a>
 
+  <% if can?(:duplicates, Site) %>
+    <h3 class="h6 mt-4 text-muted text-uppercase">Duplicates</h3>
+    <%= link_to "Sites", curate_site_duplicates_path, class: "nav-link #{active_class(curate_site_duplicates_path)}" %>
+  <% end %>
+
   <h3 class="h6 mt-4 text-muted text-uppercase">Issues</h3>
   <a class="nav-link" href="/issues/c14s">Radiocarbon dates</a>
   <a class="nav-link" href="/issues/references">References</a>

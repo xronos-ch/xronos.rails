@@ -1,0 +1,40 @@
+<% content_for :title, "Possible site duplicates" %>
+
+<h2>Possible site duplicates</h2>
+<p>These sites have active radiocarbon measurements with the same lab identifier, age and error.</p>
+
+
+<% if @pairs.any? %>
+  <div class="table-responsive">
+    <table class="table align-middle">
+      <thead>
+        <tr>
+          <th scope="col">First site</th>
+          <th scope="col">Second site</th>
+          <th scope="col">Matching measurements</th>
+          <th scope="col"><span class="visually-hidden">Review</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @pairs.each do |pair| %>
+          <% first, second = @sites.values_at(pair.first_id, pair.second_id) %>
+          <% next unless first && second %>
+          <tr>
+            <% [first, second].each do |site| %>
+              <td>
+                <%= link_to site.name, site %>
+                <div class="small text-body-secondary"><%= [site.country_code, site.coordinates&.to_s("dd")].compact.join(" · ") %></div>
+              </td>
+            <% end %>
+            <td><%= pair.evidence_count %></td>
+            <td><%= link_to "Compare sites", curate_site_duplicate_path(first, candidate_id: second.id),
+                            class: "btn btn-outline-primary btn-sm" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <%== @pagy.series_nav(:bootstrap) %>
+<% else %>
+  <p>No site pairs to review.</p>
+<% end %>
