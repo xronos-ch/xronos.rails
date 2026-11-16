@@ -70,7 +70,7 @@ class C14 < Chron
   pg_search_scope :search,
                   against: :lab_identifier,
                   using: { tsearch: { prefix: true } } # match partial words
-  multisearchable against: :lab_identifier
+  multisearchable against: :lab_identifier, unless: :superseded_in_database?
 
   LIBBY_MEAN_LIFE = 8033.0
 

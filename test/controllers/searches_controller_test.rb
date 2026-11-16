@@ -17,6 +17,12 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     active = create(:site, name: "#{query} active")
     superseded = create(:site, name: "#{query} superseded")
     superseded.supersede!(active)
+    assert_not PgSearch::Document.exists?(searchable: superseded)
+    superseded.update!(name: "#{query} superseded edited")
+    assert_not PgSearch::Document.exists?(searchable: superseded)
+
+    # Simulate a stale entry from before supersession maintained the index.
+    PgSearch::Document.create!(searchable: superseded, content: superseded.name)
     missing = create(:site, name: "#{query} missing")
     missing.delete
 
@@ -34,6 +40,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     assert_equal [active.id], result_ids
 
     PaperTrail.request(whodunnit: create(:user).id.to_s) { superseded.restore! }
+    assert PgSearch::Document.exists?(searchable: superseded)
     get search_path, params: { q: query }
 
     assert_response :success
