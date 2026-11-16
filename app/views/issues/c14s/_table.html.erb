@@ -39,12 +39,23 @@
         <td><%= c14.std %></td>
         <td><%= c14.delta_c13 %></td>
         <td><%= c14.delta_c13_std %></td>
-        <td><% c14.issues.each do |issue| %>
-          <%= issue_badge(issue) %>
-        <% end %></td>
+        <td>
+          <% C14.issues.excluding(:potential_duplicate).each do |issue| %>
+            <%= issue_badge(issue) if c14.has_issue?(issue) %>
+          <% end %>
+          <% candidates = @duplicate_ids.fetch(c14.potential_duplicate_key, []).excluding(c14.id) %>
+          <% if candidates.any? %>
+            <%= issue_badge(:potential_duplicate) %>
+            <% if params[:issue] == 'potential_duplicate' %>
+              <ul class="list-inline mb-0">
+                <% candidates.each do |id| %>
+                  <li class="list-inline-item"><%= link_to id, c14_path(id), data: { turbo_frame: "_top" } %></li>
+                <% end %>
+              </ul>
+            <% end %>
+          <% end %>
+        </td>
       </tr>
-
-    </tr>
-  <% end %>
+    <% end %>
   </tbody>
 </table>

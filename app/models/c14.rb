@@ -48,6 +48,8 @@ class C14 < Chron
                       delta_c13: :nil_matches_nil,
                       delta_c13_std: :nil_matches_nil
 
+  potential_duplicates_on :lab_identifier, :bp, :std
+
   belongs_to :c14_lab, optional: true
   accepts_nested_attributes_for :sample, reject_if: :all_blank
 
@@ -59,7 +61,7 @@ class C14 < Chron
   include HasIssues
   @issues = %i[missing_c14_age very_old_c14 missing_c14_error
                missing_d13c missing_d13c_error missing_c14_method
-               missing_c14_lab_id invalid_lab_id missing_c14_lab]
+               missing_c14_lab_id invalid_lab_id missing_c14_lab potential_duplicate]
 
   include Linkable
   linkable_to :opencontext
@@ -109,6 +111,23 @@ class C14 < Chron
   end
 
   # Issues
+
+  scope :potential_duplicate, -> {
+    fields = C14.potential_duplicates_attrs
+    duplicate_keys = C14.default_scoped.where.not(lab_identifier: [nil, ''])
+                        .group(*fields).having('COUNT(*) > 1').select(*fields)
+    where('(c14s.lab_identifier, c14s.bp, c14s.std) IN (?)', duplicate_keys)
+  }
+
+  def potential_duplicate_key
+    return if lab_identifier.blank? || bp.nil? || std.nil?
+
+    [lab_identifier, bp, std]
+  end
+
+  def potential_duplicate?
+    potential_duplicate_key.present? && is_potential_duplicate?
+  end
 
   scope :missing_c14_age, -> { where(bp: nil) }
   def missing_c14_age?
