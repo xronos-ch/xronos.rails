@@ -19,6 +19,20 @@ class Admin::ArticlesControllerTest < ActionDispatch::IntegrationTest # rubocop:
     }
   )
 
+  test 'a regular account cannot publish an article' do
+    user = create(:user)
+    sign_in user
+
+    assert_no_difference 'Article.count' do
+      post admin_articles_path, params: { article: {
+        title: 'A valid title', slug: 'valid-publication', section: 'news',
+        user_id: user.id, publish: true, body: 'Article content'
+      } }
+    end
+
+    assert_response :not_found
+  end
+
   test 'index renders machine-readable publication times' do
     sign_in create(:user, :admin)
     published = create(:article, :published)
