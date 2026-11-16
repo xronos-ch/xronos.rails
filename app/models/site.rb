@@ -186,6 +186,18 @@ class Site < ApplicationRecord
     country_code.blank?
   end
 
+  def update_for_duplicate_merge!(attributes)
+    @manual_duplicate_merge = true
+    self.revision_comment = 'Selected site values during manual duplicate merge'
+    update!(attributes)
+  ensure
+    @manual_duplicate_merge = false
+  end
+
+  def merge_exact_duplicates
+    super unless @manual_duplicate_merge
+  end
+
   def find_exact_duplicate
     candidate = duplicates_except.first
     return nil unless candidate
