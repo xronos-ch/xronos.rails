@@ -1,0 +1,16 @@
+<% case field
+   when :name %>
+  <%= label_tag "merge_custom_name", "Custom site name", class: "form-label" %>
+  <%= text_field_tag "merge[custom][name]", values[:name], class: "form-control" %>
+<% when :coordinates %>
+  <%= label_tag "merge_custom_lat", "Latitude (decimal degrees)", class: "form-label" %>
+  <%= text_field_tag "merge[custom][lat]", values[:lat], inputmode: "decimal", class: "form-control mb-2",
+                     data: { site_merge_map_target: "latitude", action: "input->site-merge-map#updateCustomMarker" } %>
+  <%= label_tag "merge_custom_lng", "Longitude (decimal degrees)", class: "form-label" %>
+  <%= text_field_tag "merge[custom][lng]", values[:lng], inputmode: "decimal", class: "form-control",
+                     data: { site_merge_map_target: "longitude", action: "input->site-merge-map#updateCustomMarker" } %>
+<% when :country %>
+  <%= label_tag "merge_custom_country_code", "Two-letter country code", class: "form-label" %>
+  <%= text_field_tag "merge[custom][country_code]", values[:country_code], maxlength: 2,
+                     placeholder: "DK", class: "form-control" %>
+<% end %>

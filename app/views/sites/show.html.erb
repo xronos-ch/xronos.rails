@@ -3,6 +3,10 @@
 
 <main class="container my-5">
 
+  <% if params[:from] == "site_duplicates" && can?(:duplicates, Site) %>
+    <p><%= link_to "Back to site duplicates", curate_site_duplicates_path, class: "btn btn-outline-secondary btn-sm" %></p>
+  <% end %>
+
   <%= render "header", site: @site %>
 
   <% cache [@site, "site_header_v2"] do %>

@@ -107,6 +107,7 @@ Rails.application.routes.draw do
   # Curation backend
   get "/curate" => "curate#index"
   namespace :curate do
+    resources :site_duplicates, only: %i[index show create]
     get "recent_changes" => "recent_changes#index"
   end
 
