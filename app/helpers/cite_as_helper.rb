@@ -5,12 +5,13 @@ module CiteAsHelper
   ##
   # Generate citation for an article
   def article_citation(article)
-    <<~TEXT
-      #{article.author_name} (#{article.publication_date}), #{article.title}.
-      <cite>#{article_citation_publication(article)}</cite>.
-      #{link_to(article_url(article.section, article.slug))}.
-      Accessed #{Time.current.strftime("%F")}.
-    TEXT
+    safe_join([
+      "#{article.author_name} (#{article.publication_date}), #{article.title}. ",
+      tag.cite(article_citation_publication(article)),
+      ". ",
+      link_to(article_url(article.section, article.slug)),
+      ". Accessed #{Time.current.strftime('%F')}."
+    ])
   end
 
   private

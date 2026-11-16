@@ -21,6 +21,49 @@ class ArticlesControllerTest < ActionDispatch::IntegrationTest
     assert_dom "time[datetime='#{published_date}']", text: published_date
   end
 
+  test 'escapes article citation fields and sanitizes stored markup while keeping article formatting' do
+    article = create(:article, :published, section: 'about', title: '<img id="citation-probe" src="/probe">',
+                            splash_attribution: '<a href="/credits" onclick="void(0)">Credits</a><script id="credit-probe"></script>',
+                            body: <<~MARKDOWN)
+      ## Field report
+
+      **Notes** <a href="javascript:void(0)">Unsafe link</a>
+      <img src="/probe" onerror="void(0)">
+
+      <script id="body-probe"></script>
+
+      | Site |
+      | --- |
+      | Kintore |
+    MARKDOWN
+
+    get article_path(section: article.section, slug: article.slug)
+
+    assert_response :success
+    assert_dom 'h2#field-report', text: 'Field report'
+    assert_dom '#toc a[href="#field-report"]'
+    assert_dom 'strong', text: 'Notes'
+    assert_dom 'table td', text: 'Kintore'
+    assert_dom 'a[href="/credits"]', text: 'Credits'
+    assert_dom '#citation-probe, #credit-probe, #body-probe, [onclick], [onerror], a[href^="javascript:"]', count: 0
+  end
+
+  test 'removes stored active markup from news previews and feeds' do
+    create(:article, :published, body: 'Preview <span onclick="void(0)">text</span><script id="feed-probe"></script>')
+
+    get root_path
+    assert_response :success
+    assert_dom 'article.card p.card-text', text: /Preview text/
+    assert_dom 'article.card [onclick], article.card #feed-probe', count: 0
+
+    %i[atom rss].each do |format|
+      get news_path(format: format)
+      assert_response :success
+      assert_includes response.body, 'Preview'
+      refute_match(/onclick|feed-probe/, response.body)
+    end
+  end
+
   test 'home page renders a machine-readable news card date' do
     article = create(:article, :published)
     published_date = article.published_at.to_date
