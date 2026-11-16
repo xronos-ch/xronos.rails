@@ -36,7 +36,7 @@
   <% if can?(:edit, record) || can?(:destroy, record) %>
     <div class="btn-group" role="group" aria-label="Access-controlled actions">
       <% if can? :edit, record %>
-        <%= link_to edit_icon, edit_polymorphic_path(record), class: "btn btn-sm btn-outline-primary", title: "Edit #{label}", data: { turbo_frame: "remote_modal" } %>
+        <%= render "shared/record_edit_link", record: record, label: label %>
       <% end %>
       <% if can? :destroy, record %>
         <%= button_to polymorphic_path(record), method: :delete, class: "btn btn-sm btn-outline-danger", title: "Delete #{label}", data: { turbo_confirm: "Are you sure?" } do %>
