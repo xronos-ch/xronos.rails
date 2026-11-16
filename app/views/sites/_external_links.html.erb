@@ -11,6 +11,11 @@
     <p>There is no linked data available for this record.</p>
   <% end %>
 
+  <% if can?(:manage, Site) %>
+    <% proposals = Site::WikidataProposal.for_review.where(subject: site).order(:id).to_a %>
+    <%= render "sites/wikidata_proposals", proposals: proposals if proposals.any? %>
+  <% end %>
+
   <% if can? :manage, LinkedResource %>
     <ul class="list-unstyled">
       <% LinkedResource::Source.all.each do |source| %>

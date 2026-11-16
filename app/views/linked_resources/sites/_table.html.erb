@@ -42,6 +42,7 @@
 
   <tbody>
     <% sites.each do |site| %>
+      <% wikidata_link = site.wikidata_link %>
       <tr>
         <td class="text-muted"><%= site.id %></td>
         <td><%= link_to site.name, site, target: :_top %></td>
@@ -50,12 +51,12 @@
         <td class="font-monospace text-end"><%= site.c14s_count %></td>
         <td class="font-monospace text-end"><%= site.typos_count %></td>
         <td class="font-monospace text-end">
-          <% if site.wikidata_link && site.wikidata_link.status == "approved" %>
-            <%= link_to site.wikidata_link.external_id, site.wikidata_link.external_url %>
-          <% elsif site.wikidata_link && site.wikidata_link.status == "pending" %>
-            <i>Suggestion: <%= site.wikidata_link.external_id %>:
-              <%= link_to "#{site.wikidata_link.data['label']} (#{site.wikidata_link.data['description']})",
-                          site.wikidata_link.external_url, target: "_blank" %>
+          <% if wikidata_link && wikidata_link.status == "approved" %>
+            <%= link_to wikidata_link.external_id, wikidata_link.external_url %>
+          <% elsif wikidata_link && wikidata_link.status == "pending" %>
+            <i>Suggestion: <%= wikidata_link.external_id %>:
+              <%= link_to "#{wikidata_link.data['label']} (#{wikidata_link.data['description']})",
+                          wikidata_link.external_url, target: "_blank" %>
             </i>
           <% else %>
             <span class="text-muted">No suggestions</span>
@@ -70,13 +71,13 @@
    <td>
      <div class="btn-toolbar justify-content-end">
        <div class="btn-group me-2">
-         <% if site.wikidata_link %>
-          <%= bootstrap_form_for site.wikidata_link, url: linked_resource_path(site.wikidata_link), method: :patch do |f| %>
+         <% if wikidata_link %>
+          <%= bootstrap_form_for wikidata_link, url: linked_resource_path(wikidata_link), method: :patch do |f| %>
              <%= f.hidden_field :linkable_type, value: "Site" %>
              <%= f.hidden_field :linkable_id, value: site.id %>
              <%= f.hidden_field :source, value: "Wikidata" %>
 
-             <% if site.wikidata_link.status == "pending" %>
+             <% if wikidata_link.status == "pending" %>
                <%= f.hidden_field :status, value: "approved" %>
                <%= f.hidden_field :revision_comment, value: "Matched to Wikidata" %>
                <%= f.primary class: "btn btn-sm btn-primary", title: "Use suggested Wikidata match" do %>
@@ -90,6 +91,10 @@
            <% end %>
          <% end %>
        </div>
+       <% if site.name.present? && wikidata_link.nil? %>
+         <%= button_to "Find Wikidata matches", linked_resources_site_wikidata_lookup_path(site),
+                       class: "btn btn-sm btn-outline-primary me-2", form: { data: { turbo_frame: "_top" } } %>
+       <% end %>
        <%= render "shared/action_buttons_compact", i: site %>
      </div>
    </td>

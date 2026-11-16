@@ -63,6 +63,12 @@ Rails.application.routes.draw do
   # the show action of the CRUD resource (where 'sites' would be
   # treated as an :id).
   namespace :linked_resources do
+    resources :wikidata_proposals, only: :index do
+      resource :approval, only: :create, controller: 'wikidata_approvals'
+    end
+    resources :sites, only: [] do
+      resource :wikidata_lookup, only: :create
+    end
     resources :sites, only: :index do
       collection do
         get ":issue", action: :index,

@@ -1,32 +1,16 @@
+# frozen_string_literal: true
+
 namespace :cache do
-  desc "Update sites with potential Wikidata matches in the cache"
+  desc 'Queue Wikidata proposal lookups for sites without a Wikidata link (optional SITE_IDS=12,34)'
   task update_sites_wikidata_match: :environment do
-    puts "Starting cache update for potential Wikidata matches..."
-
-    Site.find_in_batches(batch_size: 100) do |site_batch|
-      site_batch.each_slice(25) do |site_chunk|
-        begin
-          # Extract site names for generating cache key
-          site_names = site_chunk.map(&:name).compact.map(&:to_s)
-
-          # Skip if the chunk is empty after sanitization
-          next if site_names.empty?
-
-          # Generate cache key for the chunk
-          cache_key = Site.generate_cache_key(site_names)
-          puts "Processing chunk with cache key: #{cache_key}"
-
-          # Fetch Wikidata match candidates
-          potential_matches = Site.wikidata_match_candidates_batch(site_chunk)
-
-          # Write to cache
-          Rails.cache.write(cache_key, potential_matches, expires_in: 24.hours)
-        rescue => e
-          puts "Failed to generate cache key for chunk: #{site_chunk.map(&:name).inspect}. Error: #{e.message}"
-        end
-      end
+    if ENV.key?('SITE_IDS')
+      ids = ENV.fetch('SITE_IDS').split(',', -1).map(&:strip)
+      abort 'SITE_IDS must contain comma-separated positive site IDs.' unless ids.any? && ids.all?(/\A[1-9][0-9]*\z/)
     end
 
-    puts "Cache update complete."
+    job_count, site_count = Site::WikidataBatchJob.enqueue_matches(site_ids: ids)
+    puts "Queued #{job_count} Wikidata lookup job(s) for #{site_count} site(s)."
+  rescue ActiveJob::EnqueueError => e
+    abort e.message
   end
 end
