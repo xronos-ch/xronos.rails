@@ -23,7 +23,7 @@ class RadonbImportTest < ActiveSupport::TestCase # rubocop:disable Metrics/Class
   test 'imports data and keeps source rows traceable through measurement deduplication' do # rubocop:disable Metrics/BlockLength
     with_versioning { run_import }
 
-    source = Source.find_by!(name: 'RADONB', version: 'fixture')
+    source = Source.find_by!(name: 'RADONB', version: nil)
     assert_equal Digest::SHA256.file(FIXTURE_DIR.join('radondaily.txt')).hexdigest,
                  source.file_manifest.fetch('radondaily.txt')
     assert source.imports.last.success?
@@ -53,7 +53,8 @@ class RadonbImportTest < ActiveSupport::TestCase # rubocop:disable Metrics/Class
 
     assert_equal 'Müller 1996, 203; Meyer 1997', provenance(versions.fetch('1')).fetch('reference')
     assert_equal 'Meyer 1998', provenance(versions.fetch('2')).fetch('reference')
-    assert_equal 'fixture', provenance(versions.fetch('2')).fetch('version')
+    assert_nil source.version
+    assert_match(/\A[0-9a-f]{64}\z/, provenance(versions.fetch('2')).fetch('row_sha256'))
     assert_equal 3410, original_date(versions.fetch('3')).bp
     assert_equal 'Autre lieu', original_date(versions.fetch('4')).site.name
     assert_equal 'FR', original_date(versions.fetch('5')).site.country_code
@@ -61,17 +62,59 @@ class RadonbImportTest < ActiveSupport::TestCase # rubocop:disable Metrics/Class
     assert_nil original_date(versions.fetch('6')).delta_c13
   end
 
-  test 'rerunning a source version does not duplicate imported records' do
+  test 'rerunning a snapshot does not duplicate imported records' do
     run_import
 
     counts = ['PaperTrail::Version.count', 'C14.unscoped.count', 'Sample.count', 'Site.count', 'Citation.count']
     assert_no_difference counts do
-      run_import
+      stdout, = run_import
+      assert_includes stdout, 'No records created.'
+      assert_includes stdout, '  unchanged row: 9'
     end
 
-    import = Source.find_by!(name: 'RADONB', version: 'fixture').imports.last
+    import = Source.find_by!(name: 'RADONB', version: nil).imports.last
     assert import.success?
-    assert_equal 9, import.records_skipped.fetch('already imported')
+    assert_equal 9, import.records_skipped.fetch('unchanged row')
+  end
+
+  test 'imports only new ids across snapshots and reports changed rows' do
+    run_import
+    original = Source.find_by!(name: 'RADONB', version: nil)
+    header, unchanged, original_row = File.readlines(FIXTURE_DIR.join('radondaily.txt')).first(3)
+    changed = original_row.sub('Meyer 1998', 'Meyer 1999')
+    new_row = original_row.sub(/\A2\t/, "99\t")
+
+    Dir.mktmpdir do |dir|
+      File.write(File.join(dir, 'radondaily.txt'), header + unchanged + changed + new_row)
+      assert_difference 'C14.unscoped.count', 1 do
+        stdout, = run_import(dir)
+        assert_includes stdout, 'Changed RADONB IDs: 2'
+      end
+    end
+
+    snapshot = Source.where(name: 'RADONB', version: nil).where.not(id: original.id).sole
+    assert_equal({ 'unchanged row' => 1, 'changed row' => 1 }, snapshot.imports.sole.records_skipped)
+    assert_equal ['99'], source_versions(snapshot).keys
+    assert_not Reference.exists?(short_ref: 'Meyer 1999')
+  end
+
+  test 'reports previously imported ids that predate row checksums' do
+    run_import
+    source = Source.find_by!(name: 'RADONB', version: nil)
+    version = source_versions(source).fetch('1')
+    prefix, _, json = version.revision_comment.lines.first.partition(': ')
+    legacy = JSON.parse(json).except('row_sha256').merge('version' => 'fixture')
+    version.update!(revision_comment: "#{prefix}: #{legacy.to_json}")
+    source.update!(version: 'fixture')
+
+    assert_no_difference 'C14.unscoped.count' do
+      stdout, = run_import
+      assert_includes stdout, 'RADONB IDs without a previous row checksum: 1'
+    end
+
+    snapshot = Source.find_by!(name: 'RADONB', version: nil)
+    assert_equal 1, snapshot.imports.sole.records_skipped.fetch('previous row checksum unavailable')
+    assert_equal 8, snapshot.imports.sole.records_skipped.fetch('unchanged row')
   end
 
   test 'deduplicates existing exact pairs and preserves site coordinates' do
@@ -109,7 +152,7 @@ class RadonbImportTest < ActiveSupport::TestCase # rubocop:disable Metrics/Class
       end
     end
 
-    import = Source.find_by!(name: 'RADONB', version: 'fixture').imports.sole
+    import = Source.find_by!(name: 'RADONB', version: nil).imports.sole
     assert_not import.success?
   end
 
@@ -121,7 +164,7 @@ class RadonbImportTest < ActiveSupport::TestCase # rubocop:disable Metrics/Class
       end
     end
 
-    import = Source.find_by!(name: 'RADONB', version: 'fixture').imports.sole
+    import = Source.find_by!(name: 'RADONB', version: nil).imports.sole
     assert_not import.success?
     assert_empty import.records_created
     assert_match(/deduplication failed/, import.error)
@@ -139,7 +182,7 @@ class RadonbImportTest < ActiveSupport::TestCase # rubocop:disable Metrics/Class
       end
     end
 
-    import = Source.find_by!(name: 'RADONB', version: 'fixture').imports.sole
+    import = Source.find_by!(name: 'RADONB', version: nil).imports.sole
     assert_not import.success?
     assert_match(/duplicate ID/, import.error)
   end
@@ -162,6 +205,6 @@ class RadonbImportTest < ActiveSupport::TestCase # rubocop:disable Metrics/Class
 
   def run_import(dir = FIXTURE_DIR)
     @task.reenable
-    capture_io { @task.invoke('fixture', dir.to_s, SOURCE_URL) }
+    capture_io { @task.invoke(dir.to_s, SOURCE_URL) }
   end
 end

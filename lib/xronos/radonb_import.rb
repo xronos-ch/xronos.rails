@@ -2,11 +2,14 @@
 
 require 'bigdecimal'
 require 'json'
+require 'net/http'
+require 'tmpdir'
 
 module Xronos
   # Imports the plain TSV export and keeps its row-level provenance.
   class RadonbImport < ImportRunner # rubocop:disable Metrics/ClassLength
     FILENAME = 'radondaily.txt'
+    EXPORT_URL = 'https://radonb.ufg.uni-kiel.de/radondaily.txt'
     PROVENANCE_PREFIX = 'RADONB import source '
     QUALIFIER_FIELDS = %w[SPECIES CULTURE PERIOD FEATURETYPE].freeze
     HEADERS = %w[
@@ -14,16 +17,42 @@ module Xronos
       FEATURETYPE FEATURE LATITUDE LONGITUDE REFERENCE
     ].freeze
 
-    def run!
-      @revision_comment = "Imported from #{@source.label} (<#{@source.source_url}>)"
-      describe!(whodunnit: PaperTrail.request.whodunnit, revision_comment: @revision_comment)
+    def self.import_latest!(archive:, admin:)
+      body = download_export
+      retrieved_at = Time.current.utc.strftime('%Y%m%dT%H%M%SZ')
+      dir = Dir.mktmpdir("radonb-#{retrieved_at}-", archive)
+      File.binwrite(File.join(dir, FILENAME), body)
+      Rails.logger.info("RADONB export retrieved at #{retrieved_at} and archived in #{dir}")
+      import_snapshot!(dir: dir, source_url: EXPORT_URL, admin: admin)
+    end
 
-      @source.with_lock(requires_new: true) do
+    def self.import_snapshot!(dir:, source_url:, admin:)
+      source = Source.register!(name: 'RADONB', version: nil, path: dir, source_url: source_url)
+      PaperTrail.request(whodunnit: admin.id.to_s) do
+        new(source, csv_dir: dir).run!
+      end
+    end
+
+    def self.download_export
+      uri = URI(EXPORT_URL)
+      response = Net::HTTP.start(uri.host, uri.port, use_ssl: true, open_timeout: 10, read_timeout: 30) do |http|
+        http.get(uri.request_uri)
+      end
+      response.value
+      response.body
+    end
+    private_class_method :download_export
+
+    def run!
+      describe_snapshot
+
+      Source.with_import_lock(@source.name) do
         import_rows(read_rows)
         succeed!
       end
 
       report!
+      @unapplied_rows.each { |reason, ids| puts "#{reason}: #{ids.join(', ')}" }
     rescue StandardError => e
       import_record.reload.update!(error: "#{e.class}: #{e.message}")
       raise
@@ -31,14 +60,39 @@ module Xronos
 
     private
 
+    def report!
+      return super if import_record.records_created_total.positive?
+
+      puts
+      puts '--- Import complete ---'
+      puts 'No records created.'
+      puts "Skipped rows: #{import_record.records_skipped_total}"
+      import_record.records_skipped.each { |reason, count| puts "  #{reason}: #{count}" }
+    end
+
+    def describe_snapshot
+      @revision_comment = "Imported from #{@source.label} (<#{@source.source_url}>)"
+      describe!(whodunnit: PaperTrail.request.whodunnit, revision_comment: @revision_comment)
+      @output.puts "Snapshot registered at #{@source.created_at.iso8601}, SHA-256: #{snapshot_digest}"
+    end
+
     def read_rows
       seen_ids = Set.new
-      File.open(File.join(@csv_dir, FILENAME), 'r:bom|utf-8') do |file|
-        header = file.gets&.chomp&.split("\t", -1)
-        raise ArgumentError, "#{FILENAME}: unexpected header" unless header == HEADERS
+      header, *lines = read_snapshot.force_encoding(Encoding::UTF_8).delete_prefix("\uFEFF").lines
+      raise ArgumentError, "#{FILENAME}: unexpected header" unless header&.chomp&.split("\t", -1) == HEADERS
 
-        file.each_line.with_index(2).map { |line, number| parse_row(line, number, seen_ids) }
-      end
+      lines.map.with_index(2) { |line, number| parse_row(line, number, seen_ids) }
+    end
+
+    def read_snapshot
+      data = File.binread(File.join(@csv_dir, FILENAME))
+      return data if Digest::SHA256.hexdigest(data) == snapshot_digest
+
+      raise ArgumentError, "#{FILENAME}: source changed after registration"
+    end
+
+    def snapshot_digest
+      @source.file_manifest.fetch(FILENAME)
     end
 
     def parse_row(line, number, seen_ids)
@@ -58,15 +112,16 @@ module Xronos
 
     def import_rows(rows)
       verify_versioning!
+      @unapplied_rows = Hash.new { |reasons, reason| reasons[reason] = [] }
       @country_codes = {}
       site_coordinates = coordinates_by_site(rows)
-      imported_ids = imported_source_ids
+      imported_rows = imported_row_digests
 
       with_merges_suppressed do
-        process_enum(rows, title: FILENAME) { |row| import_row(row, imported_ids, site_coordinates) }
+        process_enum(rows, title: FILENAME) { |row| import_row(row, imported_rows, site_coordinates) }
       end
 
-      deduplicate_chrons!
+      deduplicate_chrons! if import_record.records_created.fetch('c14', 0).positive?
     end
 
     def coordinates_by_site(rows)
@@ -79,9 +134,9 @@ module Xronos
       end
     end
 
-    def import_row(row, imported_ids, site_coordinates)
+    def import_row(row, imported_rows, site_coordinates)
       id = cell(row, 'ID')
-      skip_unless !imported_ids.include?(id), 'already imported'
+      skip_previously_imported_row(row, imported_rows) if imported_rows.key?(id)
 
       bp = integer(cell(row, 'C14AGE'))
       std = integer(cell(row, 'C14STD'))
@@ -152,21 +207,39 @@ module Xronos
     def measurement_revision_comment(row)
       provenance = {
         id: cell(row, 'ID'),
-        version: @source.version,
+        row_sha256: row_digest(row),
         reference: row.fetch('REFERENCE'),
         qualifiers: QUALIFIER_FIELDS.to_h { |field| [field, text_cell(row, field)] }.compact
       }
       "#{source_prefix}#{JSON.generate(provenance)}\n#{@revision_comment}"
     end
 
-    def provenance_versions(prefix = PROVENANCE_PREFIX)
+    def imported_row_digests
       PaperTrail::Version.where(item_type: 'C14', event: 'create')
-                         .where('starts_with(revision_comment, ?)', prefix)
+                         .where('starts_with(revision_comment, ?)', PROVENANCE_PREFIX)
+                         .pluck(:revision_comment).each_with_object({}) do |comment, digests|
+        provenance = parse_provenance(comment)
+        id = provenance.fetch('id')
+        (digests[id] ||= Set.new).add(provenance['row_sha256'])
+      end
     end
 
-    def imported_source_ids
-      provenance_versions(source_prefix).pluck(:revision_comment)
-                                        .to_set { |comment| parse_provenance(comment).fetch('id') }
+    def skip_previously_imported_row(row, imported_rows)
+      id = cell(row, 'ID')
+      digests = imported_rows.fetch(id)
+      skip_unless !digests.include?(row_digest(row)), 'unchanged row'
+
+      if digests.include?(nil)
+        @unapplied_rows['RADONB IDs without a previous row checksum'] << id
+        skip_unless false, 'previous row checksum unavailable'
+      end
+
+      @unapplied_rows['Changed RADONB IDs'] << id
+      skip_unless false, 'changed row'
+    end
+
+    def row_digest(row)
+      Digest::SHA256.hexdigest(JSON.generate(row.values_at(*HEADERS)))
     end
 
     def parse_provenance(comment)
