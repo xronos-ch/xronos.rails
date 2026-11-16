@@ -22,6 +22,11 @@
 #  index_articles_on_user_id  (user_id)
 #
 class Article < ApplicationRecord
+  BODY_TAGS = (Rails::HTML5::SafeListSanitizer.allowed_tags +
+               %w[caption col colgroup table tbody td tfoot th thead tr]).freeze
+  BODY_ATTRIBUTES = (Rails::HTML5::SafeListSanitizer.allowed_attributes +
+                     %w[id colspan rowspan scope]).freeze
+
   enum :section, %i[news about docs], suffix: true
 
   belongs_to :user
@@ -73,7 +78,8 @@ class Article < ApplicationRecord
   end
 
   def body_html
-    document.to_html
+    sanitizer = Rails::HTML5::SafeListSanitizer.new
+    sanitizer.sanitize(document.to_html, tags: BODY_TAGS, attributes: BODY_ATTRIBUTES).html_safe
   end
 
   def toc

@@ -1,4 +1,5 @@
-<% article_description = truncate(strip_tags(@article.body_html).squish.presence || @article.title, length: 160) %>
+<% body_html = @article.body_html %>
+<% article_description = truncate(strip_tags(body_html).squish.presence || @article.title, length: 160) %>
 <% content_for :title, @article.title %>
 <% content_for :meta_description, article_description %>
 <% content_for :og_type, "article" %>
@@ -74,7 +75,7 @@
 
     <div class="col-lg-9">
       <div style="max-width: 720px;">
-        <%= @article.body_html.html_safe %>
+        <%= body_html %>
       </div>
     </div>
 
@@ -102,12 +103,12 @@
         </p>
 
         <% if @article.splash_attribution? %>
-          <p class="mb-3">Cover image: <%= @article.splash_attribution.html_safe %></p>
+          <p class="mb-3">Cover image: <%= sanitize(@article.splash_attribution, tags: %w[a b br cite em i span strong], attributes: %w[href title]) %></p>
         <% end %>
 
         <p>
           Cite this <%= @article.news_section? ? "article" : "page" %> as:<br>
-          <%= article_citation(@article).html_safe %><br><br>
+          <%= article_citation(@article) %><br><br>
           <a href="/about/citation">More information about citing XRONOS</a>
         </p>
 
