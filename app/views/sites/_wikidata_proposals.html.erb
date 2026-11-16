@@ -1,0 +1,20 @@
+<section id="site-wikidata-proposals" aria-labelledby="site-wikidata-proposals-heading" class="mb-3">
+  <h4 id="site-wikidata-proposals-heading" class="h6">Wikidata proposals</h4>
+  <p class="small text-body-secondary mb-2">Candidates based on an exact match of the English name.</p>
+  <ul class="list-unstyled mb-0">
+    <% proposals.each do |proposal| %>
+      <li class="d-flex flex-wrap align-items-center justify-content-between gap-2 py-2">
+        <div>
+          <%= link_to proposal.target_key, LinkedResource::Source.find("Wikidata").url_for(proposal.target_key) %>
+          <%= proposal.evidence["label"] %>
+          <% if proposal.evidence["description"].present? %>
+            <div class="small text-body-secondary"><%= proposal.evidence["description"] %></div>
+          <% end %>
+        </div>
+        <%= button_to "Approve link", linked_resources_wikidata_proposal_approval_path(proposal),
+                      params: { from: "site" }, class: "btn btn-sm btn-outline-primary",
+                      aria: { label: "Approve Wikidata link #{proposal.target_key}" } %>
+      </li>
+    <% end %>
+  </ul>
+</section>
