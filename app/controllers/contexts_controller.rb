@@ -21,6 +21,13 @@ class ContextsController < ApplicationController
   # GET /contexts/1
   # GET /contexts/1.json
   def show
+    respond_to do |format|
+      format.html do
+        measurements = @context.c14s.includes(:references, sample: [:material, :taxon]).order(:lab_identifier, :id)
+        @pagy, @c14s = pagy(:offset, measurements)
+      end
+      format.json
+    end
   end
 
   # GET /contexts/new
