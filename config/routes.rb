@@ -50,7 +50,7 @@ Rails.application.routes.draw do
   resources :typos do
     get 'search', on: :collection
   end
-  
+
   resources :dendros do
     member do
       get :export_measurements_csv
@@ -117,7 +117,7 @@ Rails.application.routes.draw do
   end
 
   # Data issues
-  namespace :issues do 
+  namespace :issues do
     resources :c14s, only: :index do
       collection do
         get ":issue", action: :index,
@@ -161,7 +161,7 @@ Rails.application.routes.draw do
       end
     end
   end
-  
+
   # LODs
 
   # API

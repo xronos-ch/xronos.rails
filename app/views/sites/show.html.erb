@@ -144,7 +144,7 @@
       </turbo-frame>
     </section>
   <%end%>
-  
+
   <% unless @dendros.nil? %>
     <section id="site-dendros" class="my-5">
       <div id="sites-dendros-toolbar" class="d-flex">
@@ -154,9 +154,9 @@
           <small class="text-muted">(<%= @pagy_dendros.count %>)</small>
         </h2>
         <div class="ms-auto">
-          <%= link_to bs_icon("download"), 
-            dendros_path(format: :csv, dendro: { sample: { contexts: { site_id: @site.id } } }), 
-            class: "btn btn-sm btn-outline-primary", 
+          <%= link_to bs_icon("download"),
+            dendros_path(format: :csv, dendro: { sample: { contexts: { site_id: @site.id } } }),
+            class: "btn btn-sm btn-outline-primary",
             title: "Download CSV" %>
         </div>
       </div>
@@ -166,7 +166,7 @@
           <%== @pagy_dendros.series_nav(:bootstrap) %>
         <% end %>
         <% if can? :create, :dendro %>
-          <%= link_to create_icon + "Add dendrochronological series", 
+          <%= link_to create_icon + "Add dendrochronological series",
             new_dendro_path(site: @site),
             class: "btn btn-outline-primary",
             data: { turbo_frame: "remote_modal" } %>

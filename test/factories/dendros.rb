@@ -53,7 +53,7 @@ FactoryBot.define do
     is_anchored { [true, false].sample }
     offset { Faker::Number.between(from: 0, to: 10) }
     measurements { Array.new(10) { { year: Faker::Number.number(digits: 4), value: Faker::Number.decimal(l_digits: 1, r_digits: 2) } } }
-    
+
     sample
   end
 end

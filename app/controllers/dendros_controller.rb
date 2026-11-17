@@ -4,7 +4,7 @@ class DendrosController < ApplicationController
   include Tabulatable
 
   load_and_authorize_resource
-  
+
   before_action :set_dendro, only: %i[ show edit update destroy ]
   before_action :set_site, only: [ :new ]
 
@@ -23,11 +23,11 @@ class DendrosController < ApplicationController
     unless dendro_params.blank?
       @dendros = @dendros.where(dendro_params)
     end
-    
+
 #    if params[:sample_attributes][:context_attributes][:site_id].present?
 #      @dendros = @dendros.joins(sample: { context: :site }).where(sample:{context:{sites:{id: params[:sample_attributes][:context_attributes][:site_id]}}})
 #    end
-        
+
     # order
     if params.has_key?(:dendros_order_by)
       order = { params[:dendros_order_by] => params.fetch(:dendros_order, "asc") }
@@ -97,7 +97,7 @@ class DendrosController < ApplicationController
       format.json { head :no_content }
     end
   end
-  
+
   def export_measurements_csv
     @dendro = Dendro.find(params[:id])
 
@@ -107,9 +107,9 @@ class DendrosController < ApplicationController
         csv << [measurement["year"], measurement["value"]]
       end
     end
-    
+
     file_name = "dendro_measurements_#{@dendro.series_code.parameterize}.csv"
-    
+
     respond_to do |format|
       format.csv { send_data csv_data, filename: file_name }
     end
@@ -120,7 +120,7 @@ class DendrosController < ApplicationController
     def set_dendro
       @dendro = Dendro.find(params[:id])
     end
-    
+
     def set_site
       @site = Site.find(params[:site])
     end
