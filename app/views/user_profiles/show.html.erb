@@ -16,6 +16,16 @@
 
       <dl class="dl-inline">
 
+        <% if @user_profile.affiliation.present? %>
+          <dt>
+            <%= bs_icon "building" %>
+            <span class="visually-hidden">Affiliation</span>
+          </dt>
+          <dd>
+            <%= @user_profile.affiliation %>
+          </dd>
+        <% end %>
+
         <% if @user_profile.orcid.present? %>
           <dt>
             <%= bs_icon "circle" %><!-- TODO: replace with real logo from simple icons -->
@@ -70,7 +80,7 @@
     </h2>
 
     <%= render "application/paper_trail/version_table", versions: @contribs %>
-    <%== pagy_bootstrap_nav(@pagy) %>
+    <%== @pagy.series_nav(:bootstrap) %>
 
   </section>
 

@@ -8,8 +8,4 @@ import * as ActiveStorage from "@rails/activestorage"
 import "@hotwired/turbo-rails"
 import "./controllers"
 
-//fonts
-require("@fontsource/inter")
-require("@fontsource/raleway")
-
 ActiveStorage.start()

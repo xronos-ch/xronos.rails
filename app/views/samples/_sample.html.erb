@@ -1,0 +1,32 @@
+<dl class="row mb-0">
+
+  <dt class="col-12 col-lg-4">Material</dt>
+  <dd class="col-12 col-lg-8">
+    <%= sample.material.present? ? sample.material.name : na_value %>
+  </dd>
+
+  <dt class="col-12 col-lg-4">Taxon</dt>
+  <dd class="col-12 col-lg-8">
+    <% if sample.taxon.present? %>
+      <%= render sample.taxon %>
+    <% else %>
+      <%= na_value %>
+    <% end %>
+  </dd>
+
+  <dt class="col-12 col-lg-4">Part of organism</dt>
+  <dd class="col-12 col-lg-8">
+    <%= render "samples/part_of_organism", sample: sample %>
+  </dd>
+
+  <dt class="col-12 col-lg-4">Position</dt>
+  <dd class="col-12 col-lg-8">
+    <%= sample.position_description.present? ? sample.position_description : na_value %>
+  </dd>
+
+  <dt class="col-12 col-lg-4">Coordinates</dt>
+  <dd class="col-12 col-lg-8">
+    <%= render "samples/coordinates", sample: sample %>
+  </dd>
+
+</dl>

@@ -7,8 +7,11 @@ import { application } from "./application"
 import ArticleEditorController from "./article_editor_controller"
 application.register("article-editor", ArticleEditorController)
 
-import FilterVisibilityController from "./filter_visibility_controller"
-application.register("filter-visibility", FilterVisibilityController)
+import ClipboardController from "./clipboard_controller"
+application.register("clipboard", ClipboardController)
+
+import ContextChoiceController from "./context_choice_controller"
+application.register("context-choice", ContextChoiceController)
 
 import FlashController from "./flash_controller"
 application.register("flash", FlashController)
@@ -27,6 +30,9 @@ application.register("remote-modal", RemoteModalController)
 
 import SliderController from "./slider_controller"
 application.register("slider", SliderController)
+
+import TaxonFieldController from "./taxon_field_controller"
+application.register("taxon-field", TaxonFieldController)
 
 import TomSelectController from "./tom_select_controller"
 application.register("tom-select", TomSelectController)

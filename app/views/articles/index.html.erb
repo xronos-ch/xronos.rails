@@ -1,3 +1,8 @@
+<%= content_for :head do %>
+  <%= tag.link rel: "alternate", type: "application/atom+xml", href: url_for(format: :atom) %>
+  <%= tag.link rel: "alternate", type: "application/rss+xml", href: url_for(format: :rss) %>
+<% end %>
+
 <header>
   <div class="container my-5 d-flex flex-row">
     <div>
@@ -20,7 +25,7 @@
       <% end %>
 
       <% unless @pagy.pages < 2 %>
-        <%== pagy_bootstrap_nav(@pagy) %>
+        <%== @pagy.series_nav(:bootstrap) %>
       <% end %>
     </div>
   </div>

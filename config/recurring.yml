@@ -1,0 +1,28 @@
+# examples:
+#   periodic_cleanup:
+#     class: CleanSoftDeletedRecordsJob
+#     queue: background
+#     args: [ 1000, { batch_size: 500 } ]
+#     schedule: every hour
+#   periodic_cleanup_with_command:
+#     command: "SoftDeletedRecord.due.delete_all"
+#     priority: 2
+#     schedule: at 5am every day
+
+production:
+  clear_solid_queue_finished_jobs:
+    command: "SolidQueue::Job.clear_finished_in_batches(sleep_between_batches: 0.3)"
+    schedule: every hour at minute 12
+  sites_with_counts_refresh:
+    class: Sites::RefreshCountsJob
+    schedule: every hour
+  data_views_refresh:
+    class: RefreshDataViewsJob
+    schedule: every day at midnight
+  trim_sessions:
+    command: |-
+      days = Integer(ENV.fetch("SESSION_DAYS_TRIM_THRESHOLD", "7"), 10)
+      raise ArgumentError, "SESSION_DAYS_TRIM_THRESHOLD must be positive" unless days.positive?
+      system({ "SESSION_DAYS_TRIM_THRESHOLD" => days.to_s },
+             Rails.root.join("bin/rails").to_s, "db:sessions:trim", exception: true)
+    schedule: "30 3 * * *"

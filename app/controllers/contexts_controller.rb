@@ -26,11 +26,9 @@ class ContextsController < ApplicationController
   # GET /contexts/new
   def new
     @context = Context.new
-    @context.periods.build
-    @context.typochronological_units.build
-    @context.ecochronological_units.build
-    @context.build_site
-    @context.build_site_type
+    respond_to do |format|
+      format.json { render json: @context }
+    end
   end
 
   # GET /contexts/1/edit
@@ -87,65 +85,17 @@ class ContextsController < ApplicationController
     def context_params
       params.require(:context).permit(
         :id,
-        :parent_id,
         :name,
         :approx_start_time,
         :approx_end_time,
         :site_id,
-        :site_type_id,
         :_destroy,
         :site_attributes => [
           :id,
           :name,
           :lat,
           :lng,
-          :_destroy,
-          :country_id,
-          :country_attributes => [
-            :id,
-            :name,
-            :_destroy
-          ],
-          :fell_phases_attributes => [
-            :id,
-            :name,
-            :start_time,
-            :end_time,
-            :_destroy,
-            :references_attributes => [
-              :id,
-              :short_ref,
-              :bibtex,
-              :_destroy
-            ]
-          ]
-        ],
-        :site_type_attributes => [
-          :id,
-          :name,
-          :description,
           :_destroy
-        ],
-        :periods_attributes => [
-          :id,
-          :name,
-          :approx_start_time,
-          :approx_end_time,
-          :_destroy
-        ],
-        :typochronological_units_attributes => [
-            :id,
-            :name,
-            :approx_start_time,
-            :approx_end_time,
-            :_destroy
-        ],
-        :ecochronological_units_attributes => [
-            :id,
-            :name,
-            :approx_start_time,
-            :approx_end_time,
-            :_destroy
         ]
       )
     end

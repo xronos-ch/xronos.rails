@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: site_names
+# Database name: primary
 #
 #  id         :bigint           not null, primary key
 #  language   :string
@@ -17,11 +18,21 @@
 #
 #  fk_rails_...  (site_id => sites.id)
 #
+
 class SiteName < ApplicationRecord
-  belongs_to :site
+  include Peripheral
+
+  belongs_to :site, touch: true
 
   validates :name, presence: true
 
-  include Versioned
+  revision_comment_parent :site
 
+  def self.label
+    "site name"
+  end
+
+  def label
+    name
+  end
 end

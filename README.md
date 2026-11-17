@@ -1,6 +1,6 @@
 # XRONOS web app
 ![Website](https://img.shields.io/website?url=https%3A%2F%2Fxronos.ch)
-![Tests](https://github.com/xronos-ch/xronos.rails/actions/workflows/verify.yml/badge.svg)
+![Tests](https://github.com/xronos-ch/xronos.rails/actions/workflows/test.yml/badge.svg)
 [![Test coverage](https://codecov.io/gh/xronos-ch/xronos.rails/branch/master/graph/badge.svg?token=0E7SVSFTVI)](https://codecov.io/gh/xronos-ch/xronos.rails)
 [![Docker pulls](https://img.shields.io/docker/pulls/xronos/xronos.rails)](https://hub.docker.com/r/xronos/xronos.rails/)
 ![GitHub issues](https://img.shields.io/github/issues/xronos-ch/xronos.rails)
@@ -30,7 +30,7 @@ your_directory
 
 **db**: An empty directory that will contain the database.  
 **docker-compose.yml**: A `docker-compose.yml` file ([example](https://github.com/xronos-ch/xronos.rails/blob/f4049a7eb0ee2a6311a72ef5616e4692aa2cad52/docker-compose.yml))  
-**env_variables.env**: A file with environment variables.
+**env_variables.env**: A file with environment variables. Example:
 
 ```
 # Database credentials
@@ -39,6 +39,13 @@ POSTGRES_USER=...
 POSTGRES_PASSWORD=...
 # Passphrase the users must know to register
 REGISTRATION_PASSPHRASE=...
+# Default admin user seeded into the database (for bulk changes etc.)
+ADMIN_USER_ID=1
+ADMIN_USER_EMAIL=
+ADMIN_USER_PASSWORD=
+ADMIN_USER_NAME=XRONOS Core Team
+# API keys
+CARTO_API_KEY=
 ```
 
 Inside of this directory you can then run
@@ -96,7 +103,9 @@ For development, you will need to run the XRONOS rails app directly (without doc
 5. Run `bundle && yarn` to install gem and javascript dependencies respectively
 6. Run `bin/rails db:setup` to set up and seed the database
 7. Start a dev server with `bin/dev`. This watches for changes in CSS and JS files.
-    * If you get an error about foreman being missing, try restarting your terminal.
+    * If you get an error about foreman being missing, try restarting your terminal or (if using rbenv) running `rbenv rehash`
+
+It is a good idea to reset your dev environment when switching between branches with `bundle && yarn && bin/rails db:reset`. This guards against schema changes leaking from one branch into another.
 
 ### Using Calibrator
 

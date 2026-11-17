@@ -1,0 +1,38 @@
+/* Fix floating input labels with TomSelect 
+ * https://github.com/orchidjs/tom-select/issues/579#issuecomment-2437534901
+ */
+.form-floating:has(input.tomselected) {
+  /* move ts-control input element below the floating label */
+  .ts-wrapper.form-control,
+  .ts-wrapper.form-select {
+    height: 0 !important;
+  }
+
+  .ts-wrapper.form-control .ts-control,
+  .ts-wrapper.form-select .ts-control {
+    padding-top: 1.625rem;
+    padding-bottom: 0.625rem;
+  }
+
+  /* if field is styled as a text field (.form-control instead of .form-select)
+   * make sure we apply the same animation as Bootstrap 5 */
+  .ts-wrapper.form-control ~ label,
+  .ts-wrapper.form-select ~ label {
+    transform: scale(1) translateY(0) translateX(0);
+    color: rgba(var(--bs-body-color-rgb), 1);
+  }
+
+  .ts-wrapper.form-control.focus ~ label,
+  .ts-wrapper.form-control.full ~ label,
+  .ts-wrapper.form-select.focus ~ label,
+  .ts-wrapper.form-select.full ~ label,
+  .ts-wrapper.form-select.has-items ~ label {
+    transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+    color: rgba(var(--bs-body-color-rgb), 0.65);
+  }
+
+  /* hides empty value which tomselect uses as placeholder */
+  .ts-wrapper.form-select:not(.focus) .ts-control ::placeholder {
+    opacity: 0;
+  }
+}

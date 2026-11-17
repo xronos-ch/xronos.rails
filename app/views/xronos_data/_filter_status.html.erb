@@ -1,8 +1,11 @@
-<% if @data.filters.any? %>
-  <span class="<%= @n_data>0 ? "text-success" : "text-danger" %>">
-    Showing <%= @n_data %> of <%= @total_data %> records
+<% if @data.filters.any? || @raw_filter_params[:type].present? %>
+  <span class="<%= @filtered_count.positive? ? "text-success" : "text-danger" %>">
+    Showing <%= number_with_delimiter(@filtered_count) %>
+    of <%= number_with_delimiter(@total_count) %> records
     (<%= link_to "clear filters", :data %>)
   </span>
 <% else %>
-  <span class="text-dark">Showing <%= @total_data %> records</span>
+  <span class="text-dark">
+    Showing <%= number_with_delimiter(@total_count) %> records
+  </span>
 <% end %>

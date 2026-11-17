@@ -1,0 +1,9 @@
+<li class="nav-item">
+  <%= link_to toc_node.value.options[:raw_text], "##{toc_node.attr[:id]}",
+    class: "nav-link" %>
+  <% if toc_node.children.present? %>
+    <ul class="nav flex-column ms-3">
+      <%= render partial: "toc_node", collection: toc_node.children %>
+    </ul>
+  <% end %>
+</li>

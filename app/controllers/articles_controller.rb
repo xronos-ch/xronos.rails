@@ -1,15 +1,30 @@
 class ArticlesController < ApplicationController
-  include Pagy::Backend
 
   load_and_authorize_resource
 
   # GET /:section
+  # GET /:section.atom
+  # GET /:section.rss
   def index
     @articles = Article
       .published
       .where(section: params[:section])
       .order(published_at: :desc)
-    @pagy, @articles = pagy(@articles)
+
+    feed_limit = 20
+
+    respond_to do |format|
+      format.html {
+        @pagy, @articles = pagy(:offset, @articles, limit: feed_limit)
+      }
+      format.atom {
+        @pagy, @articles = pagy(:offset, @articles, limit: feed_limit)
+      }
+      format.rss {
+        @feed_limit = feed_limit
+      }
+    end
+
   end
 
   # GET /:section/:slug

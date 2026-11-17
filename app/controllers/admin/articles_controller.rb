@@ -1,5 +1,4 @@
 class Admin::ArticlesController < AdminController
-  include Pagy::Backend
 
   load_and_authorize_resource
 

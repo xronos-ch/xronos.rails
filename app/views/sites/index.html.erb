@@ -10,11 +10,11 @@
   <turbo-frame id="sites-table">
     <div id="sites-toolbar" class="d-flex">
       <div class="ms-auto">
-        <%= link_to bs_icon("download"), sites_path(format: :csv, **request.query_parameters), class: "btn btn-sm btn-outline-primary", title: "Download CSV" %>
+        <%= link_to bs_icon("download"), sites_path(format: :csv, **(@site_params || {}).to_h), class: "btn btn-sm btn-outline-primary", title: "Download CSV" %>
       </div>
     </div>
     <%= render "table", sites: @sites %>
-    <%== pagy_bootstrap_nav(@pagy) %>
+    <%== @pagy.series_nav(:bootstrap) %>
   </turbo-frame>
 
   <% if can? :create, Site %>

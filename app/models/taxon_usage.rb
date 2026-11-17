@@ -9,18 +9,37 @@ class TaxonUsage
   attr_accessor :id
 
   def gbif
-    Rails.cache.fetch("gbif_usage/response/#{id}", expires_in: 30.days) do
-      Rails.logger.debug "GBIF API request: #{api_url}"
-      Gbif::Request.new("species/#{id}", nil, nil, nil).perform
-    end
+    return @gbif if defined?(@gbif)
+
+    result = GBIF::Species.usage(id)
+
+    @failed = result.nil?
+    @gbif = result || {}
+  end
+
+  def failed?
+    gbif
+    @failed
+  end
+
+  def present?
+    canonical_name.present?
   end
 
   def url
-    "https://www.gbif.org/species/#{@id}"
+    TaxonUsage.url @id
   end
 
   def api_url
-    "https://api.gbif.org/v1/species/#{@id}"
+    TaxonUsage.api_url @id
+  end
+
+  def self.url(id)
+    "https://www.gbif.org/species/#{id}"
+  end
+
+  def self.api_url(id)
+    "https://api.gbif.org/v1/species/#{id}"
   end
 
   def rank

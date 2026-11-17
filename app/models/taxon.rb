@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: taxons
+# Database name: primary
 #
 #  id         :bigint           not null, primary key
 #  name       :string
@@ -13,16 +14,26 @@
 #  index_taxons_on_gbif_id  (gbif_id)
 #  index_taxons_on_name     (name)
 #
+
 class Taxon < ApplicationRecord
+  include Peripheral
+  include Mergeable
+
+  exact_duplicates_on :name, { gbif_id: [:nil_matches_nil] }
 
   has_many :samples
 
   validates :name, presence: true
 
-  include Versioned
+  touch_referencing_records :samples
 
-  before_save :set_gbif_id_from_match, unless: :gbif_id?
-  before_save :set_name_from_usage
+  attr_accessor :revision_comment
+
+  after_save :enqueue_gbif_sync
+  after_save :merge_exact_duplicates
+  validate :no_exact_duplicate, on: :create
+
+  before_merge :reassign_samples!
 
   include HasIssues
   @issues = [ :unknown_taxon, :long_taxon ]
@@ -33,10 +44,6 @@ class Taxon < ApplicationRecord
     using: { tsearch: { prefix: true } } # match partial words
 
   acts_as_copy_target # enable CSV exports
-
-  validates :name, presence: true
-
-  has_many :samples
 
   scope :with_samples_count, -> {
     select <<~SQL
@@ -58,41 +65,53 @@ class Taxon < ApplicationRecord
     gbif_id.present?
   end
 
-  def gbif_match(strict = false)
-    Rails.cache.fetch("gbif_match/#{name}", expires_in: 24.hours) do
-      logger.debug "GBIF API request: https://api.gbif.org/v1/species/match?name=#{name}"
-      OpenStruct.new(Gbif::Species.name_backbone(name: name, strict: strict))
-    end
-  end
-
-  def gbif_id_from_match(match = gbif_match)
-    if match.synonym
-      match.acceptedUsageKey
-    else
-      match.usageKey
-    end
-  end
-
-  def gbif_usage_from_match(match = gbif_match)
-    TaxonUsage.new(id: gbif_id_from_match(match))
-  end
-
-  def set_gbif_id_from_match(strict = true)
-    match = gbif_match(strict = strict)
-    fuzzy_matches = ["AGGREGATE", "FUZZY", "HIGHERRANK"]
-    if match.matchType == "EXACT" or (!strict and match.matchType.in?(fuzzy_matches))
-      self.gbif_id = gbif_id_from_match(match)
-    else
-      self.gbif_id = nil
-    end
-  end
-
-  def set_name_from_usage
-    self.name = usage.canonical_name unless gbif_id.blank?
+  def enqueue_gbif_sync
+    return if name.blank? and gbif_id.blank?
+    SyncTaxonWithGbifJob.perform_later(id)
   end
 
   def self.label
     "taxon"
+  end
+
+  def self.search_with_gbif(query, limit: 5, matched_only: false)
+    return [] if query.blank?
+
+    local_taxons = search(query)
+
+    if matched_only
+      # Use database index if available
+      if local_taxons.respond_to?(:where)
+        local_taxons = local_taxons.where.not(gbif_id: nil)
+      else
+        local_taxons = local_taxons.select { |t| t.gbif_id.present? }
+      end
+    end
+
+    local_taxons = local_taxons.limit(limit) if local_taxons.respond_to?(:limit)
+
+    gbif_results = GBIF::Species.search(query: query, limit: limit)
+    gbif_taxons  = build_from_gbif_response(gbif_results)
+
+    unique_taxons(local_taxons + gbif_taxons)
+  end
+
+  def self.from_gbif_result(result)
+    new(
+      name: result["canonicalName"],
+      gbif_id: result["acceptedKey"] || result["key"]
+    )
+  end
+
+  def label
+    name
+  end
+
+  # Tidy up unused taxa when samples are deleted
+  def destroy_if_orphaned
+    if samples.count == 0
+      self.destroy
+    end
   end
 
   # Issues
@@ -106,6 +125,26 @@ class Taxon < ApplicationRecord
   def long_taxon?
     return nil if name.blank?
     name.length > 64
+  end
+
+  private
+
+  def reassign_samples!
+    Sample.where(taxon_id: id).update_all(taxon_id: merged_into_id)
+  end
+
+  private_class_method
+
+  # Extract Taxons from a GBIF search response
+  def self.build_from_gbif_response(response)
+    response
+      &.fetch("results", [])
+      &.map { |r| from_gbif_result(r) } || []
+  end
+
+  # Deduplicate by gbif_id if present, otherwise by name
+  def self.unique_taxons(taxons)
+    taxons.uniq { |t| t.gbif_id.presence || t.name }
   end
 
 end

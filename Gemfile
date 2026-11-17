@@ -5,8 +5,8 @@ git_source(:github) { |repo| 'https://github.com/#{repo}.git' }
 # CORE ------------------------------------------------------------------------
 
 # Ruby on Rails
-ruby '3.3.6'
-gem 'rails', '~> 7.2'
+ruby '3.3.12'
+gem 'rails', '~> 8.0.0'
 
 # Database for Active Record
 gem 'pg'
@@ -14,8 +14,10 @@ gem 'pg'
 # App server
 gem 'puma'
 
-# In-memory cache (also required for Turbo broadcasts and ActionCable)
-gem 'redis', '~> 4.0'
+# Use the database-backed adapters for Rails.cache, Active Job, and Action Cable
+gem "solid_cache"
+gem "solid_queue"
+gem "solid_cable"
 
 # Reduce boot times through caching (required in config/boot.rb)
 # gem 'bootsnap', '>= 1.1.0', require: false
@@ -25,6 +27,9 @@ gem "rack-brotli"
 
 # Write cron jobs
 gem "whenever", require: false
+
+# Request throttling / rate limiting
+gem "rack-attack"
 
 # ASSET PIPELINE --------------------------------------------------------------
 
@@ -79,6 +84,7 @@ gem 'doorkeeper'
 
 # Versioning
 gem 'paper_trail'
+gem 'active_snapshot'
 
 # Search
 gem 'pg_search'
@@ -99,6 +105,9 @@ gem 'bibtex-ruby'
 gem 'citeproc-ruby'
 gem 'csl-styles'
 
+# XLSX spreadsheet reading (for import tasks)
+gem 'roo'
+
 # Session store backed by an Active Record class to avoid cookie overflow with 
 # lasso
 gem 'activerecord-session_store'
@@ -109,9 +118,6 @@ gem 'faraday', '>= 2.5.2'
 
 # Geocoding
 gem 'geocoder'
-
-# GBIF (Backbone Taxonomy)
-gem 'gbifrb'
 
 # Wikidata & Wikipedia
 gem 'wikidata-client', require: 'wikidata'
@@ -137,13 +143,21 @@ gem 'leaflet-rails'
 # Charts
 gem 'vega'
 
+# Misc
+gem 'regexp-examples'
+
 # Get posts from blog.xronos.ch
 gem 'feedjira'
 gem 'httparty'
 
+gem "msgpack", ">= 1.7.0"
+
 # DATABASE --------------------------------------------------------------------
 
 gem 'scenic' 
+
+# Job dashboard
+gem "mission_control-jobs"
 
 # DEVELOPMENT -----------------------------------------------------------------
 
@@ -178,10 +192,12 @@ group :development do
   gem 'spring-watcher-listen'
 
   # Annotate models etc. with current schema
-  gem 'annotate'
+  gem 'annotaterb'
 
   # Watch for N+1 queries and unused eager loading
   gem 'bullet'
+  
+  gem 'xmpp4r'
 
 end
 
@@ -189,24 +205,24 @@ end
 # TESTING ---------------------------------------------------------------------
 
 group :development, :test do
-
-  # RSpec for testing
-  gem 'rspec-rails', '~> 7.0.0'
-
   # Generate test data from model specs
   gem 'factory_bot_rails'
   gem 'faker'
-  gem 'guard-rspec'
-
 end
 
 group :test do
 
   # Unit testing
-  gem 'minitest'
+  gem "minitest", "~> 5.26"
+
+  # XLSX writing for tests
+  gem 'rubyXL'
 
   # Schema testing
   gem 'json-schema'
+
+  # Mocking
+  gem 'webmock'
 
   # Acceptance testing
   gem 'selenium-webdriver'
@@ -214,9 +230,9 @@ group :test do
   gem 'capybara-selenium'
   gem 'launchy'
 
-  # Measure test coverage
-  gem 'simplecov', require: false
-  gem 'simplecov-cobertura'
+  # Test coverage
+  gem "simplecov", require: false
+  gem "simplecov-cobertura", require: false
 
 end
 

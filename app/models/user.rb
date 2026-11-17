@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: users
+# Database name: primary
 #
 #  id                     :bigint           not null, primary key
 #  admin                  :boolean          default(FALSE)
@@ -36,6 +37,19 @@ class User < ApplicationRecord
            foreign_key: :resource_owner_id,
            dependent: :delete_all # or :destroy if you need callbacks
 
-  has_one :user_profile
-           
+  has_one :user_profile, dependent: :destroy
+
+  # The default user (ADMIN_USER_ID), representing the project as a whole
+  # rather than an individual.
+  def self.default
+    find_by(id: ENV["ADMIN_USER_ID"].to_i)
+  end
+
+  def display_name
+    user_profile&.full_name
+  end
+
+  def has_real_name?
+    user_profile&.full_name.present?
+  end
 end

@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: references
+# Database name: primary
 #
 #  id         :bigint           not null, primary key
 #  bibtex     :text
@@ -12,6 +13,7 @@
 #
 #  index_references_on_short_ref  (short_ref)
 #
+
 class Reference < ApplicationRecord
   DELIM_PATTERN = '[;,]'
   MAX_SHORT_REF_LENGTH = 30
@@ -24,16 +26,29 @@ class Reference < ApplicationRecord
   has_many :dendros, :through => :citations, :source => :citing, :source_type => 'Dendro'
 
 
+  has_many :sources
+
   validates :short_ref, presence: true
 
   include Versioned
+  include Supersedable
+  include Mergeable
+
+  exact_duplicates_on :short_ref
+
+  after_save :merge_exact_duplicates
+  validate :no_exact_duplicate, on: :create
+
+  before_merge :reassign_citations!
+  before_merge :reassign_sources!
+
   acts_as_copy_target # enable CSV exports
 
   include HasIssues
   @issues = [ :mixed_reference, :missing_bibtex, :long_label ]
 
   include PgSearch::Model
-  pg_search_scope :search, 
+  pg_search_scope :search,
     against: [ :short_ref, :bibtex ],
     using: { tsearch: { prefix: true } } # match partial words
   multisearchable against: [ :short_ref, :bibtex ]
@@ -42,7 +57,7 @@ class Reference < ApplicationRecord
     select <<~SQL
       "references".*,
       (
-        SELECT COUNT(citations.id) 
+        SELECT COUNT(citations.id)
         FROM citations
         WHERE reference_id = "references".id
       ) AS citations_count
@@ -55,6 +70,10 @@ class Reference < ApplicationRecord
 
   def self.icon
     "icons/reference.svg"
+  end
+
+  def label
+    really_short_ref
   end
 
   def really_short_ref
@@ -99,15 +118,28 @@ class Reference < ApplicationRecord
   end
 
   def render_citation
-    return short_ref if parse.blank?
+    @rendered_citation ||= begin
+      return short_ref if parse.blank?
 
-    cp = CiteProc::Processor.new style: 'chicago-author-date', format: 'html', locale: 'en'
-    cp.import parse.to_citeproc
+      cp = CiteProc::Processor.new style: 'chicago-author-date', format: 'html', locale: 'en'
+      cp.import parse.to_citeproc
 
-    html = parse['@entry, @meta_content'].map do |e|
-      cp.render :citation, id: e.key
+      html = parse['@entry, @meta_content'].map do |e|
+        cp.render :citation, id: e.key
+      end
+      html.join.delete('()').html_safe
     end
-    html.join.delete('()').html_safe
+  end
+
+  def parse
+    @parse ||= if bibtex.present?
+      BibTeX.parse bibtex, filter: :latex
+    else
+      bib = BibTeX::Entry.new
+      bib.type = :misc
+      bib.key = short_ref
+      bib
+    end
   end
 
   # Issues
@@ -115,7 +147,7 @@ class Reference < ApplicationRecord
   def mixed_reference?
     short_ref.match?(DELIM_PATTERN)
   end
-  
+
   scope :missing_bibtex, -> { where(bibtex: nil) }
   def missing_bibtex?
     bibtex.blank?
@@ -127,17 +159,23 @@ class Reference < ApplicationRecord
     short_ref.length > MAX_SHORT_REF_LENGTH
   end
 
+  # Tidy up unused references when citations are deleted.
+  # N.B. Incompatible with destroy_async
+  def destroy_if_orphaned
+    if citations.count == 0
+      self.revision_comment = "Deleted uncited reference"
+      self.destroy
+    end
+  end
+
   private
 
-  def parse
-    if bibtex.present?
-      BibTeX.parse bibtex, filter: :latex
-    else
-      bib = BibTeX::Entry.new
-      bib.type = :misc
-      bib.key = short_ref
-      return bib
-    end
+  def reassign_citations!
+    Citation.reassign_all_to!(from: self, to: canonical)
+  end
+
+  def reassign_sources!
+    Source.where(reference_id: id).update_all(reference_id: merged_into_id)
   end
 
 end

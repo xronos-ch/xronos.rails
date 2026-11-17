@@ -1,21 +1,189 @@
 # XRONOS Changelog
 
-## 1.1.0.9000 [unreleased]
+## [1.3.1.9000] - unreleased
 
-## 1.1.0 [2024-12-18]
+- Aligned icons across the interface and removed the Bootstrap icon font (#493).
+- Fixed context selection and creation in radiocarbon date forms, including
+  editing context dates, visible validation errors and return navigation (#520).
+- Redesigned the radiocarbon date show view:
+  - Clearer two-column layout and page header with a copyable permalink
+  - Export options (JSON, MIaaRD JSON) are now visible in the UI
+  - Changelog is now shown as a compact timeline
+  - Adjusted site and reference show pages for consistency
+- Added suggested citation for radiocarbon dates to show view
+  - Exportable as BibTeX, CSL-JSON, YAML, RIS
+- Added new configuration variable ADMIN_USER_NAME
+- Made it possible to pass revision comments from peripheral models to their
+  parent(s). Fixes editing taxons (#526).
+- Fixed site header controls being incorrectly cached across users (#474).
+- Reduced the compressed frontend stylesheet size by removing its embedded sourcemap (#221).
+- Automatically clean up inactive sessions daily, with a default retention period of seven days.
 
-- Introduced the ability to manage and display external linked data (e.g., 
+## [1.3.1] - 2026-10-26
+
+### Bug fixes
+
+- **Migrations required:** Improved performance of data browser, BibTeX 
+  citation rendering, site index tables, C14 show views, and CSV exports.
+- Updated vendored version of [calibrator](https://github.com/ISAAKiel/calibrator),
+  bring better radiocarbon calibration performance.
+- Links to CSV exports no longer contain meaningless pagination and ordering
+  parameters. Requests with these parameters are now rejected as bad requests.
+- **Migrations required:** Improved performance of data browser, BibTeX 
+  citation rendering, site index tables and C14 show views.
+- Fixed a bug in the rendering of c14 lab identifiers without a hyphen.
+
+## [1.3.0] - 2026-10-07
+
+### Breaking changes
+
+- Maps now require a CARTO API key (#524)
+- Environment variable `ADMIN_USER_PASSWORD` is now required when seeding a
+  new database
+
+### New features
+
+- **Migrations required:** exact duplicate scientific records are now detected
+  and automatically merged. Rejects creation of duplicates (#310), warns when
+  an update will cause a merge (#311), and can merge across unnamed but
+  identical samples (#516). (#309, #515)
+- **Migrations required:** scientific records can now be *superseded*:
+  soft-deleted and replaced by another record, retaining their permalink (#496).
+- **Migrations required:** added `name` attribute to samples (#371)
+- **Migrations required:** added OpenContext, Pleiades, Vici.org, and
+  iDAI.gazetteer as linked record sources for sites and c14s (#487). Renamed
+  LODLinks to LinkedResources (#372). Public views/controllers decoupled from
+  Wikidata specifically. Added site description section populated via Wikidata;
+  linked-data panel no longer fetches supplementary data on every page load (#479).
+- **Migrations required:** added admin CLI for importing tabular datasets from
+  CSV and BibTeX, replacing the removed GUI import_tables feature (#341)
+- **Migrations required:** added generic representation of controlled
+  vocabularies with variant thesauri (#444), including controlled term attribute
+  `part_of_organism` on samples (#253)
+- **Migrations required:** peripheral associated records are now snapshotted on
+  Site versions via ActiveSnapshot (#502), including new snapshots and
+  snapshot_items tables. Site version history now shows a unified diff of both
+  Site changes and peripheral record changes. SiteNames and LinkedResources now
+  generate contextual revision comments when added, changed, or removed.
+- **Migrations required:** added affiliations to user profiles
+- Editing taxons now uses the GBIF search API for suggestions (#250), with
+  asynchronous requests that don't block page rendering (#417).
+- Added MIaaRD-shaped JSON export for radiocarbon determinations, including
+  single-record downloads for C14 records and filter-aware collection export
+  from the public data browser. Uses the current MIaaRD `RadiocarbonDate`
+  field structure.
+- Added second column to article show views with extended author metadata on
+  news articles, table of contents on about pages, and suggested citations (#117).
+- Added Atom and RSS feeds of news articles (#395).
+
+### Bug fixes
+
+- Fixed synchronisation of taxons with GBIF by replacing the deprecated V1
+  species match API (#417).
+
+### Other changes
+
+- **Migration required:** removed the unused MeasurementStates.
+- Optimised JavaScript asset pipeline (#217)
+- Made software version visible in page footer and added Zenodo archive link (#436)
+- Removed standalone Typo show view. Typological dates are now only shown
+  embedded in Site views (#398)
+- Improved test coverage
+
+## [1.2.2] - 2026-07-03
+
+- Security hotfix: tightened authorization for mutating controller actions.
+- Disabled unused exposed `measurement_states` routes.
+- Added focused regression tests for unauthorized create/update requests.
+
+## [1.2.1] - 2026-06-10
+
+- Fixed pagination in context issue show view
+- Fixed bug in context issue show view
+
+## [1.2.0] - 2026-06-10
+
+New features & API changes:
+
+- Added unique and "one blank per site" constraints on context names (#432)
+- Added functional classifications of contexts (#407)
+  - Added curation workflow for functional classifications of contexts
+  - Added issue view for contexts missing functional classifications
+  - Added functional classification suggestions based on site type labels
+  - Added JSON builder for functional classification data
+- New admin dashboard for monitoring asynchronous jobs (/admin/jobs)
+- Improved workflows for record deletion
+  - Unused references, taxons, and materials are now automatically deleted
+    - Added rake tasks to cleanup unused
+  - Ensured dependent records are properly cleaned up after site deletion
+    - Added rake task for safe cascading destruction
+  - Prevented duplicate citations from being created
+    - Migration may fail if there are existing duplicates in the database. If so:
+        DRY_RUN=1 bin/rails xronos:citations:deduplicate
+      checks for existing duplicates that would block this migration. And:
+        bin/rails xronos:citations:deduplicate
+      deletes them.
+- Added bundled acknowledgements page rendered from version-controlled Markdown (#359).
+- Added article-specific page titles and meta descriptions for news, about, and documentation articles.
+
+Bug fixes:
+
+- Sign-in cookie is now deleted on sign out (#379)
+- Fixed Leaflet marker initialisation on site pages with quotation marks or apostrophes in site names.
+- Fixed data browser map display for records with missing coordinates.
+- Added countish pagination for large public listings to reduce expensive repeated count queries.
+- Fixed potential code injection vulnerability in issues (#407)
+
+Maintenance & documentation:
+
+- Standardised the test suite on Minitest and migrated existing RSpec coverage (#422).
+- Documented expectations for responsible API and automated data access (#405).
+- Updated footer logos to reflect current affiliations, funding, and previous support (#404).
+- Upgraded Rails from 7.2.3 to 8.0.5 and enabled Rails 8.0 framework defaults.
+- Upgraded Pagy from 6.5.0 to 43.5.5 and migrated pagination helpers to the Pagy 43 API.
+- XRONOS rake tasks are now prepended with xronos and can be listed with
+    bin/rails -T xronos
+
+## [1.1.2] - 2026-05-29
+
+- Removed pagination and sorting from public CSV exports
+- Hardened CSV exports against costly crawler/bot requests
+- Added request throttling with `rack-attack`
+- Added Cloudflare-aware client IP handling for rate limiting
+- Improved handling of pagination overflow by returning `404`
+- Improved performance of recursive site reference loading
+- Refactored XRONOS data response helpers
+
+## [1.1.1] - 2025-12-11
+
+- Opened lean JSON endpoints for C14 labs and C14 dates, returning JSON directly
+  from the controller and trimming unnecessary associations from samples
+- Optimised eager loading for sites, C14s and references pages, solving several
+  N+1 query issues and preloading PaperTrail versions where needed
+- Added fragment caching to the site view and a 10-minute cache for XRONOS data
+  responses, significantly reducing load times for heavy data pages
+- Cached item counts on the home page and re-used Pagy's count values instead of
+  recounting, further reducing database load
+- Improved map performance by streamlining the JavaScript and optimising how
+  counts are calculated for the map view
+- Adjusted C14 calibration handling by removing noisy calibration logging and
+  only joining cals when a calibration filter is actually applied
+- Added MessagePack support and updated Rails to the latest 7.2 release
+
+## [1.1.0] - 2024-12-18
+
+- Introduced the ability to manage and display external linked data (e.g.,
   Wikidata) within the application
 - Added a new Linked Data section to the site view, providing clear and user-
   friendly access to external resources
-- Added options for authorized users to add external resource links (e.g. 
+- Added options for authorized users to add external resource links (e.g.
   Wikidata entries)
-- Improved search interface; now shows more information and can be filtered by 
+- Improved search interface; now shows more information and can be filtered by
   record type
 - Added `LONG_LABEL` issue for references (#260)
 - Updated to Ruby 3.3.6 and Rails 7.2
 
-## 1.0.0 [2024-07-30]
+## [1.0.0] - 2024-07-30
 
-First named release. See [the commit log](https://github.com/xronos-ch/xronos.rails/commits/v1.0.0) 
+First named release. See [the commit log](https://github.com/xronos-ch/xronos.rails/commits/v1.0.0)
 for changes before this point.

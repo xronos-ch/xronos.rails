@@ -2,7 +2,6 @@ require 'csv'
 
 class DendrosController < ApplicationController
   include Tabulatable
-  include Pagy::Backend
 
   load_and_authorize_resource
   
@@ -37,7 +36,7 @@ class DendrosController < ApplicationController
 
     respond_to do |format|
       format.html {
-        @pagy, @dendros = pagy(@dendros)
+        @pagy, @dendros = pagy(:countish, @dendros)
       }
       format.json
       format.csv {

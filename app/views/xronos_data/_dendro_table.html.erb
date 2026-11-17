@@ -14,9 +14,7 @@
     <tbody>
       <% @dendro_xrons.each do |dendro| %>
         <tr>
-          <% if dendro.site.present? %>
-            <td><%= link_to dendro.site.name, dendro.site, target: :_top %></td>
-          <% end %>
+          <td><%= link_to dendro.site.name, dendro.site, target: :_top if dendro.site %></td>
           <td><%= link_to dendro.name, dendro, target: :_top %></td>
           <td><%= dendro.start_year.present? ? dendro.start_year : na_value %></td>
           <td><%= dendro.end_year.present? ? dendro.end_year : na_value %></td>
@@ -29,6 +27,6 @@
 
 
   <% if @dendro_pagy %>
-    <%== pagy_bootstrap_nav(@dendro_pagy) %>
+    <%== @dendro_pagy.series_nav(:bootstrap) %>
   <% end %>
 <% end %>

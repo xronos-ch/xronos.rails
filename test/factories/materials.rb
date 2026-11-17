@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: materials
+# Database name: primary
 #
 #  id         :bigint           not null, primary key
 #  name       :string
@@ -11,6 +12,7 @@
 #
 #  index_materials_on_name  (name)
 #
+
 FactoryBot.define do
   
   factory :material do

@@ -1,8 +1,10 @@
 # == Schema Information
 #
 # Table name: user_profiles
+# Database name: primary
 #
 #  id           :bigint           not null, primary key
+#  affiliation  :text
 #  full_name    :string
 #  orcid        :string
 #  public_email :string
@@ -19,13 +21,18 @@
 #
 #  fk_rails_...  (user_id => users.id)
 #
+
 class UserProfile < ApplicationRecord
   belongs_to :user, required: true
 
   has_one_attached :photo do |attachable|
     attachable.variant :thumb, resize_to_fill: [180, 180]
   end
-  
+
+  before_validation :strip_affiliation
+  validates :affiliation, length: { maximum: 200 }, allow_blank: true
+  validates :affiliation, format: { with: /\A[^\n\r]+\z/ }, allow_blank: true
+
   validates :orcid, 
     format: { 
       with: /\A(\d{4}-){3}\d{3}(\d|X)\z/, # https://gist.github.com/asencis/644f174855899b873131c2cabcebeb87
@@ -44,6 +51,10 @@ class UserProfile < ApplicationRecord
 
   validate :photo_not_too_big
   validate :variable_photo
+
+  def strip_affiliation
+    self.affiliation = affiliation.to_s.strip.presence
+  end
 
   def variable_photo
     return unless photo.attached?

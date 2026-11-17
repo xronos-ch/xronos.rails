@@ -2,13 +2,34 @@
   <div class="row m-3">
 
     <div class="col">
-      <h1>API</h1>
+      <h1>APIs</h1>
 
       <hr>
 
       <p>
-      The data in this application can also be accessed in JSON format with direct requests to an API.
-      Use the following URL to access all (public) dates.
+      The data in this application can be accessed with direct requests to an API.
+      </p>
+
+      <h2 id="files">File exports</h2>
+
+      <p>We provide up-to-date snapshots of XRONOS entire scientific database as flat-file exports:</p>
+
+      <ul>
+        <li>JSON: <a href="/data.json" title="Download all XRONOS data in JSON format">https://xronos.ch/data.json</a></li>
+        <li>CSV: <a href="/data.csv" title="Download all xronos data in CSV format">https://xronos.ch/data.csv</a></li>
+      </ul>
+
+      <p>This is the simplest and most efficient way to access larger portions of the database.</p>
+
+      <h2 id="api-v1">API v1</h2>
+
+      <div class="alert alert-warning" role="alert">
+        We are in the process of deprecating the V1 API in favour of more flexible, modular endpoints (see Roe et al. 2025, <a href="https://doi.org/10.5334/jcaa.191" title="Paper in the Journal of Computer Applications in Archaeology">https://doi.org/10.5334/jcaa.191</a>).
+        If you are developing an application that interfaces with XRONOS, we recommend waiting for the V2 API documentation.
+      </div>
+
+      <p>
+        To query subsets of the database, we provide a JSON API at this endpoint:
       </p>
 
       <pre>
@@ -56,6 +77,48 @@
         <li>query_material</li>
         <li>query_species</li>
       </ul>
+
+      <h2>Usage expectations</h2>
+
+      <p>
+        XRONOS is an open resource, and we welcome responsible reuse of its data.
+        When accessing the API or harvesting pages programmatically, please
+        <a href="https://dmi3kno.github.io/polite/">be polite</a>:
+        identify yourself, respect the site policy, make requests slowly, and 
+        avoid asking for the same resource repeatedly.
+      </p>
+
+      <ul>
+        <li>
+          Always set an informative <code>User-Agent</code> string that identifies 
+          your project or application and provides a contact email or URL.
+        </li>
+        <li>
+          Respect <code>robots.txt</code> and do not request paths that are excluded
+          there.
+        </li>
+        <li>
+          Avoid unnecessary repeated requests. Cache responses locally where possible.
+        </li>
+        <li>
+          Keep request rates moderate and avoid parallel scraping or deep pagination
+          loops.
+        </li>
+        <li>
+          Prefer <a href="#api-v1">documented API endpoints</a> or 
+          <a href="#files">flat-file data exports</a> over scraping HTML pages.
+        </li>
+        <li>
+          If you need a substantial part of the database, use the
+          <a href="#files">flat-file exports</a> we make available.
+        </li>
+      </ul>
+
+      <p>
+        We reserve the right to block traffic uses an excessive amount of server
+        resources or causes problems for other users.
+        If in doubt, please <a href="/about/contact">contact us</a>.
+      </p>
     </div>
   </div>
 </div>

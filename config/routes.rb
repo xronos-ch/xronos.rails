@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'about/acknowledgements', to: 'static_pages#acknowledgements', as: :acknowledgements
   use_doorkeeper
 
   # Static pages
@@ -6,13 +7,13 @@ Rails.application.routes.draw do
   get '/home' => 'pages#home'
   get '/database' => 'pages#database'
   get '/api' => 'pages#api'
-  get "/unauthorized", to: "pages#unauthorized", as: :unauthorized
 
   # Articles (news posts and other pseudo-static pages)
   get '/news', to: 'articles#index', section: 'news'
-  get 'news/:slug', to: 'articles#show'
-  get 'about/:slug', to: 'articles#show'
-  get 'docs/:slug', to: 'articles#show'
+  get "/news.atom", to: "articles#index", format: :atom, section: "news"
+  get "/news.rss",  to: "articles#index", format: :rss, section: "news"
+  get "/:section/:slug", to: "articles#show", as: :article,
+    constraints: { section: /(news|about|docs)/ }
 
   # Redirects for backwards compatibility
   get '/about', to: redirect('/about/xronos')
@@ -25,20 +26,23 @@ Rails.application.routes.draw do
       get 'calibrate_multi'
       get 'calibrate_sum'
     end
+    resource :citation, only: :show, controller: "c14/citation"
   end
   resources :c14_labs
   resources :contexts
-  resources :duplicates
+  resources :controlled_vocabularies, only: :index
   resources :materials do
     get 'search', on: :collection
   end
-  resources :measurement_states
   resources :references do
     get 'search', on: :collection
   end
   resources :sites do
     get 'search', on: :collection
     resources :site_names, except: [:index, :show]
+    scope module: :sites do
+      resource :description, only: :show
+    end
   end
   resources :site_types do
     get 'search', on: :collection
@@ -52,15 +56,28 @@ Rails.application.routes.draw do
       get :export_measurements_csv
     end
   end
+  resources :functional_classifications, only: [:index, :create, :update, :destroy]
 
   # Secondary data resources (no independent show/index views)
-  resources :taxons, except: [:index, :show] do
-    get 'search', on: :collection
-  end
-  resources :taxon_usages, only: :show
+  resources :samples, only: [:index, :show]
+  resources :taxons, except: [:show]
+  resources :taxon_usages, only: [:index, :show]
 
   # External data resources
-  resources :lod_links, except: :index
+  # Note: the curation namespace below is defined first so that
+  # /linked_resources/sites matches the sites dashboard rather than
+  # the show action of the CRUD resource (where 'sites' would be
+  # treated as an :id).
+  namespace :linked_resources do
+    resources :sites, only: :index do
+      collection do
+        get ":issue", action: :index,
+          constraints: lambda { |req| Site.linked_resource_issues.include?(req.params[:issue].to_sym) }
+      end
+    end
+  end
+
+  resources :linked_resources, except: :index
 
   # User management
   devise_for :users, controllers: {
@@ -78,6 +95,7 @@ Rails.application.routes.draw do
     resources :articles, except: :show
     resources :users
   end
+  mount MissionControl::Jobs::Engine, at: "/admin/jobs"
 
   # Data browser
   get 'data/index'
@@ -95,11 +113,6 @@ Rails.application.routes.draw do
   # Curation backend
   get "/curate" => "curate#index"
   namespace :curate do
-    resources :import_tables do
-      get 'edit' => 'import_tables#edit_read_options'
-      get 'edit/read_options' => 'import_tables#edit_read_options'
-      get 'edit/mapping' => 'import_tables#edit_mapping'
-    end
     get "recent_changes" => "recent_changes#index"
   end
 
@@ -141,17 +154,15 @@ Rails.application.routes.draw do
           constraints: lambda { |req| Taxon.issues.include?(req.params[:issue].to_sym) }
       end
     end
-  end
-  
-  # LODs
-  namespace :lods do
-    resources :sites, only: :index do
+    resources :contexts, only: :index do
       collection do
-        get ":lod", action: :index,
-          constraints: lambda { |req| Site.lods.include?(req.params[:lod].to_sym) }
+        get ":issue", action: :index,
+            constraints: lambda { |req| Context.issues.include?(req.params[:issue].to_sym) }
       end
     end
   end
+  
+  # LODs
 
   # API
   namespace :api, defaults: {format: 'json'} do
@@ -159,5 +170,5 @@ Rails.application.routes.draw do
       resources :data, controller: 'xronos_data'
     end
   end
-  
+
 end

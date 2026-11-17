@@ -45,7 +45,6 @@
 #
 class Dendro < ApplicationRecord
   
-  has_one :chron, as: :recordable
   belongs_to :sample
   accepts_nested_attributes_for :sample, reject_if: :all_blank
   

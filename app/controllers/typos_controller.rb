@@ -1,44 +1,58 @@
-class TyposController < ApplicationController
+class TyposController < ApplicationController # rubocop:disable Metrics/ClassLength
   include Tabulatable
-  include Pagy::Backend
+
+  before_action :redirect_show_to_site, only: :show
 
   load_and_authorize_resource
 
-  before_action :set_typo, only: [:show, :edit, :update, :destroy]
+  before_action :set_typo, only: [:edit, :update, :destroy]
+
+  include MergeableController
 
   # GET /typos
   # GET /typos.json
   # GET /typos.csv
   def index
-    @typos = Typo.includes([
-      :references, 
-      sample: [ 
-        context: [ 
-          :site 
-        ] 
-      ] 
-    ])
+    @typos = Typo.includes(
+      :references,
+      sample: [
+        { context: :site }
+      ]
+    )
 
     # filter
     unless typo_params.blank?
+      @typo_params = typo_params
       @typos = @typos.where(typo_params)
     end
 
-    # order
-    if params.has_key?(:typos_order_by)
-      order = { params[:typos_order_by] => params.fetch(:typos_order, "asc") }
-      @typos = @typos.reorder(order)
-    end
-
     respond_to do |format|
-      format.html { 
-        @pagy, @typos = pagy(@typos)
-      }
+      format.html do
+        # Sorting is only applied to the interactive HTML table.
+        # CSV exports deliberately ignore arbitrary ordering parameters.
+        if params.has_key?(:typos_order_by)
+          order = { params[:typos_order_by] => params.fetch(:typos_order, "asc") }
+          @typos = @typos.reorder(order)
+        end
+
+        begin
+          @pagy, @typos = pagy(:countish, @typos)
+        rescue Pagy::OverflowError
+          head :not_found
+        end
+      end
+
       format.json
-      format.csv {
-        @typos = @typos.select(index_csv_template)
+
+      format.csv do
+        # Public CSV export remains available, but does not honour pagination
+        # or arbitrary sorting parameters from crawlers/bots.
+        validate_csv_params!
+        return if performed?
+
+        @typos = @typos.reorder(:id).select(index_csv_template)
         render csv: @typos
-      }
+      end
     end
   end
 
@@ -48,18 +62,26 @@ class TyposController < ApplicationController
     @typos = Typo.search(params[:q])
 
     respond_to do |format|
-      format.html { 
-        @pagy, @typos = pagy(@typos)
+      format.html do
+        begin
+          @pagy, @typos = pagy(:countish, @typos)
+        rescue Pagy::OverflowError
+          head :not_found
+        end
+
+        render :index unless performed?
+      end
+
+      format.json do
         render :index
-      }
-      format.json  {
-        render :index
-      }
+      end
     end
   end
 
   # GET /typos/1
-  # GET /typos/1.json
+  # Permanently redirects to the show view of the typo's site. If the
+  # typo is superseded, the redirect target is the site of the canonical
+  # typo it was ultimately superseded by.
   def show
   end
 
@@ -79,7 +101,7 @@ class TyposController < ApplicationController
 
     respond_to do |format|
       if @typo.save
-        format.html { redirect_to @typo, notice: 'Typo was successfully created.' }
+        format.html { redirect_to @typo.sample.context.site, notice: "Typo was successfully created." }
         format.json { render :show, status: :created, location: @typo }
       else
         format.html { render :new }
@@ -93,11 +115,12 @@ class TyposController < ApplicationController
   def update
     respond_to do |format|
       if @typo.update(typo_params)
-        format.html { redirect_to @typo, notice: 'Typo was successfully updated.' }
+        format.html { redirect_to @typo.site, notice: "Typo was successfully updated." }
         format.json { render :show, status: :ok, location: @typo }
       else
         format.html { render :edit }
         format.json { render json: @typo.errors, status: :unprocessable_entity }
+        format.turbo_stream { render :form_update, status: :unprocessable_entity }
       end
     end
   end
@@ -106,31 +129,39 @@ class TyposController < ApplicationController
   # DELETE /typos/1.json
   def destroy
     @typo.destroy
+
     respond_to do |format|
-      format.html { redirect_to typos_url, notice: 'Typo was successfully destroyed.' }
+      format.html { redirect_to @typo.sample.context.site, notice: "Typo was successfully destroyed." }
       format.json { head :no_content }
     end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_typo
-      @typo = Typo.find(params[:id])
-    end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def typo_params
-      params.fetch(:typo, {}).permit(
-        :name, 
-        :approx_start_time, 
-        :approx_end_time, 
-        :sample_id,
-        sample: [
-          :context_id,
-          contexts: [
-            :site_id
-          ]
+  def redirect_show_to_site
+    typo = Typo.unscoped.find(params[:id])
+    canonical_typo = typo.ultimately_superseded_by
+    site = Site.unscoped.find(canonical_typo.context.site_id)
+    redirect_to site_path(site), status: :moved_permanently
+  end
+
+  def set_typo
+    @typo = Typo.find(params[:id])
+  end
+
+  def typo_params
+    params.fetch(:typo, {}).permit(
+      :name,
+      :approx_start_time,
+      :approx_end_time,
+      :sample_id,
+      sample: [
+        :context_id,
+        :name,
+        contexts: [
+          :site_id
         ]
-      )
-    end
+      ]
+    )
+  end
 end

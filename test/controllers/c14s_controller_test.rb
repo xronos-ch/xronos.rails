@@ -1,0 +1,248 @@
+# frozen_string_literal: true
+
+require 'test_helper'
+
+class C14sControllerTest < ActionDispatch::IntegrationTest # rubocop:disable Metrics/ClassLength
+  include ControllerSmokeTest
+
+  smoke_tests(
+    param_key: :c14,
+    query_params: { site: :smoke_site_id },
+    statuses: {
+      index: { not_signed_in: :success, signed_in: :success },
+      show: { not_signed_in: :success,  signed_in: :success },
+      new: { not_signed_in: :not_found, signed_in: :success },
+      create: { not_signed_in: :not_found, signed_in: :found },
+      edit: { not_signed_in: :not_found, signed_in: :not_found },
+      update: { not_signed_in: :not_found, signed_in: :not_found },
+      destroy: { not_signed_in: :not_found, signed_in: :not_found }
+    }
+  )
+
+  def smoke_site_id
+    @smoke_site_id ||= create(:site).id
+  end
+
+  # The C14 factory returns association objects; strong params expect
+  # association foreign keys. cal_bp/cal_std are factory-only columns
+  # that the controller's strong params don't permit.
+  def smoke_payload_for(_action)
+    attributes_for(:c14)
+      .except(:c14_lab, :sample, :cal_bp, :cal_std)
+      .merge(c14_lab_id: create(:c14_lab).id, sample_id: create(:sample).id)
+  end
+
+  test 'show renders machine-readable record dates and revision timestamps' do
+    c14 = with_versioning { create(:c14) }.reload
+    revision = c14.versions.find_by!(event: 'create')
+
+    get c14_path(c14)
+
+    assert_response :success
+    created_date = c14.created_at.to_date.iso8601
+    assert_dom "aside dl time[datetime='#{created_date}']", text: created_date
+    assert_dom "#version-v#{revision.id} time[datetime='#{revision.created_at.iso8601}']",
+                  text: revision.created_at.strftime('%F %H:%M')
+  end
+
+  test 'show redirects to the canonical record when the C14 is superseded' do
+    site = create(:site)
+    context = create(:context, site: site)
+    sample = create(:sample, context: context)
+    canonical = create(:c14, sample: sample)
+    superseded = create(:c14, :superseded_by, canonical: canonical, sample: sample)
+
+    get c14_path(superseded)
+
+    assert_response :moved_permanently
+    assert_equal c14_url(canonical), response.location
+  end
+
+  test 'show follows a re-pointed chain to the canonical' do
+    site = create(:site)
+    context = create(:context, site: site)
+    sample = create(:sample, context: context)
+    canonical = create(:c14, sample: sample)
+    middle = create(:c14, sample: sample)
+    leaf = create(:c14, sample: sample)
+
+    leaf.supersede!(middle)
+    middle.supersede!(canonical)
+
+    get c14_path(leaf)
+
+    assert_response :moved_permanently
+    assert_equal c14_url(canonical), response.location
+  end
+
+  test 'unauthenticated users cannot create c14 records' do
+    sample = create(:sample)
+    c14_lab = create(:c14_lab)
+
+    assert_no_difference('C14.count') do
+      post c14s_path, params: {
+        c14: {
+          sample_id: sample.id,
+          c14_lab_id: c14_lab.id,
+          lab_identifier: 'UNAUTH-1',
+          bp: 4500,
+          std: 30,
+          method: 'AMS'
+        }
+      }
+    end
+
+    assert_not_includes [200, 201, 204], response.status
+  end
+
+  test 'downloads a C14 record as MIaaRD JSON' do
+    site = create(
+      :site,
+      name: 'Test Site',
+      lat: 54.323,
+      lng: 10.122,
+      country_code: 'DE'
+    )
+
+    context = create(
+      :context,
+      name: 'Test Context',
+      site: site
+    )
+
+    taxon = create(
+      :taxon,
+      name: 'Homo sapiens',
+      gbif_id: 2_436_436
+    )
+
+    sample = create(
+      :sample,
+      context: context,
+      taxon: taxon
+    )
+
+    c14 = create(
+      :c14,
+      sample: sample,
+      lab_identifier: 'OxA-12345',
+      bp: 4500,
+      std: 30,
+      method: 'AMS'
+    )
+
+    get c14_path(c14, format: :json, schema: C14::MIAARD::SCHEMA)
+
+    assert_response :success
+    assert_equal 'application/json', response.media_type
+
+    json = JSON.parse(response.body)
+
+    assert_equal 'OxA', json['lab_code']
+    assert_equal '12345', json['lab_id']
+    assert_equal 4500, json['conventional_age']
+    assert_equal 30, json['conventional_age_error']
+    assert_equal 'AMS', json['measurement_method']
+    assert_equal 'gbif:2436436', json['sample_taxon_id']
+  end
+
+  test 'downloads C14 records as a MIaaRD collection' do
+    site = create(:site, name: 'Test Site')
+    context = create(:context, site: site)
+    sample = create(:sample, context: context)
+
+    create(
+      :c14,
+      sample: sample,
+      lab_identifier: 'OxA-12345',
+      bp: 4500,
+      std: 30
+    )
+
+    get c14s_path(format: :json, schema: C14::MIAARD::SCHEMA)
+
+    assert_response :success
+    assert_equal 'application/json', response.media_type
+
+    json = JSON.parse(response.body)
+
+    assert json.key?('entries')
+    assert json['entries'].any?
+    assert_equal 'OxA', json['entries'].first['lab_code']
+  end
+
+  test 'downloads filtered C14 records as a MIaaRD collection' do
+    site = create(:site, name: 'Test Site')
+    context = create(:context, site: site)
+    sample = create(:sample, context: context)
+
+    matching = create(
+      :c14,
+      sample: sample,
+      lab_identifier: 'OxA-12345',
+      bp: 4500,
+      std: 30
+    )
+
+    create(
+      :c14,
+      sample: sample,
+      lab_identifier: 'Beta-67890',
+      bp: 3200,
+      std: 25
+    )
+
+    get c14s_path(
+          format: :json,
+          schema: C14::MIAARD::SCHEMA,
+          c14: { lab_identifier: matching.lab_identifier }
+        )
+
+    assert_response :success
+
+    json = JSON.parse(response.body)
+
+    assert_equal 1, json['entries'].length
+    assert_equal 'OxA', json['entries'].first['lab_code']
+    assert_equal '12345', json['entries'].first['lab_id']
+  end
+
+  test 'CSV export rejects pagination and ordering parameters' do
+    site = create(:site)
+    context = create(:context, site: site)
+    sample = create(:sample, context: context)
+    create(:c14, sample: sample, lab_identifier: 'Test-001')
+
+    get c14s_path(format: :csv, c14s_order_by: 'bp', c14s_order: 'desc', page: 5)
+
+    assert_response :bad_request
+  end
+
+  test 'CSV export works without pagination and ordering parameters' do
+    site = create(:site)
+    context = create(:context, site: site)
+    sample = create(:sample, context: context)
+    create(:c14, sample: sample, lab_identifier: 'Test-001')
+
+    get c14s_path(format: :csv)
+
+    assert_response :success
+    assert_equal 'text/csv', response.media_type
+  end
+
+  test 'CSV download with filter parameters includes only filters' do
+    site = create(:site)
+    context = create(:context, site: site)
+    sample = create(:sample, context: context)
+
+    matching = create(:c14, sample: sample, lab_identifier: 'Matching-001')
+    create(:c14, sample: sample, lab_identifier: 'Other-002')
+
+    get c14s_path(format: :csv, c14: { lab_identifier: matching.lab_identifier })
+
+    assert_response :success
+    assert_equal 'text/csv', response.media_type
+    assert_includes response.body, 'Matching-001'
+    assert_not_includes response.body, 'Other-002'
+  end
+end

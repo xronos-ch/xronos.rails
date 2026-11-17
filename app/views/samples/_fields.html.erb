@@ -1,14 +1,16 @@
-<h2 class="h5">Context</h5>
+<h2 class="h5">Context</h2>
 
-<% if @c14.present?%>
-  <%= f.fields_for :context, @c14.context do |ff| %>
-    <%= render "contexts/fields", f: ff %>
+<% if @c14 %>
+  <% if @c14.context&.site %>
+    <%= render "contexts/choice", f: f %>
+  <% else %>
+    <%= f.fields_for :context, @c14.context do |ff| %>
+      <%= render "contexts/fields", f: ff %>
+    <% end %>
   <% end %>
-<% end %>
-
-<% if @dendro.present?%>
+<% elsif @dendro %>
   <%= f.fields_for :context, @dendro.context do |ff| %>
-    <%= ff.hidden_field :site_id, value: @dendro.sample.context.site_id %> <!-- Pass the site ID -->
+    <%= ff.hidden_field :site_id, value: @dendro.context&.site_id %>
     <%= render "contexts/fields", f: ff %>
   <% end %>
 <% end %>
@@ -28,7 +30,24 @@
   </div>
 </div>
 
-<!-- TODO: name? -->
+<%= f.text_field :part_of_organism, label: "Part of organism",
+  data: {
+    controller: "tom-select",
+    tom_select_route_value: "controlled_vocabularies",
+    tom_select_search_mode_value: true,
+    tom_select_value_value: "name",
+    tom_select_label_value: "name",
+    tom_select_search_value: "name",
+    tom_select_params_value: "vocabulary=part_of_organism&model=Sample&attribute=part_of_organism",
+    tom_select_max_items_value: 1,
+    tom_select_create_value: true,
+    tom_select_option_template_value: "controlled-vocabulary",
+    tom_select_item_template_value: "controlled-vocabulary"
+  } %>
+
+<%= f.text_field :name, label: "Sample name",
+  help: "Optional. When set, must be unique within this context." %>
+
 <%= f.text_field :position_description, label: "Position" %>
 
 <div class="row">

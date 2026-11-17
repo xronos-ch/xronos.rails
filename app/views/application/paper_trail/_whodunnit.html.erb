@@ -1,5 +1,7 @@
-<% if version.whodunnit.present? %>
-  <%= render "users/user", user: User.find(version.whodunnit) %>
+<% if entry.respond_to?(:whodunnit_user) && entry.whodunnit_user.present? %>
+  <%= render "users/user", user: entry.whodunnit_user %>
+<% elsif entry.respond_to?(:whodunnit) && entry.whodunnit.present? %>
+  <%= render "users/user", user: User.find(entry.whodunnit) %>
 <% else %>
   <span class="text-muted">Unknown user</span>
 <% end %>

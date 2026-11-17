@@ -1,3 +1,5 @@
+##
+# Helper methods for Bootstrap components
 module BootstrapHelper
 
   def accordion_item(id, title, collapsed = true)
@@ -9,7 +11,6 @@ module BootstrapHelper
       header + collapse
     end
   end
-
 
   def spinner
     content_tag :div, class: "spinner-border spinner-border-sm text-info", role: "status" do

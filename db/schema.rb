@@ -10,10 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_12_18_102909) do
+ActiveRecord::Schema[8.0].define(version: 2026_11_13_120000) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
-  enable_extension "plpgsql"
   enable_extension "unaccent"
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -82,7 +82,11 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_18_102909) do
     t.bigint "c14_lab_id"
     t.bigint "sample_id"
     t.string "lab_identifier"
+    t.float "delta_15n"
+    t.float "carbon_proportion"
+    t.float "carbon_nitrogen_ratio"
     t.index ["c14_lab_id"], name: "index_c14s_on_c14_lab_id"
+    t.index ["lab_identifier", "sample_id", "created_at"], name: "index_c14s_on_lab_identifier_sample_id_and_created_at"
     t.index ["lab_identifier"], name: "index_c14s_on_lab_identifier"
     t.index ["method"], name: "index_c14s_on_method"
     t.index ["sample_id"], name: "index_c14s_on_sample_id"
@@ -116,6 +120,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_18_102909) do
     t.bigint "reference_id"
     t.string "citing_type"
     t.bigint "citing_id"
+    t.index ["citing_type", "citing_id", "reference_id"], name: "index_citations_on_citing_and_reference", unique: true
     t.index ["citing_type", "citing_id"], name: "index_citations_on_citing"
     t.index ["reference_id"], name: "index_citations_on_reference_id"
   end
@@ -128,7 +133,39 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_18_102909) do
     t.datetime "updated_at", precision: nil, null: false
     t.integer "site_id"
     t.index ["name"], name: "index_contexts_on_name"
+    t.index ["site_id", "name"], name: "index_contexts_unique_name_per_site", unique: true, where: "(name IS NOT NULL)"
     t.index ["site_id"], name: "index_contexts_on_site_id"
+    t.index ["site_id"], name: "index_contexts_one_null_name_per_site", unique: true, where: "(name IS NULL)"
+  end
+
+  create_table "controlled_vocabularies", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_controlled_vocabularies_on_name", unique: true
+  end
+
+  create_table "controlled_vocabulary_terms", force: :cascade do |t|
+    t.bigint "controlled_vocabulary_id", null: false
+    t.string "name", null: false
+    t.text "description"
+    t.string "ontology_name"
+    t.string "ontology_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["controlled_vocabulary_id", "ontology_name", "name"], name: "index_cv_terms_on_vocabulary_ontology_and_name", unique: true
+    t.index ["ontology_name", "ontology_id"], name: "index_cv_terms_on_ontology", unique: true, where: "((ontology_name IS NOT NULL) AND (ontology_id IS NOT NULL))"
+  end
+
+  create_table "controlled_vocabulary_variants", force: :cascade do |t|
+    t.bigint "controlled_vocabulary_term_id", null: false
+    t.string "value", null: false
+    t.string "normalized", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["controlled_vocabulary_term_id", "normalized"], name: "index_cv_variants_on_term_and_normalized", unique: true
+    t.index ["controlled_vocabulary_term_id", "value"], name: "index_cv_variants_on_term_and_value", unique: true
   end
 
   create_table "dendros", force: :cascade do |t|
@@ -165,18 +202,39 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_18_102909) do
     t.index ["series_code"], name: "index_dendros_on_series_code", unique: true
   end
 
-  create_table "import_tables", force: :cascade do |t|
-    t.string "file"
-    t.datetime "imported_at", precision: nil
+  create_table "functional_classification_categories", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "user_id"
-    t.jsonb "read_options"
-    t.jsonb "mapping"
-    t.index ["user_id"], name: "index_import_tables_on_user_id"
   end
 
-  create_table "lod_links", force: :cascade do |t|
+  create_table "functional_classifications", force: :cascade do |t|
+    t.string "assignable_type", null: false
+    t.bigint "assignable_id", null: false
+    t.bigint "functional_classification_category_id", null: false
+    t.integer "confidence", default: 1, null: false
+    t.string "source"
+    t.text "note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assignable_type", "assignable_id", "functional_classification_category_id"], name: "idx_functional_classifications_unique_category", unique: true
+    t.index ["assignable_type", "assignable_id"], name: "index_functional_classifications_on_assignable"
+    t.index ["functional_classification_category_id"], name: "idx_on_functional_classification_category_id_0cc23f287f"
+  end
+
+  create_table "imports", force: :cascade do |t|
+    t.bigint "source_id", null: false
+    t.jsonb "records_created", default: {}
+    t.boolean "success", default: false
+    t.text "error"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.jsonb "records_skipped", default: {}
+    t.index ["source_id"], name: "index_imports_on_source_id"
+  end
+
+  create_table "linked_resources", force: :cascade do |t|
     t.string "source", null: false
     t.string "external_id", null: false
     t.string "linkable_type", null: false
@@ -185,8 +243,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_18_102909) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "status", default: "pending", null: false
-    t.index ["linkable_type", "linkable_id"], name: "index_lod_links_on_linkable_type_and_linkable_id"
-    t.index ["source", "external_id"], name: "index_lod_links_on_source_and_external_id", unique: true
+    t.index ["linkable_type", "linkable_id", "source"], name: "index_linked_resources_on_linkable_and_source", unique: true
+    t.index ["linkable_type", "linkable_id"], name: "index_linked_resources_on_linkable_type_and_linkable_id"
   end
 
   create_table "materials", force: :cascade do |t|
@@ -194,14 +252,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_18_102909) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.index ["name"], name: "index_materials_on_name"
-  end
-
-  create_table "measurement_states", force: :cascade do |t|
-    t.string "name"
-    t.text "description"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_measurement_states_on_name"
   end
 
   create_table "oauth_access_grants", force: :cascade do |t|
@@ -286,6 +336,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_18_102909) do
     t.decimal "position_y"
     t.decimal "position_z"
     t.text "position_crs"
+    t.text "part_of_organism"
+    t.string "name"
     t.index ["context_id"], name: "index_samples_on_context_id"
     t.index ["material_id"], name: "index_samples_on_material_id"
     t.index ["position_crs"], name: "index_samples_on_position_crs"
@@ -332,9 +384,76 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_18_102909) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.string "country_code"
-    t.integer "superseded_by"
     t.index ["country_code"], name: "index_sites_on_country_code"
     t.index ["name"], name: "index_sites_on_name"
+  end
+
+  create_table "snapshot_items", force: :cascade do |t|
+    t.bigint "snapshot_id", null: false
+    t.string "item_type", null: false
+    t.bigint "item_id", null: false
+    t.json "object", null: false
+    t.datetime "created_at", null: false
+    t.string "child_group_name"
+    t.index ["item_type", "item_id"], name: "index_snapshot_items_on_item"
+    t.index ["snapshot_id", "item_id", "item_type"], name: "index_snapshot_items_on_snapshot_id_and_item_id_and_item_type"
+    t.index ["snapshot_id"], name: "index_snapshot_items_on_snapshot_id"
+  end
+
+  create_table "snapshots", force: :cascade do |t|
+    t.string "item_type", null: false
+    t.bigint "item_id", null: false
+    t.string "user_type"
+    t.bigint "user_id"
+    t.string "identifier"
+    t.json "metadata"
+    t.datetime "created_at", null: false
+    t.index ["identifier", "item_id", "item_type"], name: "index_snapshots_on_identifier_and_item_id_and_item_type", unique: true
+    t.index ["identifier"], name: "index_snapshots_on_identifier"
+    t.index ["item_type", "item_id"], name: "index_snapshots_on_item"
+    t.index ["user_type", "user_id"], name: "index_snapshots_on_user"
+  end
+
+  create_table "sources", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "version"
+    t.text "path"
+    t.jsonb "file_manifest", default: {}
+    t.string "source_url"
+    t.string "license"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "reference_id"
+    t.index ["name", "version"], name: "index_sources_on_name_and_version", unique: true, where: "(version IS NOT NULL)"
+    t.index ["reference_id"], name: "index_sources_on_reference_id"
+  end
+
+  create_table "supersession_events", force: :cascade do |t|
+    t.string "event_type", null: false
+    t.string "superseded_type", null: false
+    t.bigint "superseded_id", null: false
+    t.string "superseded_by_type", null: false
+    t.bigint "superseded_by_id", null: false
+    t.text "comment"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "whodunnit_user_id", null: false
+    t.index ["event_type", "created_at"], name: "index_supersession_events_on_event_type"
+    t.index ["superseded_by_type", "superseded_by_id", "created_at"], name: "index_supersession_events_on_superseded_by"
+    t.index ["superseded_type", "superseded_id", "created_at"], name: "index_supersession_events_on_superseded"
+    t.index ["whodunnit_user_id"], name: "index_supersession_events_on_whodunnit_user_id"
+  end
+
+  create_table "supersessions", force: :cascade do |t|
+    t.string "superseded_type", null: false
+    t.bigint "superseded_id", null: false
+    t.string "superseded_by_type", null: false
+    t.bigint "superseded_by_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["superseded_by_type", "superseded_by_id"], name: "index_supersessions_on_superseded_by"
+    t.index ["superseded_type", "superseded_id"], name: "index_supersessions_unique_superseded", unique: true
   end
 
   create_table "taxons", force: :cascade do |t|
@@ -352,8 +471,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_18_102909) do
     t.integer "approx_end_time"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
-    t.integer "parent_id"
     t.bigint "sample_id"
+    t.index ["name", "sample_id", "created_at"], name: "index_typos_on_name_sample_id_and_created_at"
     t.index ["name"], name: "index_typos_on_name"
     t.index ["sample_id"], name: "index_typos_on_sample_id"
   end
@@ -366,6 +485,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_18_102909) do
     t.string "orcid"
     t.string "public_email"
     t.string "url"
+    t.text "affiliation"
     t.index ["user_id"], name: "index_user_profiles_on_user_id"
   end
 
@@ -393,36 +513,30 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_18_102909) do
     t.text "revision_comment"
     t.jsonb "new_object"
     t.jsonb "object_changes"
+    t.bigint "snapshot_id"
     t.index ["event"], name: "index_versions_on_event"
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
+    t.index ["snapshot_id"], name: "index_versions_on_snapshot_id"
     t.index ["whodunnit"], name: "index_versions_on_whodunnit"
-  end
-
-  create_table "wikidata_links", force: :cascade do |t|
-    t.integer "qid"
-    t.string "wikidata_linkable_type"
-    t.bigint "wikidata_linkable_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["qid"], name: "index_wikidata_links_on_qid"
-    t.index ["wikidata_linkable_type", "wikidata_linkable_id"], name: "index_wikidata_links_on_linkable_type_and_linkable_id"
-    t.index ["wikidata_linkable_type", "wikidata_linkable_id"], name: "index_wikidata_links_on_wikidata_linkable"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "dendros", "chronologies"
   add_foreign_key "dendros", "samples"
-  add_foreign_key "import_tables", "users"
+  add_foreign_key "functional_classifications", "functional_classification_categories"
+  add_foreign_key "imports", "sources"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_grants", "users", column: "resource_owner_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "users", column: "resource_owner_id"
   add_foreign_key "site_names", "sites"
+  add_foreign_key "sources", "references"
+  add_foreign_key "supersession_events", "users", column: "whodunnit_user_id"
   add_foreign_key "user_profiles", "users"
 
   create_view "data_views", materialized: true, sql_definition: <<-SQL
-      SELECT DISTINCT c14s.id,
+      SELECT c14s.id,
       c14s.lab_identifier AS labnr,
       c14s.bp,
       c14s.std,
@@ -434,62 +548,84 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_18_102909) do
       materials.name AS material,
       taxons.name AS species,
       contexts.name AS feature,
-      ( SELECT st.name
-             FROM (((site_types st
-               JOIN site_types_sites sts ON ((st.id = sts.site_type_id)))
-               JOIN contexts ctx ON ((ctx.site_id = sts.site_id)))
-               JOIN samples samp ON ((samp.context_id = ctx.id)))
-            WHERE ((samp.id = samples.id) AND (st.name IS NOT NULL))
-           LIMIT 1) AS feature_type,
+      site_type_lateral.st_name AS feature_type,
       sites.name AS site,
       sites.country_code AS country,
       (sites.lat)::text AS lat,
       (sites.lng)::text AS lng,
-      ( SELECT st.name
-             FROM (((site_types st
-               JOIN site_types_sites sts ON ((st.id = sts.site_type_id)))
-               JOIN contexts ctx ON ((ctx.site_id = sts.site_id)))
-               JOIN samples samp ON ((samp.context_id = ctx.id)))
-            WHERE ((samp.id = samples.id) AND (st.name IS NOT NULL))
-           LIMIT 1) AS site_type,
-      (COALESCE(( SELECT json_agg(json_build_object('periode', tp.name)) AS json_agg
-             FROM (((typos tp
-               JOIN samples sam ON ((tp.sample_id = sam.id)))
-               JOIN contexts contexts_1 ON ((sam.context_id = contexts_1.id)))
-               JOIN samples all_samples ON ((all_samples.context_id = contexts_1.id)))
-            WHERE (all_samples.id = samples.id)), '[]'::json))::jsonb AS periods,
-      (COALESCE(( SELECT json_agg(json_build_object('typochronological_unit', tp.name)) AS json_agg
-             FROM (((typos tp
-               JOIN samples sam ON ((tp.sample_id = sam.id)))
-               JOIN contexts contexts_1 ON ((sam.context_id = contexts_1.id)))
-               JOIN samples all_samples ON ((all_samples.context_id = contexts_1.id)))
-            WHERE (all_samples.id = samples.id)), '[]'::json))::jsonb AS typochronological_units,
-      (COALESCE(( SELECT json_agg(json_build_object('ecochronological_unit', tp.name)) AS json_agg
-             FROM (((typos tp
-               JOIN samples sam ON ((tp.sample_id = sam.id)))
-               JOIN contexts contexts_1 ON ((sam.context_id = contexts_1.id)))
-               JOIN samples all_samples ON ((all_samples.context_id = contexts_1.id)))
-            WHERE (all_samples.id = samples.id)), '[]'::json))::jsonb AS ecochronological_units,
-      (COALESCE(( SELECT json_agg(json_build_object('reference', ref.short_ref)) AS json_agg
-             FROM ("references" ref
-               JOIN citations cit ON ((ref.id = cit.reference_id)))
-            WHERE (((cit.citing_type)::text = 'C14'::text) AND (cit.citing_id = c14s.id))), '[]'::json))::jsonb AS reference
-     FROM (((((((c14s
+      site_type_lateral.st_name AS site_type,
+      (COALESCE(typo_agg.periods, '[]'::json))::jsonb AS periods,
+      (COALESCE(typo_agg.typochronological_units, '[]'::json))::jsonb AS typochronological_units,
+      (COALESCE(typo_agg.ecochronological_units, '[]'::json))::jsonb AS ecochronological_units,
+      (COALESCE(ref_agg.reference, '[]'::json))::jsonb AS reference
+     FROM ((((((((c14s
        LEFT JOIN samples ON ((samples.id = c14s.sample_id)))
        LEFT JOIN materials ON ((materials.id = samples.material_id)))
        LEFT JOIN taxons ON ((taxons.id = samples.taxon_id)))
        LEFT JOIN contexts ON ((contexts.id = samples.context_id)))
        LEFT JOIN sites ON ((sites.id = contexts.site_id)))
-       LEFT JOIN site_types_sites ON ((site_types_sites.site_id = sites.id)))
-       LEFT JOIN site_types ON ((site_types_sites.site_type_id = site_types.id)));
+       LEFT JOIN LATERAL ( SELECT st.name AS st_name
+             FROM (site_types st
+               JOIN site_types_sites sts ON ((st.id = sts.site_type_id)))
+            WHERE ((sts.site_id = sites.id) AND (st.name IS NOT NULL))
+           LIMIT 1) site_type_lateral ON (true))
+       LEFT JOIN LATERAL ( SELECT json_agg(json_build_object('periode', tp.name)) AS periods,
+              json_agg(json_build_object('typochronological_unit', tp.name)) AS typochronological_units,
+              json_agg(json_build_object('ecochronological_unit', tp.name)) AS ecochronological_units
+             FROM (typos tp
+               JOIN samples sam ON ((tp.sample_id = sam.id)))
+            WHERE (sam.context_id = samples.context_id)) typo_agg ON (true))
+       LEFT JOIN LATERAL ( SELECT json_agg(json_build_object('reference', ref.short_ref)) AS reference
+             FROM ("references" ref
+               JOIN citations cit ON ((ref.id = cit.reference_id)))
+            WHERE (((cit.citing_type)::text = 'C14'::text) AND (cit.citing_id = c14s.id))) ref_agg ON (true));
   SQL
+  add_index "data_views", ["bp"], name: "index_data_views_on_bp"
   add_index "data_views", ["country"], name: "index_data_views_on_country"
   add_index "data_views", ["feature"], name: "index_data_views_on_feature"
-  add_index "data_views", ["id"], name: "index_data_views_on_id"
+  add_index "data_views", ["id"], name: "index_data_views_on_id", unique: true
   add_index "data_views", ["labnr"], name: "index_data_views_on_labnr"
   add_index "data_views", ["material"], name: "index_data_views_on_material"
   add_index "data_views", ["site"], name: "index_data_views_on_site"
   add_index "data_views", ["site_type"], name: "index_data_views_on_site_type"
   add_index "data_views", ["species"], name: "index_data_views_on_species"
+
+  create_view "sites_with_counts", materialized: true, sql_definition: <<-SQL
+      SELECT sites.id,
+      sites.name,
+      sites.lat,
+      sites.lng,
+      sites.created_at,
+      sites.updated_at,
+      sites.country_code,
+      COALESCE(c14_counts.c14s_count, (0)::bigint) AS c14s_count,
+      COALESCE(typo_counts.typos_count, (0)::bigint) AS typos_count,
+      COALESCE(ref_counts.references_count, (0)::bigint) AS references_count
+     FROM (((sites
+       LEFT JOIN ( SELECT contexts.site_id,
+              count(*) AS c14s_count
+             FROM ((c14s
+               JOIN samples ON ((samples.id = c14s.sample_id)))
+               JOIN contexts ON ((contexts.id = samples.context_id)))
+            WHERE (NOT (c14s.id IN ( SELECT supersessions.superseded_id
+                     FROM supersessions
+                    WHERE ((supersessions.superseded_type)::text = 'C14'::text))))
+            GROUP BY contexts.site_id) c14_counts ON ((c14_counts.site_id = sites.id)))
+       LEFT JOIN ( SELECT contexts.site_id,
+              count(*) AS typos_count
+             FROM ((typos
+               JOIN samples ON ((samples.id = typos.sample_id)))
+               JOIN contexts ON ((contexts.id = samples.context_id)))
+            WHERE (NOT (typos.id IN ( SELECT supersessions.superseded_id
+                     FROM supersessions
+                    WHERE ((supersessions.superseded_type)::text = 'Typo'::text))))
+            GROUP BY contexts.site_id) typo_counts ON ((typo_counts.site_id = sites.id)))
+       LEFT JOIN ( SELECT citations.citing_id AS site_id,
+              count(*) AS references_count
+             FROM citations
+            WHERE ((citations.citing_type)::text = 'Site'::text)
+            GROUP BY citations.citing_id) ref_counts ON ((ref_counts.site_id = sites.id)));
+  SQL
+  add_index "sites_with_counts", ["id"], name: "sites_with_counts_id_idx", unique: true
 
 end

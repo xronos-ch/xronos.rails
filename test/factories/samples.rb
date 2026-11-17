@@ -1,8 +1,11 @@
 # == Schema Information
 #
 # Table name: samples
+# Database name: primary
 #
 #  id                   :bigint           not null, primary key
+#  name                 :string
+#  part_of_organism     :text
 #  position_crs         :text
 #  position_description :text
 #  position_x           :decimal(, )
@@ -21,6 +24,7 @@
 #  index_samples_on_position_crs  (position_crs)
 #  index_samples_on_taxon_id      (taxon_id)
 #
+
 FactoryBot.define do
   
   factory :sample do

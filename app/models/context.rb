@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: contexts
+# Database name: primary
 #
 #  id                :bigint           not null, primary key
 #  approx_end_time   :integer
@@ -12,27 +13,154 @@
 #
 # Indexes
 #
-#  index_contexts_on_name     (name)
-#  index_contexts_on_site_id  (site_id)
+#  index_contexts_on_name                 (name)
+#  index_contexts_on_site_id              (site_id)
+#  index_contexts_one_null_name_per_site  (site_id) UNIQUE WHERE (name IS NULL)
+#  index_contexts_unique_name_per_site    (site_id,name) UNIQUE WHERE (name IS NOT NULL)
 #
-class Context < ApplicationRecord
 
-  validates :name, presence: true
+class Context < ApplicationRecord
+  include Versioned
+  include Mergeable
+
+  exact_duplicates_on :site_id, name: :nil_matches_nil
+
+  FUNCTIONAL_CLASSIFICATION_SUGGESTION_PATTERN =
+    "settlement|habitation|occupation|dwelling|village|house|domestic|" \
+      "burial|cemetery|grave|funerary|tomb|necropolis|" \
+      "hoard|depot|deposit|" \
+      "production|workshop|kiln|craft|industrial|metallurgy|mine|mining|" \
+      "ritual|ceremonial|cult|sanctuary|temple|shrine|" \
+      "palaeoenvironmental|paleoenvironmental|environmental|off.?site|core|peat|lake|sediment|" \
+      "natural|geological"
+
+  before_validation :normalise_name
+  validates :name, uniqueness: { scope: :site_id, allow_nil: true }
+  validate :only_one_nil_name_per_site
 
   belongs_to :site
   accepts_nested_attributes_for :site, :reject_if => proc { |attributes| attributes.all? { |key, value| key == "_destroy" || value.blank? || (value.is_a?(Hash) && value.values.all?(&:blank?)) } }
   validates_associated :site
 
-  has_many :samples
+  has_many :samples, dependent: :destroy
+
   has_many :c14s, through: :samples
   has_many :typos, through: :samples
   has_many :dendros, through: :samples
-  has_paper_trail
+
+  has_many :functional_classifications,
+           as: :assignable,
+           dependent: :destroy
+
+  snapshot_peripherals :functional_classifications
+
+  # No `after_save :merge_exact_duplicates`: the model-level
+  # uniqueness validation and DB unique index already prevent new
+  # duplicates. Mergeable is here to power Site#reassign_contexts!
+  # (where we explicitly merge contexts that collide across two
+  # sites being merged).
+  before_merge :reassign_samples!
+  before_merge :reassign_functional_classifications!
 
   acts_as_copy_target # enable CSV exports
+
+  include HasIssues
+  @issues = [ :missing_functional_classification ]
+
+  scope :with_functional_classification_suggestions, -> {
+    joins(site: :site_types)
+      .left_outer_joins(:functional_classifications)
+      .where(functional_classifications: { id: nil })
+      .where(
+        "LOWER(site_types.name) ~ ?",
+        FUNCTIONAL_CLASSIFICATION_SUGGESTION_PATTERN
+      )
+      .distinct
+  }
 
   def self.label
     "context"
   end
 
+  def label
+    name
+  end
+
+  def suggested_functional_classification_category
+    return nil if site.blank? || !site.respond_to?(:site_types)
+
+    site_type_names = site.site_types
+                          .map { |site_type| site_type.name.to_s.downcase }
+                          .join(" ")
+
+    category_name =
+      case site_type_names
+      when /settlement|habitation|occupation|dwelling|village|house|domestic/
+        "settlement"
+      when /burial|cemetery|grave|funerary|tomb|necropolis/
+        "burial"
+      when /hoard|depot|deposit/
+        "hoard"
+      when /production|workshop|kiln|craft|industrial|metallurgy|mine|mining/
+        "production"
+      when /ritual|ceremonial|cult|sanctuary|temple|shrine/
+        "ritual_ceremonial"
+      when /palaeoenvironmental|paleoenvironmental|environmental|off.?site|core|peat|lake|sediment/
+        "palaeoenvironmental"
+      when /natural|geological/
+        "natural"
+      else
+        nil
+      end
+
+    FunctionalClassificationCategory.find_by(name: category_name)
+  end
+
+  def suggested_confidence
+    "possible"
+  end
+
+  def functional_classification_suggestion_available?
+    functional_classifications.blank? &&
+      suggested_functional_classification_category.present? &&
+      suggested_confidence.present?
+  end
+
+  # Issues
+
+  scope :missing_functional_classification, -> {
+    joins(:c14s)
+      .left_outer_joins(:functional_classifications)
+      .where(functional_classifications: { id: nil })
+      .distinct
+  }
+
+  def missing_functional_classification?
+    c14s.exists? && functional_classifications.blank?
+  end
+
+  private
+
+  def normalise_name
+    self.name = name.to_s.strip.presence # normalise blanks to nil
+  end
+
+  def only_one_nil_name_per_site
+    return unless name.nil?
+
+    scope = Context.where(site_id: site_id, name: nil)
+    scope = scope.where.not(id: id) if persisted?
+
+    if scope.exists?
+      errors.add(:name, "can only be blank once per site")
+    end
+  end
+
+  def reassign_samples!
+    Sample.where(context_id: id).update_all(context_id: merged_into_id)
+  end
+
+  def reassign_functional_classifications!
+    FunctionalClassification.reassign_all_to!(from: self, to: canonical)
+  end
 end

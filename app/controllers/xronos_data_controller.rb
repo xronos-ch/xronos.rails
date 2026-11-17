@@ -1,205 +1,207 @@
+# frozen_string_literal: true
+
 class XronosDataController < ApplicationController
-  include Pagy::Backend
-
-  before_action :set_data, only: [:index]
-
   def turn_off_lasso
-    reset_session_key(:spatial_lasso_selection)
+    session[:spatial_lasso_selection] = nil
+    redirect_to request.env['HTTP_REFERER']
   end
 
   def reset_manual_table_selection
-    reset_session_key(:manual_table_selection)
+    session[:manual_table_selection] = nil
+    redirect_to request.env['HTTP_REFERER']
   end
 
   def index
     @raw_filter_params = filter_params
-    logger.debug { "Parsed filters: #{@data.filters.inspect}" }
+    @data = XronosData.new(@raw_filter_params.except(:type), select_params)
+    @data_types = @raw_filter_params.fetch(:type, %w[c14 dendro]).map(&:downcase) & %w[c14 dendro]
+    if @data_types.include?("dendro") || params[:type] == "dendro"
+      @dendro_data = XronosData.new(@raw_filter_params.except(:type), select_params, data_type: :dendro)
+    end
 
-    # Select data based on the 'type' parameter
-    export_data = case params[:type]
-           when "c14" then @c14_data.xrons
-           when "dendro" then @dendro_data.xrons
-           else @data.xrons
-           end
-           
     respond_to do |format|
-      format.html { render_index_html }
-      format.json { render json: export_data }
-      format.geojson { render_geojson }
-      format.csv { render_csv }
+      format.html do
+        @filtered_count = @total_count = 0
+        set_counts if @data_types.include?("c14")
+
+        xrons_relation = @data.xrons.includes(
+          sample: [
+            :material,
+            :taxon,
+            { context: :site }
+          ]
+        )
+
+        begin
+          if @dendro_data && @data_types.include?("dendro")
+            dendros = @dendro_data.xrons.includes(sample: { context: :site }).order(:id)
+            @dendro_pagy, @dendro_xrons = pagy(:countish, dendros, page_param: :dendros_page)
+          end
+          @pagy, @xrons = if !@data_types.include?("c14")
+                            [nil, []]
+                          elsif unfiltered_request?
+                            Rails.cache.fetch(
+                              cache_key_for("html_page_#{params[:page] || 1}"),
+                              expires_in: 10.minutes
+                            ) do
+                              pagy(:countish, xrons_relation)
+                            end
+                          else
+                            pagy(:countish, xrons_relation)
+                          end
+        rescue Pagy::OverflowError
+          head :not_found and return
+        end
+
+        if @dendro_pagy
+          @filtered_count += @dendro_data.xrons.except(:select, :order).distinct.count(:id)
+          @total_count += @dendro_data.everything.count(:id)
+        end
+
+        render layout: 'full_page'
+      end
+
+      format.json do
+        if params[:type] == "dendro"
+          render json: @dendro_data.xrons
+        elsif params[:schema] == C14::MIAARD::SCHEMA
+          payload = if unfiltered_request?
+                      Rails.cache.fetch(cache_key_for('json_miaard'), expires_in: 10.minutes) do
+                        build_miaard_payload(@data.xrons)
+                      end
+                    else
+                      build_miaard_payload(@data.xrons)
+                    end
+          send_miaard_json(payload, "xronos_data_miaard_#{Date.today}.json")
+        elsif unfiltered_request?
+          send_cached_standard_json
+        else
+          render json: @data
+        end
+      end
+
+      format.geojson do
+        geojson = if unfiltered_request?
+                    Rails.cache.fetch(
+                      cache_key_for('geojson_with_dendro'),
+                      expires_in: 10.minutes
+                    ) do
+                      build_geojson_from_sql(filtered_sites_sql)
+                    end
+                  else
+                    build_geojson_from_sql(filtered_sites_sql)
+                  end
+
+        render json: geojson, adapter: nil, serializer: nil
+      end
+
+      format.csv do
+        if params[:type] == "dendro"
+          next send_data build_csv(@dendro_data.xrons, table: "dendros"),
+                           type: "text/csv; charset=utf-8",
+                           filename: "dendro_data_#{Date.today}.csv"
+        end
+
+        csv_data = if unfiltered_request?
+                     Rails.cache.fetch(
+                       cache_key_for('csv'),
+                       expires_in: 10.minutes
+                     ) do
+                       build_csv(@data.xrons)
+                     end
+                   else
+                     build_csv(@data.xrons)
+                   end
+
+        send_data csv_data,
+                  type: 'text/csv; charset=utf-8',
+                  filename: "xronos_data_#{Date.today}.csv",
+                  disposition: 'attachment'
+      end
     end
   end
 
   private
 
-  def set_data
-    # Determine the requested type (C14 or Dendro) and adjust filters
-    type_filter = filter_params[:type]&.map(&:downcase) || %w[c14 dendro]
+  def set_counts
+    if unfiltered_request?
+      base_relation = @data.everything.except(:select, :includes, :order)
 
-    # Separate filters based on type
-    if type_filter.include?("c14")
-      @c14_filter_params = filter_params.except(:type, :dendros)
-      @c14_data = XronosData.new(@c14_filter_params, select_params, :c14)
+      @total_count = @filtered_count =
+        Rails.cache.fetch(cache_key_for('total_count'), expires_in: 10.minutes) do
+          base_relation.distinct.count(:id)
+        end
     else
-      @c14_data = nil
-    end
+      filtered_relation = @data.xrons.except(:select, :includes, :order)
+      total_relation    = @data.everything.except(:select, :includes, :order)
 
-    if type_filter.include?("dendro")
-      @dendro_filter_params = filter_params.except(:type, :c14s, :cals)
-      @dendro_data = XronosData.new(@dendro_filter_params, select_params, :dendro)
-    else
-      @dendro_data = nil
-    end
-
-    # Set @data to the primary dataset, or a placeholder with filters
-    if @c14_data
-      @data = @c14_data
-    elsif @dendro_data
-      @data = @dendro_data
-    else
-      @data = XronosData.new(filter_params, select_params)
-    end
-
-    # Calculate total records and initialize sites
-    @n_data = (@c14_data&.xrons&.count || 0) + (@dendro_data&.xrons&.count || 0)
-    @total_data = (@c14_data&.everything&.count || 0) + (@dendro_data&.everything&.count || 0)
-
-    # Fetch site data based on the type filter
-    c14_sites = @c14_data&.xrons&.joins("LEFT JOIN sites ON sites.id = contexts.site_id")
-                         &.select("sites.id AS site_id, sites.lng, sites.lat, sites.name AS site_name")
-                         &.distinct
-
-    dendro_sites = @dendro_data&.xrons&.joins("LEFT JOIN sites ON sites.id = contexts.site_id")
-                               &.select("sites.id AS site_id, sites.lng, sites.lat, sites.name AS site_name")
-                               &.distinct
-
-    if c14_sites && dendro_sites
-      combined_sites_query = "((#{c14_sites.to_sql}) UNION (#{dendro_sites.to_sql})) AS combined_sites"
-      @sites = Site.from(combined_sites_query).select("site_id, lng, lat, site_name").distinct
-    elsif c14_sites
-      @sites = c14_sites
-    elsif dendro_sites
-      @sites = dendro_sites
-    else
-      @sites = Site.none
+      @filtered_count = filtered_relation.distinct.count(:id)
+      @total_count    = Rails.cache.fetch(cache_key_for('total_count'), expires_in: 10.minutes) do
+        total_relation.distinct.count(:id)
+      end
     end
   end
 
-  def reset_session_key(key)
-    session[key] = nil
-    redirect_back(fallback_location: root_path)
+  def unfiltered_request?
+    filter_params.blank? && select_params.blank?
   end
 
-  def filter_params
-    return {} unless params[:filter].present? # Return an empty hash if :filter is nil or empty
-    
-    params.fetch(:filter, {}).permit(
-    type: [],
-      c14s: [
-        :lab_identifier, { lab_identifier: [] }, { bp: [] }
-      ],
-      dendros: [
-        :waney_edge, :is_anchored
-      ],
-      cals: [
-        :tpq, { tpq: [] }, :taq, { taq: [] }
-      ],
-      c14_labs: [
-        :name, { name: [] }
-      ],
-      contexts: [
-        :name, { name: [] }
-      ],
-      materials: [
-        :name, { name: [] }
-      ],
-      taxons: [
-        :name, { name: [] }
-      ],
-      typos: [
-        :name, { name: [] }
-      ],
-      references: [
-        :short_ref, { short_ref: [] }
-      ],
-      sites: [
-        :name, { name: [] }, :country_code, { country_code: [] }, 
-        { lat: [] }, { lng: [] }
-      ],
-      site_types: [
-        :name, { name: [] }
-      ]
-    )    
+  def cache_key_for(suffix)
+    "xronos_data/unfiltered/v2/#{suffix}"
   end
 
-  def select_params
-    params.fetch(:select, {})
+  def filtered_sites_sql
+    relations = []
+    relations << @data.xrons if @data_types.include?("c14")
+    relations << @dendro_data.xrons if @dendro_data && @data_types.include?("dendro")
+    relations << @data.xrons.none if relations.empty?
+
+    relations.map do |relation|
+      relation.reselect("sites.id", "sites.lng", "sites.lat", "sites.name").reorder(nil).distinct.to_sql
+    end.join(" UNION ")
   end
 
-  def render_index_html
-    if @c14_data
-      @c14_pagy, @c14_xrons = pagy(@c14_data.xrons)
-    else
-      @c14_pagy, @c14_xrons = nil, []
-    end
-
-    if @dendro_data
-      @dendro_pagy, @dendro_xrons = pagy(@dendro_data.xrons)
-    else
-      @dendro_pagy, @dendro_xrons = nil, []
-    end
-
-    render layout: "full_page"
-  end
-
-  def render_geojson
-    geojson_query = Site.select("json_agg(geojson) AS measurements")
-                        .from(build_geojson_subquery)
-    render json: Site.connection.exec_query(geojson_query.to_sql)[0]['measurements'],
-           adapter: nil, serializer: nil
-  end
-
-  def build_geojson_subquery
-    <<~SQL
-      (SELECT jsonb_build_object(
+  def build_geojson_from_sql(sites_sql)
+    geojson_sql = <<~SQL.squish
+      (
+        SELECT jsonb_build_object(
           'type', 'Feature',
           'geometry', jsonb_build_object(
-              'type', 'Point',
-              'coordinates', jsonb_build_array(lng, lat)
+            'type', 'Point',
+            'coordinates', jsonb_build_array(lng, lat)
           ),
           'properties', jsonb_build_object(
-              'name', site_name,
-              'id', site_id
+            'name', name,
+            'id', id
           )
-      ) AS geojson FROM (#{@sites.to_sql}) AS subquery1) AS subquery2
+        ) AS geojson
+        FROM (#{sites_sql}) AS subquery1
+        WHERE lat IS NOT NULL
+          AND lng IS NOT NULL
+      ) AS subquery2
     SQL
+
+    Site.connection.exec_query(
+      Site.unscoped
+        .select("COALESCE(json_agg(geojson), '[]'::json) AS measurements")
+        .from(geojson_sql)
+        .to_sql
+    )[0]['measurements']
   end
 
-  def render_csv
-    # Determine the query based on the 'type' parameter
-    query = case params[:type]
-            when "c14"
-              <<~SQL
-                COPY (
-                  SELECT * FROM data_views WHERE id IN (#{@c14_data.xrons.pluck(:id).join(', ')})
-                ) TO STDOUT WITH CSV HEADER
-              SQL
-            when "dendro" # Preliminary dump the dendro table, ToDo when datastructure is fixed, replace by an related mat_view
-              <<~SQL
-                COPY (
-                  SELECT * FROM dendros WHERE id IN (#{@dendro_data.xrons.pluck(:id).join(', ')})
-                ) TO STDOUT WITH CSV HEADER
-              SQL
-            end
+  def build_csv(xrons_relation, table: "data_views")
+    ids_subquery = xrons_relation.reorder(nil).select(:id).to_sql
 
-    # Fetch CSV data and render it
-    csv_data = fetch_csv_data(query)
-    render plain: csv_data, content_type: 'text/csv', filename: "#{params[:type] || 'data'}_#{Date.today}.csv"
-  end
+    query = <<~SQL.squish
+      COPY (
+        SELECT *
+        FROM #{table}
+        WHERE id IN (#{ids_subquery})
+      ) TO STDOUT WITH CSV HEADER
+    SQL
 
-  def fetch_csv_data(query)
     connection = ActiveRecord::Base.connection.raw_connection
-    csv_data = ""
+    csv_data   = +''
 
     connection.copy_data(query) do
       while (row = connection.get_copy_data)
@@ -208,5 +210,86 @@ class XronosDataController < ApplicationController
     end
 
     csv_data
+  end
+
+  def build_miaard_payload(xrons_relation)
+    c14s = xrons_relation
+           .includes(sample: [:taxon, { context: :site }])
+           .reorder(:id)
+
+    entries = C14::MIAARD.collection(c14s).map(&:to_h)
+    { entries: entries }
+  end
+
+  def send_miaard_json(payload, filename)
+    send_data JSON.pretty_generate(payload),
+              type: 'application/json; charset=utf-8',
+              filename: filename,
+              disposition: 'attachment'
+  end
+
+  def send_cached_standard_json
+    json_payload = Rails.cache.fetch(cache_key_for('json'), expires_in: 10.minutes) do
+      @data.as_json
+    end
+
+    render json: json_payload
+  end
+
+  def filter_params
+    params.fetch(:filter, ActionController::Parameters.new).permit(
+      { type: [], dendros: [:waney_edge, :is_anchored] },
+      { c14s: [
+        :lab_identifier,
+        { lab_identifier: [] },
+        { bp: [] }
+      ] },
+      { cals: [
+        :tpq,
+        { tpq: [] },
+        :taq,
+        { taq: [] }
+      ] },
+      { c14_labs: [
+        :name,
+        { name: [] }
+      ] },
+      { contexts: [
+        :name,
+        { name: [] }
+      ] },
+      { materials: [
+        :name,
+        { name: [] }
+      ] },
+      { taxons: [
+        :name,
+        { name: [] }
+      ] },
+      { typos: [
+        :name,
+        { name: [] }
+      ] },
+      { references: [
+        :short_ref,
+        { short_ref: [] }
+      ] },
+      { sites: [
+        :name,
+        { name: [] },
+        :country_code,
+        { country_code: [] },
+        { lat: [] },
+        { lng: [] }
+      ] },
+      { site_types: [
+        :name,
+        { name: [] }
+      ] }
+    )
+  end
+
+  def select_params
+    params.fetch(:select, {})
   end
 end

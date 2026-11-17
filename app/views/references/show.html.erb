@@ -1,30 +1,60 @@
 <% content_for :title, "#{@reference.render_citation}, #{Reference.label.downcase}" %>
-<% content_for :meta_description, "#{@reference.render_citation} is cited by #{@reference.citations.count} records of archaeological sites, radiocarbon dates, and/or other chronometric determinations in the XRONOS repository." %>
+<% content_for :meta_description,
+   "#{@reference.render_citation} is cited by #{@citations_count} records of archaeological sites, radiocarbon dates, and/or other chronometric determinations in the XRONOS repository." %>
 
-<header id="reference-header" class="bg-light text-primary">
-  <div class="container my-5">
-    <h1 class="display-1"><%= @reference.render_citation %></h1>
-    <h2 class="display-6">
-      <%= xr_icon Reference, {}, style: "height: 2.5rem;" %>
-      <%= Reference.label.humanize %>
-    </h2>
+<main class="container my-5">
+
+  <header id="reference-header" class="mb-3">
+
+    <div class="text-uppercase small d-flex align-items-center">
+      <%= xr_icon Reference, {}, { class: "me-2", style: "width: auto; height: 1rem;" } %>
+      <span><%= Reference.label %></span>
+      <span class="vr mx-2"></span>
+      <%= link_to "XRONOS", root_path, class: "text-body-secondary text-decoration-none" %>
+    </div>
+
+    <div class="d-flex align-items-baseline mb-2">
+      <h1 class="mb-0 me-3"><%= @reference.render_citation %></h1>
+    </div>
+
+    <div class="lead text-body-secondary">
+      <%= @reference.render %>
+    </div>
+
+    <div class="d-flex align-items-center text-body-secondary small mt-2">
+      <%= bs_icon "link-45deg", class: "me-2" %>
+      <span class="font-monospace text-truncate"><%= reference_url(@reference) %></span>
+      <button type="button"
+              class="btn btn-sm btn-link p-0 ms-2"
+              data-controller="clipboard"
+              data-clipboard-text-value="<%= reference_url(@reference) %>"
+              data-action="clipboard#copy"
+              title="Copy permalink">
+        <%= bs_icon "clipboard" %>
+      </button>
+    </div>
+
+  </header>
+
+  <div class="mt-3">
+    <%= render "shared/record_metadata", record: @reference %>
   </div>
-</header>
 
-<section id="reference-details" class="bg-body">
-  <div class="container my-5">
+  <div class="mt-3 mb-5">
+    <%= render "shared/record_toolbar", record: @reference, downloads: [] %>
+  </div>
+
+  <section id="reference-details" class="my-5">
     <%= render "bibliography", references: [@reference] %>
-  </div>
-</section>
+  </section>
 
-<section id="reference-citations" class="bg-body">
-  <div class="container my-5">
+  <section id="reference-citations" class="my-5">
     <h2>Citing records</h2>
-    <% c = @reference.citations.count %>
+    <% c = @citations_count %>
     <p>There <%= c > 1 ? 'are' : 'is' %> <%= c %> <%= 'record'.pluralize(c) %>
         in XRONOS that <%= c > 1 ? 'cite' : 'cites' %> this reference.</p>
 
-    <% unless @sites.blank? %>
+    <% if @sites.present? %>
       <div class="my-5">
         <h3>
           <%= xr_icon Site, {}, style: "height: 1.75rem; vertical-align: top;" %>
@@ -32,60 +62,18 @@
           <small class="text-muted">(<%= @pagy_sites.count %>)</small>
         </h3>
         <turbo-frame id="reference-sites-table">
-          <ul>
-            <% @sites.each do |site| %>
-              <li><%= link_to site.name, site %>, <%= render "sites/country", site: site %></li>
-            <% end %>
-          </ul>
+          <%= render "sites/table", sites: @sites %>
           <% unless @pagy_sites.pages <= 1 %>
-            <%== pagy_bootstrap_nav(@pagy_sites) %>
+            <%== @pagy_sites.series_nav(:bootstrap) %>
           <% end %>
         </turbo-frame>
       </div>
     <% end %>
+  </section>
 
-    <% unless @c14s.blank? %>
-      <div class="my-5">
-        <h3>
-          <%= xr_icon C14, {}, style: "height: 1.75rem; vertical-align: top;" %>
-          <%= C14.label.humanize.pluralize %>
-          <small class="text-muted">(<%= @pagy_c14s.count %>)</small>
-        </h3>
-        <turbo-frame id="reference-c14s-table">
-          <%= render "c14s/table", c14s: @c14s %>
-          <% unless @pagy_c14s.pages <= 1 %>
-            <%== pagy_bootstrap_nav(@pagy_c14s) %>
-          <% end %>
-        </turbo-frame>
-      </div>
-    <% end %>
-
-    <% unless @typos.blank? %>
-      <div class="my-5">
-        <h3>
-          <%= xr_icon Typo, {}, style: "height: 1.75rem; vertical-align: top;" %>
-          <%= Typo.label.humanize.pluralize %>
-          <small class="text-muted">(<%= @pagy_typos.count %>)</small>
-        </h3>
-        <turbo-frame id="reference-typos-table">
-          <%= render "typos/table", typos: @typos %>
-          <% unless @pagy_c14s.pages <= 1 %>
-            <%== pagy_bootstrap_nav(@pagy_typos) %>
-          <% end %>
-        </turbo-frame>
-      </div>
-    <% end %>
-  </div>
-</section>
-
-<section id="xronos-metadata" class="bg-light">
-  <div class="container my-5">
-    <h2>Metadata</h2>
-    <%= render "shared/record_metadata", record: @reference, record_label: "reference" %>
-  </div>
-
-  <div class="container my-5">
+  <section id="reference-changelog" class="my-5">
     <h2>Changelog</h2>
     <%= render "application/paper_trail/versions", item: @reference %>
-  </div>
-</section>
+  </section>
+
+</main>

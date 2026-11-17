@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: site_types
+# Database name: primary
 #
 #  id          :bigint           not null, primary key
 #  description :text
@@ -12,10 +13,11 @@
 #
 #  index_site_types_on_name  (name)
 #
+
 FactoryBot.define do
   
   factory :site_type do
-    name { Faker::Name.unique.last_name }
+    sequence(:name) { |n| "Site Type #{n}" }
     description { Faker::Lorem.sentence }
   end
   

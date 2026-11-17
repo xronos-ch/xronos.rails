@@ -1,6 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
 import noUiSlider from "nouislider";
-import "nouislider/dist/nouislider.css";
 import wNumb from "wnumb";
 
 // Connects to data-controller="slider"

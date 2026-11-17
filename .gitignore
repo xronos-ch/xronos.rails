@@ -70,6 +70,9 @@ yarn-debug.log*
 
 # --- XRONOS ---
 
+# import data
+data/sources/
+
 # macOS
 *.DS_Store
 
@@ -103,3 +106,9 @@ public/sitemaps/*
 !/app/assets/builds/.keep
 
 /node_modules
+
+
+
+# --- Coding agents ---
+PLAN
+PLAN.md

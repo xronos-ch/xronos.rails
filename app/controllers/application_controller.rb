@@ -1,8 +1,15 @@
 class ApplicationController < ActionController::Base
+  include Pagy::Method
+
   before_action :store_user_location!, if: :storable_location?
   before_action :set_paper_trail_whodunnit
 
   before_action :http_basic_authenticate
+  
+  after_action lambda {
+    cookies.delete(Rails.application.config.session_options[:key]) unless user_signed_in?
+    request.session_options[:skip] = !(user_signed_in? || devise_controller?)
+  }
 
   protect_from_forgery with: :null_session, :if => Proc.new { |c| c.request.format == 'application/json' }
 
@@ -13,18 +20,8 @@ class ApplicationController < ActionController::Base
   end
 
   # Return 404 for unauthorised resources
-  #rescue_from CanCan::AccessDenied do |exception|
-  #  raise ActionController::RoutingError.new('Not Found')
-  #end
-  
-
-  # Redirect to the custom unauthorized page for unauthorized access
-  rescue_from CanCan::AccessDenied do |exception|
-    respond_to do |format|
-      format.html { redirect_to unauthorized_path, alert: exception.message, status: :forbidden }
-      format.json { render json: { error: exception.message }, status: :forbidden }
-      format.any { head :forbidden }
-    end
+  rescue_from CanCan::AccessDenied do |_exception|
+    head :not_found
   end
 
   def info_for_paper_trail

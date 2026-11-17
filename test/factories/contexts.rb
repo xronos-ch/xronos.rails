@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: contexts
+# Database name: primary
 #
 #  id                :bigint           not null, primary key
 #  approx_end_time   :integer
@@ -12,16 +13,19 @@
 #
 # Indexes
 #
-#  index_contexts_on_name     (name)
-#  index_contexts_on_site_id  (site_id)
+#  index_contexts_on_name                 (name)
+#  index_contexts_on_site_id              (site_id)
+#  index_contexts_one_null_name_per_site  (site_id) UNIQUE WHERE (name IS NULL)
+#  index_contexts_unique_name_per_site    (site_id,name) UNIQUE WHERE (name IS NOT NULL)
 #
+
 FactoryBot.define do
-  
+
   factory :context do
-    name { Faker::Tea.unique.variety }
+    sequence(:name) { |n| "Context #{n}" }
     approx_start_time {Faker::Number.between(from: 3000, to: 4000)}
     approx_end_time {Faker::Number.between(from: 1000, to: 2000)}
     site
   end
-  
+
 end

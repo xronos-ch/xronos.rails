@@ -1,5 +1,5 @@
 # base image
-FROM ruby:3.3.6
+FROM ruby:3.3.13-bookworm
 MAINTAINER Martin Hinz <martin.hinz@iaw.unibe.ch>
 
 # install node and yarn

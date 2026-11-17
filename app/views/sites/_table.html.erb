@@ -36,7 +36,7 @@
     <% sites.each do |site| %>
       <tr>
         <td><%= link_to site.name, site, target: :_top %></td>
-        <td><%= site.country.present? ? render("country", site: site) : na_value %></td>
+        <td><%= site.country.present? ? render("sites/country", site: site) : na_value %></td>
         <td class="font-monospace"><%= site.coordinates.present? ? site.coordinates : na_value %></td>
         <td class="text-end"><%= site.c14s_count %></td>
         <td class="text-end"><%= site.typos_count %></td>

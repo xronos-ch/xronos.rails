@@ -2,9 +2,22 @@
   <%= na_value %>
 <% else %>
   <span class="badge bg-info"><%= link_to context.site.name, context.site %></span>
+
   <% if context.name.present? %>
     <%= context.name %>
   <% else %>
     <%= na_value %>
+  <% end %>
+
+  <% if context.functional_classifications.any? %>
+    <span class="ms-1">
+      <% context.functional_classifications.each do |classification| %>
+        <span class="badge bg-secondary"
+              title="Functional classification: <%= classification.confidence.humanize %>"
+          <%= classification.functional_classification_category.name.humanize %>
+              (<%= classification.confidence.humanize %>)
+        </span>
+      <% end %>
+    </span>
   <% end %>
 <% end %>

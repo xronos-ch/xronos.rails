@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: taxons
+# Database name: primary
 #
 #  id         :bigint           not null, primary key
 #  name       :string
@@ -13,10 +14,9 @@
 #  index_taxons_on_gbif_id  (gbif_id)
 #  index_taxons_on_name     (name)
 #
+
 FactoryBot.define do
-  
   factory :taxon do
-    name { Faker::Creature::Animal.unique.name }
+    sequence(:name) { |n| "Taxon #{n}" }
   end
-  
 end

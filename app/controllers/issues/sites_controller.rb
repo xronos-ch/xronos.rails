@@ -3,11 +3,7 @@ class Issues::SitesController < IssuesController
 
   # GET /issues/sites/:issue
   def index
-    if issue_param.present?
-      @sites = Site.send(issue_param)
-    else
-      @sites = Site.all
-    end
+    @sites = issue_relation_for(Site)
 
     if params.has_key?(:search)
       @sites = @sites.search params[:search]
@@ -23,7 +19,7 @@ class Issues::SitesController < IssuesController
     @sites = @sites.with_counts
 
     respond_to do |format|
-      format.html { @pagy, @sites = pagy(@sites) }
+      format.html { @pagy, @sites = pagy(:offset, @sites) }
     end
   end
 

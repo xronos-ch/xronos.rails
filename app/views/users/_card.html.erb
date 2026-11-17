@@ -1,0 +1,27 @@
+<% user_profile = user.user_profile %>
+  <div class="mb-3">
+  <% if user_profile.present? %>
+    <% if user_profile.photo.attached? %>
+      <div class="ms-auto">
+        <%= image_tag user_profile.photo.variant(:thumb),
+          style: "max-width: 48px; border-radius: 50%" %>
+      </div>
+    <% end %>
+    <%= link_to user_profile.full_name, contributor_path(user.user_profile) %>
+    <p class="small">
+      <% if user_profile.affiliation.present? %>
+        <%= user_profile.affiliation %>
+      <% end %>
+      <% if user.admin? and user.id != ENV["ADMIN_USER_ID"].to_i %>
+        <br>XRONOS Core Team
+      <% end %>
+    </p>
+  <% else %>
+    <span class="text-body-secondary"
+          data-bs-toggle="tooltip"
+          data-controller="tooltips"
+          title="This user has not supplied further details about themselves">
+      XRONOS user #<%= user.id %>
+    </span>
+  <% end %>
+</div>

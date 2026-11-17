@@ -1,0 +1,16 @@
+<%= f.hidden_field :linkable_type %>
+<%= f.hidden_field :linkable_id %>
+<%= f.hidden_field :source %>
+
+<% source_obj = LinkedResource::Source.find(@linked_resource.source) %>
+
+<%= f.text_field :external_id,
+  label: "#{source_obj.name} identifier",
+  placeholder: (source_obj.id_pattern ? "e.g. #{source_obj.id_pattern.random_example}" : nil)
+%>
+
+<div class="form-check">
+  <%= f.hidden_field :status, value: "pending" %>
+  <%= f.check_box :status, { class: "form-check-input", id: "status_checkbox", label: "Approve" }, "approved", "pending" %>
+</div>
+

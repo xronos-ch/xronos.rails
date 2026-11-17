@@ -9,7 +9,7 @@
   <turbo-frame id="references-table">
     <div id="references-toolbar" class="d-flex">
       <div class="ms-auto">
-        <%= link_to bs_icon("download"), references_path(format: :csv, **request.query_parameters), class: "btn btn-sm btn-outline-primary", title: "Download CSV" %>
+        <%= link_to bs_icon("download"), references_path(format: :csv, reference: @reference_params), class: "btn btn-sm btn-outline-primary", title: "Download CSV" %>
       </div>
     </div>
     <table class="responsive nowrap table table-hover align-middle">
@@ -44,7 +44,7 @@
       </tbody>
     </table>
 
-    <%== pagy_bootstrap_nav(@pagy) %>
+    <%== @pagy.series_nav(:bootstrap) %>
   </turbo-frame>
 
   <% if can? :create, Reference %>

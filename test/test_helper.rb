@@ -1,12 +1,41 @@
+# Calculate coverage if required (i.e. in CI, but not locally)
+if ENV["COVERAGE"]
+  require "simplecov"
+  require "simplecov-cobertura"
+
+  SimpleCov.command_name ENV.fetch("SIMPLECOV_COMMAND_NAME", "rails-tests")
+  SimpleCov.merge_timeout 3600
+
+  SimpleCov.formatters = [
+    SimpleCov::Formatter::HTMLFormatter,
+    SimpleCov::Formatter::CoberturaFormatter
+  ]
+
+  SimpleCov.start "rails" do
+    enable_coverage :branch
+  end
+end
+
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
 require 'rails/test_help'
+require 'minitest/autorun'
+require 'webmock/minitest'
 #require "minitest/rails/capybara"
 require 'capybara/rails'
 require 'capybara/minitest'
+require "active_job/test_helper"
+
+# Allow local requests
+WebMock.disable_net_connect!(allow_localhost: true)
+
+# Load all files in test/support
+Dir[Rails.root.join("test/support/**/*.rb")].sort.each { |f| require f }
 
 class ActionDispatch::IntegrationTest
-  
+
+  include ApiAssertions
+
   # Make the Capybara DSL available in all integration tests
   include Capybara::DSL
   # Make `assert_*` methods behave like Minitest assertions
@@ -24,10 +53,14 @@ class ActionDispatch::IntegrationTest
   end
 
   Capybara.register_driver :headless_chrome do |app|
+    options = Selenium::WebDriver::Chrome::Options.new
+    options.add_argument("--headless=new")
+    options.logging_prefs = { browser: "ALL" }
+
     Capybara::Selenium::Driver.new(
       app,
       browser: :chrome,
-      options: capabilities # change keyword
+      options: options
     )
   end
 
@@ -39,12 +72,27 @@ class ActionDispatch::IntegrationTest
   end
 end
 
+# Set PaperTrail whodunnit for all tests that create SupersessionEvents.
+PAPER_TRAIL_WHODUNNIT = begin
+  user = User.find_or_create_by!(email: "paper_trail@xronos.ch") do |u|
+    u.password = "password"
+    u.password_confirmation = "password"
+    u.passphrase = ENV.fetch("REGISTRATION_PASSPHRASE", "xronos")
+  end
+  user.id.to_s
+end
+
 class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
   #fixtures :all
   # Add more helper methods to be used by all tests here...
 
   include FactoryBot::Syntax::Methods
+  include ActiveJob::TestHelper
+
+  setup do
+    PaperTrail.request.whodunnit = PAPER_TRAIL_WHODUNNIT
+  end
 
   def with_versioning
     was_enabled = PaperTrail.enabled?

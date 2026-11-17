@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ##
 # c14 class
 #
@@ -6,94 +8,118 @@
 # == Schema Information
 #
 # Table name: c14s
+# Database name: primary
 #
-#  id             :bigint           not null, primary key
-#  bp             :integer
-#  cal_bp         :integer
-#  cal_std        :integer
-#  delta_c13      :float
-#  delta_c13_std  :float
-#  lab_identifier :string
-#  method         :string
-#  std            :integer
-#  created_at     :datetime         not null
-#  updated_at     :datetime         not null
-#  c14_lab_id     :bigint
-#  sample_id      :bigint
+#  id                    :bigint           not null, primary key
+#  bp                    :integer
+#  cal_bp                :integer
+#  cal_std               :integer
+#  carbon_nitrogen_ratio :float
+#  carbon_proportion     :float
+#  delta_15n             :float
+#  delta_c13             :float
+#  delta_c13_std         :float
+#  lab_identifier        :string
+#  method                :string
+#  std                   :integer
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  c14_lab_id            :bigint
+#  sample_id             :bigint
 #
 # Indexes
 #
-#  index_c14s_on_c14_lab_id      (c14_lab_id)
-#  index_c14s_on_lab_identifier  (lab_identifier)
-#  index_c14s_on_method          (method)
-#  index_c14s_on_sample_id       (sample_id)
+#  index_c14s_on_c14_lab_id                               (c14_lab_id)
+#  index_c14s_on_lab_identifier                           (lab_identifier)
+#  index_c14s_on_lab_identifier_sample_id_and_created_at  (lab_identifier,sample_id,created_at)
+#  index_c14s_on_method                                   (method)
+#  index_c14s_on_sample_id                                (sample_id)
 #
-class C14 < ApplicationRecord
 
-  has_one :chron, as: :recordable
-  belongs_to :sample
-  accepts_nested_attributes_for :sample, reject_if: :all_blank
+class C14 < Chron
+  include Citable
+
+  exact_duplicates_on :lab_identifier,
+                      :sample_id,
+                      bp: :nil_matches_nil,
+                      std: :nil_matches_nil,
+                      method: :nil_matches_nil,
+                      delta_15n: :nil_matches_nil,
+                      delta_c13: :nil_matches_nil,
+                      delta_c13_std: :nil_matches_nil
 
   belongs_to :c14_lab, optional: true
-  belongs_to :source_database, optional: true
-
-  has_many :citations, as: :citing
-  has_many :references, :through => :citations
-
-  delegate :context, to: :sample
-  delegate :site, to: :sample
+  accepts_nested_attributes_for :sample, reject_if: :all_blank
 
   validates :bp, :std, presence: true
-  validates_associated :sample
+  validates :carbon_proportion, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 1 }, allow_nil: true
 
-  composed_of :lab_id, mapping: %w(lab_identifier), allow_nil: true
-
-  include Versioned
+  composed_of :lab_id, mapping: %w[lab_identifier], allow_nil: true
 
   include HasIssues
-  @issues = [ :missing_c14_age, :very_old_c14, :missing_c14_error, 
-              :missing_d13c, :missing_d13c_error, :missing_c14_method, 
-              :missing_c14_lab_id, :invalid_lab_id, :missing_c14_lab ]
+  @issues = %i[missing_c14_age very_old_c14 missing_c14_error
+               missing_d13c missing_d13c_error missing_c14_method
+               missing_c14_lab_id invalid_lab_id missing_c14_lab]
+
+  include Linkable
+  linkable_to :opencontext
+
+  snapshot_peripherals :citations, :linked_resources
 
   include PgSearch::Model
-  pg_search_scope :search, 
-    against: :lab_identifier, 
-    using: { tsearch: { prefix: true } } # match partial words
+  pg_search_scope :search,
+                  against: :lab_identifier,
+                  using: { tsearch: { prefix: true } } # match partial words
   multisearchable against: :lab_identifier
 
-  acts_as_copy_target # enable CSV exports
+  LIBBY_MEAN_LIFE = 8033.0
 
   def self.label
-    "radiocarbon date"
+    'radiocarbon date'
   end
 
   def self.icon
-    "icons/c14.svg"
+    'icons/c14.svg'
+  end
+
+  def label
+    lab_id
   end
 
   def uncal_age
-    unless bp.blank? && std.blank?
-      "#{bp}±#{std} BP"
-    else
-      nil
-    end
+    return if bp.blank? && std.blank?
+
+    "#{bp}±#{std} BP"
   end
 
   def calibration(curve: site.default_c14_curve)
-    Calibration.find_or_create_by c14_age: bp, c14_error: std, c14_curve: curve
+    @calibration ||= Calibration.find_or_create_by c14_age: bp, c14_error: std, c14_curve: curve
+  end
+
+  def f14c
+    return nil if bp.blank?
+
+    Math.exp(-bp.to_f / LIBBY_MEAN_LIFE)
+  end
+
+  def f14c_error
+    return nil if bp.blank? || std.blank?
+
+    f14c * std.to_f / LIBBY_MEAN_LIFE
   end
 
   # Issues
-  
+
   scope :missing_c14_age, -> { where(bp: nil) }
   def missing_c14_age?
     bp.blank?
   end
 
-  scope :very_old_c14, -> { where("bp > 50000") }
+  scope :very_old_c14, -> { where('bp > 50000') }
   def very_old_c14?
     return nil if bp.blank?
-    bp > 50000
+
+    bp > 50_000
   end
 
   scope :missing_c14_error, -> { where(std: nil) }
@@ -110,27 +136,32 @@ class C14 < ApplicationRecord
   def missing_d13c_error?
     delta_c13_std.blank?
   end
-  
+
   scope :missing_c14_method, -> { where(method: nil) }
   def missing_c14_method?
     method.blank?
   end
-  
+
   scope :missing_c14_lab_id, -> { where(lab_identifier: nil) }
   def missing_c14_lab_id?
     lab_identifier.blank?
   end
 
-  scope :invalid_lab_id, -> { where("lab_identifier !~* ?", LabId::PATTERN) }
+  scope :invalid_lab_id, -> { where('lab_identifier !~* ?', LabId::PATTERN) }
   def invalid_lab_id?
     return false if lab_id.blank?
+
     lab_id.invalid?
   end
-  
+
   scope :missing_c14_lab, -> { where(c14_lab_id: nil) }
   def missing_c14_lab?
     c14_lab_id.blank?
   end
-  
-end
 
+  private
+
+  def citation_title
+    lab_id.to_s.presence || "C14 record ##{id}"
+  end
+end

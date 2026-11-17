@@ -1,0 +1,588 @@
+# frozen_string_literal: true
+
+# == Schema Information
+#
+# Table name: c14s
+# Database name: primary
+#
+#  id                    :bigint           not null, primary key
+#  bp                    :integer
+#  cal_bp                :integer
+#  cal_std               :integer
+#  carbon_nitrogen_ratio :float
+#  carbon_proportion     :float
+#  delta_15n             :float
+#  delta_c13             :float
+#  delta_c13_std         :float
+#  lab_identifier        :string
+#  method                :string
+#  std                   :integer
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  c14_lab_id            :bigint
+#  sample_id             :bigint
+#
+# Indexes
+#
+#  index_c14s_on_c14_lab_id                               (c14_lab_id)
+#  index_c14s_on_lab_identifier                           (lab_identifier)
+#  index_c14s_on_lab_identifier_sample_id_and_created_at  (lab_identifier,sample_id,created_at)
+#  index_c14s_on_method                                   (method)
+#  index_c14s_on_sample_id                                (sample_id)
+#
+require 'test_helper'
+
+class C14Test < ActiveSupport::TestCase
+  test 'destroying a c14 destroys its citations' do
+    c14 = create(:c14, :with_citations, citations_count: 2)
+    assert_dependent_destroy(c14, :citations, count: 2)
+  end
+
+  test 'is invalid when its sample has been merged away' do
+    sample = create(:sample)
+    sample.destroy
+    c14 = build(:c14, sample: sample)
+
+    assert_not c14.valid?
+    assert(c14.errors[:sample].any? { |m| /was merged/.match?(m) })
+    assert_raises(ActiveRecord::RecordInvalid) { c14.save! }
+  end
+
+  test 'calculates f14c from conventional radiocarbon age' do
+    c14 = C14.new(bp: 4500)
+
+    assert_in_delta Math.exp(-4500.0 / C14::LIBBY_MEAN_LIFE),
+                    c14.f14c,
+                    0.0000001
+  end
+
+  test 'calculates f14c error from conventional radiocarbon age and error' do
+    c14 = C14.new(bp: 4500, std: 30)
+
+    expected_f14c = Math.exp(-4500.0 / C14::LIBBY_MEAN_LIFE)
+    expected_error = expected_f14c * 30.0 / C14::LIBBY_MEAN_LIFE
+
+    assert_in_delta expected_error,
+                    c14.f14c_error,
+                    0.0000001
+  end
+
+  test 'returns nil f14c without conventional radiocarbon age' do
+    c14 = C14.new(bp: nil)
+
+    assert_nil c14.f14c
+  end
+
+  test 'returns nil f14c error without conventional radiocarbon age or error' do
+    assert_nil C14.new(bp: nil, std: 30).f14c_error
+    assert_nil C14.new(bp: 4500, std: nil).f14c_error
+  end
+
+  test 'carbon_proportion accepts nil' do
+    c14 = build(:c14, carbon_proportion: nil)
+    assert c14.valid?
+  end
+
+  test 'carbon_proportion accepts values between 0 and 1' do
+    assert build(:c14, carbon_proportion: 0.0).valid?
+    assert build(:c14, carbon_proportion: 0.5).valid?
+    assert build(:c14, carbon_proportion: 1.0).valid?
+  end
+
+  test 'carbon_proportion rejects values outside 0..1' do
+    c14 = build(:c14, carbon_proportion: -0.1)
+    assert_not c14.valid?
+    assert_includes c14.errors[:carbon_proportion], 'must be greater than or equal to 0'
+
+    c14 = build(:c14, carbon_proportion: 1.1)
+    assert_not c14.valid?
+    assert_includes c14.errors[:carbon_proportion], 'must be less than or equal to 1'
+  end
+
+  #
+  # Deduplication
+  #
+
+  test 'auto-merges on create when all key attrs match' do
+    sample = create(:sample)
+    canonical = create(:c14, lab_identifier: 'OxA-12345', sample: sample,
+                             bp: 3500, std: 30, method: 'AMS',
+                             delta_15n: -25.0, delta_c13: -20.0, delta_c13_std: 1.5)
+
+    # Bypass `validate :no_exact_duplicate, on: :create` to exercise
+    # the after_save merge path in isolation.
+    dupe = build(:c14, lab_identifier: 'OxA-12345', sample: sample,
+                       bp: 3500, std: 30, method: 'AMS',
+                       delta_15n: -25.0, delta_c13: -20.0, delta_c13_std: 1.5)
+    dupe.save(validate: false)
+
+    assert_predicate dupe, :superseded?
+    assert_equal canonical.id, dupe.merged_into_id
+  end
+
+  test 'auto-merges on update when an update creates a duplicate' do
+    sample = create(:sample)
+    canonical = create(:c14, lab_identifier: 'OxA-12345', sample: sample,
+                             bp: 3500, std: 30, method: 'AMS',
+                             delta_15n: -25.0, delta_c13: -20.0, delta_c13_std: 1.5)
+    other = create(:c14, lab_identifier: 'OxA-67890', sample: sample,
+                         bp: 4000, std: 35, method: 'AMS',
+                         delta_15n: -22.0, delta_c13: -18.0, delta_c13_std: 1.2)
+
+    other.update!(lab_identifier: 'OxA-12345', bp: 3500, std: 30,
+                  delta_15n: -25.0, delta_c13: -20.0, delta_c13_std: 1.5)
+
+    assert_predicate other, :superseded?
+    assert_equal canonical.id, other.merged_into_id
+  end
+
+  test 'does not auto-merge when lab_identifier is unique' do
+    sample = create(:sample)
+    create(:c14, lab_identifier: 'OxA-12345', sample: sample)
+    other = create(:c14, lab_identifier: 'OxA-67890', sample: sample)
+
+    assert_not other.superseded?
+    assert_nil other.merged_into_id
+  end
+
+  test 'does not auto-merge when lab_identifier matches but bp differs' do
+    sample = create(:sample)
+    create(:c14, lab_identifier: 'OxA-12345', sample: sample, bp: 3500, std: 30)
+    other = create(:c14, lab_identifier: 'OxA-12345', sample: sample, bp: 4000, std: 30)
+
+    assert_not other.superseded?
+    assert_nil other.merged_into_id
+  end
+
+  test 'does not auto-merge when lab_identifier matches but sample differs' do
+    sample_a = create(:sample)
+    sample_b = create(:sample)
+    create(:c14, lab_identifier: 'OxA-12345', sample: sample_a, bp: 3500, std: 30)
+    other = create(:c14, lab_identifier: 'OxA-12345', sample: sample_b, bp: 3500, std: 30)
+
+    # Cross-sample matches are excluded by the key
+    assert_not other.superseded?
+    assert_nil other.merged_into_id
+    assert_predicate C14.find(other.id), :persisted?
+  end
+
+  test 'auto-merges when key attrs match with nil on both sides (nil_matches_nil)' do
+    sample = create(:sample)
+    canonical = create(:c14, lab_identifier: 'OxA-12345', sample: sample,
+                             bp: 3500, std: 30, method: nil,
+                             delta_15n: nil, delta_c13: nil, delta_c13_std: nil)
+
+    # Bypass `validate :no_exact_duplicate, on: :create` to exercise
+    # the after_save merge path in isolation.
+    dupe = build(:c14, lab_identifier: 'OxA-12345', sample: sample,
+                       bp: 3500, std: 30, method: nil,
+                       delta_15n: nil, delta_c13: nil, delta_c13_std: nil)
+    dupe.save(validate: false)
+
+    assert_predicate dupe, :superseded?
+    assert_equal canonical.id, dupe.merged_into_id
+  end
+
+  test 'does not auto-merge when method is set on one side and nil on the other' do
+    sample = create(:sample)
+    create(:c14, lab_identifier: 'OxA-12345', sample: sample, bp: 3500, std: 30, method: 'AMS')
+    other = create(:c14, lab_identifier: 'OxA-12345', sample: sample, bp: 3500, std: 30, method: nil)
+
+    # method has :nil_matches_nil, so nil==nil matches, but nil != "AMS"
+    assert_not other.superseded?
+    assert_nil other.merged_into_id
+  end
+
+  test 'reassigns non-colliding citations to the canonical on create' do
+    sample = create(:sample)
+    canonical = create(:c14, lab_identifier: 'OxA-12345', sample: sample,
+                             bp: 3500, std: 30, method: 'AMS',
+                             delta_15n: -25.0, delta_c13: -20.0, delta_c13_std: 1.5)
+    reference = create(:reference)
+
+    dupe = build(:c14, lab_identifier: 'OxA-12345', sample: sample,
+                       bp: 3500, std: 30, method: 'AMS',
+                       delta_15n: -25.0, delta_c13: -20.0, delta_c13_std: 1.5)
+    dupe.citations << build(:citation, reference: reference, citing: dupe)
+    dupe.save(validate: false)
+
+    assert_predicate dupe, :superseded?
+    assert_equal 0, Citation.where(citing_type: 'C14', citing_id: dupe.id).count
+    assert_equal 1, Citation.where(citing_type: 'C14', citing_id: canonical.id, reference: reference).count
+  end
+
+  test 'destroys colliding citations on create' do
+    sample = create(:sample)
+    canonical = create(:c14, lab_identifier: 'OxA-12345', sample: sample,
+                             bp: 3500, std: 30, method: 'AMS',
+                             delta_15n: -25.0, delta_c13: -20.0, delta_c13_std: 1.5)
+    reference = create(:reference)
+    create(:citation, reference: reference, citing: canonical)
+
+    dupe = build(:c14, lab_identifier: 'OxA-12345', sample: sample,
+                       bp: 3500, std: 30, method: 'AMS',
+                       delta_15n: -25.0, delta_c13: -20.0, delta_c13_std: 1.5)
+    dupe.citations << build(:citation, reference: reference, citing: dupe)
+    dupe.save(validate: false)
+
+    assert_predicate dupe, :superseded?
+    # Canonical's citation remains; dupe's collision is destroyed
+    assert_equal 1, Citation.where(citing_type: 'C14', citing_id: canonical.id, reference: reference).count
+    assert_equal 0, Citation.where(citing_type: 'C14', citing_id: dupe.id).count
+  end
+
+  #
+  # Cross-sample dedup
+  #
+
+  def nameless_sample_attrs(context:)
+    { context: context, name: nil, material: nil, taxon: nil,
+      part_of_organism: nil, position_description: nil, position_crs: nil,
+      position_x: nil, position_y: nil, position_z: nil }
+  end
+
+  def c14_attrs(sample:)
+    { lab_identifier: 'OxA-12345', sample: sample,
+      bp: 3500, std: 30, method: 'AMS',
+      delta_15n: -25.0, delta_c13: -20.0, delta_c13_std: 1.5 }
+  end
+
+  test 'cross-sample: auto-merges on create when chrons match across two name-relaxed-duplicate samples' do
+    context = create(:context)
+    canonical_sample = create(:sample, nameless_sample_attrs(context: context))
+
+    # Skip the sample auto-merge (and the on: :create duplicate
+    # validation) so the dupe sample persists long enough to receive
+    # a c14; the c14 save will trigger the cross-sample flow.
+    Sample.skip_callback(:save, :after, :merge_exact_duplicates)
+    Sample.skip_callback(:validate, :before, :no_exact_duplicate, on: :create)
+    begin
+      dupe_sample = create(:sample, nameless_sample_attrs(context: context))
+      canonical = create(:c14, c14_attrs(sample: canonical_sample))
+      dupe = create(:c14, c14_attrs(sample: dupe_sample))
+    ensure
+      Sample.set_callback(:save, :after, :merge_exact_duplicates)
+      Sample.set_callback(:validate, :before, :no_exact_duplicate, on: :create)
+    end
+
+    assert_predicate dupe_sample, :destroyed?
+    assert_equal canonical_sample.id, dupe.reload.sample_id
+    assert_predicate dupe, :superseded?
+    assert_equal canonical.id, dupe.ultimately_superseded_by.id
+  end
+
+  test 'cross-sample: auto-merges on update when an update creates a cross-sample duplicate' do
+    context = create(:context)
+    canonical_sample = create(:sample, nameless_sample_attrs(context: context))
+
+    Sample.skip_callback(:save, :after, :merge_exact_duplicates)
+    Sample.skip_callback(:validate, :before, :no_exact_duplicate, on: :create)
+    begin
+      dupe_sample = create(:sample, nameless_sample_attrs(context: context))
+      canonical = create(:c14, c14_attrs(sample: canonical_sample))
+      dupe = create(:c14, lab_identifier: 'OxA-67890', sample: dupe_sample,
+                          bp: 4000, std: 35, method: 'AMS',
+                          delta_15n: -22.0, delta_c13: -18.0, delta_c13_std: 1.2)
+    ensure
+      Sample.set_callback(:save, :after, :merge_exact_duplicates)
+      Sample.set_callback(:validate, :before, :no_exact_duplicate, on: :create)
+    end
+
+    dupe.update!(lab_identifier: 'OxA-12345', bp: 3500, std: 30,
+                 delta_15n: -25.0, delta_c13: -20.0, delta_c13_std: 1.5)
+
+    assert_predicate dupe_sample, :destroyed?
+    assert_predicate dupe, :superseded?
+    assert_equal canonical.id, dupe.ultimately_superseded_by.id
+  end
+
+  test 'cross-sample: does not auto-merge when chrons differ in a non-sample_id attr' do
+    context = create(:context)
+    canonical_sample = create(:sample, nameless_sample_attrs(context: context))
+
+    Sample.skip_callback(:save, :after, :merge_exact_duplicates)
+    Sample.skip_callback(:validate, :before, :no_exact_duplicate, on: :create)
+    begin
+      dupe_sample = create(:sample, nameless_sample_attrs(context: context))
+      create(:c14, c14_attrs(sample: canonical_sample))
+      dupe = create(:c14, c14_attrs(sample: dupe_sample).merge(bp: 4000))
+    ensure
+      Sample.set_callback(:save, :after, :merge_exact_duplicates)
+      Sample.set_callback(:validate, :before, :no_exact_duplicate, on: :create)
+    end
+
+    # Cross-sample matches are excluded by the key
+    assert_not dupe_sample.destroyed?
+    assert_not dupe.superseded?
+    assert_nil dupe.merged_into_id
+    assert_predicate C14.find(dupe.id), :persisted?
+  end
+
+  test 'cross-sample: does not auto-merge when samples are not name-relaxed duplicates (different contexts)' do
+    canonical_sample = create(:sample, nameless_sample_attrs(context: create(:context)))
+
+    Sample.skip_callback(:save, :after, :merge_exact_duplicates)
+    Sample.skip_callback(:validate, :before, :no_exact_duplicate, on: :create)
+    begin
+      dupe_sample = create(:sample, nameless_sample_attrs(context: create(:context)))
+      create(:c14, c14_attrs(sample: canonical_sample))
+      dupe = create(:c14, c14_attrs(sample: dupe_sample))
+    ensure
+      Sample.set_callback(:save, :after, :merge_exact_duplicates)
+      Sample.set_callback(:validate, :before, :no_exact_duplicate, on: :create)
+    end
+
+    # Different contexts -> not name-relaxed duplicates -> no cross-sample merge
+    assert_not dupe_sample.destroyed?
+    assert_not dupe.superseded?
+    assert_nil dupe.merged_into_id
+  end
+
+  test 'cross-sample: does not auto-merge when one sample has a name and the other does not' do
+    context = create(:context)
+    canonical_sample = create(:sample, nameless_sample_attrs(context: context).merge(name: 'Bone 1'))
+
+    Sample.skip_callback(:save, :after, :merge_exact_duplicates)
+    Sample.skip_callback(:validate, :before, :no_exact_duplicate, on: :create)
+    begin
+      dupe_sample = create(:sample, nameless_sample_attrs(context: context))
+      create(:c14, c14_attrs(sample: canonical_sample))
+      dupe = create(:c14, c14_attrs(sample: dupe_sample))
+    ensure
+      Sample.set_callback(:save, :after, :merge_exact_duplicates)
+      Sample.set_callback(:validate, :before, :no_exact_duplicate, on: :create)
+    end
+
+    # Under the hypothetical name: :nil_matches_nil rule, "Bone 1" != nil
+    assert_not dupe_sample.destroyed?
+    assert_not dupe.superseded?
+    assert_nil dupe.merged_into_id
+  end
+
+  test 'cross-sample: same-sample path takes precedence (skips cross-sample fallback)' do
+    context_a = create(:context)
+    context_b = create(:context)
+    sample = create(:sample, nameless_sample_attrs(context: context_a))
+    canonical = create(:c14, c14_attrs(sample: sample))
+
+    other_sample = create(:sample, nameless_sample_attrs(context: context_b))
+    create(:c14, c14_attrs(sample: other_sample))
+
+    # other_sample is in a different context, so it's not a name-relaxed
+    # duplicate of `sample`. The same-sample merge would proceed; the
+    # cross-sample callback is a no-op. Bypass the on: :create duplicate
+    # validation to exercise the after_save path in isolation.
+    C14.skip_callback(:validate, :before, :no_exact_duplicate, on: :create)
+    begin
+      dupe = create(:c14, c14_attrs(sample: sample))
+    ensure
+      C14.set_callback(:validate, :before, :no_exact_duplicate, on: :create)
+    end
+
+    assert_predicate dupe, :superseded?
+    assert_equal canonical.id, dupe.ultimately_superseded_by.id
+    # The cross-sample fallback did not merge the samples
+    assert_not other_sample.destroyed?
+  end
+
+  test 'cross-sample: reassigns non-colliding citations to the canonical chron' do
+    context = create(:context)
+    canonical_sample = create(:sample, nameless_sample_attrs(context: context))
+    reference = create(:reference)
+
+    Sample.skip_callback(:save, :after, :merge_exact_duplicates)
+    Sample.skip_callback(:validate, :before, :no_exact_duplicate, on: :create)
+    begin
+      dupe_sample = create(:sample, nameless_sample_attrs(context: context))
+      canonical = create(:c14, c14_attrs(sample: canonical_sample))
+
+      dupe = build(:c14, c14_attrs(sample: dupe_sample))
+      dupe.citations << build(:citation, reference: reference, citing: dupe)
+      dupe.save!
+    ensure
+      Sample.set_callback(:save, :after, :merge_exact_duplicates)
+      Sample.set_callback(:validate, :before, :no_exact_duplicate, on: :create)
+    end
+
+    assert_predicate dupe, :superseded?
+    assert_equal 0, Citation.where(citing_type: 'C14', citing_id: dupe.id).count
+    assert_equal 1, Citation.where(citing_type: 'C14', citing_id: canonical.id, reference: reference).count
+  end
+
+  #
+  # Peripheral snapshots
+  #
+
+  test "c14 update creates version with peripheral snapshot" do
+    with_versioning do
+      c14 = create(:c14, lab_identifier: "OxA-12345")
+      c14.update!(bp: 4000)
+
+      version = c14.versions.last
+      assert version.snapshot_id.present?,
+        "Expected snapshot_id on c14 update version"
+    end
+  end
+
+  test "c14 update snapshot captures peripherals" do
+    with_versioning do
+      c14 = create(:c14, :with_citations, citations_count: 2)
+      c14.update!(bp: 4000)
+
+      version = c14.versions.last
+      snapshot = ActiveSnapshot::Snapshot.find(version.snapshot_id)
+
+      citation_items = snapshot.snapshot_items.where(child_group_name: "citations")
+      assert_equal c14.citations.count, citation_items.size,
+        "Expected snapshot to capture citations"
+    end
+  end
+
+  test "citation create triggers c14 version with snapshot" do
+    with_versioning do
+      c14 = create(:c14)
+      create(:citation, citing: c14)
+
+      version = c14.versions.reorder(created_at: :desc).first
+      assert version.snapshot_id.present?,
+        "Expected snapshot_id after citation create"
+
+      snapshot = ActiveSnapshot::Snapshot.find(version.snapshot_id)
+      items = snapshot.snapshot_items.where(child_group_name: "citations")
+      assert_equal 1, items.size
+    end
+  end
+
+  test "linked resource create triggers c14 version with snapshot" do
+    with_versioning do
+      c14 = create(:c14)
+      create(:linked_resource, linkable: c14, source: "OpenContext", external_id: "12345678-1234-1234-1234-123456789abc")
+
+      version = c14.versions.reorder(created_at: :desc).first
+      assert version.snapshot_id.present?,
+        "Expected snapshot_id after linked_resource create"
+
+      snapshot = ActiveSnapshot::Snapshot.find(version.snapshot_id)
+      items = snapshot.snapshot_items.where(child_group_name: "linked_resources")
+      assert_equal 1, items.size
+      assert_equal "OpenContext", items.first.object["source"]
+    end
+  end
+
+  test '.cross_sample_deduplicate! merges cross-sample duplicates in the existing dataset' do
+    context = create(:context)
+    canonical_sample = create(:sample, nameless_sample_attrs(context: context))
+
+    # Skip both sample and c14 auto-merge (and the on: :create
+    # duplicate validation) so the cross-sample duplicates can be
+    # set up without the auto-merge pre-empting the class method.
+    Sample.skip_callback(:save, :after, :merge_exact_duplicates)
+    Sample.skip_callback(:validate, :before, :no_exact_duplicate, on: :create)
+    C14.skip_callback(:save, :after, :merge_cross_sample_duplicates)
+    begin
+      dupe_sample = create(:sample, nameless_sample_attrs(context: context))
+      canonical = create(:c14, c14_attrs(sample: canonical_sample))
+      dupe = create(:c14, c14_attrs(sample: dupe_sample))
+    ensure
+      C14.set_callback(:save, :after, :merge_cross_sample_duplicates)
+      Sample.set_callback(:save, :after, :merge_exact_duplicates)
+      Sample.set_callback(:validate, :before, :no_exact_duplicate, on: :create)
+    end
+
+    # Nothing was merged yet
+    assert Sample.exists?(dupe_sample.id)
+    assert_not dupe.superseded?
+
+    C14.cross_sample_deduplicate!
+
+    # The class method loads fresh in-memory records, so we verify
+    # the database state directly rather than the original in-memory
+    # objects' `destroyed?` flag.
+    assert_nil Sample.find_by(id: dupe_sample.id)
+    dupe.reload
+    assert_predicate dupe, :superseded?
+    assert_equal canonical.id, dupe.ultimately_superseded_by.id
+  end
+  test "citation title is the lab_identifier" do
+    c14 = create(:c14, lab_identifier: "OxA-12345")
+    assert_equal "OxA-12345 (radiocarbon date)", c14.citation['title']
+  end
+
+  test "citation title falls back to a generic label when lab_identifier is missing" do
+    c14 = create(:c14, lab_identifier: nil)
+    assert_equal "C14 record ##{c14.id} (radiocarbon date)", c14.citation['title']
+  end
+
+  test "citation title is the lab_identifier even when it does not parse" do
+    c14 = create(:c14, lab_identifier: "not a real lab id")
+    assert_equal "not a real lab id (radiocarbon date)", c14.citation['title']
+  end
+
+  test "citation id is prefixed with xronos_c14_" do
+    c14 = create(:c14)
+    assert_equal "xronos_c14_#{c14.id}", c14.citation['id']
+  end
+
+  test "citation URL is the c14 permalink" do
+    c14 = create(:c14)
+    assert_equal "http://localhost:3000/c14s/#{c14.id}", c14.citation['URL']
+  end
+
+  test "render_citation returns an html-safe string containing the URL" do
+    c14 = create(:c14, lab_identifier: "OxA-12345")
+    rendered = c14.render_citation
+    assert_predicate rendered, :html_safe?
+    assert_includes rendered, "http://localhost:3000/c14s/#{c14.id}"
+  end
+
+  test "format_bibtex returns a BibTeX entry string" do
+    c14 = create(:c14, lab_identifier: "OxA-12345")
+    bib = c14.format_bibtex
+    assert_match(/^@dataset\{xronos_c14_#{c14.id},/, bib)
+    assert_includes bib, "OxA-12345 (radiocarbon date)"
+  end
+
+  test "format_bibtex double-braces the admin author literal" do
+    admin = create(:user)
+    admin.user_profile.update!(full_name: "Zara Admin")
+    with_env("ADMIN_USER_ID" => admin.id.to_s) do
+      c14 = create(:c14, lab_identifier: "OxA-12345")
+      bib = c14.format_bibtex
+      assert_includes bib, "{{Zara Admin}}"
+    end
+  end
+
+  private
+
+  def with_env(vars)
+    previous = vars.keys.to_h { |k| [k, ENV[k]] }
+    vars.each { |k, v| ENV[k] = v }
+    yield
+  ensure
+    previous.each { |k, v| ENV[k] = v }
+  end
+
+  test "format_json returns CSL-JSON" do
+    c14 = create(:c14, lab_identifier: "OxA-12345")
+    json = JSON.parse(c14.format_json)
+    assert_equal "entry", json["type"]
+    assert_equal "xronos_c14_#{c14.id}", json["id"]
+    assert_equal "OxA-12345 (radiocarbon date)", json["title"]
+  end
+
+  test "format_yaml returns YAML serialization" do
+    c14 = create(:c14, lab_identifier: "OxA-12345")
+    yaml = YAML.safe_load(c14.format_yaml, permitted_classes: [Symbol])
+    assert_equal "entry", yaml["type"]
+  end
+
+  test "format_ris returns a RIS record" do
+    c14 = create(:c14, lab_identifier: "OxA-12345")
+    ris = c14.format_ris
+    assert_match(/^TY  - DATA/, ris)
+    assert_includes ris, "TI  - OxA-12345 (radiocarbon date)"
+    assert_includes ris, "UR  - http://localhost:3000/c14s/#{c14.id}"
+    assert_match(/^ER  - /, ris)
+  end
+
+end

@@ -1,49 +1,63 @@
+# frozen_string_literal: true
+
 class C14sController < ApplicationController
-  include Pagy::Backend
   include Tabulatable
+  include SupersedableController
 
   load_and_authorize_resource
 
-  before_action :set_c14, only: [:show, :edit, :update, :destroy]
-  before_action :set_site, only: [ :new ]
+  before_action :set_c14, only: %i[show edit update destroy]
+  before_action :set_site, only: [:new]
+  before_action :set_versions, only: [:show]
+
+  include MergeableController
 
   # GET /c14s
   # GET /c14s.json
   # GET /c14s.csv
   def index
-    @c14s = C14.includes(
-      {sample: [
-        :material,
-        :taxon,
-        :context
-      ]},
-      :references
-    )
+    @c14s = C14.includes(sample: [:taxon, { context: :site }])
 
     # filter
     unless c14_params.blank?
+      @c14_params = c14_params
       @c14s = @c14s.where(c14_params)
-    end
-    
-#    if params[:sample_attributes][:context_attributes][:site_id].present?
-#      @c14s = @c14s.joins(sample: { context: :site }).where(sample:{context:{sites:{id: params[:sample_attributes][:context_attributes][:site_id]}}})
-#    end
-        
-    # order
-    if params.has_key?(:c14s_order_by)
-      order = { params[:c14s_order_by] => params.fetch(:c14s_order, "asc") }
-      @c14s = @c14s.reorder(order)
     end
 
     respond_to do |format|
-      format.html {
-        @pagy, @c14s = pagy(@c14s)
-      }
-      format.json
-      format.csv {
-        @c14s = @c14s.select(index_csv_template)
+      format.html do
+        @c14s = @c14s.includes(:references, sample: [:material])
+
+        # Sorting is only applied to the interactive HTML table.
+        # CSV exports deliberately ignore arbitrary ordering parameters.
+        if params.key?(:c14s_order_by)
+          order = { params[:c14s_order_by] => params.fetch(:c14s_order, 'asc') }
+          @c14s = @c14s.reorder(order)
+        end
+
+        begin
+          @pagy, @c14s = pagy(:countish, @c14s)
+        rescue Pagy::OverflowError
+          head :not_found
+        end
+      end
+
+      format.json do
+        if params[:schema] == C14::MIAARD::SCHEMA
+          entries = C14::MIAARD.collection(@c14s.reorder(:id)).map(&:to_h)
+          send_miaard_json({ entries: entries }, 'xronos_c14s_miaard.json')
+        end
+      end
+
+      format.csv do
+        # Public CSV export remains available, but does not honour pagination
+        # or arbitrary sorting parameters from crawlers/bots.
+        validate_csv_params!
+        return if performed?
+
+        @c14s = @c14s.reorder(:id).select(index_csv_template)
         render csv: @c14s
-      }
+      end
     end
   end
 
@@ -53,49 +67,68 @@ class C14sController < ApplicationController
     @c14s = C14.search(params[:q])
 
     respond_to do |format|
-      format.html { 
-        @pagy, @c14s = pagy(@c14s)
+      format.html do
+        begin
+          @pagy, @c14s = pagy(:countish, @c14s)
+        rescue Pagy::OverflowError
+          head :not_found
+        end
+
+        render :index unless performed?
+      end
+
+      format.json do
         render :index
-      }
-      format.json  {
-        render :index
-      }
+      end
     end
   end
 
   # GET /c14s/1
   # GET /c14s/1.json
   def show
-    @calibration = @c14.calibration
-    @calibration.calibrate if @c14.calibration.present?
+    respond_to do |format|
+      format.html do
+        @calibration = @c14.calibration
+        @calibration.calibrate if @calibration.present?
+      end
+
+      format.json do
+        if params[:schema] == C14::MIAARD::SCHEMA
+          send_miaard_json(C14::MIAARD.new(@c14).to_h,
+                           "xronos_c14_#{@c14.id}_miaard.json")
+        end
+      end
+    end
   end
 
   # GET /c14s/new
   def new
-    #@c14 = C14.new
+    @return_to = request.referer
     @context = @site.contexts.build
-    @sample = @context.samples.build
-    @c14 = @sample.c14s.build
-    #@c14.context = Context.new()
-    #@c14.sample = Sample.new
+    @sample  = @context.samples.build
+    @c14     = @sample.c14s.build
   end
 
   # GET /c14s/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /c14s
   # POST /c14s.json
   def create
     @c14 = C14.new(c14_params)
+    authorize_context_changes
 
     respond_to do |format|
       if @c14.save
-        format.html { redirect_to @c14, notice: 'Radiocarbon date created.' }
+        format.html do
+          redirect_to url_from(params[:return_to]) || url_from(request.referer) || @c14,
+                      notice: 'Radiocarbon date created.'
+        end
         format.json { render :show, status: :created, location: @c14 }
       else
-        format.html { render :new }
+        format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @c14.errors, status: :unprocessable_entity }
+        format.turbo_stream { render :form_update, status: :unprocessable_entity }
       end
     end
   end
@@ -103,10 +136,13 @@ class C14sController < ApplicationController
   # PATCH/PUT /c14s/1
   # PATCH/PUT /c14s/1.json
   def update
+    @c14.assign_attributes(c14_params)
+    authorize_context_changes
+
     respond_to do |format|
-      if @c14.update(c14_params)
+      if @c14.save
         format.html { redirect_to @c14, notice: 'Radiocarbon date saved.' }
-        format.json { render :show, status: :ok, location: @c14 }
+        format.json { render json: @c14, status: :ok }
       else
         format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @c14.errors, status: :unprocessable_entity }
@@ -119,6 +155,7 @@ class C14sController < ApplicationController
   # DELETE /c14s/1.json
   def destroy
     @c14.destroy
+
     respond_to do |format|
       format.html { redirect_to c14s_url, notice: 'Radiocarbon date deleted.' }
       format.json { head :no_content }
@@ -126,51 +163,92 @@ class C14sController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_c14
-      @c14 = C14.find(params[:id])
-    end
 
-    def set_site
-      @site = Site.find(params[:site])
-    end
+  def send_miaard_json(payload, filename)
+    send_data JSON.pretty_generate(payload),
+              type: 'application/json; charset=utf-8',
+              filename: filename,
+              disposition: 'attachment'
+  end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def c14_params
-      params.fetch(:c14, {}).permit(
-        :lab_identifier,
-        :c14_lab_id,
-        :bp,
-        :std,
-        :delta_c13,
-        :delta_c13_std,
-        :method,
-        :sample_id,
-        {sample_attributes: [
+  def set_c14
+    @c14 = C14.includes(
+      sample: [
+        :material,
+        :taxon,
+        context: [
+          :site,
+          { functional_classifications: :functional_classification_category }
+        ]
+      ]
+    ).find(params[:id])
+  end
+
+  def set_site
+    @site = Site.find(params[:site])
+  end
+
+  # Preload versions and supersession events for the show view
+  def set_versions
+    versions = @c14.versions.includes(:item).to_a
+    events   = @c14.supersession_events.includes(:whodunnit_user, :superseded_by).to_a
+    @versions = (versions + events).sort_by(&:created_at)
+  end
+
+  def authorize_context_changes
+    context = @c14.sample&.context
+    authorize! :update, context if context&.persisted? && context.changed?
+  end
+
+  def normalize_context_selection(attributes)
+    sample = attributes[:sample_attributes]
+    return unless sample && sample[:context_id].present? && sample[:context_attributes]
+
+    sample[:context_attributes] = sample[:context_attributes]
+                                  .slice(:approx_start_time, :approx_end_time)
+                                  .merge(id: sample[:context_id])
+  end
+
+  def c14_params
+    params.fetch(:c14, {}).permit(
+      :lab_identifier,
+      :c14_lab_id,
+      :bp,
+      :std,
+      :delta_c13,
+      :delta_c13_std,
+      :method,
+      :sample_id,
+      {
+        sample_attributes: [
           :id,
           :material_id,
           :taxon_id,
           :context_id,
-          {context_attributes: [
-            :id,
-            :name,
-            :approx_start_time,
-            :approx_end_time,
-            :site_id
-          ]},
+          :name,
+          {
+            context_attributes: %i[
+              id
+              name
+              approx_start_time
+              approx_end_time
+              site_id
+            ]
+          },
           :position_description,
           :position_x,
           :position_y,
           :position_z,
-          :position_crs
-        ]},
-        sample: [
-          :context_id,
-          contexts: [
-            :site_id
-          ]
+          :position_crs,
+          :part_of_organism
         ]
-      )
-    end
-
+      },
+      sample: [
+        :context_id,
+        { contexts: [
+          :site_id
+        ] }
+      ]
+    ).tap { |attributes| normalize_context_selection(attributes) }
+  end
 end
