@@ -1,6 +1,6 @@
 # Dendrochronological measurement series
 
-A Dendro record describes one measurement series attached to an XRONOS sample. Its `series_code` is unique in XRONOS. The sample links the series to its archaeological context and site.
+A Dendro record describes one measurement series attached to an XRONOS sample. The sample links the series to its archaeological context and site.
 
 ## Series format
 
