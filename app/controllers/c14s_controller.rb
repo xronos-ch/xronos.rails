@@ -185,6 +185,11 @@ class C14sController < ApplicationController
   end
 
   def set_site
+    if params[:site].blank?
+      redirect_to sites_path, notice: "Choose a site, then select Add radiocarbon date."
+      return
+    end
+
     @site = Site.find(params[:site])
   end
 

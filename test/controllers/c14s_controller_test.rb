@@ -32,6 +32,26 @@ class C14sControllerTest < ActionDispatch::IntegrationTest # rubocop:disable Met
       .merge(c14_lab_id: create(:c14_lab).id, sample_id: create(:sample).id)
   end
 
+  test 'the radiocarbon dates list directs contributors to a site before starting a new date' do
+    sign_in create(:user)
+    site = create(:site)
+
+    get c14s_path
+    assert_response :success
+    assert_dom "a[href='#{new_c14_path}']"
+
+    get new_c14_path
+    assert_redirected_to sites_path
+
+    get site_path(site)
+    assert_response :success
+    assert_dom "a[href='#{new_c14_path(site: site)}']"
+
+    get new_c14_path(site: site)
+    assert_response :success
+    assert_dom "input[name='c14[sample_attributes][context_attributes][site_id]'][value='#{site.id}']"
+  end
+
   test 'show renders machine-readable record dates and revision timestamps' do
     c14 = with_versioning { create(:c14) }.reload
     revision = c14.versions.find_by!(event: 'create')
