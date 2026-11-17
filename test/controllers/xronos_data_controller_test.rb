@@ -15,6 +15,21 @@ class XronosDataControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test 'only the selected record types have enabled filter sections' do
+    [nil, ['c14'], ['dendro']].each do |types|
+      get data_path(filter: { type: types }.compact)
+
+      assert_response :success
+      document = Nokogiri::HTML(response.body)
+      %w[c14 dendro].each do |type|
+        section = document.at_css(%(fieldset[data-record-type="#{type}"]))
+        visible = types.nil? || types.include?(type)
+        assert_equal !visible, section.key?('hidden')
+        assert_equal !visible, section.key?('disabled')
+      end
+    end
+  end
+
   test 'dendro filters apply to the table and JSON export' do
     included = create(:dendro, :anchored, name: 'Anchored series')
     create(:dendro, name: 'Floating series', is_anchored: false)

@@ -1,7 +1,7 @@
 <h2 class="visually-hidden">Filters</h2>
 
 <div style="width: 30rem">
-  <%= bootstrap_form_for :filter, method: :get, url: data_path do |f| %>
+  <%= bootstrap_form_for :filter, method: :get, url: data_path, data: { controller: "record-type-filters" } do |f| %>
 
     <div class="accordion accordion-flush">
       <%= render "filter_fields", f: f %>

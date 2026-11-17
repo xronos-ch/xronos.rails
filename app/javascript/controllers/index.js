@@ -25,6 +25,9 @@ application.register("map", MapController)
 import MarkdownEditorController from "./markdown_editor_controller"
 application.register("markdown-editor", MarkdownEditorController)
 
+import RecordTypeFiltersController from "./record_type_filters_controller"
+application.register("record-type-filters", RecordTypeFiltersController)
+
 import RemoteModalController from "./remote_modal_controller"
 application.register("remote-modal", RemoteModalController)
 

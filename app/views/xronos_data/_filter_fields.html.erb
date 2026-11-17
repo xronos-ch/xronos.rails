@@ -8,7 +8,8 @@
 <%= accordion_item "dataFilters-Type", "Record types", @raw_filter_params[:type].blank? do %>
   <% { "c14" => "Radiocarbon dates", "dendro" => "Dendrochronological series" }.each do |type, label| %>
     <div class="form-check">
-      <%= check_box_tag "filter[type][]", type, @data_types.include?(type), id: "type_#{type}", class: "form-check-input" %>
+      <%= check_box_tag "filter[type][]", type, @data_types.include?(type), id: "type_#{type}", class: "form-check-input",
+            data: { record_type_filters_target: "type", action: "change->record-type-filters#update" } %>
       <%= label_tag "type_#{type}", label, class: "form-check-label" %>
     </div>
   <% end %>
@@ -102,130 +103,136 @@
 
 <% end %>
 
-<%= accordion_item "dataFilters-C14", "Radiocarbon", (@data.filters.dig("c14_labs") || @data.filters.dig("c14s") || @data.filters.dig("cals")) ? false : true  do %>
-  <%= f.fields_for :c14_labs do |f| %>
-    <%= f.collection_select :name, C14Lab.all, :name, :name,
-      {
-        label: "Labs",
-        selected: @data.filter_value(:c14_labs, :name),
-        include_blank: true,
-      },
-      {
+<%= tag.fieldset hidden: !@data_types.include?("c14"), disabled: !@data_types.include?("c14"),
+      data: { record_type_filters_target: "section", record_type: "c14" } do %>
+  <%= accordion_item "dataFilters-C14", "Radiocarbon", (@data.filters.dig("c14_labs") || @data.filters.dig("c14s") || @data.filters.dig("cals")) ? false : true  do %>
+    <%= f.fields_for :c14_labs do |f| %>
+      <%= f.collection_select :name, C14Lab.all, :name, :name,
+        {
+          label: "Labs",
+          selected: @data.filter_value(:c14_labs, :name),
+          include_blank: true,
+        },
+        {
+          multiple: true,
+          data: { controller: "tom-select" }
+        }
+      %>
+    <% end %>
+
+    <%= f.fields_for :c14s do |f| %>
+
+      <%= f.text_field :lab_identifier, label: "Lab IDs",
+        value: @data.filter_value_string(:c14s, :lab_identifier),
         multiple: true,
-        data: { controller: "tom-select" }
-      }
-    %>
+        data: {
+          controller: "tom-select",
+          "tom-select-route-value": "c14s/search",
+          "tom-select-search-mode": "true",
+          "tom-select-value-value": "lab_identifier",
+          "tom-select-label-value": "lab_identifier",
+          "tom-select-search-value": "lab_identifier"
+        }
+      %>
+
+      <%# TODO: abstract as a helper or FormBuilder extension %>
+      <div class="mb-3"
+           data-controller="slider"
+           data-slider-formatter-value="uncalBP"
+           data-slider-step-value=10
+           data-slider-direction-value=rtl
+           data-slider-range-value='{ "min": [0, 20], "25%": [2000, 100], "50%": [10000, 250], "75%": [30000, 500], "max": 50000 }'
+           data-slider-density-value=2>
+
+        <%= f.fields_for :bp do |f| %>
+          <%= f.hidden_field nil, data: { slider_target: "minInput" },
+            min: 0, max: 50000,
+            value: @data.filter_value(:c14s, :bp).present? ? @data.filter_value(:c14s, :bp)[0].min : 0 %>
+          <%= f.hidden_field nil, data: { slider_target: "maxInput" },
+            min: 0, max: 50000,
+            value: @data.filter_value(:c14s, :bp).present? ? @data.filter_value(:c14s, :bp)[0].max : 50000 %>
+        <% end %>
+
+        <label class="form-label" for="uncal_bp_slider">Radiocarbon age <span class="text-muted">(uncal BP)</span></label>
+        <div class="mx-3 my-1" id="uncal_bp_slider" data-slider-target="slider"></div>
+
+      <noscript data-slider-target="noscript">
+        <%# TODO: Switch to range fields if this is fixed:
+          https://github.com/bootstrap-ruby/bootstrap_form/issues/677 %>
+        <%= f.fields_for :bp do |f| %>
+          <%= f.number_field nil, label: "Minimum radiocarbon age",
+            append: "uncal BP",
+            min: 0,
+            max: 50000,
+            value: @data.filter_value(:c14s, :bp).present? ? @data.filter_value(:c14s, :bp)[0].min : 0 %>
+          <%= f.number_field nil, label: "Maximum radiocarbon age",
+            append: "uncal BP",
+            min: 0,
+            max: 50000,
+            value: @data.filter_value(:c14s, :bp).present? ? @data.filter_value(:c14s, :bp)[0].max : 50000 %>
+        <% end %>
+      </noscript>
+
+      </div>
+
+    <% end %>
+
+      <div class="mb-3"
+           data-controller="slider"
+           data-slider-formatter-value="calBP"
+           data-slider-step-value=10
+           data-slider-direction-value=rtl
+           data-slider-range-value='{ "min": [0, 20], "25%": [2000, 100], "50%": [10000, 250], "75%": [30000, 500], "max": 50000 }'
+           data-slider-density-value=2>
+
+        <%= f.fields_for :cals do |f| %>
+          <%= f.hidden_field :tpq, data: { slider_target: "minInput" },
+            min: 0, max: 50000,
+            value: @data.filter_value(:cals, :tpq).present? ? @data.filter_value(:cals, :tpq)[0].min : 0 %>
+          <%= f.hidden_field :taq, data: { slider_target: "maxInput" },
+            min: 0, max: 50000,
+            value: @data.filter_value(:cals, :taq).present? ? @data.filter_value(:cals, :taq)[0].max : 50000 %>
+        <% end %>
+
+        <label class="form-label" for="cal_bp_slider">Calendar age <span class="text-muted">(cal BP)</span></label>
+        <div class="mx-3 my-1" id="cal_bp_slider" data-slider-target="slider"></div>
+
+
+       <noscript data-slider-target="noscript">
+        <%# TODO: Switch to range fields if this is fixed:
+          https://github.com/bootstrap-ruby/bootstrap_form/issues/677 %>
+        <%= f.fields_for :cals do |f| %>
+          <%= f.number_field :tpq, label: "Minimum calendar age",
+            append: "cal BP",
+            min: 0,
+            max: 50000,
+            value: @data.filter_value(:cals, :tpq).present? ? @data.filter_value(:cals, :tpq)[0].min : 0 %>
+          <%= f.number_field :taq, label: "Maximum calendar age",
+            append: "cal BP",
+            min: 0,
+            max: 50000,
+            value: @data.filter_value(:cals, :taq).present? ? @data.filter_value(:cals, :taq)[0].max : 50000 %>
+        <% end %>
+      </noscript>
+      </div>
+
   <% end %>
-
-  <%= f.fields_for :c14s do |f| %>
-
-    <%= f.text_field :lab_identifier, label: "Lab IDs",
-      value: @data.filter_value_string(:c14s, :lab_identifier),
-      multiple: true,
-      data: {
-        controller: "tom-select",
-        "tom-select-route-value": "c14s/search",
-        "tom-select-search-mode": "true",
-        "tom-select-value-value": "lab_identifier",
-        "tom-select-label-value": "lab_identifier",
-        "tom-select-search-value": "lab_identifier"
-      }
-    %>
-
-    <%# TODO: abstract as a helper or FormBuilder extension %>
-    <div class="mb-3"
-         data-controller="slider"
-         data-slider-formatter-value="uncalBP"
-         data-slider-step-value=10
-         data-slider-direction-value=rtl
-         data-slider-range-value='{ "min": [0, 20], "25%": [2000, 100], "50%": [10000, 250], "75%": [30000, 500], "max": 50000 }'
-         data-slider-density-value=2>
-
-      <%= f.fields_for :bp do |f| %>
-        <%= f.hidden_field nil, data: { slider_target: "minInput" },
-          min: 0, max: 50000,
-          value: @data.filter_value(:c14s, :bp).present? ? @data.filter_value(:c14s, :bp)[0].min : 0 %>
-        <%= f.hidden_field nil, data: { slider_target: "maxInput" },
-          min: 0, max: 50000,
-          value: @data.filter_value(:c14s, :bp).present? ? @data.filter_value(:c14s, :bp)[0].max : 50000 %>
-      <% end %>
-
-      <label class="form-label" for="uncal_bp_slider">Radiocarbon age <span class="text-muted">(uncal BP)</span></label>
-      <div class="mx-3 my-1" id="uncal_bp_slider" data-slider-target="slider"></div>
-
-    <noscript data-slider-target="noscript">
-      <%# TODO: Switch to range fields if this is fixed:
-        https://github.com/bootstrap-ruby/bootstrap_form/issues/677 %>
-      <%= f.fields_for :bp do |f| %>
-        <%= f.number_field nil, label: "Minimum radiocarbon age",
-          append: "uncal BP",
-          min: 0,
-          max: 50000,
-          value: @data.filter_value(:c14s, :bp).present? ? @data.filter_value(:c14s, :bp)[0].min : 0 %>
-        <%= f.number_field nil, label: "Maximum radiocarbon age",
-          append: "uncal BP",
-          min: 0,
-          max: 50000,
-          value: @data.filter_value(:c14s, :bp).present? ? @data.filter_value(:c14s, :bp)[0].max : 50000 %>
-      <% end %>
-    </noscript>
-
-    </div>
-
-  <% end %>
-
-    <div class="mb-3"
-         data-controller="slider"
-         data-slider-formatter-value="calBP"
-         data-slider-step-value=10
-         data-slider-direction-value=rtl
-         data-slider-range-value='{ "min": [0, 20], "25%": [2000, 100], "50%": [10000, 250], "75%": [30000, 500], "max": 50000 }'
-         data-slider-density-value=2>
-
-      <%= f.fields_for :cals do |f| %>
-        <%= f.hidden_field :tpq, data: { slider_target: "minInput" },
-          min: 0, max: 50000,
-          value: @data.filter_value(:cals, :tpq).present? ? @data.filter_value(:cals, :tpq)[0].min : 0 %>
-        <%= f.hidden_field :taq, data: { slider_target: "maxInput" },
-          min: 0, max: 50000,
-          value: @data.filter_value(:cals, :taq).present? ? @data.filter_value(:cals, :taq)[0].max : 50000 %>
-      <% end %>
-
-      <label class="form-label" for="cal_bp_slider">Calendar age <span class="text-muted">(cal BP)</span></label>
-      <div class="mx-3 my-1" id="cal_bp_slider" data-slider-target="slider"></div>
-
-
-     <noscript data-slider-target="noscript">
-      <%# TODO: Switch to range fields if this is fixed:
-        https://github.com/bootstrap-ruby/bootstrap_form/issues/677 %>
-      <%= f.fields_for :cals do |f| %>
-        <%= f.number_field :tpq, label: "Minimum calendar age",
-          append: "cal BP",
-          min: 0,
-          max: 50000,
-          value: @data.filter_value(:cals, :tpq).present? ? @data.filter_value(:cals, :tpq)[0].min : 0 %>
-        <%= f.number_field :taq, label: "Maximum calendar age",
-          append: "cal BP",
-          min: 0,
-          max: 50000,
-          value: @data.filter_value(:cals, :taq).present? ? @data.filter_value(:cals, :taq)[0].max : 50000 %>
-      <% end %>
-    </noscript>
-    </div>
-
 <% end %>
 
-<%= accordion_item "dataFilters-Dendro", "Dendrochronology", @data.filters[:dendros].blank? do %>
-  <%= f.fields_for :dendros do |fields| %>
-    <div class="mb-3">
-      <%= tristate_radio_button_group(fields, :waney_edge,
-            current_value: @data.filter_value(:dendros, :waney_edge)) %>
-    </div>
-    <div class="mb-3">
-      <%= tristate_radio_button_group(fields, :is_anchored,
-            overall_label: "Anchored",
-            current_value: @data.filter_value(:dendros, :is_anchored)) %>
-    </div>
+<%= tag.fieldset hidden: !@data_types.include?("dendro"), disabled: !@data_types.include?("dendro"),
+      data: { record_type_filters_target: "section", record_type: "dendro" } do %>
+  <%= accordion_item "dataFilters-Dendro", "Dendrochronology", @data.filters[:dendros].blank? do %>
+    <%= f.fields_for :dendros do |fields| %>
+      <div class="mb-3">
+        <%= tristate_radio_button_group(fields, :waney_edge,
+              current_value: @data.filter_value(:dendros, :waney_edge)) %>
+      </div>
+      <div class="mb-3">
+        <%= tristate_radio_button_group(fields, :is_anchored,
+              overall_label: "Anchored",
+              current_value: @data.filter_value(:dendros, :is_anchored)) %>
+      </div>
+    <% end %>
   <% end %>
 <% end %>
 
