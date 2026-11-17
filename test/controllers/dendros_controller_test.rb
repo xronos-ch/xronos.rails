@@ -14,6 +14,11 @@ class DendrosControllerTest < ActionDispatch::IntegrationTest
     get dendro_path(dendro)
     assert_response :success
     assert_includes response.body, dendro.name
+
+    get site_path(dendro.site)
+    assert_response :success
+    section = Nokogiri::HTML(response.body).at_css("#site-dendros")
+    assert section&.at_css(%(a[href="#{dendro_path(dendro)}"]))
   end
 
   test "a signed-in contributor can add a series" do
@@ -43,6 +48,27 @@ class DendrosControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
+  test "editing the series name preserves structured metadata" do
+    sign_in create(:user, :admin)
+    metadata = { object_dimensions: { "width_mm" => 42 }, wood_completeness: nil, parameters: {} }
+    dendro = create(:dendro, **metadata)
+
+    get edit_dendro_path(dendro)
+    assert_response :success
+    form = Nokogiri::HTML(response.body).at_css("form#dendroForm")
+    assert form
+    metadata.each_key do |field|
+      assert_nil form.at_css(%([name="dendro[#{field}]"]))
+      assert_nil form.at_css(%([name="dendro[#{field}_json]"]))
+    end
+
+    patch dendro_path(dendro), params: { dendro: { name: "Renamed series" } }
+
+    assert_redirected_to dendro_path(dendro)
+    assert_equal "Renamed series", dendro.reload.name
+    assert_equal metadata.stringify_keys, dendro.attributes.slice(*metadata.keys.map(&:to_s))
+  end
+
   test "an administrator can modify and delete a series" do
     sign_in create(:user, :admin)
     dendro = create(:dendro)
@@ -50,9 +76,19 @@ class DendrosControllerTest < ActionDispatch::IntegrationTest
     get edit_dendro_path(dendro)
     assert_response :success
 
-    patch dendro_path(dendro), params: { dendro: { name: "Updated series" } }
+    patch dendro_path(dendro), params: { dendro: {
+      name: "Updated series",
+      sample_attributes: {
+        id: dendro.sample.id,
+        name: "Updated sample",
+        part_of_organism: "Stem",
+        context_attributes: { id: dendro.context.id, site_id: dendro.site.id }
+      }
+    } }
     assert_redirected_to dendro_path(dendro)
     assert_equal "Updated series", dendro.reload.name
+    assert_equal "Updated sample", dendro.sample.name
+    assert_equal "Stem", dendro.sample.part_of_organism
 
     assert_difference("Dendro.count", -1) { delete dendro_path(dendro) }
     assert_redirected_to dendros_path

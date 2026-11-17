@@ -150,6 +150,8 @@ class DendrosController < ApplicationController
       :measurements,
         {sample_attributes: [
           :id,
+          :name,
+          :part_of_organism,
           :material_id,
           :taxon_id,
           :context_id,
