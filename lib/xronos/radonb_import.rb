@@ -167,13 +167,20 @@ module Xronos
                         keys: { name: text_cell(row, 'FEATURE') },
                         revision_comment: @revision_comment)
 
-      material_name = text_cell(row, 'MATERIAL')
-      material = import!(Material, keys: { name: material_name }) if material_name
-      sample = build_new!(context.samples, attributes: { material: material }, revision_comment: @revision_comment)
+      sample = import_sample(context, row)
       import!(sample.c14s,
               keys: { lab_identifier: lab_identifier(row) },
               attributes: { bp: age, std: std, delta_c13: decimal(cell(row, 'C13'))&.to_f },
               revision_comment: measurement_revision_comment(row))
+    end
+
+    def import_sample(context, row)
+      material_name = text_cell(row, 'MATERIAL')
+      material = import!(Material, keys: { name: material_name }) if material_name
+      taxon_name = text_cell(row, 'SPECIES')
+      taxon = import!(Taxon, keys: { name: taxon_name }, revision_comment: @revision_comment) if taxon_name
+
+      build_new!(context.samples, attributes: { material: material, taxon: taxon }, revision_comment: @revision_comment)
     end
 
     def cite_references!(c14, row)
