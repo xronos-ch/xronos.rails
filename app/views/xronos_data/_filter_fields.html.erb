@@ -215,6 +215,20 @@
 
 <% end %>
 
+<%= accordion_item "dataFilters-Dendro", "Dendrochronology", @data.filters[:dendros].blank? do %>
+  <%= f.fields_for :dendros do |fields| %>
+    <div class="mb-3">
+      <%= tristate_radio_button_group(fields, :waney_edge,
+            current_value: @data.filter_value(:dendros, :waney_edge)) %>
+    </div>
+    <div class="mb-3">
+      <%= tristate_radio_button_group(fields, :is_anchored,
+            overall_label: "Anchored",
+            current_value: @data.filter_value(:dendros, :is_anchored)) %>
+    </div>
+  <% end %>
+<% end %>
+
 <%# The following don't have a straightforward association to C14s and are
     disabled pending a better solution to:
     https://github.com/xronos-ch/xronos.rails/issues/165 %>
@@ -236,20 +250,6 @@
       }
     %>
 
-  <% end %>
-<% end %>
-
-<%= accordion_item "dataFilters-Dendro", "Dendrochronology", @data.filters[:dendros].blank? do %>
-  <%= f.fields_for :dendros do |fields| %>
-    <div class="mb-3">
-      <%= tristate_radio_button_group(fields, :waney_edge,
-            current_value: @data.filter_value(:dendros, :waney_edge)) %>
-    </div>
-    <div class="mb-3">
-      <%= tristate_radio_button_group(fields, :is_anchored,
-            overall_label: "Anchored",
-            current_value: @data.filter_value(:dendros, :is_anchored)) %>
-    </div>
   <% end %>
 <% end %>
 

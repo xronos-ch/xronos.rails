@@ -24,6 +24,8 @@ class XronosDataControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     document = Nokogiri::HTML(response.body)
+    assert document.at_css('button[data-bs-target="#dataFilters-Dendro"]')
+    assert document.at_css('#dataFilters-Dendro.show input[name="filter[dendros][is_anchored]"][value="true"][checked]')
     rows = document.css('#dendro_table tbody tr')
     assert_equal 1, rows.size
     assert_includes rows.first.text, 'Anchored series'
