@@ -17,9 +17,8 @@
       <dt class="col-sm-4">Certainty</dt>
       <dd class="col-sm-8 font-monospace"><%= dendro.chronology.certainty || 'N/A' %></dd>
 
-      <dt class="col-sm-4">Parameters</dt>
-      <dd class="col-sm-8"><%= dendro.chronology.parameters.present? ? dendro.chronology.parameters.to_json : 'N/A' %></dd>
     </dl>
+    <%= render "metadata_details", title: "Chronology processing details", value: dendro.chronology.parameters %>
   <% else %>
     <p>No associated chronology available.</p>
   <% end %>

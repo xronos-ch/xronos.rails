@@ -3,25 +3,13 @@ class Issues::DendrosController < IssuesController
 
   # GET /issues/dendros/:issue
   def index
-    if issue_param.present?
-      @dendros = Dendro.send(issue_param)
-    else
-      @dendros = Dendro.all
-    end
-
-    if params.has_key?(:search)
-      @dendros = @dendros.search params[:search]
-    end
-
-    if params.has_key?(:dendros_order_by)
-      order = { params[:dendros_order_by] => params.fetch(:dendros_order, "asc") }
-    else
-      order = :id
-    end
+    @dendros = issue_relation_for(Dendro).includes(:chronology, sample: { context: :site })
+    @dendros = @dendros.search(params[:search]) if params[:search].present?
+    order = { id: params[:dendros_order] == "desc" ? :desc : :asc }
     @dendros = @dendros.reorder(order)
 
     respond_to do |format|
-      format.html { @pagy, @dendros = pagy(@dendros) }
+      format.html { @pagy, @dendros = pagy(:offset, @dendros) }
     end
   end
 

@@ -4,10 +4,11 @@
       <tr>
         <th>Site</th>
         <th>Series</th>
-        <th>Start Year</th>
-        <th>End Year</th>
-        <th>Waney Edge</th>
-        <th>Is Anchored?</th>
+        <th>Calendar start</th>
+        <th>Calendar end</th>
+        <th>Series positions</th>
+      <th>Waney Edge</th>
+        <th>Dating status</th>
       </tr>
     </thead>
 
@@ -16,10 +17,11 @@
         <tr>
           <td><%= link_to dendro.site.name, dendro.site, target: :_top if dendro.site %></td>
           <td><%= link_to dendro.name, dendro, target: :_top %></td>
-          <td><%= dendro.start_year.present? ? dendro.start_year : na_value %></td>
-          <td><%= dendro.end_year.present? ? dendro.end_year : na_value %></td>
+          <td><%= dendro_calendar_year(dendro.calendar_start_year) %></td>
+          <td><%= dendro_calendar_year(dendro.calendar_end_year) %></td>
+					<td class="font-monospace"><%= dendro.position_range&.join("–") || na_value %></td>
 					<td><%= dendro.waney_edge.nil? ? na_value : dendro.waney_edge %></td>
-					<td><%= dendro.is_anchored.nil? ? na_value : dendro.is_anchored %></td>
+					<td><%= dendro_dating_status(dendro) %></td>
         </tr>
       <% end %>
     </tbody>

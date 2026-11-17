@@ -2,47 +2,41 @@ require 'csv'
 
 class DendrosController < ApplicationController
   include Tabulatable
+  include SupersedableController
 
-  load_and_authorize_resource
+  load_and_authorize_resource except: :export_measurements_csv
 
   before_action :set_dendro, only: %i[ show edit update destroy ]
   before_action :set_site, only: [ :new ]
 
   # GET /dendros or /dendros.json
   def index
-    @dendros = Dendro.includes(
-      {sample: [
-        :material,
-        :taxon,
-        :context
-      ]},
-      :references
+    filters = params.fetch(:dendro, ActionController::Parameters.new).permit(
+      :sample_id, :series_code, :name, :measurement_variable, :measurement_unit, :is_anchored, :waney_edge,
+      sample: [:context_id, { contexts: [:site_id] }]
     )
-
-    # filter
-    unless dendro_params.blank?
-      @dendros = @dendros.where(dendro_params)
-    end
-
-#    if params[:sample_attributes][:context_attributes][:site_id].present?
-#      @dendros = @dendros.joins(sample: { context: :site }).where(sample:{context:{sites:{id: params[:sample_attributes][:context_attributes][:site_id]}}})
-#    end
-
-    # order
-    if params.has_key?(:dendros_order_by)
-      order = { params[:dendros_order_by] => params.fetch(:dendros_order, "asc") }
-      @dendros = @dendros.reorder(order)
+    sample_filter = filters.delete(:sample)
+    site_id = params[:site_id].presence || sample_filter&.dig(:contexts, :site_id)
+    @dendros = Dendro.includes(:references, sample: { context: :site }).where(filters.to_h)
+    @dendros = @dendros.where(sample_id: Sample.where(context_id: sample_filter[:context_id])) if sample_filter&.[](:context_id).present?
+    if site_id.present?
+      @dendros = @dendros.where(sample_id: Sample.where(context: Context.where(site_id: site_id)))
     end
 
     respond_to do |format|
-      format.html {
+      format.html do
+        @dendros = Dendro.sort_series(@dendros, params[:dendros_order_by], params[:dendros_order])
         @pagy, @dendros = pagy(:countish, @dendros)
-      }
+      rescue Pagy::OverflowError
+        head :not_found
+      end
       format.json
-      format.csv {
-        @dendros = @dendros.select(index_csv_template)
-        render csv: @dendros
-      }
+      format.csv do
+        validate_csv_params!
+        next if performed?
+
+        render csv: @dendros.except(:includes).reorder(:id).select(*Dendro::EXPORT_COLUMNS)
+      end
     end
   end
 
@@ -63,6 +57,7 @@ class DendrosController < ApplicationController
   # POST /dendros or /dendros.json
   def create
     @dendro = Dendro.new(dendro_params)
+    authorize_association_changes
 
     respond_to do |format|
       if @dendro.save
@@ -70,6 +65,7 @@ class DendrosController < ApplicationController
         format.json { render :show, status: :created, location: @dendro }
       else
         format.html { render :new, status: :unprocessable_entity }
+        format.turbo_stream { render :form_update, status: :unprocessable_entity }
         format.json { render json: @dendro.errors, status: :unprocessable_entity }
       end
     end
@@ -77,12 +73,16 @@ class DendrosController < ApplicationController
 
   # PATCH/PUT /dendros/1 or /dendros/1.json
   def update
+    @dendro.assign_attributes(dendro_params)
+    authorize_association_changes
+
     respond_to do |format|
-      if @dendro.update(dendro_params)
+      if @dendro.save
         format.html { redirect_to @dendro, notice: "Dendro was successfully updated." }
         format.json { render :show, status: :ok, location: @dendro }
       else
         format.html { render :edit, status: :unprocessable_entity }
+        format.turbo_stream { render :form_update, status: :unprocessable_entity }
         format.json { render json: @dendro.errors, status: :unprocessable_entity }
       end
     end
@@ -99,12 +99,14 @@ class DendrosController < ApplicationController
   end
 
   def export_measurements_csv
-    @dendro = Dendro.find(params[:id])
+    @dendro = Dendro.unscoped.find(params[:id]).ultimately_superseded_by
+    authorize! :read, @dendro
 
     csv_data = CSV.generate(headers: true) do |csv|
-      csv << ["Year", "Width (mm)"]
-      @dendro.measurements.each do |measurement|
-        csv << [measurement["year"], measurement["value"]]
+      csv << %w[position calendar_year value measurement_variable measurement_unit]
+      @dendro.series_points.each do |point|
+        csv << [point["position"], point["calendar_year"], point["value"],
+                @dendro.measurement_variable, @dendro.measurement_unit]
       end
     end
 
@@ -116,6 +118,14 @@ class DendrosController < ApplicationController
   end
 
   private
+
+    def authorize_association_changes
+      sample = @dendro.sample
+      context = sample&.context
+      authorize! :update, sample if sample&.persisted? && sample.changed?
+      authorize! :update, context if context&.persisted? && context.changed?
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_dendro
       @dendro = Dendro.find(params[:id])
@@ -137,11 +147,12 @@ class DendrosController < ApplicationController
       :series_code,
       :name,
       :description,
-      :start_year,
-      :end_year,
+      :anchor_position,
+      :anchor_year,
+      :measurement_variable,
+      :measurement_unit,
       :is_anchored,
       :waney_edge,
-      :offset,
       :object_title,
       :object_type,
       :object_description,
@@ -153,6 +164,7 @@ class DendrosController < ApplicationController
       :wood_completeness,
       :parameters,
       :measurements,
+        { measurements: [:position, :value] },
         {sample_attributes: [
           :id,
           :name,

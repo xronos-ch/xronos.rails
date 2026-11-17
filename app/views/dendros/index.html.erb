@@ -11,7 +11,7 @@
   <turbo-frame id="dendros-table">
     <div id="dendros-toolbar" class="d-flex">
       <div class="ms-auto">
-        <%= link_to bs_icon("download"), dendros_path(format: :csv, **request.query_parameters), class: "btn btn-sm btn-outline-primary", title: "Download CSV" %>
+        <%= link_to bs_icon("download"), dendros_path(format: :csv, **request.query_parameters.slice("site_id", "dendro")), class: "btn btn-sm btn-outline-primary", title: "Download CSV" %>
       </div>
     </div>
     <%= render "table", dendros: @dendros %>

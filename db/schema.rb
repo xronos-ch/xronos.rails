@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_11_13_120000) do
+ActiveRecord::Schema[8.0].define(version: 2026_11_17_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -173,10 +173,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_11_13_120000) do
     t.string "series_code", null: false
     t.string "name", null: false
     t.text "description"
-    t.integer "start_year"
-    t.integer "end_year"
-    t.boolean "is_anchored", default: false
-    t.integer "offset"
+    t.boolean "is_anchored"
     t.jsonb "measurements", default: [], null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -196,10 +193,15 @@ ActiveRecord::Schema[8.0].define(version: 2026_11_13_120000) do
     t.bigint "chronology_id"
     t.jsonb "parameters", default: {}
     t.boolean "waney_edge"
+    t.integer "anchor_position"
+    t.integer "anchor_year"
+    t.string "measurement_variable"
+    t.string "measurement_unit"
     t.index ["chronology_id"], name: "index_dendros_on_chronology_id"
     t.index ["measurements"], name: "index_dendros_on_measurements", using: :gin
     t.index ["sample_id"], name: "index_dendros_on_sample_id"
     t.index ["series_code"], name: "index_dendros_on_series_code", unique: true
+    t.check_constraint "is_anchored IS TRUE AND anchor_position IS NOT NULL AND anchor_year IS NOT NULL OR is_anchored IS NOT TRUE AND anchor_position IS NULL AND anchor_year IS NULL", name: "dendros_calendar_anchor"
   end
 
   create_table "functional_classification_categories", force: :cascade do |t|

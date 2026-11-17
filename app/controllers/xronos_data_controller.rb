@@ -63,7 +63,7 @@ class XronosDataController < ApplicationController
 
       format.json do
         if params[:type] == "dendro"
-          render json: @dendro_data.xrons
+          render json: @dendro_data.xrons.as_json(only: Dendro::EXPORT_COLUMNS)
         elsif params[:schema] == C14::MIAARD::SCHEMA
           payload = if unfiltered_request?
                       Rails.cache.fetch(cache_key_for('json_miaard'), expires_in: 10.minutes) do
@@ -97,7 +97,7 @@ class XronosDataController < ApplicationController
 
       format.csv do
         if params[:type] == "dendro"
-          next send_data build_csv(@dendro_data.xrons, table: "dendros"),
+          next send_data build_csv(@dendro_data.xrons, table: "dendros", columns: Dendro::EXPORT_COLUMNS),
                            type: "text/csv; charset=utf-8",
                            filename: "dendro_data_#{Date.today}.csv"
         end
@@ -189,12 +189,13 @@ class XronosDataController < ApplicationController
     )[0]['measurements']
   end
 
-  def build_csv(xrons_relation, table: "data_views")
+  def build_csv(xrons_relation, table: "data_views", columns: nil)
+    columns_sql = columns ? columns.map { |column| ActiveRecord::Base.connection.quote_column_name(column) }.join(", ") : "*"
     ids_subquery = xrons_relation.reorder(nil).select(:id).to_sql
 
     query = <<~SQL.squish
       COPY (
-        SELECT *
+        SELECT #{columns_sql}
         FROM #{table}
         WHERE id IN (#{ids_subquery})
       ) TO STDOUT WITH CSV HEADER

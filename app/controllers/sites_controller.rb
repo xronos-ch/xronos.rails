@@ -103,12 +103,8 @@ class SitesController < ApplicationController
 
     respond_to do |format|
       format.html do
-        dendros_scope = @site.dendros.includes(:references)
-        sort_column = params[:dendros_order_by]
-        if %w[name start_year end_year is_anchored].include?(sort_column)
-          direction = params[:dendros_order] == "desc" ? :desc : :asc
-          dendros_scope = dendros_scope.reorder(sort_column => direction)
-        end
+        dendros_scope = Dendro.sort_series(@site.dendros.includes(:references),
+                                           params[:dendros_order_by], params[:dendros_order])
 
         begin
           @pagy_c14s, @c14s = pagy(:countish, c14s_scope, page_param: :c14s_page)

@@ -5,9 +5,8 @@
 #  id                 :bigint           not null, primary key
 #  death_year         :integer
 #  description        :text
-#  end_year           :integer
 #  first_year         :integer
-#  is_anchored        :boolean          default(FALSE)
+#  is_anchored        :boolean
 #  last_year          :integer
 #  measurements       :jsonb            not null
 #  name               :string           not null
@@ -15,7 +14,6 @@
 #  object_dimensions  :jsonb
 #  object_title       :string
 #  object_type        :string
-#  offset             :integer
 #  parameters         :jsonb
 #  pith_year          :integer
 #  project_end_date   :datetime
@@ -23,7 +21,6 @@
 #  project_start_date :datetime
 #  project_title      :string
 #  series_code        :string           not null
-#  start_year         :integer
 #  waney_edge         :boolean
 #  wood_completeness  :jsonb
 #  created_at         :datetime         not null
@@ -48,11 +45,14 @@ FactoryBot.define do
     series_code { Faker::Alphanumeric.unique.alphanumeric(number: 10).upcase }
     name { Faker::Science.element }
     description { Faker::Lorem.paragraph }
-    start_year { Faker::Number.between(from: -5000, to: 1950) }
-    end_year { start_year + Faker::Number.between(from: 10, to: 300) }
-    is_anchored { [true, false].sample }
-    offset { Faker::Number.between(from: 0, to: 10) }
-    measurements { Array.new(10) { { year: Faker::Number.number(digits: 4), value: Faker::Number.decimal(l_digits: 1, r_digits: 2) } } }
+
+    measurements { (1..10).map { |position| { position: position, value: 1.25 } } }
+
+    trait :anchored do
+      is_anchored { true }
+      anchor_position { 1 }
+      anchor_year { 1246 }
+    end
 
     sample
   end

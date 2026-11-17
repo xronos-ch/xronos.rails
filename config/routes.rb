@@ -52,6 +52,7 @@ Rails.application.routes.draw do
   end
 
   resources :dendros do
+    resource :citation, only: :show, controller: "dendro/citation"
     member do
       get :export_measurements_csv
     end

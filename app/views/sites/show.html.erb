@@ -155,7 +155,7 @@
         </h2>
         <div class="ms-auto">
           <%= link_to bs_icon("download"),
-            dendros_path(format: :csv, dendro: { sample: { contexts: { site_id: @site.id } } }),
+            dendros_path(format: :csv, site_id: @site.id),
             class: "btn btn-sm btn-outline-primary",
             title: "Download CSV" %>
         </div>

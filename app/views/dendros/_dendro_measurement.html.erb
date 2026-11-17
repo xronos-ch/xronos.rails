@@ -18,68 +18,71 @@
   <div class="mb-4">
     <h5>Temporal Details</h5>
     <dl class="row">
-      <dt class="col-sm-4">Start Year</dt>
-      <dd class="col-sm-8 font-monospace"><%= dendro.start_year %></dd>
+      <dt class="col-sm-4">Series positions</dt>
+      <dd class="col-sm-8 font-monospace"><%= dendro.position_range&.join("–") || na_value %></dd>
 
-      <dt class="col-sm-4">End Year</dt>
-      <dd class="col-sm-8 font-monospace"><%= dendro.end_year %></dd>
+      <dt class="col-sm-4">Calendar start</dt>
+      <dd class="col-sm-8 font-monospace"><%= dendro_calendar_year(dendro.calendar_start_year) %></dd>
 
-      <dt class="col-sm-4">Is Anchored</dt>
-      <dd class="col-sm-8 font-monospace"><%= dendro.is_anchored.nil? ? na_value : dendro.is_anchored %></dd>
+      <dt class="col-sm-4">Calendar end</dt>
+      <dd class="col-sm-8 font-monospace"><%= dendro_calendar_year(dendro.calendar_end_year) %></dd>
 
-      <dt class="col-sm-4">Offset</dt>
-      <dd class="col-sm-8 font-monospace"><%= dendro.offset || na_value %></dd>
+      <dt class="col-sm-4">Dating status</dt>
+      <dd class="col-sm-8"><%= dendro_dating_status(dendro) %></dd>
+
+      <% if dendro.is_anchored? %>
+        <dt class="col-sm-4">Calendar anchor</dt>
+        <dd class="col-sm-8">Position <%= dendro.anchor_position %> → <%= dendro_calendar_year(dendro.anchor_year) %></dd>
+      <% end %>
+
+      <dt class="col-sm-4">Measurement variable</dt>
+      <dd class="col-sm-8"><%= Dendro::MEASUREMENT_VARIABLES[dendro.measurement_variable] || na_value %></dd>
+
+      <dt class="col-sm-4">Measurement unit</dt>
+      <dd class="col-sm-8"><%= dendro.measurement_unit.presence || na_value %></dd>
     </dl>
   </div>
 
-  <!-- Group 3: Object Details -->
+  <% if [dendro.object_title, dendro.object_type, dendro.object_description, dendro.object_dimensions].any?(&:present?) || dendro.object_dimensions == false %>
+    <div class="mb-4">
+      <h5>Object Details</h5>
+      <dl class="row mb-0">
+        <% { "Object title" => dendro.object_title, "Object type" => dendro.object_type,
+             "Object description" => dendro.object_description }.each do |label, value| %>
+          <% next if value.blank? %>
+          <dt class="col-sm-4"><%= label %></dt>
+          <dd class="col-sm-8"><%= value %></dd>
+        <% end %>
+      </dl>
+      <%= render "metadata_details", title: "Object dimensions", value: dendro.object_dimensions %>
+    </div>
+  <% end %>
+
+  <% project_fields = {
+    "Project title" => dendro.project_title,
+    "Project objective" => dendro.project_objective,
+    "Project start date" => dendro.project_start_date&.strftime("%F"),
+    "Project end date" => dendro.project_end_date&.strftime("%F")
+  }.compact_blank %>
+  <% if project_fields.any? %>
+    <div class="mb-4">
+      <h5>Project Details</h5>
+      <dl class="row mb-0">
+        <% project_fields.each do |label, value| %>
+          <dt class="col-sm-4"><%= label %></dt>
+          <dd class="col-sm-8"><%= value %></dd>
+        <% end %>
+      </dl>
+    </div>
+  <% end %>
+
   <div class="mb-4">
-    <h5>Object Details</h5>
-    <dl class="row">
-      <dt class="col-sm-4">Object Title</dt>
-      <dd class="col-sm-8 font-monospace"><%= dendro.object_title || na_value %></dd>
-
-      <dt class="col-sm-4">Object Type</dt>
-      <dd class="col-sm-8 font-monospace"><%= dendro.object_type || na_value %></dd>
-
-      <dt class="col-sm-4">Object Description</dt>
-      <dd class="col-sm-8"><%= dendro.object_description || na_value %></dd>
-
-      <dt class="col-sm-4">Object Dimensions</dt>
-      <dd class="col-sm-8"><%= dendro.object_dimensions.present? ? dendro.object_dimensions.to_json : na_value %></dd>
-    </dl>
-  </div>
-
-  <!-- Group 4: Project Details -->
-  <div class="mb-4">
-    <h5>Project Details</h5>
-    <dl class="row">
-      <dt class="col-sm-4">Project Title</dt>
-      <dd class="col-sm-8 font-monospace"><%= dendro.project_title || na_value %></dd>
-
-      <dt class="col-sm-4">Project Objective</dt>
-      <dd class="col-sm-8"><%= dendro.project_objective || na_value %></dd>
-
-      <dt class="col-sm-4">Project Start Date</dt>
-      <dd class="col-sm-8 font-monospace"><%= dendro.project_start_date ? dendro.project_start_date.strftime('%Y-%m-%d') : na_value %></dd>
-
-      <dt class="col-sm-4">Project End Date</dt>
-      <dd class="col-sm-8 font-monospace"><%= dendro.project_end_date ? dendro.project_end_date.strftime('%Y-%m-%d') : na_value %></dd>
-    </dl>
-  </div>
-
-  <!-- Group 6: Completeness and Parameters -->
-  <div class="mb-4">
-    <h5>Completeness and Parameters</h5>
-    <dl class="row">
-      <dt class="col-sm-4">Wood Completeness</dt>
-      <dd class="col-sm-8"><%= dendro.wood_completeness.present? ? dendro.wood_completeness.to_json : na_value %></dd>
-
-      <dt class="col-sm-4">Parameters</dt>
-      <dd class="col-sm-8"><%= dendro.parameters.present? ? dendro.parameters.to_json : na_value %></dd>
-
+    <h5>Wood Completeness</h5>
+    <dl class="row mb-0">
       <dt class="col-sm-4">Waney Edge</dt>
       <dd class="col-sm-8"><%= dendro.waney_edge.nil? ? na_value : dendro.waney_edge %></dd>
     </dl>
+    <%= render "metadata_details", title: "Additional wood completeness details", value: dendro.wood_completeness %>
+    <%= render "metadata_details", title: "Series processing details", value: dendro.parameters %>
   </div>
 </div>

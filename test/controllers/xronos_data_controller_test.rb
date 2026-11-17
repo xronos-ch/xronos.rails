@@ -16,7 +16,7 @@ class XronosDataControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'dendro filters apply to the table and JSON export' do
-    included = create(:dendro, name: 'Anchored series', is_anchored: true)
+    included = create(:dendro, :anchored, name: 'Anchored series')
     create(:dendro, name: 'Floating series', is_anchored: false)
     filter = { type: ['dendro'], dendros: { is_anchored: 'true' } }
 

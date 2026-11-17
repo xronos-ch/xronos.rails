@@ -20,25 +20,9 @@
   </p>
 
   <p>
-    <strong>Start year:</strong>
-    <%= dendro.start_year %>
+    <strong>Dating status:</strong>
+    <%= dendro_dating_status(dendro) %>
   </p>
-
-  <p>
-    <strong>End year:</strong>
-    <%= dendro.end_year %>
-  </p>
-
-  <p>
-    <strong>Is anchored:</strong>
-    <%= dendro.is_anchored.nil? ? na_value : dendro.is_anchored %>
-  </p>
-
-  <p>
-    <strong>Offset:</strong>
-    <%= dendro.offset %>
-  </p>
-
   <p>
     <strong>Measurements:</strong>
     <%= dendro.measurements %>
