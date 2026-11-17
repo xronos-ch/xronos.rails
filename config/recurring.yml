@@ -26,3 +26,8 @@ production:
       system({ "SESSION_DAYS_TRIM_THRESHOLD" => days.to_s },
              Rails.root.join("bin/rails").to_s, "db:sessions:trim", exception: true)
     schedule: "30 3 * * *"
+<% if ENV['RADONB_IMPORT_ENABLED'] == 'true' %>
+  import_radonb:
+    class: ImportRadonbJob
+    schedule: "0 4 1 * * UTC"
+<% end %>

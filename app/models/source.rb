@@ -36,15 +36,15 @@ class Source < ApplicationRecord
   def self.register(name:, version:, path:, source_url: nil, license: nil, notes: nil)
     current_manifest = Dir.children(path).to_h { |basename|
       full = File.join(path, basename)
-      [basename, File.file?(full) ? Digest::SHA256.hexdigest(File.read(full)) : nil]
+      [basename, File.file?(full) ? Digest::SHA256.file(full).hexdigest : nil]
     }.compact
 
+    attributes = { path: path, source_url: source_url, license: license, notes: notes }
+    return register_snapshot(name, current_manifest, **attributes) if version.nil?
+
     source = find_or_create_by!(name: name, version: version) do |s|
-      s.path = path
+      s.assign_attributes(attributes)
       s.file_manifest = current_manifest
-      s.source_url = source_url
-      s.license = license
-      s.notes = notes
     end
 
     if source.persisted?
@@ -68,6 +68,24 @@ class Source < ApplicationRecord
   rescue ManifestMismatchError => e
     abort e.message
   end
+
+  # Serialise imports of the same dataset even when they use different source snapshots.
+  def self.with_import_lock(name)
+    transaction(requires_new: true) do
+      quoted_name = connection.quote(name)
+      connection.execute("SELECT pg_advisory_xact_lock(hashtext('xronos source import'), hashtext(#{quoted_name}))")
+      yield
+    end
+  end
+
+  def self.register_snapshot(name, manifest, **attributes)
+    with_import_lock(name) do
+      find_or_create_by!(name: name, version: nil, file_manifest: manifest) do |source|
+        source.assign_attributes(attributes)
+      end
+    end
+  end
+  private_class_method :register_snapshot
 
   def self.label
     "data source"

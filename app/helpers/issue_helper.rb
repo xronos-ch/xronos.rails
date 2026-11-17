@@ -31,6 +31,8 @@ module IssueHelper
       "Laboratory identifier doesn't match the conventional format (e.g. Lab-1234)"
     when :missing_c14_lab
       "No radiocarbon laboratory associated with radiocarbon date"
+    when :potential_duplicate
+      "Another active measurement has the same lab identifier, age and error"
     # References
     when :mixed_reference
       "Reference potentially combines multiple sources"
