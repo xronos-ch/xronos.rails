@@ -68,24 +68,6 @@
     </dl>
   </div>
 
-  <!-- Group 5: Sample Details -->
-  <div class="mb-4">
-    <h5>Sample Details</h5>
-    <dl class="row">
-      <dt class="col-sm-4">Material</dt>
-      <dd class="col-sm-8"><%= dendro.sample.material.present? ? dendro.sample.material.name : na_value %></dd>
-
-      <dt class="col-sm-4">Taxon</dt>
-      <dd class="col-sm-8">
-        <% if dendro.sample.taxon.present? %>
-          <%= render dendro.sample.taxon %>
-        <% else %>
-          N/A
-        <% end %>
-      </dd>
-    </dl>
-  </div>
-
   <!-- Group 6: Completeness and Parameters -->
   <div class="mb-4">
     <h5>Completeness and Parameters</h5>

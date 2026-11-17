@@ -7,79 +7,114 @@
 
   <%= render "header" %>
 
-  <%# Chronology Section %>
-  <section id="dendro-chronology" class="my-5">
-    <h2><%= bs_icon "clock" %> Chronology</h2>
-    <%= render "dendro_chronology", dendro: @dendro %>
-  </section>
+  <div class="mb-5">
+    <%= render "shared/record_toolbar", record: @dendro, show_destroy: false,
+          downloads: [
+            { name: "JSON", path: dendro_path(@dendro, format: :json) },
+            { name: "Ring widths (CSV)", path: export_measurements_csv_dendro_path(@dendro, format: :csv) }
+          ] %>
+  </div>
 
-  <%# Plot Section %>
-  <section id="dendro-plot" class="my-5">
-    <h2><%= bs_icon "graph-down" %> Plot</h2>
-    <div class="row">
-      <div class="col-lg-8" style="margin-bottom: -31px" data-controller="vega">
-        <%= ring_width_plot(@dendro) %>
-      </div>
-      <div class="col-lg-4">
-        <dl>
-          <dt>Further info</dt>
-          <dd>to be added</dd>
-        </dl>
-      </div>
-    </div>
-  </section>
+  <div class="row g-4">
+    <div class="col-12 col-lg-8">
+      <section id="dendro-measurement" class="section-with-legend position-relative">
+        <h2 class="legend">
+          <%= bs_icon "rulers", class: "me-1" %>Measurement
+        </h2>
+        <div class="section-body">
+          <%= render "dendro_measurement", dendro: @dendro %>
+        </div>
+      </section>
 
-  <%# Context Section %>
-  <section id="dendro-context" class="my-5">
-    <h2><%= bs_icon "diagram-3" %> Context</h2>
-    <%= render "dendro_context", dendro: @dendro %>
-  </section>
+      <section id="dendro-chronology" class="section-with-legend mt-5 position-relative">
+        <h2 class="legend">
+          <%= bs_icon "clock", class: "me-1" %>Chronology
+        </h2>
+        <div class="section-body">
+          <%= render "dendro_chronology", dendro: @dendro %>
+        </div>
+      </section>
 
-  <%# Measurement Section %>
-  <section id="dendro-measurement" class="my-5">
-    <h2><%= bs_icon "rulers" %> Measurement</h2>
-    <%= render "dendro_measurement", dendro: @dendro %>
-  </section>
-
-  <%# Measurements Table Section %>
-  <section id="dendro-values" class="my-5">
-    <h3><%= bs_icon "table" %> Measurements</h3>
-    <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
-      <table class="table table-sm table-bordered">
-        <thead class="table-light">
-          <tr>
-            <th>Year</th>
-            <th>Width (mm)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% JSON.parse(@dendro.measurements.to_json).each do |measurement| %>
-            <tr>
-              <td><%= measurement["year"] %></td>
-              <td><%= number_with_precision(measurement["value"], precision: 2) %></td>
-            </tr>
+      <section id="dendro-plot" class="section-with-legend mt-5 position-relative">
+        <h2 class="legend">
+          <%= bs_icon "graph-down", class: "me-1" %>Ring widths
+        </h2>
+        <div class="section-body">
+          <% if @dendro.measurements.present? %>
+            <div class="overflow-auto" data-controller="vega">
+              <%= ring_width_plot(@dendro) %>
+            </div>
+          <% else %>
+            <p class="mb-0">No ring widths recorded.</p>
           <% end %>
-        </tbody>
-      </table>
+        </div>
+      </section>
+
+      <section id="dendro-values" class="section-with-legend mt-5 position-relative">
+        <h2 class="legend">
+          <%= bs_icon "table", class: "me-1" %>Ring measurements
+          <span class="badge text-bg-info ms-1"><%= @dendro.measurements.length %></span>
+        </h2>
+        <div class="section-body">
+          <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+            <table class="table table-sm table-bordered">
+              <thead class="table-light">
+                <tr>
+                  <th>Year</th>
+                  <th>Width (mm)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @dendro.measurements.each do |measurement| %>
+                  <tr>
+                    <td><%= measurement["year"] %></td>
+                    <td><%= number_with_precision(measurement["value"], precision: 2) %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="dendro-sample" class="section-with-legend mt-5 position-relative">
+        <h2 class="legend">
+          <%= bs_icon "archive", class: "me-1" %>Sample
+        </h2>
+        <div class="section-body">
+          <%= render "samples/sample", sample: @dendro.sample %>
+        </div>
+      </section>
+
+      <section id="dendro-context" class="section-with-legend mt-5 position-relative">
+        <h2 class="legend">
+          <%= bs_icon "diagram-3", class: "me-1" %>Context
+        </h2>
+        <div class="section-body">
+          <%= render "dendro_context", dendro: @dendro %>
+        </div>
+      </section>
+
+      <% references = (@dendro.references + @dendro.site.references).uniq %>
+      <section id="dendro-references" class="section-with-legend mt-5 position-relative">
+        <h2 class="legend">
+          <%= bs_icon "book", class: "me-1" %><%= Reference.label.humanize.pluralize %>
+          <span class="badge text-bg-info ms-1"><%= references.count %></span>
+        </h2>
+        <div class="section-body">
+          <%= render "references/bibliography", references: references %>
+        </div>
+      </section>
     </div>
-    <%= link_to "Download as CSV", export_measurements_csv_dendro_path(@dendro, format: :csv), class: "btn btn-primary btn-sm ms-2" %>
-  </section>
 
-  <%# References Section %>
-  <section id="dendro-references" class="my-5">
-    <% references = (@dendro.references + @dendro.site.references).uniq %>
-    <h2>
-      <%= xr_icon Reference, {}, style: "width: auto; height: 2rem" %>
-      <%= Reference.label.humanize.pluralize %>
-      <small class="text-muted">(<%= references.count %>)</small>
-    </h2>
-    <%= render "references/bibliography", references: references %>
-  </section>
+    <aside class="col-lg-4">
+      <%= render "shared/record_metadata", record: @dendro %>
 
-  <%# Changelog Section %>
-  <section id="dendro-changelog" class="my-5">
-    <h2>Changelog</h2>
-    <%= render "application/paper_trail/versions", item: @dendro %>
-  </section>
+      <section id="dendro-changelog" class="mt-5">
+        <h2 class="h5-lg">Changelog</h2>
+        <%= render "application/paper_trail/versions", item: @dendro %>
+      </section>
+    </aside>
+  </div>
 
 </main>
