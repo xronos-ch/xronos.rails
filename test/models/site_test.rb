@@ -51,6 +51,23 @@ class SiteTest < ActiveSupport::TestCase
     assert_dependent_destroy(site, :citations, count: 2)
   end
 
+  test 'destroying a site removes its dendro series with the sample' do
+    site = create(:site)
+    context = create(:context, site: site)
+    sample = create(:sample, context: context)
+    dendro = create(:dendro, sample: sample)
+    c14 = create(:c14, sample: sample)
+
+    perform_enqueued_jobs do
+      site.destroy!
+    end
+
+    assert_not Context.unscoped.exists?(context.id)
+    assert_not Sample.unscoped.exists?(sample.id)
+    assert_not Dendro.unscoped.exists?(dendro.id)
+    assert_not C14.unscoped.exists?(c14.id)
+  end
+
   test 'destroying a site destroys its linked resources' do
     site = create(:site, :with_linked_resources, linked_resources_count: 2)
 
