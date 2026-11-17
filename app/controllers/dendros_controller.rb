@@ -122,6 +122,11 @@ class DendrosController < ApplicationController
     end
 
     def set_site
+      if params[:site].blank?
+        redirect_to sites_path, notice: "Choose a site, then select Add dendrochronological series."
+        return
+      end
+
       @site = Site.find(params[:site])
     end
 

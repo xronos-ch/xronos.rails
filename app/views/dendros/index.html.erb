@@ -19,6 +19,6 @@
   </turbo-frame>
 
   <% if can? :create, Dendro %>
-    <%= link_to 'New Dendro measurement', new_dendro_path, class: 'btn btn-secondary' %>
+    <%= link_to "Choose a site to add a series", new_dendro_path, class: 'btn btn-secondary' %>
   <% end %>
 </div>

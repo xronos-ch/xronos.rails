@@ -21,6 +21,27 @@ class DendrosControllerTest < ActionDispatch::IntegrationTest
     assert section&.at_css(%(a[href="#{dendro_path(dendro)}"]))
   end
 
+  test "the series list directs contributors to a site before starting a new series" do
+    sign_in create(:user)
+    site = create(:site)
+
+    get dendros_path
+    assert_response :success
+    assert Nokogiri::HTML(response.body).at_css(%(a[href="#{new_dendro_path}"]))
+
+    get new_dendro_path
+    assert_redirected_to sites_path
+
+    get site_path(site)
+    assert_response :success
+    assert Nokogiri::HTML(response.body).at_css(%(a[href="#{new_dendro_path(site: site)}"]))
+
+    get new_dendro_path(site: site)
+    assert_response :success
+    field = Nokogiri::HTML(response.body).at_css('input[name="dendro[sample_attributes][context_attributes][site_id]"]')
+    assert_equal site.id.to_s, field&.[]("value")
+  end
+
   test "a signed-in contributor can add a series" do
     sign_in create(:user)
     sample = create(:sample)
