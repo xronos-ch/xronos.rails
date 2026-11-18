@@ -40,4 +40,14 @@ class DendroTest < ActiveSupport::TestCase
     assert_not dendro.valid?
     assert_includes dendro.errors[:measurements], "must have unique positions"
   end
+  test 'ring widths reject negatives while preserving zero and missing values' do
+    dendro = build(:dendro, measurement_variable: 'ring_width', measurement_unit: 'mm',
+                   measurements: [{ position: 1, value: -0.5 }])
+
+    assert_not dendro.valid?
+    assert dendro.errors[:measurements].present?
+
+    dendro.measurements = [{ position: 1, value: 0 }, { position: 2, value: nil }]
+    assert_predicate dendro, :valid?
+  end
 end

@@ -187,7 +187,7 @@ class Dendro < Chron
 
   def valid_measurements
     unless measurements.is_a?(Array) && measurements.all? { |entry| valid_measurement?(entry) }
-      errors.add(:measurements, "must contain an integer position and a finite numeric or missing value for each entry")
+      errors.add(:measurements, "must contain an integer position and a finite nonnegative numeric or missing value for each entry")
       return
     end
 
@@ -201,6 +201,6 @@ class Dendro < Chron
     point = entry.stringify_keys
     value = point["value"]
     point["position"].is_a?(Integer) && point.key?("value") &&
-      (value.nil? || (value.is_a?(Numeric) && value.finite?))
+      (value.nil? || (value.is_a?(Numeric) && value.finite? && value >= 0))
   end
 end
