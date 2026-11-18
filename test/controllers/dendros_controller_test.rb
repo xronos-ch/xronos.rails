@@ -215,9 +215,9 @@ class DendrosControllerTest < ActionDispatch::IntegrationTest
     sections = page.css("#dendro-measurement details, #dendro-chronology details")
     assert_equal ["Object dimensions", "Additional wood completeness details",
                   "Series processing details", "Chronology processing details"],
-                 sections.map { |section| section.at_css("summary").text.strip }
-    assert_empty sections.select { |section| section.key?("open") }
-    assert_equal %w[42 0 false 8], sections.map { |section| section.at_css("dd").text.strip }
+                 (sections.map { |section| section.at_css("summary").text.strip })
+    assert_empty(sections.select { |section| section.key?("open") })
+    assert_equal %w[42 0 false 8], (sections.map { |section| section.at_css("dd").text.strip })
   end
 
   test "project details show only the supplied project fields" do
