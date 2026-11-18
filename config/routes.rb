@@ -169,6 +169,7 @@ Rails.application.routes.draw do
   namespace :api, defaults: {format: 'json'} do
     namespace :v1 do
       resources :data, controller: 'xronos_data'
+      resources :dendros, only: [:index, :show]
     end
   end
 
