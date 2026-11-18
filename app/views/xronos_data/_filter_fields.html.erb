@@ -223,6 +223,28 @@
       data: { record_type_filters_target: "section", record_type: "dendro" } do %>
   <%= accordion_item "dataFilters-Dendro", "Dendrochronology", @data.filters[:dendros].blank? do %>
     <%= f.fields_for :dendros do |fields| %>
+      <% calendar_from = @data.filter_value(:dendros, :calendar_from) %>
+      <% calendar_to = @data.filter_value(:dendros, :calendar_to) %>
+      <% slider_min = [-12000, calendar_from.presence&.to_i, calendar_to.presence&.to_i].compact.min %>
+      <% slider_max = [2100, calendar_from.presence&.to_i, calendar_to.presence&.to_i].compact.max %>
+      <%= tag.div class: "mb-3", data: {
+            controller: "slider", slider_formatter_value: "calendar", slider_step_value: 1,
+            slider_direction_value: "ltr", slider_optional_value: true, slider_density_value: 2,
+            slider_range_value: { min: slider_min, "50%" => 0, max: slider_max }.to_json
+          } do %>
+        <%= fields.hidden_field :calendar_from, value: calendar_from,
+              min: slider_min, max: slider_max, data: { slider_target: "minInput" } %>
+        <%= fields.hidden_field :calendar_to, value: calendar_to,
+              min: slider_min, max: slider_max, data: { slider_target: "maxInput" } %>
+        <label class="form-label" for="dendro_calendar_slider">Calendar date <span class="text-muted">(BCE/CE)</span></label>
+        <div class="mx-3 my-1" id="dendro_calendar_slider" data-slider-target="slider"></div>
+        <noscript data-slider-target="noscript">
+          <%= fields.number_field :calendar_from, label: "Calendar from", value: calendar_from %>
+          <%= fields.number_field :calendar_to, label: "Calendar to", value: calendar_to %>
+          <p class="form-text">Use astronomical years: 0 = 1 BCE, −1 = 2 BCE.</p>
+        </noscript>
+      <% end %>
+      <p class="form-text">Overlapping anchored Dendro series only when a bound is set.</p>
       <div class="mb-3">
         <%= tristate_radio_button_group(fields, :waney_edge,
               current_value: @data.filter_value(:dendros, :waney_edge)) %>

@@ -84,16 +84,35 @@ class Dendro < Chron
       relation.reorder(column => direction, id: :asc)
     when "calendar_start_year", "calendar_end_year"
       bound = column == "calendar_start_year" ? "MIN" : "MAX"
-      year = <<~SQL.squish
-        dendros.anchor_year::bigint - dendros.anchor_position +
-          (SELECT #{bound}((point->>'position')::numeric)
-           FROM jsonb_array_elements(dendros.measurements) AS point)
-      SQL
+      year = calendar_bound_sql(bound)
       relation.reorder(Arel.sql("#{year} #{direction} NULLS LAST"), :id)
     else
       relation.reorder(:id)
     end
   end
+
+  def self.in_calendar_range(from_year: nil, to_year: nil)
+    from = Integer(from_year.to_s, 10) if from_year.present?
+    to = Integer(to_year.to_s, 10) if to_year.present?
+    raise ArgumentError, 'Calendar start must not exceed calendar end' if from && to && from > to
+    return all unless from || to
+
+    relation = where(is_anchored: true)
+    relation = relation.where("#{calendar_bound_sql('MAX')} >= ?", from) if from
+    relation = relation.where("#{calendar_bound_sql('MIN')} <= ?", to) if to
+    relation
+  end
+
+  def self.calendar_bound_sql(bound)
+    raise ArgumentError unless %w[MIN MAX].include?(bound)
+
+    <<~SQL.squish
+      dendros.anchor_year::bigint - dendros.anchor_position +
+        (SELECT #{bound}((point->>'position')::numeric)
+         FROM jsonb_array_elements(dendros.measurements) AS point)
+    SQL
+  end
+  private_class_method :calendar_bound_sql
 
   def self.label
     "dendrochronological series"

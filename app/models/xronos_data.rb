@@ -115,6 +115,13 @@ class XronosData
                     else
                       @filters_for_query.except(:dendros)
                     end
+    if @data_type == :dendro && query_filters[:dendros].present?
+      dendro_filters = query_filters[:dendros]
+      scope = scope.in_calendar_range(from_year: dendro_filters[:calendar_from], to_year: dendro_filters[:calendar_to])
+      remaining = dendro_filters.except(:calendar_from, :calendar_to)
+      query_filters = query_filters.except(:dendros)
+      query_filters = query_filters.merge(dendros: remaining) if remaining.present?
+    end
     scope = scope.left_outer_joins(:references) if query_filters[:references].present?
 
     # 1) calibrated age filters – need cals join

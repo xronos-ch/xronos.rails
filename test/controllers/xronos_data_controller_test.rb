@@ -280,4 +280,29 @@ class XronosDataControllerTest < ActionDispatch::IntegrationTest
       }
     }
   end
+  test 'dendro calendar overlap is preserved in HTML JSON CSV and map exports' do
+    included = create(:dendro, :anchored, anchor_position: 2, anchor_year: 1)
+    excluded = create(:dendro, :anchored, anchor_year: 100)
+    create(:dendro, is_anchored: false)
+    filter = { type: ['dendro'], dendros: { calendar_from: '0', calendar_to: '0' } }
+
+    get data_path, params: { filter: filter }
+    assert_response :success
+    document = Nokogiri::HTML(response.body)
+    assert_includes document.at_css('#dendro_table').text, included.name
+    assert_not_includes document.at_css('#dendro_table').text, excluded.name
+    assert_equal '0', document.at_css('input[name="filter[dendros][calendar_from]"]')['value']
+
+    get data_path(format: :json), params: { type: 'dendro', filter: filter }
+    assert_equal [included.id], JSON.parse(response.body).pluck('id')
+    get data_path(format: :csv), params: { type: 'dendro', filter: filter }
+    assert_equal [included.id.to_s], (CSV.parse(response.body, headers: true).map { |row| row['id'] })
+    get data_path(format: :geojson), params: { filter: filter }
+    assert_response :success
+    assert_includes response.body, included.site.name
+    assert_not_includes response.body, excluded.site.name
+
+    get data_path, params: { filter: { type: ['dendro'], dendros: { calendar_from: 'invalid' } } }
+    assert_response :bad_request
+  end
 end

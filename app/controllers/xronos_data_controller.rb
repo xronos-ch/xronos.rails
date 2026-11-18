@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class XronosDataController < ApplicationController
+  rescue_from ArgumentError do |error|
+    render plain: error.message, status: :bad_request
+  end
+
   def turn_off_lasso
     session[:spatial_lasso_selection] = nil
     redirect_to request.env['HTTP_REFERER']
@@ -239,7 +243,7 @@ class XronosDataController < ApplicationController
 
   def filter_params
     params.fetch(:filter, ActionController::Parameters.new).permit(
-      { type: [], dendros: [:waney_edge, :is_anchored] },
+      { type: [], dendros: [:waney_edge, :is_anchored, :calendar_from, :calendar_to] },
       { c14s: [
         :lab_identifier,
         { lab_identifier: [] },
