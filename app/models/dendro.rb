@@ -73,6 +73,7 @@ class Dendro < Chron
 
   include PgSearch::Model
   pg_search_scope :search, against: [:name, :series_code], using: { tsearch: { prefix: true } }
+  multisearchable against: [:name, :series_code, :description], if: :not_superseded?
 
   include HasIssues
   @issues = [ :missing_waney_edge_info, :missing_is_anchored_info, :missing_sample_elevation, :missing_object_info, :missing_wood_completeness_info, :unknown_chronology_type, :unknown_certainty ]
