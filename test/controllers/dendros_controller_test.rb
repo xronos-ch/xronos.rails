@@ -288,4 +288,20 @@ class DendrosControllerTest < ActionDispatch::IntegrationTest
     assert_difference("Dendro.count", -1) { delete dendro_path(dendro) }
     assert_redirected_to dendros_path
   end
+
+  test "an update to identical series data requires merge confirmation" do
+    sign_in create(:user, :admin)
+    canonical = create(:dendro, measurement_variable: "ring_width", measurement_unit: "mm")
+    other = create(:dendro, sample: canonical.sample, series_code: canonical.series_code,
+                   measurement_variable: "ring_width", measurement_unit: "mm",
+                   measurements: [{ position: 1, value: 9 }])
+    attributes = { measurements: canonical.measurements }
+    patch dendro_path(other, format: :json), params: { dendro: attributes }, as: :json
+    assert_response :conflict
+    assert_not other.reload.superseded?
+    patch dendro_path(other, format: :json), params: { dendro: attributes, confirm_merge: true }, as: :json
+    assert_response :success
+    assert_equal canonical, other.reload.ultimately_superseded_by
+  end
+
 end

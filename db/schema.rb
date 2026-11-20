@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_11_17_120000) do
+ActiveRecord::Schema[8.0].define(version: 2026_11_20_140000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -200,7 +200,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_11_17_120000) do
     t.index ["chronology_id"], name: "index_dendros_on_chronology_id"
     t.index ["measurements"], name: "index_dendros_on_measurements", using: :gin
     t.index ["sample_id"], name: "index_dendros_on_sample_id"
-    t.index ["series_code"], name: "index_dendros_on_series_code", unique: true
+    t.index ["series_code"], name: "index_dendros_on_series_code"
     t.check_constraint "is_anchored IS TRUE AND anchor_position IS NOT NULL AND anchor_year IS NOT NULL OR is_anchored IS NOT TRUE AND anchor_position IS NULL AND anchor_year IS NULL", name: "dendros_calendar_anchor"
   end
 

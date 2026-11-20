@@ -9,6 +9,8 @@ class DendrosController < ApplicationController
   before_action :set_dendro, only: %i[ show edit update destroy ]
   before_action :set_site, only: [ :new ]
 
+  include MergeableController
+
   # GET /dendros or /dendros.json
   def index
     filters = params.fetch(:dendro, ActionController::Parameters.new).permit(

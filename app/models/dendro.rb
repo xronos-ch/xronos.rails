@@ -1,43 +1,44 @@
 # == Schema Information
 #
 # Table name: dendros
+# Database name: primary
 #
-#  id                 :bigint           not null, primary key
-#  anchor_position    :integer
-#  anchor_year        :integer
-#  measurement_unit   :string
+#  id                   :bigint           not null, primary key
+#  anchor_position      :integer
+#  anchor_year          :integer
+#  death_year           :integer
+#  description          :text
+#  first_year           :integer
+#  is_anchored          :boolean
+#  last_year            :integer
+#  measurement_unit     :string
 #  measurement_variable :string
-#  death_year         :integer
-#  description        :text
-#  first_year         :integer
-#  is_anchored        :boolean
-#  last_year          :integer
-#  measurements       :jsonb            not null
-#  name               :string           not null
-#  object_description :text
-#  object_dimensions  :jsonb
-#  object_title       :string
-#  object_type        :string
-#  parameters         :jsonb
-#  pith_year          :integer
-#  project_end_date   :datetime
-#  project_objective  :text
-#  project_start_date :datetime
-#  project_title      :string
-#  series_code        :string           not null
-#  waney_edge         :boolean
-#  wood_completeness  :jsonb
-#  created_at         :datetime         not null
-#  updated_at         :datetime         not null
-#  chronology_id      :bigint
-#  sample_id          :bigint           not null
+#  measurements         :jsonb            not null
+#  name                 :string           not null
+#  object_description   :text
+#  object_dimensions    :jsonb
+#  object_title         :string
+#  object_type          :string
+#  parameters           :jsonb
+#  pith_year            :integer
+#  project_end_date     :datetime
+#  project_objective    :text
+#  project_start_date   :datetime
+#  project_title        :string
+#  series_code          :string           not null
+#  waney_edge           :boolean
+#  wood_completeness    :jsonb
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
+#  chronology_id        :bigint
+#  sample_id            :bigint           not null
 #
 # Indexes
 #
 #  index_dendros_on_chronology_id  (chronology_id)
 #  index_dendros_on_measurements   (measurements) USING gin
 #  index_dendros_on_sample_id      (sample_id)
-#  index_dendros_on_series_code    (series_code) UNIQUE
+#  index_dendros_on_series_code    (series_code)
 #
 # Foreign Keys
 #
@@ -53,14 +54,17 @@ class Dendro < Chron
   EXPORT_COLUMNS = %i[id sample_id series_code name description is_anchored anchor_position anchor_year
                       measurement_variable measurement_unit waney_edge measurements created_at updated_at].freeze
 
-  exact_duplicates_on :series_code, :sample_id
+  exact_duplicates_on :series_code, :sample_id, :measurements, :measurement_variable, :measurement_unit,
+                      is_anchored: :nil_matches_nil, anchor_position: :nil_matches_nil,
+                      anchor_year: :nil_matches_nil, waney_edge: :nil_matches_nil,
+                      chronology_id: :nil_matches_nil
 
   accepts_nested_attributes_for :sample, reject_if: :all_blank
   belongs_to :chronology, optional: true
 
   validates_associated :sample
   validates :name, presence: true
-  validates :series_code, presence: true, uniqueness: true
+  validates :series_code, presence: true
   normalizes :measurement_variable, :measurement_unit, with: ->(value) { value.presence }
   validates :measurement_variable, inclusion: { in: MEASUREMENT_VARIABLES.keys }, allow_blank: true
   validates :measurement_unit, inclusion: { in: MEASUREMENT_UNITS }, allow_blank: true
@@ -77,6 +81,22 @@ class Dendro < Chron
 
   include HasIssues
   @issues = [ :missing_waney_edge_info, :missing_is_anchored_info, :missing_sample_elevation, :missing_object_info, :missing_wood_completeness_info, :unknown_chronology_type, :unknown_certainty ]
+
+  # Empty series do not provide evidence for an automatic merge.
+  def self.duplicate_group_scope
+    super.where("dendros.measurements <> '[]'::jsonb")
+  end
+
+  def self.cross_sample_pair_sql(for_id: nil)
+    super.squish + " AND c1.measurements <> '[]'::jsonb"
+  end
+
+  def duplicates_except(*except)
+    return self.class.none if measurements.blank?
+
+    scope = super(*except, :measurements)
+    except.include?(:measurements) ? scope : scope.where("dendros.measurements = ?::jsonb", measurements.to_json)
+  end
 
   def self.sort_series(relation, column, direction)
     direction = direction == "desc" ? :desc : :asc

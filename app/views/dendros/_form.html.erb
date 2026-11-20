@@ -1,4 +1,4 @@
-<%= bootstrap_form_with(model: @dendro, local: true, id: "dendroForm") do |f| %>
+<%= bootstrap_form_with(model: @dendro, local: true, id: "dendroForm", data: { turbo_frame: "_top" }) do |f| %>
   <% if @dendro.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@dendro.errors.count, "error") %> prohibited this dendro from being saved:</h2>
@@ -10,6 +10,9 @@
       </ul>
     </div>
   <% end %>
+
+  <%= render "shared/confirm_merge_warning" if @merge_duplicate %>
+  <%= hidden_field_tag :confirm_merge, "true" if @merge_duplicate %>
 
   <%= render  'fields', f: f %>
 
