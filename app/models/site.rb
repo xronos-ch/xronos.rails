@@ -154,7 +154,11 @@ class Site < ApplicationRecord
                           .joins(:citations)
                           .where(citations: { citing_type: 'C14', citing_id: c14s.select(:id) })
 
-    site_reference_scope.or(c14_reference_scope).distinct.to_a
+    dendro_reference_scope = Reference
+                             .joins(:citations)
+                             .where(citations: { citing_type: 'Dendro', citing_id: dendros.select(:id) })
+
+    site_reference_scope.or(c14_reference_scope).or(dendro_reference_scope).distinct.to_a
   end
 
   def default_c14_curve

@@ -180,8 +180,9 @@
       <%= xr_icon Reference, {}, style: "width: auto; height: 2rem" %>
       <%= Reference.label.humanize.pluralize %>
     </h2>
-    <% cache [@site, "references_v1"] do %>
-      <%= render "references/bibliography", references: @site.recursive_references %>
+    <% references = @site.recursive_references %>
+    <% cache [@site, "references_v2", references] do %>
+      <%= render "references/bibliography", references: references %>
     <% end %>
   </section>
 

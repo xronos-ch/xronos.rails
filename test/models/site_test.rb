@@ -451,4 +451,13 @@ class SiteTest < ActiveSupport::TestCase
       assert_equal "Q12345", items.first.object["external_id"]
     end
   end
+
+  test "recursive references include Dendro citations without unrelated sites" do
+    series = create(:dendro)
+    citation = create(:citation, citing: series)
+    unrelated = create(:citation, citing: create(:dendro))
+    assert_includes series.site.recursive_references, citation.reference
+    assert_not_includes series.site.recursive_references, unrelated.reference
+  end
+
 end
