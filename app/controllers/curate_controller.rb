@@ -4,7 +4,7 @@ class CurateController < ApplicationController
   def index
     @n_site = Site.count
     @n_c14 = C14.count
-    @n_dendro = 0
+    @n_dendro = Dendro.count
     @n_typo = Typo.count
   end
 
