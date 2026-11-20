@@ -337,12 +337,13 @@ class SiteTest < ActiveSupport::TestCase
     assert_equal 1, FunctionalClassification.where(assignable_type: 'Site', assignable_id: canonical.id).count
   end
 
-  test 'with_counts returns correct c14s_count, typos_count, and references_count' do
+  test 'with_counts returns correct chron and reference counts' do
     site = create(:site)
     context = create(:context, site: site)
     sample = create(:sample, context: context)
     create_list(:c14, 3, sample: sample)
     create_list(:typo, 2, sample: sample)
+    create_list(:dendro, 2, sample: sample)
     create_list(:citation, 4, citing: site)
 
     # Refresh the materialized view to pick up the new data
@@ -352,6 +353,7 @@ class SiteTest < ActiveSupport::TestCase
 
     assert_equal 3, result.c14s_count
     assert_equal 2, result.typos_count
+    assert_equal 2, result.dendros_count
     assert_equal 4, result.references_count
   end
 
@@ -368,12 +370,17 @@ class SiteTest < ActiveSupport::TestCase
     canonical_typo = create(:typo, sample: sample)
     typos.each { |t| t.supersede!(canonical_typo) }
 
+    dendro = create(:dendro, sample: sample)
+    canonical_dendro = create(:dendro, sample: sample)
+    dendro.supersede!(canonical_dendro)
+
     ActiveRecord::Base.connection.execute('REFRESH MATERIALIZED VIEW sites_with_counts')
 
     result = Site.with_counts.find(site.id)
 
     assert_equal 1, result.c14s_count
     assert_equal 1, result.typos_count
+    assert_equal 1, result.dendros_count
   end
 
   #

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_11_20_140000) do
+ActiveRecord::Schema[8.0].define(version: 2026_11_20_150000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -166,6 +166,18 @@ ActiveRecord::Schema[8.0].define(version: 2026_11_20_140000) do
     t.datetime "updated_at", null: false
     t.index ["controlled_vocabulary_term_id", "normalized"], name: "index_cv_variants_on_term_and_normalized", unique: true
     t.index ["controlled_vocabulary_term_id", "value"], name: "index_cv_variants_on_term_and_value", unique: true
+  end
+
+  create_table "curation_proposals", force: :cascade do |t|
+    t.string "subject_type", null: false
+    t.bigint "subject_id", null: false
+    t.string "kind", null: false
+    t.string "target_key", null: false
+    t.jsonb "evidence", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["kind", "id"], name: "index_curation_proposals_on_kind_and_id"
+    t.index ["subject_type", "subject_id", "kind", "target_key"], name: "index_curation_proposals_on_target", unique: true
   end
 
   create_table "dendros", force: :cascade do |t|
@@ -602,8 +614,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_11_20_140000) do
       sites.country_code,
       COALESCE(c14_counts.c14s_count, (0)::bigint) AS c14s_count,
       COALESCE(typo_counts.typos_count, (0)::bigint) AS typos_count,
+      COALESCE(dendro_counts.dendros_count, (0)::bigint) AS dendros_count,
       COALESCE(ref_counts.references_count, (0)::bigint) AS references_count
-     FROM (((sites
+     FROM ((((sites
        LEFT JOIN ( SELECT contexts.site_id,
               count(*) AS c14s_count
              FROM ((c14s
@@ -622,12 +635,21 @@ ActiveRecord::Schema[8.0].define(version: 2026_11_20_140000) do
                      FROM supersessions
                     WHERE ((supersessions.superseded_type)::text = 'Typo'::text))))
             GROUP BY contexts.site_id) typo_counts ON ((typo_counts.site_id = sites.id)))
+       LEFT JOIN ( SELECT contexts.site_id,
+              count(*) AS dendros_count
+             FROM ((dendros
+               JOIN samples ON ((samples.id = dendros.sample_id)))
+               JOIN contexts ON ((contexts.id = samples.context_id)))
+            WHERE (NOT (dendros.id IN ( SELECT supersessions.superseded_id
+                     FROM supersessions
+                    WHERE ((supersessions.superseded_type)::text = 'Dendro'::text))))
+            GROUP BY contexts.site_id) dendro_counts ON ((dendro_counts.site_id = sites.id)))
        LEFT JOIN ( SELECT citations.citing_id AS site_id,
               count(*) AS references_count
              FROM citations
             WHERE ((citations.citing_type)::text = 'Site'::text)
             GROUP BY citations.citing_id) ref_counts ON ((ref_counts.site_id = sites.id)));
   SQL
-  add_index "sites_with_counts", ["id"], name: "sites_with_counts_id_idx", unique: true
+  add_index "sites_with_counts", ["id"], name: "index_sites_with_counts_on_id", unique: true
 
 end

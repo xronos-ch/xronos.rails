@@ -97,7 +97,7 @@ class Site < ApplicationRecord
 
   scope :with_counts, lambda {
     joins("LEFT JOIN sites_with_counts ON sites_with_counts.id = sites.id")
-      .select("sites.*, sites_with_counts.c14s_count, sites_with_counts.typos_count, sites_with_counts.references_count")
+      .select("sites.*, sites_with_counts.c14s_count, sites_with_counts.typos_count, sites_with_counts.dendros_count, sites_with_counts.references_count")
   }
 
   def self.label
