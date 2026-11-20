@@ -225,4 +225,24 @@ class XronosDeduplicateTaskTest < ActiveSupport::TestCase # rubocop:disable Metr
       end
     end
   end
+  test 'Dendro batch merges identical measurement arrays without merging different or empty series' do
+    canonical = create(:dendro, measurement_variable: 'ring_width', measurement_unit: 'mm')
+    attributes = canonical.attributes.except('id')
+    result = Dendro.insert_all!([
+      attributes.merge('name' => 'Identical series'),
+      attributes.merge('name' => 'Different series', 'measurements' => [{ 'position' => 1, 'value' => 9 }]),
+      attributes.merge('name' => 'Empty series one', 'measurements' => []),
+      attributes.merge('name' => 'Empty series two', 'measurements' => [])
+    ])
+    duplicate = Dendro.find(result.rows.first.first)
+    citation = create(:citation, citing: duplicate)
+
+    assert_difference('Dendro.count', -1) { invoke_dedupe('Dendro') }
+
+    assert_equal canonical, duplicate.reload.ultimately_superseded_by
+    assert_equal canonical, citation.reload.citing
+    assert_equal 2, Dendro.where("measurements = '[]'::jsonb").count
+    assert Dendro.exists?(name: 'Different series')
+  end
+
 end
