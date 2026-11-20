@@ -289,6 +289,36 @@ class DendrosControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to dendros_path
   end
 
+  test "contributors can select an existing context and enter series values" do
+    sign_in create(:user)
+    context = create(:context, name: "Existing context")
+    get new_dendro_path(site: context.site)
+    assert_dom "select[name='context_choice'] option[value='#{context.id}']"
+    assert_dom "textarea[name='dendro[measurements_text]']"
+    assert_no_difference("Context.count") do
+      post dendros_path, params: { dendro: {
+        name: "Entered series", series_code: "SOURCE-1", measurements_text: "1 0.5\n2 0\n4 NA",
+        sample_attributes: { context_id: context.id,
+          context_attributes: { site_id: context.site.id, name: "",
+            approx_start_time: context.approx_start_time, approx_end_time: context.approx_end_time } }
+      } }
+    end
+    series = Dendro.find_by!(name: "Entered series")
+    assert_equal context, series.context
+    assert_equal [{ "position" => 1, "value" => 0.5 }, { "position" => 2, "value" => 0.0 },
+                  { "position" => 4, "value" => nil }], series.measurements
+  end
+
+  test "invalid measurement text is retained and existing values are not overwritten" do
+    sign_in create(:user, :admin)
+    series = create(:dendro)
+    original = series.measurements
+    patch dendro_path(series), params: { dendro: { measurements_text: "1 invalid" } }
+    assert_response :unprocessable_entity
+    assert_dom "textarea[name='dendro[measurements_text]']", text: "1 invalid"
+    assert_equal original, series.reload.measurements
+  end
+
   test "an update to identical series data requires merge confirmation" do
     sign_in create(:user, :admin)
     canonical = create(:dendro, measurement_variable: "ring_width", measurement_unit: "mm")

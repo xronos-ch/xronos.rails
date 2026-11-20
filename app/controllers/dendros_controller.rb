@@ -165,6 +165,7 @@ class DendrosController < ApplicationController
       :project_end_date,
       :wood_completeness,
       :parameters,
+      :measurements_text,
       :measurements,
         { measurements: [:position, :value] },
         {sample_attributes: [
@@ -193,6 +194,15 @@ class DendrosController < ApplicationController
             :site_id
           ]
         ]
-      )
+      ).tap { |attributes| normalize_context_selection(attributes) }
+    end
+
+    def normalize_context_selection(attributes)
+      sample = attributes[:sample_attributes]
+      return unless sample && sample[:context_id].present? && sample[:context_attributes]
+
+      sample[:context_attributes] = sample[:context_attributes]
+                                    .slice(:approx_start_time, :approx_end_time)
+                                    .merge(id: sample[:context_id])
     end
 end

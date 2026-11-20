@@ -73,6 +73,8 @@ class Dendro < Chron
   validates :anchor_position, :anchor_year, absence: true, unless: :is_anchored?
   validate :valid_measurements, if: :will_save_change_to_measurements?
 
+  validate :valid_measurements_text
+
   snapshot_peripherals :citations
 
   include PgSearch::Model
@@ -96,6 +98,26 @@ class Dendro < Chron
 
     scope = super(*except, :measurements)
     except.include?(:measurements) ? scope : scope.where("dendros.measurements = ?::jsonb", measurements.to_json)
+  end
+
+  def measurements_text
+    @measurements_text || series_points.map { |point| "#{point['position']}\t#{point['value'].nil? ? 'NA' : point['value']}" }.join("\n")
+  end
+
+  def measurements_text=(text)
+    @measurements_text = text.to_s
+    @invalid_measurements_text = false
+    self.measurements = @measurements_text.lines.filter_map do |line|
+      next if line.strip.empty?
+
+      position, value, extra = line.split
+      raise ArgumentError if extra
+
+      { "position" => Integer(position, 10),
+        "value" => value.nil? || %w[NA null].include?(value) ? nil : Float(value) }
+    end
+  rescue ArgumentError, TypeError
+    @invalid_measurements_text = true
   end
 
   def self.sort_series(relation, column, direction)
@@ -224,6 +246,12 @@ class Dendro < Chron
   end
 
   private
+
+  def valid_measurements_text
+    return unless @invalid_measurements_text
+
+    errors.add(:measurements_text, "must contain one integer position and a numeric value or NA per line")
+  end
 
   def valid_measurements
     unless measurements.is_a?(Array) && measurements.all? { |entry| valid_measurement?(entry) }

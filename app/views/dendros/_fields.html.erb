@@ -36,6 +36,9 @@
 
 <h2 class="h5">Measurements</h2>
 
+<%= f.text_area :measurements_text, label: "Series values", rows: 8, class: "font-monospace",
+      help: "One position and value per line, separated by spaces or a tab. Use NA for a missing value; omit a position for a gap. Use a decimal point, for example: 1 0.48." %>
+
 <div class="row">
   <div class="col">
     <%= f.number_field :anchor_position, label: "Anchor position", help: "Relative position with a known calendar year." %>

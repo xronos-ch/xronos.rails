@@ -1,16 +1,10 @@
 <h2 class="h5">Context</h2>
 
-<% if @c14 %>
-  <% if @c14.context&.site %>
-    <%= render "contexts/choice", f: f %>
-  <% else %>
-    <%= f.fields_for :context, @c14.context do |ff| %>
-      <%= render "contexts/fields", f: ff %>
-    <% end %>
-  <% end %>
-<% elsif @dendro %>
-  <%= f.fields_for :context, @dendro.context do |ff| %>
-    <%= ff.hidden_field :site_id, value: @dendro.context&.site_id %>
+<% chron = @c14 || @dendro %>
+<% if chron&.context&.site %>
+  <%= render "contexts/choice", f: f %>
+<% else %>
+  <%= f.fields_for :context, chron&.context do |ff| %>
     <%= render "contexts/fields", f: ff %>
   <% end %>
 <% end %>
