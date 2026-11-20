@@ -46,6 +46,7 @@ class Context < ApplicationRecord
 
   has_many :c14s, through: :samples
   has_many :typos, through: :samples
+  has_many :dendros, through: :samples
 
   has_many :functional_classifications,
            as: :assignable,

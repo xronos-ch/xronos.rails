@@ -22,29 +22,40 @@
   </div>
   <ul class="me-3 nav nav-pills" role="tablist">
     <li class="nav-item" role="presentation">
-      <a id="dataMapTab" 
-         class="nav-link active" 
-         data-bs-toggle="pill" 
+      <a id="dataMapTab"
+         class="nav-link active"
+         data-bs-toggle="pill"
          href="#dataMap"
-         role="tab" 
+         role="tab"
          aria-controls="dataMap"
          aria-selected="true">
         <%= bs_icon "pin-map-fill" %>
         Sites
       </a>
     </li>
+    <% if @pagy %>
     <li class="nav-item" role="presentation">
-      <a id="dataTableTab" 
-         class="nav-link" 
-         data-bs-toggle="pill" 
+      <a id="dataTableTab"
+         class="nav-link"
+         data-bs-toggle="pill"
          href="#dataTable"
-         role="tab" 
+         role="tab"
          aria-controls="dataTable"
          aria-selected="false">
         <%= bs_icon "table" %>
         Radiocarbon dates
       </a>
     </li>
+    <% end %>
+    <% if @dendro_pagy %>
+      <li class="nav-item" role="presentation">
+        <a id="dendroTableTab" class="nav-link" data-bs-toggle="pill" href="#dendroTable"
+           role="tab" aria-controls="dendroTable" aria-selected="false">
+          <%= bs_icon "table" %>
+          Dendrochronological series
+        </a>
+      </li>
+    <% end %>
   </ul>
 
   <span class="navbar-text me-3">
@@ -54,10 +65,10 @@
   <ul class="nav">
   <!--
     <li class="nav-item dropdown">
-      <a class="nav-link dropdown-toggle" 
-         id="dataTools"  
-         role="button" 
-         data-bs-toggle="dropdown" 
+      <a class="nav-link dropdown-toggle"
+         id="dataTools"
+         role="button"
+         data-bs-toggle="dropdown"
          aria-expanded="false" href="#">
         <%= bs_icon "clipboard-data-fill" %>
         Analyse
@@ -69,21 +80,23 @@
     </li>
   -->
     <li class="nav-item dropdown">
-      <a class="nav-link dropdown-toggle" 
-         id="dataDownload"  
-         role="button" 
-         data-bs-toggle="dropdown" 
-         aria-expanded="false" 
+      <a class="nav-link dropdown-toggle"
+         id="dataDownload"
+         role="button"
+         data-bs-toggle="dropdown"
+         aria-expanded="false"
          href="#">
         <%= bs_icon "download" %>
         Download
       </a>
       <ul class="dropdown-menu" aria-labelledby="dataDownload" style="padding:0px;">
+        <% if @pagy %>
+          <li><h6 class="dropdown-header">Radiocarbon dates</h6></li>
         <li>
 			<div class="d-grid gap-2">
-			
-			<%= link_to data_path(format: :csv, filter: @raw_filter_params), 
-				class: "nav-link", 
+
+			<%= link_to data_path(format: :csv, filter: @raw_filter_params),
+				class: "nav-link",
 				title: "CSV",
 				download: "data_#{Date.today}.csv" do %>
 					<%=bs_icon("filetype-csv")%> CSV
@@ -92,9 +105,9 @@
 	  </li>
         <li>
 			<div class="d-grid gap-2">
-			
-			<%= link_to data_path(format: :json, filter: @raw_filter_params), 
-				class: "nav-link", 
+
+			<%= link_to data_path(format: :json, filter: @raw_filter_params),
+				class: "nav-link",
 				title: "JSON",
 				download: "data_#{Date.today}.json" do %>
 					<%=bs_icon("filetype-json")%> JSON
@@ -111,6 +124,12 @@
             <% end %>
           </div>
         </li>
+        <% end %>
+        <% if @dendro_pagy %>
+          <li><h6 class="dropdown-header">Dendrochronological series</h6></li>
+          <li><%= link_to "CSV", data_path(format: :csv, filter: @raw_filter_params, type: :dendro), class: "nav-link" %></li>
+          <li><%= link_to "JSON", data_path(format: :json, filter: @raw_filter_params, type: :dendro), class: "nav-link" %></li>
+        <% end %>
       </ul>
     </li>
   </ul>

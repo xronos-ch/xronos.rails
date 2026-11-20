@@ -55,6 +55,22 @@ class SiteHeaderCachingTest < ActionDispatch::IntegrationTest
     assert_dom "a[href='#{new_site_site_name_path(@site)}']", count: 1
   end
 
+  test 'cached bibliography follows citations on Dendro series' do
+    series = create(:dendro, sample: create(:sample, context: create(:context, site: @site)))
+    get site_path(@site)
+    assert_dom '#site-references', text: /There are no bibliographic references/
+
+    reference = create(:reference, short_ref: 'Dendro cache reference',
+                       bibtex: '@misc{cache_test, title={Dendro cache reference}, year={2026}}')
+    citation = create(:citation, citing: series, reference: reference)
+    get site_path(@site)
+    assert_dom '#site-references', text: /Dendro cache reference/
+
+    citation.destroy!
+    get site_path(@site)
+    assert_dom '#site-references', text: /There are no bibliographic references/
+  end
+
   private
 
   def assert_site_fragment_hit(&block)

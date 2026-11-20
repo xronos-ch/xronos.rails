@@ -1,0 +1,17 @@
+<article class="card" id="<%= dom_id dendro %>">
+  <div class="card-header">
+    <%= xr_icon Dendro, {}, { style: "width: auto; height: 1.1rem;" } %>
+    <%= Dendro.label.humanize %>
+  </div>
+  <div class="card-body">
+    <h2 class="card-title h4"><%= link_to dendro.name, dendro %></h2>
+    <p class="card-subtitle text-body-secondary mb-2"><%= dendro.series_code %></p>
+    <p class="card-text">From <%= link_to dendro.site.name, dendro.site %></p>
+    <p class="card-text">
+      <%= dendro_dating_status(dendro) %>
+      <% if dendro.is_anchored? && dendro.position_range %>
+        · <%= dendro_calendar_year(dendro.calendar_start_year) %>–<%= dendro_calendar_year(dendro.calendar_end_year) %>
+      <% end %>
+    </p>
+  </div>
+</article>

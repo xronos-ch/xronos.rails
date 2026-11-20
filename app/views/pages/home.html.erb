@@ -48,16 +48,12 @@
         <p class="h4"><%= Typo.label.humanize.pluralize %></p>
       </div>
 
-      <div class="col-sm-6 col-lg-3 my-3 text-dark position-relative">
-        <span class="position-absolute top-0 end-0 text-warning">
-          Coming soon!
-          <%= bs_icon "cone-striped" %>
-        </span>
-        <%= embedded_svg "icons/dendro.svg", class: "d-block mx-auto mb-2", style: "width: 5rem; height: auto;" %>
-        <a href="#" class="display-5 link-dark text-decoration-none">
-          —
-        </a>
-        <p class="h4">Dendro dates</p>
+      <div class="col-sm-6 col-lg-3 my-3">
+        <%= xr_icon Dendro, { light: true }, { class: "d-block mx-auto mb-2", style: "width: 5rem; height: auto;" } %>
+        <%= link_to number_with_delimiter(Dendro.count), dendros_path,
+              class: "display-5 link-secondary text-decoration-none",
+              title: "Browse dendrochronological series" %>
+        <p class="h4"><%= Dendro.label.humanize.pluralize %></p>
       </div>
 
     </div>

@@ -1,4 +1,5 @@
 <% label = record.class.respond_to?(:label) ? record.class.label : record.class.name.humanize(capitalize: false) %>
+<% destroy_allowed = local_assigns.fetch(:show_destroy, true) && can?(:destroy, record) %>
 <div class="btn-toolbar" role="toolbar" aria-label="Record actions">
 
   <% if downloads.present? %>
@@ -33,12 +34,12 @@
     <% end %>
   <% end %>
 
-  <% if can?(:edit, record) || can?(:destroy, record) %>
+  <% if can?(:edit, record) || destroy_allowed %>
     <div class="btn-group" role="group" aria-label="Access-controlled actions">
       <% if can? :edit, record %>
         <%= link_to edit_icon, edit_polymorphic_path(record), class: "btn btn-sm btn-outline-primary", title: "Edit #{label}", data: { turbo_frame: "remote_modal" } %>
       <% end %>
-      <% if can? :destroy, record %>
+      <% if destroy_allowed %>
         <%= button_to polymorphic_path(record), method: :delete, class: "btn btn-sm btn-outline-danger", title: "Delete #{label}", data: { turbo_confirm: "Are you sure?" } do %>
           <%= bs_icon "trash" %>
         <% end %>

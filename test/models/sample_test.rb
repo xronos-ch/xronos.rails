@@ -241,6 +241,34 @@ class SampleTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert_equal canonical.id, typo.reload.sample_id
   end
 
+  test 'destroying a sample destroys both active and superseded dendro series' do
+    sample = create(:sample)
+    active = create(:dendro, sample: sample)
+    superseded = create(:dendro, sample: sample)
+    superseded.merge_into!(active)
+    unrelated = create(:dendro)
+
+    assert_equal [active.id], sample.dendros.ids
+    sample.destroy!
+
+    assert_not Dendro.unscoped.exists?(id: [active.id, superseded.id])
+    assert Dendro.exists?(unrelated.id)
+  end
+
+  test 'reassigns dendro series to the canonical sample on merge' do
+    canonical = create(:sample)
+    duplicate = create(:sample)
+    dendro = create(:dendro, sample: duplicate)
+    superseded = create(:dendro, sample: duplicate)
+    superseded.merge_into!(dendro)
+
+    duplicate.merge_into!(canonical)
+
+    assert_equal canonical.id, dendro.reload.sample_id
+    assert_equal canonical.id, superseded.reload.sample_id
+    assert_equal dendro, superseded.ultimately_superseded_by
+  end
+
   test 'hard-destroys the dupe (Sample is not Supersedable)' do
     context = create(:context)
     canonical = create(:sample, blank_attrs(context: context))

@@ -40,6 +40,7 @@ class Site < ApplicationRecord
   has_many :samples, through: :contexts
   has_many :c14s, through: :contexts
   has_many :typos, through: :contexts
+  has_many :dendros, through: :contexts
   has_many :references, through: :citations
 
   # Cousins
@@ -96,7 +97,7 @@ class Site < ApplicationRecord
 
   scope :with_counts, lambda {
     joins("LEFT JOIN sites_with_counts ON sites_with_counts.id = sites.id")
-      .select("sites.*, sites_with_counts.c14s_count, sites_with_counts.typos_count, sites_with_counts.references_count")
+      .select("sites.*, sites_with_counts.c14s_count, sites_with_counts.typos_count, sites_with_counts.dendros_count, sites_with_counts.references_count")
   }
 
   def self.label
@@ -153,7 +154,11 @@ class Site < ApplicationRecord
                           .joins(:citations)
                           .where(citations: { citing_type: 'C14', citing_id: c14s.select(:id) })
 
-    site_reference_scope.or(c14_reference_scope).distinct.to_a
+    dendro_reference_scope = Reference
+                             .joins(:citations)
+                             .where(citations: { citing_type: 'Dendro', citing_id: dendros.select(:id) })
+
+    site_reference_scope.or(c14_reference_scope).or(dendro_reference_scope).distinct.to_a
   end
 
   def default_c14_curve

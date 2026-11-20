@@ -15,6 +15,43 @@ class XronosDataControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test 'only the selected record types have enabled filter sections' do
+    [nil, ['c14'], ['dendro']].each do |types|
+      get data_path(filter: { type: types }.compact)
+
+      assert_response :success
+      document = Nokogiri::HTML(response.body)
+      %w[c14 dendro].each do |type|
+        section = document.at_css(%(fieldset[data-record-type="#{type}"]))
+        visible = types.nil? || types.include?(type)
+        assert_equal !visible, section.key?('hidden')
+        assert_equal !visible, section.key?('disabled')
+      end
+    end
+  end
+
+  test 'dendro filters apply to the table and JSON export' do
+    included = create(:dendro, :anchored, name: 'Anchored series')
+    create(:dendro, name: 'Floating series', is_anchored: false)
+    filter = { type: ['dendro'], dendros: { is_anchored: 'true' } }
+
+    get data_path(filter: filter)
+
+    assert_response :success
+    document = Nokogiri::HTML(response.body)
+    assert document.at_css('button[data-bs-target="#dataFilters-Dendro"]')
+    assert document.at_css('#dataFilters-Dendro.show input[name="filter[dendros][is_anchored]"][value="true"][checked]')
+    rows = document.css('#dendro_table tbody tr')
+    assert_equal 1, rows.size
+    assert_includes rows.first.text, 'Anchored series'
+    assert_nil document.at_css('#dataTableTab')
+
+    get data_path(format: :json, type: 'dendro', filter: filter)
+
+    assert_response :success
+    assert_equal [included.id], JSON.parse(response.body).pluck('id')
+  end
+
   test 'data json responds successfully' do
     get data_path(format: :json)
 
@@ -242,5 +279,30 @@ class XronosDataControllerTest < ActionDispatch::IntegrationTest
         }
       }
     }
+  end
+  test 'dendro calendar overlap is preserved in HTML JSON CSV and map exports' do
+    included = create(:dendro, :anchored, anchor_position: 2, anchor_year: 1)
+    excluded = create(:dendro, :anchored, anchor_year: 100)
+    create(:dendro, is_anchored: false)
+    filter = { type: ['dendro'], dendros: { calendar_from: '0', calendar_to: '0' } }
+
+    get data_path, params: { filter: filter }
+    assert_response :success
+    document = Nokogiri::HTML(response.body)
+    assert_includes document.at_css('#dendro_table').text, included.name
+    assert_not_includes document.at_css('#dendro_table').text, excluded.name
+    assert_equal '0', document.at_css('input[name="filter[dendros][calendar_from]"]')['value']
+
+    get data_path(format: :json), params: { type: 'dendro', filter: filter }
+    assert_equal [included.id], JSON.parse(response.body).pluck('id')
+    get data_path(format: :csv), params: { type: 'dendro', filter: filter }
+    assert_equal [included.id.to_s], (CSV.parse(response.body, headers: true).map { |row| row['id'] })
+    get data_path(format: :geojson), params: { filter: filter }
+    assert_response :success
+    assert_includes response.body, included.site.name
+    assert_not_includes response.body, excluded.site.name
+
+    get data_path, params: { filter: { type: ['dendro'], dendros: { calendar_from: 'invalid' } } }
+    assert_response :bad_request
   end
 end

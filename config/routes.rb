@@ -50,6 +50,13 @@ Rails.application.routes.draw do
   resources :typos do
     get 'search', on: :collection
   end
+
+  resources :dendros do
+    resource :citation, only: :show, controller: "dendro/citation"
+    member do
+      get :export_measurements_csv
+    end
+  end
   resources :functional_classifications, only: [:index, :create, :update, :destroy]
 
   # Secondary data resources (no independent show/index views)
@@ -111,11 +118,17 @@ Rails.application.routes.draw do
   end
 
   # Data issues
-  namespace :issues do 
+  namespace :issues do
     resources :c14s, only: :index do
       collection do
         get ":issue", action: :index,
           constraints: lambda { |req| C14.issues.include?(req.params[:issue].to_sym) }
+      end
+    end
+    resources :dendros, only: :index do
+      collection do
+        get ":issue", action: :index,
+          constraints: lambda { |req| Dendro.issues.include?(req.params[:issue].to_sym) }
       end
     end
     resources :references, only: :index do
@@ -149,13 +162,14 @@ Rails.application.routes.draw do
       end
     end
   end
-  
+
   # LODs
 
   # API
   namespace :api, defaults: {format: 'json'} do
     namespace :v1 do
       resources :data, controller: 'xronos_data'
+      resources :dendros, only: [:index, :show]
     end
   end
 

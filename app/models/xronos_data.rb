@@ -7,7 +7,8 @@ class XronosData
   attr_accessor :xrons
   attr_accessor :selects
 
-  def initialize(filters = {}, selects = {})
+  def initialize(filters = {}, selects = {}, data_type: :c14)
+    @data_type = data_type
     self.filters = filters
     @selects     = selects
 
@@ -85,9 +86,13 @@ class XronosData
   # ---------------------------
 
   def base_scope
-    C14
-      .left_outer_joins(:c14_lab)
-      .left_outer_joins(sample: [
+    scope = if @data_type == :dendro
+              Dendro.all
+            else
+              C14.left_outer_joins(:c14_lab)
+            end
+
+    scope.left_outer_joins(sample: [
         :material,
         :taxon,
         context: [
@@ -105,7 +110,19 @@ class XronosData
 
   def apply_filters
     scope         = @xrons
-    query_filters = @filters_for_query
+    query_filters = if @data_type == :dendro
+                      @filters_for_query.except(:c14s, :cals, :c14_labs, :typos)
+                    else
+                      @filters_for_query.except(:dendros)
+                    end
+    if @data_type == :dendro && query_filters[:dendros].present?
+      dendro_filters = query_filters[:dendros]
+      scope = scope.in_calendar_range(from_year: dendro_filters[:calendar_from], to_year: dendro_filters[:calendar_to])
+      remaining = dendro_filters.except(:calendar_from, :calendar_to)
+      query_filters = query_filters.except(:dendros)
+      query_filters = query_filters.merge(dendros: remaining) if remaining.present?
+    end
+    scope = scope.left_outer_joins(:references) if query_filters[:references].present?
 
     # 1) calibrated age filters – need cals join
     if query_filters.key?(:cals) && query_filters[:cals].present?

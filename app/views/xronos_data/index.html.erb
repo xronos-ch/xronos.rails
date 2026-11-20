@@ -16,10 +16,15 @@
     <div class="tab-pane show active w-100 h-100" id="dataMap" role="tabpanel" aria-labelledby="dataMapTab" tabindex="0">
       <%= render "map" %>
     </div>
-    <div class="tab-pane p-3" id="dataTable" role="tabpanel" aria-labelledby="dataTableTab" tabindex="0">
-      <%= render "table" %>
-    </div>
-  </div>
-
+    <% if @pagy %>
+      <div class="tab-pane p-3" id="dataTable" role="tabpanel" aria-labelledby="dataTableTab" tabindex="0">
+        <%= render "c14_table" %>
+      </div>
+    <% end %>
+    <% if @dendro_pagy %>
+      <div class="tab-pane p-3" id="dendroTable" role="tabpanel" aria-labelledby="dendroTableTab" tabindex="0">
+        <%= render "dendro_table" %>
+      </div>
+    <% end %>
   </div>
 </div>
