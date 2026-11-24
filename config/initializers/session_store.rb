@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-require 'action_dispatch/session/active_record_store'
-require_relative '../../lib/xronos/active_record_session_store'
+require 'active_record/session_store'
+require_relative '../../lib/xronos/active_record_session'
 
-Rails.application.config.session_store Xronos::ActiveRecordSessionStore, key: '_my_app_session'
+ActionDispatch::Session::ActiveRecordStore.session_class = Xronos::ActiveRecordSession
+Rails.application.config.session_store :active_record_store, key: '_my_app_session'
