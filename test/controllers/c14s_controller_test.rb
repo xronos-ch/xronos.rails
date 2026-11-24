@@ -230,6 +230,15 @@ class C14sControllerTest < ActionDispatch::IntegrationTest # rubocop:disable Met
     assert_equal 'text/csv', response.media_type
   end
 
+  test 'signals when a CSV download response is ready' do
+    request_id = '123e4567-e89b-12d3-a456-426614174000'
+
+    get c14s_path(format: :csv, download_request_id: request_id)
+
+    assert_response :success
+    assert_equal 'ready', response.cookies["xronos_download_#{request_id}"]
+  end
+
   test 'CSV download with filter parameters includes only filters' do
     site = create(:site)
     context = create(:context, site: site)

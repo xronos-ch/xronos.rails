@@ -101,6 +101,7 @@
           <%= link_to bs_icon("download"),
                       c14s_path(format: :csv, c14: { sample: { contexts: { site_id: @site.id } } }),
                       class: "btn btn-sm btn-outline-primary",
+                      data: { controller: "download", action: "click->download#start", turbo: false },
                       title: "Download CSV" %>
         </div>
       </div>
@@ -132,6 +133,7 @@
           <%= link_to bs_icon("download"),
                       typos_path(format: :csv, typo: { sample: { contexts: { site_id: @site.id } } }),
                       class: "btn btn-sm btn-outline-primary",
+                      data: { controller: "download", action: "click->download#start", turbo: false },
                       title: "Download CSV" %>
         </div>
       </div>

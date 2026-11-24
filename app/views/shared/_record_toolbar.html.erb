@@ -12,7 +12,7 @@
       </button>
       <ul class="dropdown-menu dropdown-menu-sm">
         <% downloads.each do |fmt| %>
-          <li><%= link_to fmt[:name], fmt[:path], class: "dropdown-item" %></li>
+          <li><%= link_to fmt[:name], fmt[:path], class: "dropdown-item", data: { controller: "download", action: "click->download#start", turbo: false } %></li>
         <% end %>
       </ul>
     </div>
@@ -24,10 +24,10 @@
           Cite
         </button>
         <ul class="dropdown-menu dropdown-menu-sm">
-          <li><%= link_to "BibTeX",   record.citation_path(format: :bibtex), class: "dropdown-item" %></li>
-          <li><%= link_to "CSL-JSON", record.citation_path(format: :json),   class: "dropdown-item" %></li>
-          <li><%= link_to "YAML",     record.citation_path(format: :yaml),   class: "dropdown-item" %></li>
-          <li><%= link_to "RIS",      record.citation_path(format: :ris),    class: "dropdown-item" %></li>
+          <li><%= link_to "BibTeX",   record.citation_path(format: :bibtex), class: "dropdown-item", data: { controller: "download", action: "click->download#start", turbo: false } %></li>
+          <li><%= link_to "CSL-JSON", record.citation_path(format: :json),   class: "dropdown-item", data: { controller: "download", action: "click->download#start", turbo: false } %></li>
+          <li><%= link_to "YAML",     record.citation_path(format: :yaml),   class: "dropdown-item", data: { controller: "download", action: "click->download#start", turbo: false } %></li>
+          <li><%= link_to "RIS",      record.citation_path(format: :ris),    class: "dropdown-item", data: { controller: "download", action: "click->download#start", turbo: false } %></li>
         </ul>
       </div>
     <% end %>

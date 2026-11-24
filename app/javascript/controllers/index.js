@@ -13,6 +13,9 @@ application.register("clipboard", ClipboardController)
 import ContextChoiceController from "./context_choice_controller"
 application.register("context-choice", ContextChoiceController)
 
+import DownloadController from "./download_controller"
+application.register("download", DownloadController)
+
 import FlashController from "./flash_controller"
 application.register("flash", FlashController)
 

@@ -10,6 +10,7 @@ class ApplicationController < ActionController::Base
     cookies.delete(Rails.application.config.session_options[:key]) unless user_signed_in?
     request.session_options[:skip] = !(user_signed_in? || devise_controller?)
   }
+  after_action :signal_download_ready
 
   protect_from_forgery with: :null_session, :if => Proc.new { |c| c.request.format == 'application/json' }
 
@@ -52,6 +53,18 @@ class ApplicationController < ActionController::Base
         username == "2user" && password == "pass1"
       end
     end
+  end
+
+  def signal_download_ready
+    request_id = params[:download_request_id].to_s
+    return unless request_id.match?(/\A[0-9a-f-]{36}\z/i)
+
+    cookies["xronos_download_#{request_id}"] = {
+      value: "ready",
+      expires: 1.minute.from_now,
+      path: "/",
+      same_site: :lax
+    }
   end
 
 end
