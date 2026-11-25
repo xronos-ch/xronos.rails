@@ -13,6 +13,8 @@ jobs:
   accessibility:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
+    outputs:
+      minimum-score: ${{ steps.scores.outputs.minimum-score }}
 
     services:
       postgres:
@@ -98,3 +100,79 @@ jobs:
           name: lighthouse-reports
           path: tmp/lighthouse-reports/
           if-no-files-found: error
+
+      - name: Summarize accessibility scores
+        id: scores
+        run: |
+          node <<'NODE' >> "$GITHUB_STEP_SUMMARY"
+          const { appendFileSync, readFileSync } = require('node:fs');
+          const { ci } = require('./.github/lighthouserc.cjs');
+          const reports = JSON.parse(readFileSync(`${ci.upload.outputDir}/manifest.json`, 'utf8'));
+
+          const scores = ci.collect.url.map((url) => {
+            const report = reports.find((entry) => entry.url === url && entry.isRepresentativeRun);
+            const score = report?.summary?.accessibility;
+            if (!Number.isFinite(score) || score < 0 || score > 1) {
+              throw new Error(`Missing or invalid Lighthouse accessibility score for ${url}`);
+            }
+            return Math.round(score * 100);
+          });
+
+          appendFileSync(process.env.GITHUB_OUTPUT, `minimum-score=${Math.min(...scores)}\n`);
+          console.log([
+            '## Lighthouse accessibility (desktop)',
+            '',
+            '| Page | Score |',
+            '| --- | ---: |',
+            ...ci.collect.url.map((url, index) => `| \`${new URL(url).pathname}\` | ${scores[index]}/100 |`),
+            '',
+            'See the `lighthouse-reports` artifact for the full HTML reports.',
+          ].join('\n'));
+          NODE
+
+  publish-score-badge:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    needs: accessibility
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    concurrency:
+      group: lighthouse-score-badge
+      queue: max
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Publish score for the README
+        env:
+          LIGHTHOUSE_MINIMUM_SCORE: ${{ needs.accessibility.outputs.minimum-score }}
+        run: |
+          # A slower run for an older master commit must not replace a newer score.
+          git fetch --no-tags origin refs/heads/master
+          if [ "$(git rev-parse FETCH_HEAD)" != "$GITHUB_SHA" ]; then
+            exit 0
+          fi
+
+          badge_ref=$(git ls-remote origin refs/heads/lighthouse-badges)
+          if [ -n "$badge_ref" ]; then
+            git fetch --no-tags origin refs/heads/lighthouse-badges
+            git switch --detach FETCH_HEAD
+          else
+            git switch --orphan lighthouse-badges
+          fi
+
+          jq -n --argjson score "$LIGHTHOUSE_MINIMUM_SCORE" '{
+            schemaVersion: 1,
+            label: "Lighthouse accessibility (lowest of 3)",
+            message: (($score | tostring) + "/100"),
+            color: "blue"
+          }' > accessibility.json
+
+          git add accessibility.json
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git -c user.name='github-actions[bot]' \
+            -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+            commit -m 'Update Lighthouse accessibility badge'
+          git push origin HEAD:refs/heads/lighthouse-badges

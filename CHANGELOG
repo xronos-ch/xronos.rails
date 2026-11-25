@@ -19,7 +19,8 @@
 - Reduced the compressed frontend stylesheet size by removing its embedded sourcemap (#221).
 - Automatically clean up inactive sessions daily, with a default retention period of seven days.
 - Added Lighthouse accessibility checks for the home page, data browser and
-  radiocarbon detail page, with HTML reports and a README status badge (#172, #575).
+  radiocarbon detail page, with HTML reports and README badges for run status
+  and the lowest accessibility score (#172, #575).
 
 ## [1.3.1] - 2026-10-26
 
