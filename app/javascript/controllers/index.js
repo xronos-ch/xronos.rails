@@ -13,6 +13,9 @@ application.register("clipboard", ClipboardController)
 import ContextChoiceController from "./context_choice_controller"
 application.register("context-choice", ContextChoiceController)
 
+import CoordinateFormController from "./coordinate_form_controller"
+application.register("coordinate-form", CoordinateFormController)
+
 import FlashController from "./flash_controller"
 application.register("flash", FlashController)
 
@@ -30,6 +33,9 @@ application.register("remote-modal", RemoteModalController)
 
 import SliderController from "./slider_controller"
 application.register("slider", SliderController)
+
+import SiteNameCheckController from "./site_name_check_controller"
+application.register("site-name-check", SiteNameCheckController)
 
 import TaxonFieldController from "./taxon_field_controller"
 application.register("taxon-field", TaxonFieldController)

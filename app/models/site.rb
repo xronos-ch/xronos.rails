@@ -20,6 +20,9 @@
 #
 
 class Site < ApplicationRecord
+  NAME_SUGGESTION_LIMIT = 5
+  MAX_NAME_SUGGESTION_LIMIT = 10
+
   include Versioned
   include Supersedable
   include BatchMatchableToWikidata
@@ -92,12 +95,23 @@ class Site < ApplicationRecord
   pg_search_scope :search,
                   against: :name,
                   using: { tsearch: { prefix: true } } # match partial words
+
   multisearchable against: :name
 
   scope :with_counts, lambda {
     joins("LEFT JOIN sites_with_counts ON sites_with_counts.id = sites.id")
       .select("sites.*, sites_with_counts.c14s_count, sites_with_counts.typos_count, sites_with_counts.references_count")
   }
+
+  def self.search_name_matches(query, exclude_id: nil, limit: nil)
+    return none if query.blank?
+
+    results = search(query)
+    numeric_exclude_id = exclude_id.to_s.match?(/\A\d+\z/)
+    results = results.where.not(id: exclude_id) if numeric_exclude_id
+    requested_limit = Integer(limit, exception: false) || NAME_SUGGESTION_LIMIT
+    results.limit(requested_limit.clamp(1, MAX_NAME_SUGGESTION_LIMIT))
+  end
 
   def self.label
     'Site'

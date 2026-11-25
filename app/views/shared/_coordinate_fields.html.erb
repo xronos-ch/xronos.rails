@@ -1,0 +1,80 @@
+<section class="my-3"
+         data-controller="coordinate-form"
+         data-action="submit@document->coordinate-form#prepareSubmission"
+         data-coordinate-form-country-url-value="<%= country_suggestion_url %>"
+         data-coordinate-form-carto-api-key-value="<%= map_api_key %>"
+         data-coordinate-form-initial-mode-value="<%= params.dig(:coordinate_input, latitude_attribute.to_s, :format).presence || 'decimal' %>">
+  <h2 class="h5">Location</h2>
+  <%= hidden_field_tag "coordinate_input[#{latitude_attribute}][format]",
+    params.dig(:coordinate_input, latitude_attribute.to_s, :format).presence || "decimal",
+    data: { coordinate_form_target: "formatField" } %>
+
+  <div class="d-flex align-items-center gap-2 mb-3">
+    <span class="small text-muted">Enter coordinates as</span>
+    <div class="btn-group btn-group-sm" role="group" aria-label="Coordinate format">
+      <button type="button" class="btn btn-outline-secondary active" aria-pressed="true" value="decimal"
+              data-action="click->coordinate-form#changeFormat">Decimal degrees</button>
+      <button type="button" class="btn btn-outline-secondary" aria-pressed="false" value="dms"
+              data-action="click->coordinate-form#changeFormat">DMS</button>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <% [
+      {
+        axis: "latitude", attribute: latitude_attribute, label: latitude_label,
+        minimum: -90, maximum: 90,
+        placeholder: "e.g. 47.3769",
+        decimal_help: "Use negative values for south of the equator.",
+        hemispheres: [["N", "N"], ["S", "S"]]
+      },
+      {
+        axis: "longitude", attribute: longitude_attribute, label: longitude_label,
+        minimum: -180, maximum: 180,
+        placeholder: "e.g. 8.5451",
+        decimal_help: "Use negative values for west of Greenwich.",
+        hemispheres: [["E", "E"], ["W", "W"]]
+      }
+    ].each do |axis_options| %>
+      <div class="col">
+        <%= render "shared/coordinate_axis_fields", form:, **axis_options %>
+      </div>
+    <% end %>
+  </div>
+
+  <% if preview %>
+    <section class="my-3" aria-labelledby="coordinate-preview-heading-<%= form.field_id(latitude_attribute) %>">
+      <h3 id="coordinate-preview-heading-<%= form.field_id(latitude_attribute) %>" class="h6">Location preview</h3>
+      <div class="position-relative">
+        <div class="rounded border" style="height: 18rem;" data-coordinate-form-target="map"></div>
+        <div class="position-absolute top-50 start-50 translate-middle bg-white bg-opacity-75 px-2 py-1 rounded small text-center"
+             data-coordinate-form-target="mapMessage">
+          Enter valid latitude and longitude to preview the location.
+        </div>
+      </div>
+    </section>
+  <% end %>
+
+  <% if country_attribute.present? %>
+    <div>
+      <%= form.label country_attribute, "Country", class: "form-label" %>
+      <%= form.country_select country_attribute, { include_blank: na_value }, {
+        data: {
+          controller: "tom-select",
+          coordinate_form_target: "country",
+          action: "change->coordinate-form#countryChanged"
+        }
+      } %>
+      <small class="form-text text-muted">
+        Country in whose territory the site is currently situated, following the
+        <a href="https://www.iso.org/iso-3166-country-codes.html">ISO 3166</a> standard.
+      </small>
+      <% if country_suggestion_url.present? %>
+        <div class="small mt-2 d-none" aria-live="polite" data-coordinate-form-target="countryMessage"></div>
+        <button type="button" class="btn btn-sm btn-outline-secondary mt-2 d-none"
+                data-coordinate-form-target="applyCountryButton"
+                data-action="click->coordinate-form#applyCountrySuggestion"></button>
+      <% end %>
+    </div>
+  <% end %>
+</section>

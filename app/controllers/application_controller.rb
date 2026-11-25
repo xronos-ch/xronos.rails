@@ -34,8 +34,6 @@ class ApplicationController < ActionController::Base
     current_user.id if user_signed_in?
   end
 
-  # default_form_builder FormHelper::BS5FormBuilder
-
   private
 
   def storable_location?

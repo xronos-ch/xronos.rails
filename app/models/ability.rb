@@ -19,6 +19,7 @@ class Ability
     # additional permissions for logged in users (they can manage their posts)
     if user.present?
       can :create, :all
+      can :country_suggestion, Site
       cannot :manage, User
       can [:read, :update], [UserProfile], :user_id => user.id
       cannot :index, [UserProfile]

@@ -1,8 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
-import "leaflet-providers"
 import Supercluster from "supercluster"
+import { createBaseMaps } from "../map_layers"
 
 // Connects to data-controller="map"
 export default class extends Controller {
@@ -26,18 +26,9 @@ export default class extends Controller {
     )
 
     // Base maps
-    const cartoOptions = { apikey: this.cartoApiKeyValue }
-    const physical = L.tileLayer.provider("CartoDB.PositronNoLabels", cartoOptions)
-    const labelledPhysical = L.tileLayer.provider("CartoDB.Positron", cartoOptions)
-    const imagery = L.tileLayer.provider("Esri.WorldImagery")
+    const baseMaps = createBaseMaps(this.cartoApiKeyValue)
 
-    const baseMaps = {
-      "Map": physical,
-      "Map with labels": labelledPhysical,
-      "Imagery": imagery
-    }
-
-    let baseMap = physical
+    let baseMap = baseMaps.Map
     if (this.hasBaseMapValue && baseMaps[this.baseMapValue]) {
       baseMap = baseMaps[this.baseMapValue]
     }

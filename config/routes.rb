@@ -44,6 +44,8 @@ Rails.application.routes.draw do
       resource :description, only: :show
     end
   end
+  resources :country_suggestions, only: :index
+  resources :site_name_suggestions, only: :index
   resources :site_types do
     get 'search', on: :collection
   end
