@@ -1,0 +1,77 @@
+name: Lighthouse
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  accessibility:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    services:
+      postgres:
+        image: postgres:15
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: xronos_test
+        options: >-
+          --health-cmd "pg_isready -U postgres -d xronos_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      RAILS_ENV: test
+      POSTGRES_DB: xronos
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/xronos_test
+      WEB_CONCURRENCY: 0
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: yarn
+
+      - name: Build assets and calibrator
+        run: |
+          yarn install --frozen-lockfile
+          yarn build
+          yarn build:css
+          bin/build_calibrator
+
+      - name: Prepare audit data
+        run: |
+          bin/rails db:test:prepare
+          bin/rails runner - <<'RUBY'
+          # frozen_string_literal: true
+
+          site = FactoryBot.create(:site, name: 'Lighthouse test site', country_code: 'DE', lat: 54.3, lng: 10.1)
+          context = FactoryBot.create(:context, site: site)
+          sample = FactoryBot.create(:sample, context: context)
+          c14 = FactoryBot.create(:c14, sample: sample, lab_identifier: 'TEST-1', bp: 4500, std: 30)
+          C14.connection.execute('REFRESH MATERIALIZED VIEW data_views')
+          File.open(ENV.fetch('GITHUB_ENV'), 'a') { |file| file.puts("LIGHTHOUSE_C14_ID=#{c14.id}") }
+          RUBY
+
+      - name: Audit public pages
+        run: npx --yes --package=@lhci/cli@0.15.1 lhci autorun --config=.github/lighthouserc.cjs
+
+      - name: Upload Lighthouse reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports
+          path: tmp/lighthouse-reports/
+          if-no-files-found: error
