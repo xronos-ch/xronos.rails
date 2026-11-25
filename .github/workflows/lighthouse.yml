@@ -29,8 +29,12 @@ jobs:
 
     env:
       RAILS_ENV: test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
       POSTGRES_DB: xronos
+      POSTGRES_DB_STAGING: xronos_staging
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/xronos_test
+      REGISTRATION_PASSPHRASE: xronos
       WEB_CONCURRENCY: 0
 
     steps:
