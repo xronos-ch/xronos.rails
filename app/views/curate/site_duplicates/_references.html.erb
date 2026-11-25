@@ -1,0 +1,29 @@
+<section class="mb-4" aria-labelledby="site-merge-references">
+  <h3 id="site-merge-references">Bibliographic references</h3>
+  <div class="row g-3">
+    <% sites.each do |site| %>
+      <% direct = site.references.distinct.to_a %>
+      <% additional = site.recursive_references - direct %>
+      <section class="col-md-6" aria-labelledby="site-merge-references-<%= site.id %>"
+               id="site-merge-references-panel-<%= site.id %>">
+        <h4 id="site-merge-references-<%= site.id %>" class="h6"><%= site.name %></h4>
+        <% if direct.empty? && additional.empty? %>
+          <p class="text-body-secondary">No bibliographic references.</p>
+        <% else %>
+          <% { "Cited on the site" => direct, "Additional references from radiocarbon measurements" => additional }.each do |label, references| %>
+            <% next if references.empty? %>
+            <h5 class="h6 mt-3"><%= label %></h5>
+            <ul class="list-unstyled mb-2">
+              <% references.sort_by { |reference| reference.short_ref.to_s.downcase }.each do |reference| %>
+                <li class="mb-2">
+                  <%= link_to reference.short_ref, reference %>
+                  <%= reference.render if reference.bibtex.present? %>
+                </li>
+              <% end %>
+            </ul>
+          <% end %>
+        <% end %>
+      </section>
+    <% end %>
+  </div>
+</section>

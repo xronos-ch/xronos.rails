@@ -28,6 +28,12 @@ application.register("markdown-editor", MarkdownEditorController)
 import RemoteModalController from "./remote_modal_controller"
 application.register("remote-modal", RemoteModalController)
 
+import SiteMergeFieldController from "./site_merge_field_controller"
+application.register("site-merge-field", SiteMergeFieldController)
+
+import SiteMergeMapController from "./site_merge_map_controller"
+application.register("site-merge-map", SiteMergeMapController)
+
 import SliderController from "./slider_controller"
 application.register("slider", SliderController)
 

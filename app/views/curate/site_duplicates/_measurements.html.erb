@@ -1,0 +1,48 @@
+<section class="mb-4" aria-labelledby="site-merge-measurements">
+  <h3 id="site-merge-measurements">Compare radiocarbon measurements</h3>
+  <p>Matches have the same lab identifier, age and error. Review their contexts and references before merging the sites.</p>
+
+  <details class="mb-3" open>
+    <summary><%= pluralize(comparison.matches.size, "matching combination") %></summary>
+    <div class="table-responsive" id="matching-measurements">
+      <table class="table table-sm align-top">
+        <thead>
+          <tr>
+            <th scope="col">Lab ID and age</th>
+            <% sites.each do |site| %>
+              <th scope="col"><%= site.name %> (#<%= site.id %>)</th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% comparison.matches.each do |(lab, bp, std), measurements| %>
+            <tr>
+              <th scope="row"><%= lab %><br><span class="fw-normal"><%= bp %> ± <%= std %> BP</span></th>
+              <% sites.each do |site| %>
+                <td>
+                  <ul class="list-unstyled mb-0">
+                    <%= render partial: "measurement", collection: measurements.fetch(site.id), as: :measurement %>
+                  </ul>
+                </td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </details>
+
+  <div class="row g-3">
+    <% sites.each do |site| %>
+      <% unmatched = comparison.unmatched(site) %>
+      <details class="col-md-6" id="unmatched-measurements-<%= site.id %>">
+        <summary><%= pluralize(unmatched.size, "measurement") %> only at <%= site.name %> (#<%= site.id %>)</summary>
+        <% if unmatched.any? %>
+          <ul class="list-unstyled mt-2">
+            <%= render partial: "measurement", collection: unmatched, as: :measurement %>
+          </ul>
+        <% end %>
+      </details>
+    <% end %>
+  </div>
+</section>

@@ -1,0 +1,19 @@
+<section class="mb-4" aria-labelledby="site-merge-map-heading">
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+    <h3 id="site-merge-map-heading" class="h5 mb-0">Compare coordinates on the map</h3>
+    <%= button_tag "Fit all points", type: "button", class: "btn btn-sm btn-outline-secondary",
+                   data: { action: "site-merge-map#fitPoints" } %>
+  </div>
+  <div class="rounded border" style="height: 22rem" data-site-merge-map-target="container"
+       role="region" aria-label="Map of the site coordinates"></div>
+  <ul class="list-inline small mt-2 mb-0">
+    <% sites.each_with_index do |site, index| %>
+      <li class="list-inline-item">
+        <span aria-hidden="true" style="color: <%= colors.fetch(index) %>">◯</span>
+        <%= "Site ##{site.id}" %>
+        <%= "(no valid coordinates)" if site.missing_coordinates? || site.invalid_coordinates? %>
+      </li>
+    <% end %>
+    <li class="list-inline-item"><span aria-hidden="true" style="color: #008450">●</span> Custom coordinates when entered</li>
+  </ul>
+</section>

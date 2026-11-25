@@ -1,0 +1,163 @@
+<% content_for :title, "Compare sites" %>
+<% first, second = @review.sites %>
+<% selection = @selection || {} %>
+
+<p><%= link_to "Back to possible site duplicates", curate_site_duplicates_path %></p>
+<h2>Compare sites</h2>
+<p>
+  <%= pluralize(@review.evidence, "matching lab identifier, age and error combination") %>.
+  <a href="#site-merge-measurements">Compare measurements</a> · <a href="#site-merge-decision">Go to merge decision</a>
+</p>
+
+<% if @merge_error %>
+  <p class="alert alert-danger" role="alert"><%= @merge_error %></p>
+<% end %>
+
+<% colors = ["#0072b2", "#d55e00"] %>
+<% markers = @review.sites.each_with_index.filter_map do |site, index|
+     next if site.missing_coordinates? || site.invalid_coordinates?
+
+     { lat: site.lat.to_f, lng: site.lng.to_f, label: "Site ##{site.id}", color: colors.fetch(index) }
+   end %>
+
+<%= form_with url: curate_site_duplicates_path, scope: :merge,
+              data: { controller: "site-merge-map", site_merge_map_sites_value: markers,
+                      site_merge_map_carto_api_key_value: ENV["CARTO_API_KEY"] } do |form| %>
+  <%= form.hidden_field :first_id, value: first.id %>
+  <%= form.hidden_field :second_id, value: second.id %>
+  <%= form.hidden_field :fingerprint, value: @review.fingerprint %>
+
+  <div class="table-responsive">
+    <table class="table align-middle">
+      <thead>
+        <tr>
+          <th scope="col">Field</th>
+          <% @review.sites.each do |site| %>
+            <th scope="col"><%= link_to "Site ##{site.id}", site %></th>
+          <% end %>
+          <th scope="col">Use value from</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Keep this site ID</th>
+          <% @review.sites.each do |site| %>
+            <td>
+              <%= form.radio_button :target_id, site.id, checked: site.id.to_s == selection.fetch(:target_id, first.id.to_s),
+                                    aria: { label: "Keep site ##{site.id}" } %>
+            </td>
+          <% end %>
+          <td></td>
+        </tr>
+        <%= form.fields_for :sources do |fields| %>
+          <% comparison = {
+            name: ["Name", ->(site) { site.name }],
+            coordinates: ["Coordinates", ->(site) { [site.lat&.to_s("F"), site.lng&.to_s("F")].join(", ") if site.coordinates }],
+            country: ["Country", ->(site) { site.country_code }]
+          } %>
+          <% comparison.each do |key, (label, value_for)| %>
+            <% values = @review.sites.map(&value_for) %>
+            <% different = values.uniq.many? %>
+            <tr class="<%= "table-warning" if different %>">
+              <th scope="row"><%= label %></th>
+              <% values.each do |value| %>
+                <td><%= value.presence || "—" %></td>
+              <% end %>
+              <td data-controller="site-merge-field">
+                <% choices = @review.sites.map { |site| ["Site ##{site.id}", site.id] } %>
+                <% field_data = { site_merge_field_target: "source", action: "change->site-merge-field#update" } %>
+                <% if key == :coordinates %>
+                  <% field_data.merge!(site_merge_map_target: "source",
+                                      action: "#{field_data[:action]} change->site-merge-map#updateCustomMarker") %>
+                <% end %>
+                <%= fields.select key, choices + [["Enter a custom value", "custom"]],
+                                  { include_blank: "Keep target value", selected: selection.dig(:sources, key) },
+                                  class: "form-select", aria: { label: "Use #{label.downcase} from" },
+                                  data: field_data %>
+                <div class="mt-2" data-site-merge-field-target="custom">
+                  <%= render "custom_field", field: key, values: selection.fetch(:custom, {}) %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <%= render "coordinate_map", sites: @review.sites, colors: colors %>
+  <%= render "measurements", sites: @review.sites, comparison: @review.measurement_comparison %>
+  <details class="mb-4">
+    <summary>Bibliography for both sites</summary>
+    <%= render "references", sites: @review.sites %>
+  </details>
+  <div class="form-check mb-3">
+    <%= form.check_box :keep_names, { checked: selection.fetch(:keep_names, "1") == "1", class: "form-check-input" } %>
+    <%= form.label :keep_names, "Keep both original names as alternative names where needed", class: "form-check-label" %>
+  </div>
+
+  <h3 id="site-merge-decision">Merge impact</h3>
+  <p>Contexts and measurements follow the retained site. Open a context in a new tab to check its measurements.</p>
+  <% context_counts = @review.context_measurement_counts %>
+  <% @review.sites.each do |site| %>
+    <% impact = @review.impact(site) %>
+    <details class="mb-2">
+      <summary>
+        Site #<%= site.id %> · <%= pluralize(impact[:contexts].size, "context") %>,
+        <%= pluralize(impact[:c14s], "radiocarbon measurement") %>,
+        <%= pluralize(impact[:typos], "typological date") %>
+      </summary>
+      <ul>
+        <% impact[:contexts].each do |id, name| %>
+          <li>
+            <%= link_to name.presence || "Unnamed context ##{id}", context_path(id), target: "_blank", rel: "noopener" %>
+            <span class="text-body-secondary">· <%= pluralize(context_counts.fetch(id, 0), "radiocarbon measurement") %></span>
+          </li>
+        <% end %>
+      </ul>
+    </details>
+  <% end %>
+
+  <% collisions = @review.collisions %>
+  <% if collisions.present? %>
+    <div class="alert alert-warning my-3">
+      <p>These contexts have the same name or are both unnamed. Give a source context a new name to keep it separate,
+         or confirm that the remaining contexts should be merged. The source is the site whose ID you did not choose to keep.</p>
+      <ul>
+        <% collisions.each do |name| %>
+          <li>
+            <%= name.presence || "Unnamed context" %>
+            <% context_ids = @review.sites.map { |site| @review.impact(site)[:contexts].find { |_, context_name| context_name == name }.first } %>
+            <% context_ids.each do |context_id| %>
+              <%= link_to "##{context_id}", context_path(context_id), target: "_blank", rel: "noopener" %>
+            <% end %>
+            <% context_id = context_ids.first %>
+            <% entered = Array(selection[:separate_contexts]).find { |choice| choice[:context_id].to_s == context_id.to_s } %>
+            <div class="mt-1 mb-3">
+              <%= hidden_field_tag "merge[separate_contexts][][context_id]", context_id, id: nil %>
+              <%= label_tag "separate_context_#{context_id}", "New source context name to keep it separate", class: "form-label" %>
+              <%= text_field_tag "merge[separate_contexts][][name]", entered&.fetch(:name, nil),
+                                 id: "separate_context_#{context_id}", class: "form-control" %>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+      <div class="form-check">
+        <%= form.check_box :confirm_contexts, checked: selection[:confirm_contexts] == "1", class: "form-check-input" %>
+        <%= form.label :confirm_contexts, "Also merge the listed contexts without a new name", class: "form-check-label" %>
+      </div>
+    </div>
+  <% end %>
+
+  <% conflicts = @review.linked_resource_conflicts %>
+  <% if conflicts.any? %>
+    <p class="alert alert-warning">Resolve conflicting links before merging: <%= conflicts.to_sentence %>.</p>
+  <% end %>
+  <% merge_label = collisions.present? ? "Merge sites with reviewed contexts" : "Merge sites" %>
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <%= form.submit merge_label, class: "btn btn-primary", disabled: conflicts.any?,
+                    data: { turbo_confirm: "#{merge_label}?" } %>
+    <%= button_tag "#{merge_label} and review next pair", name: "intent", value: "next", type: "submit",
+                   class: "btn btn-outline-primary", disabled: conflicts.any?,
+                   data: { turbo_confirm: "#{merge_label} and open the next pair?" } %>
+  </div>
+<% end %>

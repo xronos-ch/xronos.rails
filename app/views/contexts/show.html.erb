@@ -1,0 +1,41 @@
+<% title = @context.name.presence || "Unnamed context ##{@context.id}" %>
+<% content_for :title, title %>
+
+<main class="container my-5">
+  <p><%= link_to @context.site.name, @context.site %></p>
+  <h1><%= title %></h1>
+
+  <h2>Radiocarbon measurements</h2>
+  <p><%= pluralize(@pagy.count, "radiocarbon measurement") %></p>
+  <% if @c14s.any? %>
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Lab ID</th>
+            <th scope="col">Uncalibrated age</th>
+            <th scope="col">Material</th>
+            <th scope="col">Taxon</th>
+            <th scope="col">References</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @c14s.each do |measurement| %>
+            <tr>
+              <td><%= link_to measurement.lab_identifier.presence || "C14 ##{measurement.id}", measurement %></td>
+              <td><%= "#{measurement.bp} ± #{measurement.std} BP" if measurement.bp && measurement.std %></td>
+              <td><%= measurement.sample.material&.name || na_value %></td>
+              <td><%= render "taxons/taxon_abbreviated", taxon: measurement.sample.taxon %></td>
+              <td>
+                <% measurement.references.each do |reference| %>
+                  <div><%= link_to reference.short_ref, reference %></div>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <%== @pagy.series_nav(:bootstrap) %>
+  <% end %>
+</main>
