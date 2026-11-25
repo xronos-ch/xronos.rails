@@ -82,7 +82,7 @@ export default class extends Controller {
     this.element.classList.remove("disabled")
     this.pending = false
 
-    const dropdown = this.element.closest(".dropdown")
+    const dropdown = this.element.closest(".dropdown, .btn-group")
     const menu = this.element.closest(".dropdown-menu")
     const toggle = dropdown?.querySelector('[data-bs-toggle="dropdown"]')
     if (menu?.classList.contains("show")) toggle?.click()
