@@ -32,7 +32,13 @@ export default class extends Controller {
     this.timeoutTimer = window.setTimeout(() => this.finish(), MAX_WAIT)
   }
 
+  connect() {
+    this.beforeCache = () => this.finish()
+    document.addEventListener("turbo:before-cache", this.beforeCache)
+  }
+
   disconnect() {
+    document.removeEventListener("turbo:before-cache", this.beforeCache)
     this.finish()
   }
 
