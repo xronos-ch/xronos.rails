@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     outputs:
-      minimum-score: ${{ steps.scores.outputs.minimum-score }}
+      score-badge: ${{ steps.scores.outputs.score-badge }}
 
     services:
       postgres:
@@ -118,9 +118,18 @@ jobs:
             return Math.round(score * 100);
           });
 
-          appendFileSync(process.env.GITHUB_OUTPUT, `minimum-score=${Math.min(...scores)}\n`);
+          const badge = {
+            label: `Lighthouse accessibility (lowest of ${scores.length})`,
+            message: `${Math.min(...scores)}/100`,
+            color: 'blue',
+          };
+          appendFileSync(process.env.GITHUB_OUTPUT, `score-badge=${JSON.stringify({ schemaVersion: 1, ...badge })}\n`);
+          const previewUrl = `https://img.shields.io/static/v1?${new URLSearchParams(badge)}`;
+
           console.log([
             '## Lighthouse accessibility (desktop)',
+            '',
+            `![README score badge preview](${previewUrl})`,
             '',
             '| Page | Score |',
             '| --- | ---: |',
@@ -145,7 +154,7 @@ jobs:
 
       - name: Publish score for the README
         env:
-          LIGHTHOUSE_MINIMUM_SCORE: ${{ needs.accessibility.outputs.minimum-score }}
+          LIGHTHOUSE_SCORE_BADGE: ${{ needs.accessibility.outputs.score-badge }}
         run: |
           # A slower run for an older master commit must not replace a newer score.
           git fetch --no-tags origin refs/heads/master
@@ -161,12 +170,7 @@ jobs:
             git switch --orphan lighthouse-badges
           fi
 
-          jq -n --argjson score "$LIGHTHOUSE_MINIMUM_SCORE" '{
-            schemaVersion: 1,
-            label: "Lighthouse accessibility (lowest of 3)",
-            message: (($score | tostring) + "/100"),
-            color: "blue"
-          }' > accessibility.json
+          jq -n --argjson badge "$LIGHTHOUSE_SCORE_BADGE" '$badge' > accessibility.json
 
           git add accessibility.json
           if git diff --cached --quiet; then
