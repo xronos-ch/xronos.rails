@@ -1,8 +1,12 @@
 import { Controller } from "@hotwired/stimulus"
 
-const POLL_INTERVAL = 100
+const POLL_INTERVAL = 250
 const MINIMUM_DISPLAY_TIME = 600
-const MAX_WAIT = 5 * 60 * 1000
+const HEARTBEAT_INTERVAL = 5000
+const HEARTBEAT_TIMEOUT = 3000
+const MAX_HEARTBEAT_FAILURES = 3
+const MAX_WAIT_MINUTES = 5
+const MAX_WAIT = MAX_WAIT_MINUTES * 60 * 1000
 
 export default class extends Controller {
   start(event) {
@@ -14,6 +18,7 @@ export default class extends Controller {
     // Keep Bootstrap from closing the dropdown that contains this link.
     event.stopPropagation()
     this.pending = true
+    this.clearFeedback()
     this.originalHref = this.element.getAttribute("href")
     this.originalContent = this.element.innerHTML
     this.requestId = crypto.randomUUID()
@@ -29,11 +34,18 @@ export default class extends Controller {
 
     this.cookieName = `xronos_download_${this.requestId}`
     this.pollTimer = window.setInterval(() => this.checkReady(), POLL_INTERVAL)
-    this.timeoutTimer = window.setTimeout(() => this.finish(), MAX_WAIT)
+    this.heartbeatFailures = 0
+    this.heartbeatPending = false
+    this.heartbeatTimer = window.setInterval(() => this.checkConnection(), HEARTBEAT_INTERVAL)
+    this.timeoutTimer = window.setTimeout(() => this.handleTimeout(), MAX_WAIT)
+    this.checkConnection()
   }
 
   connect() {
-    this.beforeCache = () => this.finish()
+    this.beforeCache = () => {
+      this.finish()
+      this.clearFeedback()
+    }
     document.addEventListener("turbo:before-cache", this.beforeCache)
   }
 
@@ -60,21 +72,74 @@ export default class extends Controller {
   }
 
   checkReady() {
-    const ready = document.cookie
+    const cookie = document.cookie
       .split("; ")
-      .some(cookie => cookie === `${this.cookieName}=ready`)
+      .find(cookie => cookie.startsWith(`${this.cookieName}=`))
 
-    if (!ready || Date.now() - this.startedAt < MINIMUM_DISPLAY_TIME) return
+    if (!cookie || Date.now() - this.startedAt < MINIMUM_DISPLAY_TIME) return
 
-    document.cookie = `${this.cookieName}=; Max-Age=0; path=/; SameSite=Lax`
-    this.finish()
+    const result = cookie.slice(this.cookieName.length + 1)
+    this.clearResponseCookie()
+
+    if (result === "ready") {
+      this.finish()
+      return
+    }
+
+    const status = result.match(/^error-(\d{3})$/)?.[1]
+    this.finish(status ? `The download request failed (HTTP ${status}).` : "The download request failed.")
   }
 
-  finish() {
+  async checkConnection() {
+    if (!this.pending || this.heartbeatPending) return
+
+    this.heartbeatPending = true
+    this.heartbeatController = new AbortController()
+    this.heartbeatTimeout = window.setTimeout(
+      () => this.heartbeatController?.abort(),
+      HEARTBEAT_TIMEOUT
+    )
+
+    try {
+      const response = await fetch("/up", {
+        cache: "no-store",
+        credentials: "same-origin",
+        signal: this.heartbeatController.signal
+      })
+
+      if (!response.ok) throw new Error(`Health check returned ${response.status}`)
+      this.heartbeatFailures = 0
+    } catch {
+      this.heartbeatFailures += 1
+      if (this.heartbeatFailures >= MAX_HEARTBEAT_FAILURES) {
+        this.finish("The server is not responding. The download may not have completed.")
+      }
+    } finally {
+      window.clearTimeout(this.heartbeatTimeout)
+      this.heartbeatTimeout = null
+      this.heartbeatController = null
+      this.heartbeatPending = false
+    }
+  }
+
+  handleTimeout() {
+    this.checkReady()
+    if (!this.pending) return
+
+    this.finish(
+      `No response after ${MAX_WAIT_MINUTES} minutes. The export may still be running; check before retrying.`,
+      "warning"
+    )
+  }
+
+  finish(message = null, messageType = "danger") {
     if (!this.pending) return
 
     window.clearInterval(this.pollTimer)
+    window.clearInterval(this.heartbeatTimer)
     window.clearTimeout(this.timeoutTimer)
+    window.clearTimeout(this.heartbeatTimeout)
+    this.heartbeatController?.abort()
     this.element.setAttribute("href", this.originalHref)
     this.element.innerHTML = this.originalContent
     this.element.removeAttribute("aria-disabled")
@@ -82,9 +147,34 @@ export default class extends Controller {
     this.element.classList.remove("disabled")
     this.pending = false
 
+    if (message) {
+      this.showFeedback(message, messageType)
+      return
+    }
+
     const dropdown = this.element.closest(".dropdown, .btn-group")
     const menu = this.element.closest(".dropdown-menu")
     const toggle = dropdown?.querySelector('[data-bs-toggle="dropdown"]')
     if (menu?.classList.contains("show")) toggle?.click()
+  }
+
+  clearResponseCookie() {
+    document.cookie = `${this.cookieName}=; Max-Age=0; path=/; SameSite=Lax`
+  }
+
+  clearFeedback() {
+    const feedback = this.element.nextElementSibling
+    if (feedback?.matches("[data-download-feedback]")) feedback.remove()
+  }
+
+  showFeedback(message, messageType) {
+    this.clearFeedback()
+
+    const feedback = document.createElement("span")
+    feedback.dataset.downloadFeedback = "true"
+    feedback.className = `small text-${messageType} ms-2`
+    feedback.setAttribute("role", messageType === "danger" ? "alert" : "status")
+    feedback.textContent = message
+    this.element.insertAdjacentElement("afterend", feedback)
   }
 }
