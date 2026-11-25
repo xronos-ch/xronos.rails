@@ -3,8 +3,6 @@ const baseUrl = 'http://127.0.0.1:3000';
 module.exports = {
   ci: {
     collect: {
-      startServerCommand: 'bin/rails server -b 127.0.0.1 -p 3000',
-      startServerReadyPattern: 'Listening on',
       url: [`${baseUrl}/`, `${baseUrl}/data`, `${baseUrl}/c14s/${process.env.LIGHTHOUSE_C14_ID}`],
       numberOfRuns: 1,
       settings: {

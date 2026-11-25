@@ -71,7 +71,24 @@ jobs:
           RUBY
 
       - name: Audit public pages
-        run: npx --yes --package=@lhci/cli@0.15.1 lhci autorun --config=.github/lighthouserc.cjs
+        run: |
+          # The test database has no Solid Queue tables.
+          bundle exec puma --no-config --bind tcp://127.0.0.1:3000 &
+          puma_pid=$!
+          trap 'kill "$puma_pid" 2>/dev/null || true' EXIT
+
+          for path in / /data "/c14s/$LIGHTHOUSE_C14_ID"; do
+            status=$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
+              --retry 15 --retry-connrefused --retry-delay 1 --max-time 5 \
+              "http://127.0.0.1:3000$path") || status=unreachable
+            if [ "$status" != 200 ]; then
+              echo "Cannot audit $path (HTTP status: $status)"
+              tail -n 100 log/test.log || true
+              exit 1
+            fi
+          done
+
+          npx --yes --package=@lhci/cli@0.15.1 lhci autorun --config=.github/lighthouserc.cjs
 
       - name: Upload Lighthouse reports
         uses: actions/upload-artifact@v4
