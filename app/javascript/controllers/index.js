@@ -13,6 +13,9 @@ application.register("clipboard", ClipboardController)
 import ContextChoiceController from "./context_choice_controller"
 application.register("context-choice", ContextChoiceController)
 
+import CoordinateFormController from "./coordinate_form_controller"
+application.register("coordinate-form", CoordinateFormController)
+
 import FlashController from "./flash_controller"
 application.register("flash", FlashController)
 

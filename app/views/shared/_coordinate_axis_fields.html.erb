@@ -1,0 +1,42 @@
+<div data-coordinate-form-target="decimalInputs">
+  <%= form.number_field attribute,
+    label: label,
+    step: "any",
+    min: minimum,
+    max: maximum,
+    placeholder: placeholder,
+    data: {
+      coordinate_form_target: "#{axis}Field",
+      action: "input->coordinate-form#coordinatesChanged"
+    } %>
+  <div class="form-text"><%= decimal_help %></div>
+</div>
+
+<div class="d-none" data-coordinate-form-target="dmsInputs">
+  <% degrees_id = form.field_id(attribute, :degrees) %>
+  <label class="form-label" for="<%= degrees_id %>"><%= label %></label>
+  <div class="input-group">
+    <% %i[degrees minutes seconds].each do |part| %>
+      <% max = part == :degrees ? maximum : (part == :minutes ? 59 : 59.999) %>
+      <% step = part == :seconds ? "any" : 1 %>
+      <%= number_field_tag "coordinate_input[#{attribute}][#{part}]",
+        params.dig(:coordinate_input, attribute.to_s, part),
+        id: form.field_id(attribute, part), class: "form-control", min: 0, max:, step:,
+        aria: { label: "#{label} #{part}" },
+        data: {
+          coordinate_form_target: "#{axis}#{part.to_s.capitalize}",
+          action: "input->coordinate-form#coordinatesChanged"
+        } %>
+      <span class="input-group-text"><%= { degrees: "°", minutes: "′", seconds: "″" }.fetch(part) %></span>
+    <% end %>
+    <%= select_tag "coordinate_input[#{attribute}][hemisphere]",
+      options_for_select(hemispheres, params.dig(:coordinate_input, attribute.to_s, :hemisphere).presence || hemispheres.first.last),
+      id: form.field_id(attribute, :hemisphere), class: "form-select",
+      aria: { label: "#{label} hemisphere" },
+      data: {
+        coordinate_form_target: "#{axis}Hemisphere",
+        action: "change->coordinate-form#coordinatesChanged"
+      } %>
+  </div>
+  <div class="form-text">Degrees, minutes, seconds, and hemisphere (<%= hemispheres.map(&:first).join("/") %>).</div>
+</div>

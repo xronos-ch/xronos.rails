@@ -11,7 +11,8 @@
         Please check that the site does not already exist in XRONOS first!
       </section>
 
-      <%= bootstrap_form_with(model: @site, local: true, id: "siteForm") do |f| %>
+      <%= bootstrap_form_with(model: @site, local: true, id: "siteForm",
+        builder: Xronos::CoordinateFormBuilder) do |f| %>
         <%= render "fields", f: f %>
         <%= f.submit class: 'btn btn-primary' %>
       <% end %>

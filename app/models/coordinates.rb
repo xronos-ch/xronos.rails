@@ -24,6 +24,12 @@ class Coordinates
     latitude >= -90 && latitude <= 90
   end
 
+  def valid?
+    return false unless latitude&.finite? && longitude&.finite?
+
+    valid_latitude? && valid_longitude?
+  end
+
   def invalid_longitude?
     not valid_longitude?
   end
