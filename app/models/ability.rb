@@ -12,9 +12,6 @@ class Ability
     cannot :read, Article
     can :read, Article, published?: true
     can :search, :all
-    can :calibrate, :all
-    can :calibrate_multi, :all
-    can :calibrate_sum, :all
 
     # additional permissions for logged in users (they can manage their posts)
     if user.present?
