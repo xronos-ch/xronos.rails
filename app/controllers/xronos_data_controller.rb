@@ -16,20 +16,6 @@ class XronosDataController < ApplicationController
     @raw_filter_params = filter_params
     logger.debug { "Parsed filters: #{@data.filters.inspect}" }
 
-    sites_relation = @data.xrons
-                          .select('sites.id', 'sites.lng', 'sites.lat', 'sites.name')
-                          .distinct
-
-    @sites = if unfiltered_request?
-               Rails.cache.fetch(cache_key_for('sites_collection'), expires_in: 10.minutes) do
-                 sites_relation.to_a
-               end
-             else
-               sites_relation
-             end
-
-    sites_sql = sites_relation.to_sql
-
     respond_to do |format|
       format.html do
         set_counts
@@ -78,6 +64,7 @@ class XronosDataController < ApplicationController
       end
 
       format.geojson do
+        sites_sql = @data.xrons.select('sites.id', 'sites.lng', 'sites.lat', 'sites.name').distinct.to_sql
         geojson = if unfiltered_request?
                     Rails.cache.fetch(
                       cache_key_for('geojson'),
@@ -194,7 +181,7 @@ class XronosDataController < ApplicationController
 
   def build_miaard_payload(xrons_relation)
     c14s = xrons_relation
-           .includes(sample: [:taxon, { context: :site }])
+           .includes(sample: [:material, :taxon, { context: :site }])
            .reorder(:id)
 
     entries = C14::MIAARD.collection(c14s).map(&:to_h)

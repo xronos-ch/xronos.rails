@@ -149,17 +149,39 @@ class C14sControllerTest < ActionDispatch::IntegrationTest # rubocop:disable Met
   test 'downloads C14 records as a MIaaRD collection' do
     site = create(:site, name: 'Test Site')
     context = create(:context, site: site)
-    sample = create(:sample, context: context)
+    first_material = create(:material, name: 'MIaaRD collection material 1')
+    first_sample = create(:sample, context: context, material: first_material)
 
     create(
       :c14,
-      sample: sample,
+      sample: first_sample,
       lab_identifier: 'OxA-12345',
       bp: 4500,
       std: 30
     )
 
-    get c14s_path(format: :json, schema: C14::MIAARD::SCHEMA)
+    second_material = create(:material, name: 'MIaaRD collection material 2')
+    second_sample = create(:sample, context: context, material: second_material)
+
+    create(
+      :c14,
+      sample: second_sample,
+      lab_identifier: 'Beta-67890',
+      bp: 3200,
+      std: 25
+    )
+
+    material_queries = []
+    capture_material_queries = lambda do |_name, _started, _finished, _unique_id, payload|
+      next if payload[:cached]
+      next unless payload[:sql].include?('FROM "materials"')
+
+      material_queries << payload[:sql]
+    end
+
+    ActiveSupport::Notifications.subscribed(capture_material_queries, 'sql.active_record') do
+      get c14s_path(format: :json, schema: C14::MIAARD::SCHEMA)
+    end
 
     assert_response :success
     assert_equal 'application/json', response.media_type
@@ -169,6 +191,9 @@ class C14sControllerTest < ActionDispatch::IntegrationTest # rubocop:disable Met
     assert json.key?('entries')
     assert json['entries'].any?
     assert_equal 'OxA', json['entries'].first['lab_code']
+    assert_equal 1, material_queries.size
+    assert_equal ['MIaaRD collection material 1', 'MIaaRD collection material 2'],
+                 json['entries'].pluck('sample_material').sort
   end
 
   test 'downloads filtered C14 records as a MIaaRD collection' do
