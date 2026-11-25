@@ -1,0 +1,126 @@
+<% content_for :title, "#{@dendro.name}, #{Dendro.label} from #{@dendro.site.name}" %>
+<% content_for :meta_description, "Dendrochronological series #{@dendro.name} from #{@dendro.site.name}, with #{@dendro.measurements.length} series values and associated sample and context information." %>
+
+<main class="container my-5">
+
+  <%= render "header" %>
+
+  <div class="mb-5">
+    <%= render "shared/record_toolbar", record: @dendro, show_destroy: false,
+          downloads: [
+            { name: "JSON", path: dendro_path(@dendro, format: :json) },
+            { name: "Series values (CSV)", path: export_measurements_csv_dendro_path(@dendro, format: :csv) }
+          ] %>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-12 col-lg-8">
+      <section id="dendro-measurement" class="section-with-legend position-relative">
+        <h2 class="legend">
+          <%= bs_icon "rulers", class: "me-1" %>Measurement
+        </h2>
+        <div class="section-body">
+          <%= render "dendro_measurement", dendro: @dendro %>
+        </div>
+      </section>
+
+      <section id="dendro-chronology" class="section-with-legend mt-5 position-relative">
+        <h2 class="legend">
+          <%= bs_icon "clock", class: "me-1" %>Chronology
+        </h2>
+        <div class="section-body">
+          <%= render "dendro_chronology", dendro: @dendro %>
+        </div>
+      </section>
+
+      <section id="dendro-plot" class="section-with-legend mt-5 position-relative">
+        <h2 class="legend">
+          <%= bs_icon "graph-down", class: "me-1" %>Series plot
+        </h2>
+        <div class="section-body">
+          <% if @dendro.measurements.present? %>
+            <div class="overflow-auto" data-controller="vega">
+              <%= ring_width_plot(@dendro) %>
+            </div>
+          <% else %>
+            <p class="mb-0">No series values recorded.</p>
+          <% end %>
+        </div>
+      </section>
+
+      <% if @dendro.measurements.present? %>
+        <details id="dendro-values" class="mt-5 border rounded px-3 py-2">
+          <summary class="fw-semibold">
+            <%= bs_icon "table", class: "me-1" %>Series values
+            <span class="badge text-bg-info ms-1"><%= @dendro.measurements.length %></span>
+          </summary>
+          <div class="table-responsive mt-2" style="max-height: 300px; overflow-y: auto;">
+            <table class="table table-sm table-bordered">
+              <thead class="table-light">
+                <tr>
+                  <th>Position</th>
+                  <% if @dendro.is_anchored? %><th>Calendar year</th><% end %>
+                  <th><%= dendro_value_label(@dendro) %></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @dendro.series_points.each do |measurement| %>
+                  <tr>
+                    <td><%= measurement["position"] %></td>
+                    <% if @dendro.is_anchored? %><td><%= dendro_calendar_year(measurement["calendar_year"]) %></td><% end %>
+                    <td><%= measurement["value"].nil? ? na_value : measurement["value"] %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </details>
+      <% end %>
+
+      <section id="dendro-sample" class="section-with-legend mt-5 position-relative">
+        <h2 class="legend">
+          <%= bs_icon "archive", class: "me-1" %>Sample
+        </h2>
+        <div class="section-body">
+          <%= render "samples/sample", sample: @dendro.sample %>
+        </div>
+      </section>
+
+      <section id="dendro-context" class="section-with-legend mt-5 position-relative">
+        <h2 class="legend">
+          <%= bs_icon "diagram-3", class: "me-1" %>Context
+        </h2>
+        <div class="section-body">
+          <%= render "dendro_context", dendro: @dendro %>
+        </div>
+      </section>
+
+      <% references = (@dendro.references + @dendro.site.references).uniq %>
+      <section id="dendro-references" class="section-with-legend mt-5 position-relative">
+        <h2 class="legend">
+          <%= bs_icon "book", class: "me-1" %><%= Reference.label.humanize.pluralize %>
+          <span class="badge text-bg-info ms-1"><%= references.count %></span>
+        </h2>
+        <div class="section-body">
+          <%= render "references/bibliography", references: references %>
+        </div>
+      </section>
+    </div>
+
+    <aside class="col-lg-4">
+      <%= render "shared/record_metadata", record: @dendro %>
+
+      <section id="dendro-citation" class="mt-5">
+        <h2 class="h5-lg">Citation</h2>
+        <p>Consult and cite the <a href="#dendro-references">original sources</a> where appropriate. To cite this XRONOS record, use:</p>
+        <p class="small font-monospace offset-1"><%= @dendro.render_citation %></p>
+      </section>
+
+      <section id="dendro-changelog" class="mt-5">
+        <h2 class="h5-lg">Changelog</h2>
+        <%= render "application/paper_trail/versions", item: @dendro %>
+      </section>
+    </aside>
+  </div>
+
+</main>

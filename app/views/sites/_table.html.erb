@@ -26,6 +26,12 @@
           <span class="text-muted"><%= order_indicator :sites %></span>
         <% end %>
       </th>
+      <th scope="col" class="text-end">
+        <%= link_to_order_by Dendro.label.humanize.pluralize, :dendros_count, :sites %>
+        <% if ordered_by?(:dendros_count, :sites) %>
+          <span class="text-muted"><%= order_indicator :sites %></span>
+        <% end %>
+      </th>
       <% if can? :manage, Site %>
         <th scope="col" class="text-end"><!-- Actions --></th>
       <% end %>
@@ -40,6 +46,7 @@
         <td class="font-monospace"><%= site.coordinates.present? ? site.coordinates : na_value %></td>
         <td class="text-end"><%= site.c14s_count %></td>
         <td class="text-end"><%= site.typos_count %></td>
+        <td class="text-end"><%= site.dendros_count %></td>
         <% if can? :manage, Site %>
           <td class="text-end"><%= render "application/actions", i: site %></td>
         <% end %>

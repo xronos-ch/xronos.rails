@@ -1,0 +1,23 @@
+<% if value.present? || value == false %>
+  <details class="mt-2">
+    <summary class="fw-semibold"><%= title %></summary>
+    <% if value.is_a?(Hash) %>
+      <dl class="row mt-2 mb-0">
+        <% value.each do |key, entry| %>
+          <dt class="col-sm-4 text-break"><%= key.to_s.humanize %></dt>
+          <dd class="col-sm-8">
+            <% if entry.is_a?(Hash) || entry.is_a?(Array) %>
+              <pre class="mb-0 text-wrap"><%= JSON.pretty_generate(entry) %></pre>
+            <% else %>
+              <%= entry.nil? ? na_value : entry.to_s %>
+            <% end %>
+          </dd>
+        <% end %>
+      </dl>
+    <% elsif value.is_a?(Array) %>
+      <pre class="mt-2 mb-0 text-wrap"><%= JSON.pretty_generate(value) %></pre>
+    <% else %>
+      <p class="mt-2 mb-0 text-break"><%= value.to_s %></p>
+    <% end %>
+  </details>
+<% end %>

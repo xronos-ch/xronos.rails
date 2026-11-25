@@ -1,0 +1,34 @@
+<%= turbo_frame_tag "dendro_table" do %>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Site</th>
+        <th>Series</th>
+        <th>Calendar start</th>
+        <th>Calendar end</th>
+        <th>Series positions</th>
+      <th>Waney Edge</th>
+        <th>Dating status</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @dendro_xrons.each do |dendro| %>
+        <tr>
+          <td><%= link_to dendro.site.name, dendro.site, target: :_top if dendro.site %></td>
+          <td><%= link_to dendro.name, dendro, target: :_top %></td>
+          <td><%= dendro_calendar_year(dendro.calendar_start_year) %></td>
+          <td><%= dendro_calendar_year(dendro.calendar_end_year) %></td>
+					<td class="font-monospace"><%= dendro.position_range&.join("–") || na_value %></td>
+					<td><%= dendro.waney_edge.nil? ? na_value : dendro.waney_edge %></td>
+					<td><%= dendro_dating_status(dendro) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+
+  <% if @dendro_pagy %>
+    <%== @dendro_pagy.series_nav(:bootstrap) %>
+  <% end %>
+<% end %>

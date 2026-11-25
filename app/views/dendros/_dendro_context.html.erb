@@ -1,0 +1,16 @@
+<dl class="row mb-0">
+  <dt class="col-12 col-lg-4">Country</dt>
+  <dd class="col-12 col-lg-8">
+    <% if dendro.site.country.present? %>
+      <%= dendro.site.country %> <span class="text-body-secondary">(<%= dendro.site.country_code %>)</span>
+    <% else %>
+      <%= na_value %>
+    <% end %>
+  </dd>
+
+  <dt class="col-12 col-lg-4">Site</dt>
+  <dd class="col-12 col-lg-8"><%= link_to dendro.site.name, dendro.site %></dd>
+
+  <dt class="col-12 col-lg-4">Context</dt>
+  <dd class="col-12 col-lg-8"><%= dendro.context.name.presence || na_value %></dd>
+</dl>

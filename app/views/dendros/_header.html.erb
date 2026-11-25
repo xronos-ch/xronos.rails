@@ -1,0 +1,50 @@
+<header id="dendro-header" class="mb-3">
+
+  <div class="text-uppercase small d-flex align-items-center">
+    <%= xr_icon Dendro, {}, { class: "me-2", style: "width: auto; height: 1rem;" } %>
+    <span><%= Dendro.label %></span>
+    <span class="vr mx-2"></span>
+    <%= link_to "XRONOS", root_path, class: "text-body-secondary text-decoration-none" %>
+  </div>
+
+  <div class="d-flex align-items-baseline mb-2">
+    <h1 class="mb-0 me-3"><%= @dendro.name %></h1>
+  </div>
+
+  <div class="lead text-body-secondary d-flex align-items-end flex-wrap">
+    <div class="d-flex align-items-center">
+      <%= bs_icon "globe", class: "me-2" %>
+      <nav aria-label="Geographic location">
+        <ol class="breadcrumb breadcrumb-chevron mb-0">
+          <% unless @dendro.site.country.blank? %>
+            <li class="breadcrumb-item"><%= @dendro.site.country %></li>
+          <% end %>
+          <li class="breadcrumb-item">
+            <%= link_to @dendro.site.name, @dendro.site %>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page"><%= @dendro.name %></li>
+        </ol>
+      </nav>
+    </div>
+    <% unless @dendro.site.coordinates.blank? %>
+      <div class="d-flex align-items-center ms-auto small">
+        <%= bs_icon "geo-alt", class: "me-2" %>
+        <span class="font-monospace"><%= @dendro.site.coordinates.to_s("dd") %></span>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="d-flex align-items-center text-body-secondary small mt-2">
+    <%= bs_icon "link-45deg", class: "me-2" %>
+    <span class="font-monospace text-truncate"><%= dendro_url(@dendro) %></span>
+    <button type="button"
+            class="btn btn-sm btn-link p-0 ms-2"
+            data-controller="clipboard"
+            data-clipboard-text-value="<%= dendro_url(@dendro) %>"
+            data-action="clipboard#copy"
+            title="Copy permalink">
+      <%= bs_icon "clipboard" %>
+    </button>
+  </div>
+
+</header>

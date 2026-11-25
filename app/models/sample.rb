@@ -73,12 +73,17 @@ class Sample < ApplicationRecord
 
   has_many :c14s, dependent: :destroy
   has_many :typos, dependent: :destroy
+  has_many :dendros
+  # Superseded series still reference this sample through a foreign key.
+  has_many :dendros_including_superseded, -> { unscope(where: :id) },
+           class_name: 'Dendro', dependent: :destroy
 
   after_save :merge_exact_duplicates
   validate :no_exact_duplicate, on: :create
 
   before_merge :reassign_c14s!
   before_merge :reassign_typos!
+  before_merge :reassign_dendros!
 
   include PgSearch::Model
   pg_search_scope :search,
@@ -193,5 +198,9 @@ class Sample < ApplicationRecord
 
   def reassign_typos!
     Typo.where(sample_id: id).update_all(sample_id: merged_into_id)
+  end
+
+  def reassign_dendros!
+    Dendro.unscoped.where(sample_id: id).update_all(sample_id: merged_into_id)
   end
 end

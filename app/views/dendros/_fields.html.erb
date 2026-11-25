@@ -1,0 +1,97 @@
+<h2 class="h5">Identifier</h2>
+
+<div class="row">
+  <div class="col">
+    <%= f.text_field :name, label: "Name" %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <%= f.text_field :series_code, label: "Source series code" %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <%= tristate_radio_button_group(f, :is_anchored, overall_label: "Is Anchored?") %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <%= tristate_radio_button_group(f, :waney_edge, overall_label: "Has Waney Edge?") %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <%= f.text_area :description, label: "Description" %>
+  </div>
+</div>
+
+<%= f.fields_for :sample, @dendro.sample do |ff| %>
+  <%= render "samples/fields", f: ff %>
+<% end %>
+
+<h2 class="h5">Measurements</h2>
+
+<%= f.text_area :measurements_text, label: "Series values", rows: 8, class: "font-monospace",
+      help: "One position and value per line, separated by spaces or a tab. Use NA for a missing value; omit a position for a gap. Use a decimal point, for example: 1 0.48." %>
+
+<div class="row">
+  <div class="col">
+    <%= f.number_field :anchor_position, label: "Anchor position", help: "Relative position with a known calendar year." %>
+  </div>
+  <div class="col">
+    <%= f.number_field :anchor_year, label: "Calendar year at anchor", help: "Use astronomical years. 0 is 1 BCE, −1 is 2 BCE." %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <%= f.select :measurement_variable, Dendro::MEASUREMENT_VARIABLES.invert.to_a,
+                 { include_blank: "Unknown", label: "Measurement variable" } %>
+  </div>
+  <div class="col">
+    <%= f.select :measurement_unit, Dendro::MEASUREMENT_UNITS,
+                 { include_blank: "Unknown", label: "Measurement unit" } %>
+  </div>
+</div>
+
+<h2 class="h5">Object Details</h2>
+
+<div class="row">
+  <div class="col">
+    <%= f.text_field :object_title, label: "Object Title" %>
+  </div>
+  <div class="col">
+    <%= f.text_field :object_type, label: "Object Type" %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <%= f.text_area :object_description, label: "Object Description" %>
+  </div>
+</div>
+
+<h2 class="h5">Project Details</h2>
+
+<div class="row">
+  <div class="col">
+    <%= f.text_field :project_title, label: "Project Title" %>
+  </div>
+  <div class="col">
+    <%= f.text_area :project_objective, label: "Project Objective" %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <%= f.date_field :project_start_date, label: "Project Start Date" %>
+  </div>
+  <div class="col">
+    <%= f.date_field :project_end_date, label: "Project End Date" %>
+  </div>
+</div>

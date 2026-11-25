@@ -1,5 +1,5 @@
 <% content_for :title, "Search" %>
-<% content_for :meta_description, "Search the XRONOS database by archaeological site name, radiocarbon laboratory identifier, or bibliographic reference." %>
+<% content_for :meta_description, "Search the XRONOS database by archaeological site name, radiocarbon laboratory identifier, dendrochronological series, or bibliographic reference." %>
 
 <div class="container my-5">
   <h1 class="display-5">Search</h1>
@@ -26,6 +26,13 @@
          href="<%= url_for request.params.merge(type: "C14") %>">
         <%= C14.label.humanize.pluralize %>
         <% if params[:q].present? %><span class="badge text-bg-info"><%= @n_c14s %></span><% end %>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link<%= ' active' if @search_type == 'Dendro' %>"
+         href="<%= url_for request.params.except(:page).merge(type: 'Dendro') %>">
+        <%= Dendro.label.humanize.pluralize %>
+        <% if params[:q].present? %><span class="badge text-bg-info"><%= @n_dendros %></span><% end %>
       </a>
     </li>
     <li class="nav-item">

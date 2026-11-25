@@ -1,0 +1,24 @@
+<% content_for :title, Dendro.label.humanize.pluralize %>
+<% content_for :meta_description do %>
+  List of <%= @pagy.count %> dendrochronological dates from archaeological sites around the world, including measurement, sample and contextual information, and bibliographic references.
+<% end %>
+
+<div class="container my-5">
+
+  <h1><%= Dendro.label.pluralize.humanize %></h1>
+  <p>Showing <%= @pagy.count %> <%= Dendro.label.pluralize(@pagy.count) %>.</p>
+
+  <turbo-frame id="dendros-table">
+    <div id="dendros-toolbar" class="d-flex">
+      <div class="ms-auto">
+        <%= link_to bs_icon("download"), dendros_path(format: :csv, **request.query_parameters.slice("site_id", "dendro")), class: "btn btn-sm btn-outline-primary", title: "Download CSV" %>
+      </div>
+    </div>
+    <%= render "table", dendros: @dendros %>
+    <%== @pagy.series_nav(:bootstrap) %>
+  </turbo-frame>
+
+  <% if can? :create, Dendro %>
+    <%= link_to "Choose a site to add a series", new_dendro_path, class: 'btn btn-secondary' %>
+  <% end %>
+</div>

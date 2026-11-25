@@ -1,0 +1,42 @@
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">
+        <%= link_to_order_by "ID", :id, :dendros %>
+        <% if ordered_by?(:id, :dendros) %>
+          <span class="text-muted"><%= order_indicator :dendros %></span>
+        <% end %>
+      </th>
+      <th scope="col">Name</th>
+			<th scope="col">Site</th>
+      <th scope="col">Calendar start</th>
+      <th scope="col">Calendar end</th>
+      <th scope="col">Series positions</th>
+      <th scope="col">Waney Edge?</th>
+      <th scope="col">Dating status</th>
+      <th scope="col">Issues</th>
+      <% if can? :manage, Dendro %><th scope="col"><span class="visually-hidden">Actions</span></th><% end %>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% dendros.each do |dendro| %>
+      <tr>
+        <td class="text-muted"><%= link_to dendro.id, dendro %></td>
+        <td><%= dendro.name %></td>
+        <td><%= dendro.site.name %></td>
+        <td class="font-monospace"><%= dendro_calendar_year(dendro.calendar_start_year) %></td>
+        <td class="font-monospace"><%= dendro_calendar_year(dendro.calendar_end_year) %></td>
+        <td class="font-monospace"><%= dendro.position_range&.join("–") || na_value %></td>
+        <td class="font-monospace"><%= dendro.waney_edge.nil? ? na_value : dendro.waney_edge %></td>
+        <td class="font-monospace"><%= dendro_dating_status(dendro) %></td>
+        <td><% dendro.issues.each do |issue| %>
+          <%= issue_badge(issue) %>
+        <% end %></td>
+        <% if can? :manage, Dendro %>
+          <td class="text-end"><%= render "shared/action_buttons_compact", i: dendro %></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

@@ -103,9 +103,13 @@ class SitesController < ApplicationController
 
     respond_to do |format|
       format.html do
+        dendros_scope = Dendro.sort_series(@site.dendros.includes(:references),
+                                           params[:dendros_order_by], params[:dendros_order])
+
         begin
           @pagy_c14s, @c14s = pagy(:countish, c14s_scope, page_param: :c14s_page)
           @pagy_typos, @typos = pagy(:countish, typos_scope, page_param: :typos_page)
+          @pagy_dendros, @dendros = pagy(:countish, dendros_scope, page_param: :dendros_page)
         rescue Pagy::OverflowError
           head :not_found
         end

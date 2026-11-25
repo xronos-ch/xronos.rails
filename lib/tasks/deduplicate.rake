@@ -66,7 +66,8 @@ namespace :xronos do
 
         duplicate_groups.each do |*values, _count|
           values_hash = attrs.zip(values).to_h
-          records = model_class.where(values_hash).order(:created_at, :id).to_a
+          conditions = values_hash.map { |attribute, value| model_class.arel_table[attribute].eq(value) }
+          records = model_class.where(conditions.reduce(:and)).order(:created_at, :id).to_a
           next if records.size < 2
 
           canonical = records.first

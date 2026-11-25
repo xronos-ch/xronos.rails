@@ -1,0 +1,59 @@
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <% unless controller_name == "sites" %>
+        <th scope="col">Site</th>
+      <% end %>
+      <th scope="col">
+        <%= link_to_order_by "Series", :name, :dendros %>
+        <% if ordered_by?(:name, :dendros) %>
+          <span class="text-muted"><%= order_indicator :dendros %></span>
+        <% end %>
+      </th>
+      <th scope="col">
+        <%= link_to_order_by "Calendar start", :calendar_start_year, :dendros %>
+        <% if ordered_by?(:calendar_start_year, :dendros) %>
+          <span class="text-muted"><%= order_indicator :dendros %></span>
+        <% end %>
+      </th>
+      <th scope="col">
+        <%= link_to_order_by "Calendar end", :calendar_end_year, :dendros %>
+        <% if ordered_by?(:calendar_end_year, :dendros) %>
+          <span class="text-muted"><%= order_indicator :dendros %></span>
+        <% end %>
+      </th>
+      <th>Series positions</th>
+      <th>Waney Edge</th>
+      <th scope="col">
+        <%= link_to_order_by "Dating status", :is_anchored, :dendros %>
+        <% if ordered_by?(:is_anchored, :dendros) %>
+          <span class="text-muted"><%= order_indicator :dendros %></span>
+        <% end %>
+      </th>
+      <th scope="col" class="text-end">References</th>
+      <% if can? :manage, Dendro %>
+        <th scope="col" class="text-end"><!-- Actions --></th>
+      <% end %>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% dendros.each do |dendro| %>
+      <tr>
+        <% unless controller_name == "sites" %>
+          <td><%= link_to dendro.site.name, dendro.site, target: :_top %></td>
+        <% end %>
+        <td><%= link_to dendro.name, dendro, target: :_top %></td>
+        <td class="font-monospace"><%= dendro_calendar_year(dendro.calendar_start_year) %></td>
+        <td class="font-monospace"><%= dendro_calendar_year(dendro.calendar_end_year) %></td>
+        <td class="font-monospace"><%= dendro.position_range&.join("–") || na_value %></td>
+        <td class="font-monospace"><%= dendro.waney_edge.nil? ? na_value : dendro.waney_edge %></td>
+        <td class="font-monospace"><%= dendro_dating_status(dendro) %></td>
+        <td class="small text-end"><%= render "references/citations", references: dendro.references %></td>
+        <% if can? :manage, Dendro %>
+          <td class="text-end"><%= render "application/actions", i: dendro %></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

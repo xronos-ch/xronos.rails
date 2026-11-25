@@ -15,6 +15,10 @@
           <td class="text-end font-monospace"><%= C14.count %></td>
         </tr>
         <tr>
+          <td><%= Dendro.label.humanize.pluralize %></td>
+          <td class="text-end font-monospace"><%= @n_dendro %></td>
+        </tr>
+        <tr>
           <td><%= C14Lab.label.humanize.pluralize %></td>
           <td class="text-end font-monospace"><%= C14Lab.count %></td>
         </tr>
@@ -72,6 +76,12 @@
           <tr>
             <td class="small"><%= issue_label(issue) %></td>
             <td class="text-end font-monospace"><%= link_to C14.send(issue).count, issues_c14s_path + "/" + issue.to_s %></td>
+          </tr>
+        <% end %>
+        <% Dendro.issues.each do |issue| %>
+          <tr>
+            <td class="small"><%= issue_label(issue) %></td>
+            <td class="text-end font-monospace"><%= link_to Dendro.send(issue).count, issues_dendros_path + "/" + issue.to_s %></td>
           </tr>
         <% end %>
         <% Reference.issues.each do |issue| %>

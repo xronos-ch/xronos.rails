@@ -85,4 +85,20 @@ class SitesControllerTest < ActionDispatch::IntegrationTest
     assert_match(/1 typological classification/, response.body)
     assert_match(/3 bibliographic references/, response.body)
   end
+  test 'sites can be sorted by active Dendro count including sites without series' do
+    populated = create(:site, name: 'Dendro populated')
+    empty = create(:site, name: 'Dendro empty')
+    sample = create(:sample, context: create(:context, site: populated))
+    create_list(:dendro, 2, sample: sample)
+    ActiveRecord::Base.connection.execute('REFRESH MATERIALIZED VIEW sites_with_counts')
+
+    get sites_path, params: { sites_order_by: 'dendros_count', sites_order: 'desc' }
+
+    assert_response :success
+    assert_dom 'th a', text: Dendro.label.humanize.pluralize
+    rows = response.parsed_body.css('#sites-table tbody tr')
+    assert_equal [populated.name, empty.name], (rows.map { |row| row.at_css('td a').text })
+    assert_equal %w[2 0], (rows.map { |row| row.css('td')[5].text.strip })
+  end
+
 end
