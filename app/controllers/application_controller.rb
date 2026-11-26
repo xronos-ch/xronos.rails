@@ -10,7 +10,6 @@ class ApplicationController < ActionController::Base
     cookies.delete(Rails.application.config.session_options[:key]) unless user_signed_in?
     request.session_options[:skip] = !(user_signed_in? || devise_controller?)
   }
-
   protect_from_forgery with: :null_session, :if => Proc.new { |c| c.request.format == 'application/json' }
 
   # Redirect to last page on sign in

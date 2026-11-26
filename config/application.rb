@@ -11,8 +11,8 @@ module Xronos
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
 
-    # Autoload lib, but ignore non-Ruby support directories.
-    config.autoload_lib(ignore: %w[assets tasks])
+    # Middleware is required explicitly because Rails does not reload it.
+    config.autoload_lib(ignore: %w[assets tasks middleware])
 
     config.assets.precompile += %w(*.png *.jpg *.jpeg *.gif)
 
@@ -29,6 +29,9 @@ module Xronos
 
     # Request throttling / rate limiting
     config.middleware.use Rack::Attack
+
+    require_relative '../lib/middleware/download_response_cookie'
+    config.middleware.insert_before ActionDispatch::ShowExceptions, Xronos::Middleware::DownloadResponseCookie
 
     # Use internal authentication for job dashboard
     config.mission_control.jobs.base_controller_class = "AdminController"

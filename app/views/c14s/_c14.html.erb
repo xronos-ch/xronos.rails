@@ -31,6 +31,7 @@
 
     <%= link_to c14_path(c14, format: :json, schema: C14::MIAARD::SCHEMA),
                 class: "card-link fw-semibold",
+                data: { controller: "download", action: "click->download#start", turbo: false },
                 title: "Export as MIaaRD JSON" do %>
       MIaaRD JSON
     <% end %>

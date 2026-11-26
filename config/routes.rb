@@ -4,6 +4,7 @@ Rails.application.routes.draw do
 
   # Static pages
   root to: "pages#home"
+  get '/up', to: 'rails/health#show', as: :rails_health_check
   get '/home' => 'pages#home'
   get '/database' => 'pages#database'
   get '/api' => 'pages#api'
