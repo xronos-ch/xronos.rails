@@ -113,7 +113,10 @@ class C14 < Chron
   end
 
   def calibration(curve: site.default_c14_curve)
-    @calibration ||= Calibration.find_or_create_by c14_age: bp, c14_error: std, c14_curve: curve
+    @calibrations ||= {}
+    @calibrations[[bp, std, curve.to_s]] ||= Calibration.find_or_create_by(
+      c14_age: bp, c14_error: std, c14_curve: curve
+    )
   end
 
   def f14c
