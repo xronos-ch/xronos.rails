@@ -1,16 +1,46 @@
-<form class="input-group mb-3" 
+<% navbar = local_assigns.fetch(:navbar, false) %>
+<% live = local_assigns.fetch(:live, false) %>
+<form class="position-relative <%= navbar ? "me-3" : "mb-3" %>"
+      <% if navbar %>id="navbarSearch" data-home-hero-target="search"<% end %>
       role="search"
-      action="/search"
+      <% if live %>
+      aria-label="Search records"
+      data-controller="live-search"
+      data-action="submit->live-search#cancel turbo:before-cache@document->live-search#cancel"
+      data-turbo-frame="search_results"
+      data-turbo-action="replace"
+      <% else %>
+      data-controller="search-preview"
+      data-search-preview-url-value="<%= search_preview_path %>"
+      data-action="focusout->search-preview#leave pointerdown@document->search-preview#dismissOutside keydown.esc->search-preview#escape submit->search-preview#clear turbo:before-cache@document->search-preview#clear"
+      <% end %>
+      action="<%= search_path %>"
       method="get">
 
-  <input class="form-control form-control-lg"
-         type="search" 
-         name="q" 
-         placeholder="<%= search_placeholder %>"
-         aria-label="Search">
-  <button class="btn btn-lg btn-primary" type="submit">
-    <%= bs_icon "search" %>
-    Search
-  </button>
+  <div class="input-group">
+    <input class="form-control <%= navbar ? "form-control-sm" : "form-control-lg" %>"
+           type="search"
+           name="q"
+           <% if live %>
+           value="<%= query %>"
+           data-action="input->live-search#queue compositionend->live-search#queue"
+           <% else %>
+           data-search-preview-target="input"
+           data-action="input->search-preview#queue compositionend->search-preview#queue"
+           <% end %>
+           placeholder="<%= search_placeholder %>"
+           aria-label="Search">
+    <button class="btn <%= navbar ? "btn-sm btn-info" : "btn-lg btn-primary" %>" type="submit">
+      <%= bs_icon "search" %>
+      Search
+    </button>
+  </div>
 
+  <% if live %>
+    <%= hidden_field_tag :type, search_type, id: nil if search_type.present? %>
+  <% else %>
+    <div class="position-absolute top-100 start-0 w-100 z-3"
+         data-search-preview-target="results"
+         aria-live="polite"></div>
+  <% end %>
 </form>

@@ -97,6 +97,7 @@ Rails.application.routes.draw do
   get "/data" => "xronos_data#index"
 
   # Search
+  get 'search/preview', to: 'search_previews#index', as: :search_preview
   get "search" => "searches#index"
 
   # Data filter controls

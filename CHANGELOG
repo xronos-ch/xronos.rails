@@ -2,6 +2,8 @@
 
 ## [1.3.1.9000] - unreleased
 
+- Show live results below the public search field as you type (#363).
+- Refresh the full results on the search page as you type (#362).
 - Reduce image download sizes on the homepage and in articles by serving
   WebP (#220).
 - Speed up MIaaRD collection exports (#573).

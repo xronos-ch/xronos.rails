@@ -4,33 +4,35 @@
 <div class="container my-5">
   <h1 class="display-5">Search</h1>
 
-  <%= render "form" %>
+  <%= render "form", live: true, query: params[:q], search_type: @search_type %>
 
+  <%= turbo_frame_tag "search_results", target: "_top", class: "d-block" do %>
+    <% filter_params = request.query_parameters.except(:page) %>
   <ul class="nav nav-pills mt-5 mb-3">
     <li class="nav-item">
       <a class="nav-link<% if @search_type.blank? %> active<% end %>"
-         href="<%= url_for request.params.except(:type) %>">
+         href="<%= search_path(filter_params.except(:type)) %>">
         Everything
         <% if params[:q].present? %><span class="badge text-bg-info"><%= @n_results %></span><% end %>
       </a>
     </li>
     <li class="nav-item">
       <a class="nav-link<% if @search_type.present? and @search_type == "Site" %> active<% end %>"
-         href="<%= url_for request.params.merge(type: "Site") %>">
+         href="<%= search_path(filter_params.merge(type: "Site")) %>">
         <%= Site.label.humanize.pluralize %>
         <% if params[:q].present? %><span class="badge text-bg-info"><%= @n_sites %></span><% end %>
       </a>
     </li>
     <li class="nav-item">
       <a class="nav-link<% if @search_type.present? and @search_type == "C14" %> active<% end %>"
-         href="<%= url_for request.params.merge(type: "C14") %>">
+         href="<%= search_path(filter_params.merge(type: "C14")) %>">
         <%= C14.label.humanize.pluralize %>
         <% if params[:q].present? %><span class="badge text-bg-info"><%= @n_c14s %></span><% end %>
       </a>
     </li>
     <li class="nav-item">
       <a class="nav-link<% if @search_type.present? and @search_type == "Reference" %> active<% end %>"
-         href="<%= url_for request.params.merge(type: "Reference") %>">
+         href="<%= search_path(filter_params.merge(type: "Reference")) %>">
         <%= Reference.label.humanize.pluralize %>
         <% if params[:q].present? %><span class="badge text-bg-info"><%= @n_references %></span><% end %>
       </a>
@@ -56,5 +58,6 @@
       <%== @pagy.series_nav(:bootstrap) %>
     <% end %>
   </div>
+  <% end %>
 
 </div>
