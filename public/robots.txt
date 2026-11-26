@@ -15,6 +15,8 @@ Disallow: /*order=
 Disallow: /*order_by=
 Disallow: /*.csv
 Disallow: /data*
+Disallow: /versions
+Allow: /versions.json
 
 # AI training / AI assistant / large-scale extraction crawlers
 
