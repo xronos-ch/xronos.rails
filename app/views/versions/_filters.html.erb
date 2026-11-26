@@ -1,0 +1,51 @@
+<%= form_with url: versions_path, method: :get, local: true,
+              class: "row g-2 align-items-end mb-3" do |f| %>
+  <div class="col-sm-6 col-lg">
+    <%= f.label :record_type, "Record type", class: "form-label small mb-1" %>
+    <%= f.select :record_type,
+                 [
+                   ["Radiocarbon dates", "C14"],
+                   ["Radiocarbon labs", "C14Lab"],
+                   ["Contexts", "Context"],
+                   ["Functional classifications", "FunctionalClassification"],
+                   ["References", "Reference"],
+                   ["Samples", "Sample"],
+                   ["Sites", "Site"],
+                   ["Taxa", "Taxon"],
+                   ["Typological dates", "Typo"]
+                 ],
+                 { include_blank: "All record types", selected: @filters[:record_type] },
+                 class: "form-select form-select-sm" %>
+  </div>
+
+  <div class="col-sm-6 col-lg">
+    <%= f.label :event_type, "Event type", class: "form-label small mb-1" %>
+    <%= f.select :event_type,
+                 [
+                   ["Created", "create"],
+                   ["Updated", "update"],
+                   ["Deleted", "destroy"],
+                   ["Superseded", "supersede"],
+                   ["Restored", "restore"]
+                 ],
+                 { include_blank: "All events", selected: @filters[:event_type] },
+                 class: "form-select form-select-sm" %>
+  </div>
+
+  <div class="col-sm-6 col-lg">
+    <%= f.label :from, "From", class: "form-label small mb-1" %>
+    <%= f.date_field :from, value: @filters[:from],
+                           class: "form-control form-control-sm" %>
+  </div>
+
+  <div class="col-sm-6 col-lg">
+    <%= f.label :to, "To", class: "form-label small mb-1" %>
+    <%= f.date_field :to, value: @filters[:to],
+                         class: "form-control form-control-sm" %>
+  </div>
+
+  <div class="col-auto">
+    <%= f.submit "Filter", name: nil, class: "btn btn-sm btn-primary" %>
+    <%= link_to "Reset", versions_path, class: "btn btn-sm btn-outline-secondary" %>
+  </div>
+<% end %>
