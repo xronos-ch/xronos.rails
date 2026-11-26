@@ -228,7 +228,51 @@ class XronosDataControllerTest < ActionDispatch::IntegrationTest
     assert_not_includes exported_lab_ids, %w[Beta 67890]
   end
 
+  test 'data miaard json preloads sample materials' do
+    site = create(:site, name: 'MIaaRD preload site')
+    entries = [
+      ['MIaaRD preload context 1', 'MIaaRD preload material 1', 'MIaaRD-1'],
+      ['MIaaRD preload context 2', 'MIaaRD preload material 2', 'MIaaRD-2']
+    ]
+
+    entries.each do |context_name, material_name, lab_identifier|
+      context = create(:context, name: context_name, site: site)
+      material = create(:material, name: material_name)
+      sample = create(:sample, context: context, material: material)
+      create(:c14, sample: sample, lab_identifier: lab_identifier)
+    end
+
+    refresh_data_views
+
+    material_queries = capture_material_queries do
+      get data_path(
+        format: :json,
+        schema: C14::MIAARD::SCHEMA,
+        params: { filter: { contexts: { name: ['MIaaRD preload context 1,MIaaRD preload context 2'] } } }
+      )
+    end
+
+    assert_response :success
+    assert_equal 1, material_queries.size
+
+    exported_materials = JSON.parse(response.body).fetch('entries').pluck('sample_material')
+    assert_equal ['MIaaRD preload material 1', 'MIaaRD preload material 2'], exported_materials.sort
+  end
+
   private
+
+  def capture_material_queries(&block)
+    queries = []
+    subscriber = lambda do |_name, _started, _finished, _unique_id, payload|
+      next if payload[:cached]
+      next unless payload[:sql].include?('FROM "materials"')
+
+      queries << payload[:sql]
+    end
+
+    ActiveSupport::Notifications.subscribed(subscriber, 'sql.active_record', &block)
+    queries
+  end
 
   def refresh_data_views
     ActiveRecord::Base.connection.execute('REFRESH MATERIALIZED VIEW data_views')
