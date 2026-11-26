@@ -137,9 +137,6 @@ gem 'breadcrumbs'
 # Markdown rendering
 gem 'kramdown'
 
-# Maps
-gem 'leaflet-rails'
-
 # Charts
 gem 'vega'
 

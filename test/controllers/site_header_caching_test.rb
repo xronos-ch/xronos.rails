@@ -11,7 +11,7 @@ class SiteHeaderCachingTest < ActionDispatch::IntegrationTest
     @previous_cache_store = SitesController.cache_store
     SitesController.perform_caching = true
     SitesController.cache_store = ActiveSupport::Cache::MemoryStore.new
-    @site = create(:site)
+    @site = create(:site, lat: 47.0, lng: 8.0)
     @admin = create(:user, :admin)
   end
 
@@ -26,10 +26,11 @@ class SiteHeaderCachingTest < ActionDispatch::IntegrationTest
     assert_dom "a[href='#{edit_site_path(@site)}']", count: 0
 
     sign_in @admin
-    assert_site_fragment_hit do
+    assert_site_types_fragment_hit do
       get site_path(@site)
     end
     assert_response :success
+    assert_dom "head script[src*='/assets/maps']", count: 1
     assert_dom "a[href='#{edit_site_path(@site)}'][data-turbo-frame='remote_modal']", count: 1
   end
 
@@ -40,14 +41,14 @@ class SiteHeaderCachingTest < ActionDispatch::IntegrationTest
     assert_dom "a[href='#{edit_site_path(@site)}']", count: 1
 
     sign_out @admin
-    assert_site_fragment_hit do
+    assert_site_types_fragment_hit do
       get site_path(@site)
     end
     assert_response :success
     assert_dom "a[href='#{edit_site_path(@site)}']", count: 0
 
     sign_in create(:user)
-    assert_site_fragment_hit do
+    assert_site_types_fragment_hit do
       get site_path(@site)
     end
     assert_response :success
@@ -57,12 +58,12 @@ class SiteHeaderCachingTest < ActionDispatch::IntegrationTest
 
   private
 
-  def assert_site_fragment_hit(&block)
+  def assert_site_types_fragment_hit(&block)
     hits = []
     subscriber = lambda do |event|
-      hits << event.payload if event.payload[:hit] && event.payload[:key].to_s.include?('site_header')
+      hits << event.payload if event.payload[:hit] && event.payload[:key].to_s.include?('site_types_v1')
     end
     ActiveSupport::Notifications.subscribed(subscriber, 'cache_read.active_support', &block)
-    assert_not_empty hits, 'Expected the site fragment to be served from cache'
+    assert_not_empty hits, 'Expected the site types fragment to be served from cache'
   end
 end

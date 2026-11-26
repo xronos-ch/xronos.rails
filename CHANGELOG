@@ -2,6 +2,8 @@
 
 ## [1.3.1.9000] - unreleased
 
+- Switch the data browser and site maps to MapLibre for smoother zooming and
+  vector basemaps (#457).
 - Reduce image download sizes on the homepage and in articles by serving
   WebP (#220).
 - Speed up MIaaRD collection exports (#573).

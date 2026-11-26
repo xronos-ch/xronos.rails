@@ -1,0 +1,27 @@
+<% site_coordinates = local_assigns[:site_coordinates] %>
+<% basemaps = [["Map", "positron-nolabels"], ["Map with labels", "positron"], ["Imagery", "imagery"]] %>
+<% initial_basemap = site_coordinates ? "imagery" : "positron-nolabels" %>
+
+<% content_for :page_styles do %>
+  <%= stylesheet_link_tag "maps" %>
+  <%= javascript_include_tag "maps", defer: true %>
+<% end %>
+
+<div class="position-relative w-100 h-100"
+     data-controller="map"
+     data-map-carto-api-key-value="<%= ENV["CARTO_API_KEY"] %>"
+     data-map-worker-url-value="<%= asset_path("maplibre-worker.js") %>"
+     <% if site_coordinates %>
+       data-map-site-coordinates-value="<%= site_coordinates.to_json %>"
+     <% else %>
+       data-map-markers-url-value="<%= markers_url %>"
+     <% end %>>
+  <div class="w-100 h-100" data-map-target="container"></div>
+  <div class="position-absolute top-0 start-0 m-2 z-3 d-flex flex-wrap align-items-center gap-2">
+    <select class="form-select form-select-sm w-auto" aria-label="Basemap"
+            data-map-target="basemap" data-action="map#changeBasemap" disabled>
+      <%= options_for_select(basemaps, initial_basemap) %>
+    </select>
+    <span class="small bg-body rounded px-2" role="status" data-map-target="status"></span>
+  </div>
+</div>

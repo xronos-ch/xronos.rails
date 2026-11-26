@@ -19,9 +19,6 @@ application.register("flash", FlashController)
 import HomeHeroController from "./home_hero_controller"
 application.register("home-hero", HomeHeroController)
 
-import MapController from "./map_controller"
-application.register("map", MapController)
-
 import MarkdownEditorController from "./markdown_editor_controller"
 application.register("markdown-editor", MarkdownEditorController)
 

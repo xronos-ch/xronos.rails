@@ -35,6 +35,19 @@ class SitesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test 'the site map uses longitude and latitude and starts with imagery' do
+    site = create(:site, lat: 47.0, lng: 8.0)
+    get site_path(site)
+
+    assert_response :success
+    page = Nokogiri::HTML(response.body)
+    map = page.at_css('#site-location [data-controller="map"]')
+    assert map
+    assert_equal [8.0, 47.0], JSON.parse(map['data-map-site-coordinates-value'])
+    assert_equal 'imagery', map.at_css('option[selected]')['value']
+    assert_match(%r{/assets/maps(?:-[^/]+)?\.js\z}, page.at_css('head script[src*="/maps"]')['src'])
+  end
+
   test 'unauthenticated users cannot create sites' do
     assert_no_difference('Site.count') do
       post sites_path, params: {
