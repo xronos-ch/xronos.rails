@@ -7,3 +7,8 @@
   </div>
 </header>
 
+<% if can? :edit, @c14_lab %>
+  <div class="container mt-3 mb-5">
+    <%= render "shared/record_edit_link", record: @c14_lab, label: C14Lab.label %>
+  </div>
+<% end %>
