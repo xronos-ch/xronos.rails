@@ -1,0 +1,182 @@
+name: Lighthouse
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  accessibility:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    outputs:
+      score-badge: ${{ steps.scores.outputs.score-badge }}
+
+    services:
+      postgres:
+        image: postgres:15
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: xronos_test
+        options: >-
+          --health-cmd "pg_isready -U postgres -d xronos_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      RAILS_ENV: test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: xronos
+      POSTGRES_DB_STAGING: xronos_staging
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/xronos_test
+      REGISTRATION_PASSPHRASE: xronos
+      WEB_CONCURRENCY: 0
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: yarn
+
+      - name: Build assets and calibrator
+        run: |
+          yarn install --frozen-lockfile
+          yarn build
+          yarn build:css
+          bin/build_calibrator
+
+      - name: Prepare audit data
+        run: |
+          bin/rails db:test:prepare
+          bin/rails runner - <<'RUBY'
+          # frozen_string_literal: true
+
+          site = FactoryBot.create(:site, name: 'Lighthouse test site', country_code: 'DE', lat: 54.3, lng: 10.1)
+          context = FactoryBot.create(:context, site: site)
+          sample = FactoryBot.create(:sample, context: context)
+          c14 = FactoryBot.create(:c14, sample: sample, lab_identifier: 'TEST-1', bp: 4500, std: 30)
+          C14.connection.execute('REFRESH MATERIALIZED VIEW data_views')
+          File.open(ENV.fetch('GITHUB_ENV'), 'a') { |file| file.puts("LIGHTHOUSE_C14_ID=#{c14.id}") }
+          RUBY
+
+      - name: Audit public pages
+        run: |
+          # The test database has no Solid Queue tables.
+          bundle exec puma --no-config --bind tcp://127.0.0.1:3000 &
+          puma_pid=$!
+          trap 'kill "$puma_pid" 2>/dev/null || true' EXIT
+
+          for path in / /data "/c14s/$LIGHTHOUSE_C14_ID"; do
+            status=$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
+              --retry 15 --retry-connrefused --retry-delay 1 --max-time 5 \
+              "http://127.0.0.1:3000$path") || status=unreachable
+            if [ "$status" != 200 ]; then
+              echo "Cannot audit $path (HTTP status: $status)"
+              tail -n 100 log/test.log || true
+              exit 1
+            fi
+          done
+
+          npx --yes --package=@lhci/cli@0.15.1 lhci autorun --config=.github/lighthouserc.cjs
+
+      - name: Upload Lighthouse reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports
+          path: tmp/lighthouse-reports/
+          if-no-files-found: error
+
+      - name: Summarize accessibility scores
+        id: scores
+        run: |
+          node <<'NODE' >> "$GITHUB_STEP_SUMMARY"
+          const { appendFileSync, readFileSync } = require('node:fs');
+          const { ci } = require('./.github/lighthouserc.cjs');
+          const reports = JSON.parse(readFileSync(`${ci.upload.outputDir}/manifest.json`, 'utf8'));
+
+          const scores = ci.collect.url.map((url) => {
+            const report = reports.find((entry) => entry.url === url && entry.isRepresentativeRun);
+            const score = report?.summary?.accessibility;
+            if (!Number.isFinite(score) || score < 0 || score > 1) {
+              throw new Error(`Missing or invalid Lighthouse accessibility score for ${url}`);
+            }
+            return Math.round(score * 100);
+          });
+
+          const badge = {
+            label: `Lighthouse accessibility (lowest of ${scores.length})`,
+            message: `${Math.min(...scores)}/100`,
+            color: 'blue',
+          };
+          appendFileSync(process.env.GITHUB_OUTPUT, `score-badge=${JSON.stringify({ schemaVersion: 1, ...badge })}\n`);
+          const previewUrl = `https://img.shields.io/static/v1?${new URLSearchParams(badge)}`;
+
+          console.log([
+            '## Lighthouse accessibility (desktop)',
+            '',
+            `![README score badge preview](${previewUrl})`,
+            '',
+            '| Page | Score |',
+            '| --- | ---: |',
+            ...ci.collect.url.map((url, index) => `| \`${new URL(url).pathname}\` | ${scores[index]}/100 |`),
+            '',
+            'See the `lighthouse-reports` artifact for the full HTML reports.',
+          ].join('\n'));
+          NODE
+
+  publish-score-badge:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    needs: accessibility
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    concurrency:
+      group: lighthouse-score-badge
+      queue: max
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Publish score for the README
+        env:
+          LIGHTHOUSE_SCORE_BADGE: ${{ needs.accessibility.outputs.score-badge }}
+        run: |
+          # A slower run for an older master commit must not replace a newer score.
+          git fetch --no-tags origin refs/heads/master
+          if [ "$(git rev-parse FETCH_HEAD)" != "$GITHUB_SHA" ]; then
+            exit 0
+          fi
+
+          badge_ref=$(git ls-remote origin refs/heads/lighthouse-badges)
+          if [ -n "$badge_ref" ]; then
+            git fetch --no-tags origin refs/heads/lighthouse-badges
+            git switch --detach FETCH_HEAD
+          else
+            git switch --orphan lighthouse-badges
+          fi
+
+          jq -n --argjson badge "$LIGHTHOUSE_SCORE_BADGE" '$badge' > accessibility.json
+
+          git add accessibility.json
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git -c user.name='github-actions[bot]' \
+            -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+            commit -m 'Update Lighthouse accessibility badge'
+          git push origin HEAD:refs/heads/lighthouse-badges

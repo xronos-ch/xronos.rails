@@ -1,6 +1,8 @@
 # XRONOS web app
 ![Website](https://img.shields.io/website?url=https%3A%2F%2Fxronos.ch)
 ![Tests](https://github.com/xronos-ch/xronos.rails/actions/workflows/test.yml/badge.svg)
+[![Lighthouse](https://github.com/xronos-ch/xronos.rails/actions/workflows/lighthouse.yml/badge.svg?branch=master&event=push)](https://github.com/xronos-ch/xronos.rails/actions/workflows/lighthouse.yml)
+[![Lighthouse accessibility score, lowest of three audited pages](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fxronos-ch%2Fxronos.rails%2Flighthouse-badges%2Faccessibility.json)](https://github.com/xronos-ch/xronos.rails/actions/workflows/lighthouse.yml)
 [![Test coverage](https://codecov.io/gh/xronos-ch/xronos.rails/branch/master/graph/badge.svg?token=0E7SVSFTVI)](https://codecov.io/gh/xronos-ch/xronos.rails)
 [![Docker pulls](https://img.shields.io/docker/pulls/xronos/xronos.rails)](https://hub.docker.com/r/xronos/xronos.rails/)
 ![GitHub issues](https://img.shields.io/github/issues/xronos-ch/xronos.rails)
