@@ -2,7 +2,7 @@
 bin/build_calibrator
 
 # update cron jobs
-bundle exec whenever --update-crontab
+bundle exec whenever --update-crontab --set "environment=${RAILS_ENV:-${RACK_ENV:-development}}"
 
 # install/update dependencies
 bundle && yarn
