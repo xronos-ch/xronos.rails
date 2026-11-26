@@ -1,0 +1,29 @@
+<% content_for :title, "Recent changes" %>
+
+<div class="container my-5">
+  <h1>Recent changes</h1>
+
+  <p>Recent additions, updates and other changes to records in XRONOS.</p>
+
+  <%= render "filters" %>
+
+  <p>Showing <%= @pagy.count %> <%= "change".pluralize(@pagy.count) %>.</p>
+
+  <div class="d-flex">
+    <div class="ms-auto">
+      <%= link_to bs_icon("download"),
+                  versions_path(format: :json, **@filters.to_h),
+                  class: "btn btn-sm btn-outline-primary",
+                  title: "View changelog as JSON" %>
+    </div>
+  </div>
+
+  <% if @versions.any? %>
+    <div class="table-responsive">
+      <%= render "application/paper_trail/version_table", versions: @versions %>
+    </div>
+    <%== @pagy.series_nav(:bootstrap) %>
+  <% else %>
+    <p class="text-muted">No recent changes match the selected filters.</p>
+  <% end %>
+</div>

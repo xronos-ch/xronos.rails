@@ -2,6 +2,8 @@
 
 ## [1.3.1.9000] - unreleased
 
+- Made the recent changes log publicly accessible, with filters for record
+  type, event type and date range (#352).
 - Reduce image download sizes on the homepage and in articles by serving
   WebP (#220).
 - Speed up MIaaRD collection exports (#573).

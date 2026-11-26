@@ -18,6 +18,8 @@ Rails.application.routes.draw do
   # Redirects for backwards compatibility
   get '/about', to: redirect('/about/xronos')
 
+  resources :versions, only: :index
+
   # Primary data resources
   resources :c14s do
     get 'search', on: :collection
@@ -107,7 +109,7 @@ Rails.application.routes.draw do
   # Curation backend
   get "/curate" => "curate#index"
   namespace :curate do
-    get "recent_changes" => "recent_changes#index"
+    get "recent_changes", to: redirect("/versions")
   end
 
   # Data issues

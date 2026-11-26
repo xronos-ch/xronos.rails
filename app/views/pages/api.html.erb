@@ -78,6 +78,41 @@
         <li>query_species</li>
       </ul>
 
+      <h2 id="changelog">Recent changes</h2>
+
+      <p>
+        The public changelog provides a record of additions, updates,
+        deletions and supersession events in XRONOS.
+        It is available in HTML and JSON.
+      </p>
+
+      <pre><code><%= versions_url(format: :json) %></code></pre>
+
+      <p>The following query parameters are supported:</p>
+
+      <ul>
+        <li><code>record_type</code>: record model, e.g. C14 or Site.</li>
+        <li><code>event_type</code>: create, update, destroy, supersede or restore.</li>
+        <li><code>from</code>: start date (YYYY-MM-DD, inclusive).</li>
+        <li><code>to</code>: end date (YYYY-MM-DD, inclusive).</li>
+        <li><code>page</code>: page number, starting at 1.</li>
+      </ul>
+
+      <p>
+        JSON responses contain up to 1,000 changes per page,
+        ordered from newest to oldest, together with pagination metadata
+        and the applied filters.
+        Changes to associated records are not necessarily included in
+        the JSON change details.
+      </p>
+
+      <p>
+        Please use date filters for incremental queries rather than repeatedly
+        downloading the entire changelog. Requests to the changelog are limited
+        to 30 per minute per IP address.
+        If you receive HTTP 429, respect the Retry-After header.
+      </p>
+
       <h2>Usage expectations</h2>
 
       <p>

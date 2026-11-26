@@ -41,6 +41,12 @@ class Rack::Attack
     ClientIp.from_rack_request(req) if req.path.start_with?("/data")
   end
 
+  throttle("versions/ip", limit: 30, period: 1.minute) do |req|
+    if req.path.match?(%r{\A/versions(?:[./]|\z)})
+      ClientIp.from_rack_request(req)
+    end
+  end
+
   throttle("deep-pagination/ip", limit: 20, period: 1.minute) do |req|
     page = req.params["page"].to_i
 

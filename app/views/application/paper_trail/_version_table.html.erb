@@ -1,54 +1,63 @@
-<table class="table table-hover">
-
+<table class="table table-sm table-hover small align-middle">
   <thead>
     <tr>
-      <th><span class="visually-hidden">Toggle changes</span></th>
-      <th>Time</th>
-      <th>User</th>
-      <th>Record</th>
-      <th>Summary</th>
+      <th scope="col"><span class="visually-hidden">Toggle changes</span></th>
+      <th scope="col">Time</th>
+      <th scope="col">User</th>
+      <th scope="col">Record</th>
+      <th scope="col">Summary</th>
     </tr>
+  </thead>
 
-    <% versions.each do |entry| %>
-      <% is_supersession = entry.is_a?(SupersessionEvent) %>
-      <% prefix = is_supersession ? "se" : "v" %>
-      <tbody>
-        <tr>
-          <td>
-            <button class="btn btn-sm btn-info"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#changeset<%= prefix %><%= entry.id %>"
-                    aria-expanded="false"
-                    aria-controls="changeset<%= prefix %><%= entry.id %>">
-                    <%= bs_icon "caret-right", title: "Show/hide changes" %>
-            </button>
-          </td>
-          <td><%= time_tag entry.created_at, entry.created_at.to_s if entry.created_at %></td>
-          <td><%= render "application/paper_trail/whodunnit", entry: entry %></td>
-          <td>
-            <% if is_supersession %>
-              <%= entry.superseded_type %>:<%= entry.superseded_id %>
-            <% else %>
-              <%= entry.item_type %>:<%= entry.item_id %>
-            <% end %>
-          </td>
-          <td>
-            <%= render "application/paper_trail/event", event: is_supersession ? entry.event_type : entry.event %>
-            <% if is_supersession %>
-              <%= entry.event_type == "supersede" ? "Superseded by #{entry.superseded_by.label}" : "Restored" %>
-            <% elsif entry.revision_comment.blank? %>
-              <span class="text-muted">No summary</span>
-            <% else %>
-              <%= md(entry.revision_comment) %>
-            <% end %>
-          </td>
-        </tr>
-        <tr class="collapse" id="changeset<%= prefix %><%= entry.id %>">
-          <td></td>
-          <td colspan=6><%= render "application/paper_trail/changes", entry: entry %></td>
-        </tr>
-      </tbody>
-    <% end %>
-
+  <% versions.each do |entry| %>
+    <% is_supersession = entry.is_a?(SupersessionEvent) %>
+    <% prefix = is_supersession ? "se" : "v" %>
+    <tbody>
+      <tr>
+        <td class="text-nowrap">
+          <button class="btn btn-sm btn-link text-body-secondary p-0"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#changeset<%= prefix %><%= entry.id %>"
+                  aria-expanded="false"
+                  aria-controls="changeset<%= prefix %><%= entry.id %>"
+                  aria-label="Show/hide changes">
+            <%= bs_icon "caret-right" %>
+          </button>
+        </td>
+        <td class="text-nowrap">
+          <%= render "application/paper_trail/event",
+                     event: is_supersession ? entry.event_type : entry.event %>
+          <%= time_tag entry.created_at,
+                       format: "%F %H:%M",
+                       class: "font-monospace text-body-secondary" if entry.created_at %>
+        </td>
+        <td class="text-nowrap">
+          <%= render "application/paper_trail/whodunnit", entry: entry %>
+        </td>
+        <td class="text-nowrap">
+          <% if is_supersession %>
+            <%= entry.superseded_type %>:<%= entry.superseded_id %>
+          <% else %>
+            <%= entry.item_type %>:<%= entry.item_id %>
+          <% end %>
+        </td>
+        <td>
+          <% if is_supersession %>
+            <%= entry.event_type == "supersede" ? "Superseded by #{entry.superseded_by.label}" : "Restored" %>
+          <% elsif entry.revision_comment.blank? %>
+            <span class="text-muted">No summary</span>
+          <% else %>
+            <%= md(entry.revision_comment) %>
+          <% end %>
+        </td>
+      </tr>
+      <tr class="collapse" id="changeset<%= prefix %><%= entry.id %>">
+        <td></td>
+        <td colspan="4">
+          <%= render "application/paper_trail/changes", entry: entry %>
+        </td>
+      </tr>
+    </tbody>
+  <% end %>
 </table>
