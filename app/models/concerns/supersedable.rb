@@ -34,6 +34,10 @@ module Supersedable
     !superseded?
   end
 
+  def superseded_in_database?
+    Supersession.exists?(superseded: self)
+  end
+
   # Walks the supersession graph to the current canonical,
   # non-superseded record. Self is the base case. The unique index on
   # supersessions.superseded_id guarantees there is at most one
@@ -61,6 +65,7 @@ module Supersedable
 
       supersession_state = Supersession.create!(superseded: self, superseded_by: canonical)
       self.supersession = supersession_state
+      sync_search_document
       SupersessionEvent.create!(
         event_type: 'supersede',
         superseded: self,
@@ -78,6 +83,7 @@ module Supersedable
     old_target = supersession.superseded_by
     transaction do
       supersession.destroy!
+      sync_search_document
       SupersessionEvent.create!(
         event_type: 'restore',
         superseded: self,
@@ -113,6 +119,13 @@ module Supersedable
   end
 
   private # rubocop:disable Lint/UselessAccessModifier
+
+  def sync_search_document
+    return unless respond_to?(:update_pg_search_document)
+
+    association(:pg_search_document).reset
+    update_pg_search_document
+  end
 
   def re_point_existing_supersessions_to(canonical)
     Supersession

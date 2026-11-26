@@ -32,6 +32,29 @@ class C14sControllerTest < ActionDispatch::IntegrationTest # rubocop:disable Met
       .merge(c14_lab_id: create(:c14_lab).id, sample_id: create(:sample).id)
   end
 
+  test 'index page links preserve the filter and sort order' do
+    sample = create(:sample)
+    measurements = Array.new(Pagy::DEFAULT.fetch(:limit) + 1) do |index|
+      create(:c14, sample: sample, lab_identifier: "PAG-#{index}", bp: 3000 + index, method: 'AMS')
+    end
+    excluded = create(:c14, sample: sample, bp: 2999, method: 'conventional')
+
+    get c14s_path, params: { c14: { method: 'AMS' }, c14s_order_by: 'bp', c14s_order: 'desc' }
+
+    assert_response :success
+    assert_dom "#c14s-table tbody a[href='#{c14_path(measurements.last)}']"
+    assert_dom "#c14s-table tbody a[href='#{c14_path(measurements.first)}']", count: 0
+    next_page = css_select('#c14s-table nav a[href*="page=2"]').first
+    assert next_page, 'Expected a link to page 2'
+
+    get next_page['href']
+
+    assert_response :success
+    assert_dom '#c14s-table tbody tr', count: 1
+    assert_dom "#c14s-table tbody a[href='#{c14_path(measurements.first)}']"
+    assert_dom "#c14s-table tbody a[href='#{c14_path(excluded)}']", count: 0
+  end
+
   test 'show renders machine-readable record dates and revision timestamps' do
     c14 = with_versioning { create(:c14) }.reload
     revision = c14.versions.find_by!(event: 'create')
@@ -149,17 +172,39 @@ class C14sControllerTest < ActionDispatch::IntegrationTest # rubocop:disable Met
   test 'downloads C14 records as a MIaaRD collection' do
     site = create(:site, name: 'Test Site')
     context = create(:context, site: site)
-    sample = create(:sample, context: context)
+    first_material = create(:material, name: 'MIaaRD collection material 1')
+    first_sample = create(:sample, context: context, material: first_material)
 
     create(
       :c14,
-      sample: sample,
+      sample: first_sample,
       lab_identifier: 'OxA-12345',
       bp: 4500,
       std: 30
     )
 
-    get c14s_path(format: :json, schema: C14::MIAARD::SCHEMA)
+    second_material = create(:material, name: 'MIaaRD collection material 2')
+    second_sample = create(:sample, context: context, material: second_material)
+
+    create(
+      :c14,
+      sample: second_sample,
+      lab_identifier: 'Beta-67890',
+      bp: 3200,
+      std: 25
+    )
+
+    material_queries = []
+    capture_material_queries = lambda do |_name, _started, _finished, _unique_id, payload|
+      next if payload[:cached]
+      next unless payload[:sql].include?('FROM "materials"')
+
+      material_queries << payload[:sql]
+    end
+
+    ActiveSupport::Notifications.subscribed(capture_material_queries, 'sql.active_record') do
+      get c14s_path(format: :json, schema: C14::MIAARD::SCHEMA)
+    end
 
     assert_response :success
     assert_equal 'application/json', response.media_type
@@ -169,6 +214,9 @@ class C14sControllerTest < ActionDispatch::IntegrationTest # rubocop:disable Met
     assert json.key?('entries')
     assert json['entries'].any?
     assert_equal 'OxA', json['entries'].first['lab_code']
+    assert_equal 1, material_queries.size
+    assert_equal ['MIaaRD collection material 1', 'MIaaRD collection material 2'],
+                 json['entries'].pluck('sample_material').sort
   end
 
   test 'downloads filtered C14 records as a MIaaRD collection' do

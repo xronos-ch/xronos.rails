@@ -78,6 +78,21 @@ class C14Test < ActiveSupport::TestCase
     assert_nil C14.new(bp: 4500, std: nil).f14c_error
   end
 
+  test 'batch calibration uses each site curve for identical measurements' do
+    north = build(:c14, bp: 4500, std: 30,
+                        sample: build(:sample, context: build(:context, site: build(:site, lat: 45))))
+    south = build(:c14, bp: 4500, std: 30,
+                        sample: build(:sample, context: build(:context, site: build(:site, lat: -45))))
+    intcal = south.calibration(curve: :IntCal20)
+
+    calibrations = C14.calibrations_for([north, south])
+
+    assert_predicate intcal, :persisted?
+    assert_equal intcal, calibrations.fetch(north)
+    assert_equal 'SHCal20', calibrations.fetch(south).c14_curve
+    assert_predicate calibrations.fetch(south), :persisted?
+  end
+
   test 'carbon_proportion accepts nil' do
     c14 = build(:c14, carbon_proportion: nil)
     assert c14.valid?

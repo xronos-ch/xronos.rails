@@ -11,12 +11,12 @@
     </h1>
     <% if site.site_names.any? %>
       <h2 class="card-subtitle h6 mb-2 text-body-secondary">
-        <%= site.site_names.pluck(:name).join(", ") %>
+        <%= site.site_names.map(&:name).join(", ") %>
       </h2>
     <% end %>
 
     <p class="card-text">
-      <%= site.site_types.any? ? site.site_types.pluck(:name).to_sentence.humanize : "Archaeological site" %>
+      <%= site.site_types.any? ? site.site_types.map(&:name).to_sentence.humanize : "Archaeological site" %>
       <% unless site.country.blank? %>in <%= site.country %><% end %>
       <% unless site.coordinates.blank? %>(<%= site.coordinates.to_s("dd") %>)<% end %>
     </p>
@@ -28,19 +28,19 @@
       class: "card-link fw-semibold",
       title: C14.label.humanize.pluralize do %>
       <%= xr_icon C14, {}, { style: "width: auto; height: 1.1rem;" } %>
-      <%= site.c14s.count %>
+      <%= local_assigns.fetch(:counts, {}).fetch(:c14s) { site.c14s.count } %>
     <% end %>
     <%= link_to site_path(site, anchor: "site-typos"), 
       class: "card-link fw-semibold",
       title: Typo.label.humanize.pluralize do %>
       <%= xr_icon Typo, {}, { style: "width: auto; height: 1.1rem;" } %>
-      <%= site.typos.count %>
+      <%= local_assigns.fetch(:counts, {}).fetch(:typos) { site.typos.count } %>
     <% end %>
     <%= link_to site_path(site, anchor: "site-references"), 
       class: "card-link fw-semibold",
       title: Reference.label.humanize.pluralize do %>
       <%= xr_icon Reference, {}, { style: "width: auto; height: 1.1rem;" } %>
-      <%= site.references.count %>
+      <%= local_assigns.fetch(:counts, {}).fetch(:references) { site.references.count } %>
     <% end %>
   </div>
 

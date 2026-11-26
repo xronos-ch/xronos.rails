@@ -93,7 +93,7 @@ class Site < ApplicationRecord
   pg_search_scope :search,
                   against: :name,
                   using: { tsearch: { prefix: true } } # match partial words
-  multisearchable against: :name
+  multisearchable against: :name, unless: :superseded_in_database?
 
   scope :with_counts, lambda {
     joins("LEFT JOIN sites_with_counts ON sites_with_counts.id = sites.id")
