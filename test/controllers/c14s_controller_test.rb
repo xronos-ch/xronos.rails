@@ -32,6 +32,29 @@ class C14sControllerTest < ActionDispatch::IntegrationTest # rubocop:disable Met
       .merge(c14_lab_id: create(:c14_lab).id, sample_id: create(:sample).id)
   end
 
+  test 'index page links preserve the filter and sort order' do
+    sample = create(:sample)
+    measurements = Array.new(Pagy::DEFAULT.fetch(:limit) + 1) do |index|
+      create(:c14, sample: sample, lab_identifier: "PAG-#{index}", bp: 3000 + index, method: 'AMS')
+    end
+    excluded = create(:c14, sample: sample, bp: 2999, method: 'conventional')
+
+    get c14s_path, params: { c14: { method: 'AMS' }, c14s_order_by: 'bp', c14s_order: 'desc' }
+
+    assert_response :success
+    assert_dom "#c14s-table tbody a[href='#{c14_path(measurements.last)}']"
+    assert_dom "#c14s-table tbody a[href='#{c14_path(measurements.first)}']", count: 0
+    next_page = css_select('#c14s-table nav a[href*="page=2"]').first
+    assert next_page, 'Expected a link to page 2'
+
+    get next_page['href']
+
+    assert_response :success
+    assert_dom '#c14s-table tbody tr', count: 1
+    assert_dom "#c14s-table tbody a[href='#{c14_path(measurements.first)}']"
+    assert_dom "#c14s-table tbody a[href='#{c14_path(excluded)}']", count: 0
+  end
+
   test 'show renders machine-readable record dates and revision timestamps' do
     c14 = with_versioning { create(:c14) }.reload
     revision = c14.versions.find_by!(event: 'create')

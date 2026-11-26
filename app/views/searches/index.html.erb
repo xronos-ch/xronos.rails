@@ -44,7 +44,7 @@
       <% @results.each do |result| %>
         <% next unless result.searchable %>
         <div class="col">
-          <%= render result.searchable %>
+          <%= render result.searchable, counts: @card_counts.fetch(result.searchable, {}) %>
         </div>
       <% end %>
     </div>
