@@ -1,0 +1,18 @@
+<div class="list-group shadow-sm text-start" style="text-shadow: none;">
+  <% if records.any? %>
+    <ul class="list-unstyled mb-0">
+      <% records.each do |record| %>
+        <% type = record.class.label.humanize %>
+        <li>
+          <%= link_to record, class: "list-group-item list-group-item-action rounded-0 text-break" do %>
+            <%= record.label.to_s.presence || type %>
+            <small class="d-block text-body-secondary"><%= type %></small>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <div class="list-group-item">No results found.</div>
+  <% end %>
+  <%= link_to "View all results", search_path(q: query), class: "list-group-item list-group-item-action" %>
+</div>

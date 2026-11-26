@@ -28,6 +28,9 @@ application.register("markdown-editor", MarkdownEditorController)
 import RemoteModalController from "./remote_modal_controller"
 application.register("remote-modal", RemoteModalController)
 
+import SearchPreviewController from "./search_preview_controller"
+application.register("search-preview", SearchPreviewController)
+
 import SliderController from "./slider_controller"
 application.register("slider", SliderController)
 

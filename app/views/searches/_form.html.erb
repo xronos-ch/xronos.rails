@@ -1,16 +1,28 @@
-<form class="input-group mb-3" 
+<% navbar = local_assigns.fetch(:navbar, false) %>
+<form class="position-relative <%= navbar ? "me-3" : "mb-3" %>"
+      <% if navbar %>id="navbarSearch" data-home-hero-target="search"<% end %>
       role="search"
-      action="/search"
+      data-controller="search-preview"
+      data-search-preview-url-value="<%= search_preview_path %>"
+      data-action="focusout->search-preview#leave pointerdown@document->search-preview#dismissOutside keydown.esc->search-preview#escape submit->search-preview#clear turbo:before-cache@document->search-preview#clear"
+      action="<%= search_path %>"
       method="get">
 
-  <input class="form-control form-control-lg"
-         type="search" 
-         name="q" 
-         placeholder="<%= search_placeholder %>"
-         aria-label="Search">
-  <button class="btn btn-lg btn-primary" type="submit">
-    <%= bs_icon "search" %>
-    Search
-  </button>
+  <div class="input-group">
+    <input class="form-control <%= navbar ? "form-control-sm" : "form-control-lg" %>"
+           type="search"
+           name="q"
+           data-search-preview-target="input"
+           data-action="input->search-preview#queue compositionend->search-preview#queue"
+           placeholder="<%= search_placeholder %>"
+           aria-label="Search">
+    <button class="btn <%= navbar ? "btn-sm btn-info" : "btn-lg btn-primary" %>" type="submit">
+      <%= bs_icon "search" %>
+      Search
+    </button>
+  </div>
 
+  <div class="position-absolute top-100 start-0 w-100 z-3"
+       data-search-preview-target="results"
+       aria-live="polite"></div>
 </form>
