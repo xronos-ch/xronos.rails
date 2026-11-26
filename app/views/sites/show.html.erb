@@ -5,7 +5,7 @@
 
   <%= render "header", site: @site %>
 
-  <% cache [@site, "site_header_v2"] do %>
+  <% cache [@site, "site_types_v1"] do %>
     <section id="site-types" class="my-5">
       <dt><%= "Site type".pluralize(@site.site_types.count) %></dt>
       <dd>
@@ -16,54 +16,48 @@
         <% end %>
       </dd>
     </section>
-
-    <section id="site-location" class="my-5">
-      <h2><%= bs_icon "pin-map" %> Location</h2>
-      <div class="row">
-
-        <div class="col-lg-8">
-          <% unless @site.lat.blank? || @site.lng.blank? %>
-            <% site_markers_data = json_escape([@site].to_json) %>
-            <div style="height: 30rem; position: relative;"
-                 data-controller="map"
-                 data-map-style-value="show_site"
-                 data-map-target="container"
-                 data-map-base-map-value="Imagery"
-                 data-map-carto-api-key-value="<%= ENV["CARTO_API_KEY"] %>"
-                 data-map-markers-data-value="<%= site_markers_data %>">
-            </div>
-          <% else %>
-            <div style="height: 30rem; position: relative;"
-                 class="bg-light d-flex align-items-center justify-content-center"
-                 title="Location data missing or incomplete">
-              <%= bs_icon "question-circle", class: "display-1 text-info" %>
-            </div>
-          <% end %>
-        </div>
-
-        <div class="col-lg-4">
-          <dl>
-            <dt>Coordinates (degrees)</dt>
-            <dd class="font-monospace">
-              <%= @site.coordinates.present? ? @site.coordinates.to_s("dd") : na_value %>
-            </dd>
-
-            <dt>Coordinates (<abbr title="Degrees, minutes, seconds">DMS</abbr>)</dt>
-            <dd class="font-monospace">
-              <%= @site.coordinates.present? ? @site.coordinates.to_s("dms") : na_value %>
-            </dd>
-
-            <dt>Country (<a href="https://www.iso.org/iso-3166-country-codes.html">ISO&nbsp;3166</a>)</dt>
-            <dd class="font-monospace">
-              <%= render "country", site: @site %>
-              (<%= @site.country_code.present? ? @site.country_code : na_value %>)
-            </dd>
-          </dl>
-        </div>
-
-      </div>
-    </section>
   <% end %>
+
+  <section id="site-location" class="my-5">
+    <h2><%= bs_icon "pin-map" %> Location</h2>
+    <div class="row">
+
+      <div class="col-lg-8">
+        <% if @site.coordinates&.valid_latitude? && @site.coordinates.valid_longitude? %>
+          <div style="height: 30rem;">
+            <%= render "shared/map", site_coordinates: [@site.lng.to_f, @site.lat.to_f] %>
+          </div>
+        <% else %>
+          <div style="height: 30rem; position: relative;"
+               class="bg-light d-flex align-items-center justify-content-center"
+               title="Location data missing or incomplete">
+            <%= bs_icon "question-circle", class: "display-1 text-info" %>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="col-lg-4">
+        <dl>
+          <dt>Coordinates (degrees)</dt>
+          <dd class="font-monospace">
+            <%= @site.coordinates.present? ? @site.coordinates.to_s("dd") : na_value %>
+          </dd>
+
+          <dt>Coordinates (<abbr title="Degrees, minutes, seconds">DMS</abbr>)</dt>
+          <dd class="font-monospace">
+            <%= @site.coordinates.present? ? @site.coordinates.to_s("dms") : na_value %>
+          </dd>
+
+          <dt>Country (<a href="https://www.iso.org/iso-3166-country-codes.html">ISO&nbsp;3166</a>)</dt>
+          <dd class="font-monospace">
+            <%= render "country", site: @site %>
+            (<%= @site.country_code.present? ? @site.country_code : na_value %>)
+          </dd>
+        </dl>
+      </div>
+
+    </div>
+  </section>
 
   <% if @site.wikidata_link&.approved? %>
     <section id="site-description" class="bg-white p-3 my-5 border rounded shadow-sm">

@@ -1,239 +1,241 @@
+import { LngLatBounds, Map, NavigationControl, Popup, ScaleControl, setWorkerUrl } from "maplibre-gl"
+import "maplibre-gl/dist/maplibre-gl.css"
 import { Controller } from "@hotwired/stimulus"
-import L from "leaflet"
-import "leaflet/dist/leaflet.css"
-import "leaflet-providers"
-import Supercluster from "supercluster"
 
-// Connects to data-controller="map"
-export default class extends Controller {
-  static targets = ["container", "spinner"]
-  static values = {
-    baseMap: String,
-    cartoApiKey: String,
-    markersData: Array,
-    markersUrl: String,
-    style: String
+const overlayId = "xronos-sites"
+const clustersId = "xronos-clusters"
+const clusterCountId = "xronos-cluster-count"
+const siteRadius = 300
+
+const imageryStyle = {
+  version: 8,
+  sources: {
+    imagery: {
+      type: "raster",
+      tileSize: 256,
+      tiles: ["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],
+      attribution: "Tiles &copy; Esri — Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
+    }
+  },
+  layers: [{ id: "imagery", type: "raster", source: "imagery" }]
+}
+
+const markerLayers = [
+  {
+    id: overlayId,
+    type: "circle",
+    source: overlayId,
+    filter: ["!", ["has", "point_count"]],
+    paint: {
+      "circle-color": "#a44a3f",
+      "circle-opacity": 0.5,
+      "circle-radius": 4,
+      "circle-stroke-color": "#000",
+      "circle-stroke-width": 2
+    }
+  },
+  {
+    id: clustersId,
+    type: "circle",
+    source: overlayId,
+    filter: ["has", "point_count"],
+    paint: {
+      "circle-color": "#466476",
+      "circle-radius": ["step", ["get", "point_count"], 15, 100, 19, 1000, 23]
+    }
+  },
+  {
+    id: clusterCountId,
+    type: "symbol",
+    source: overlayId,
+    filter: ["has", "point_count"],
+    layout: {
+      "text-field": ["to-string", ["get", "point_count_abbreviated"]],
+      "text-font": ["Open Sans Regular"],
+      "text-size": 12,
+      "text-allow-overlap": true
+    },
+    paint: { "text-color": "#fff" }
   }
+]
+
+const siteLayers = [
+  {
+    id: "xronos-site-area",
+    type: "fill",
+    source: overlayId,
+    paint: { "fill-color": "#b99555", "fill-opacity": 0.5 }
+  },
+  {
+    id: "xronos-site-outline",
+    type: "line",
+    source: overlayId,
+    paint: { "line-color": "#b99555", "line-width": 5 }
+  }
+]
+
+export default class extends Controller {
+  static targets = ["container", "status", "basemap"]
+  static values = { markersUrl: String, siteCoordinates: Array, cartoApiKey: String, workerUrl: String }
 
   connect() {
-    // Avoid double-initialisation (e.g. Turbo / Stimulus reconnects)
-    if (this._initialized) return
-    this._initialized = true
+    const site = this.hasSiteCoordinatesValue ? siteArea(this.siteCoordinatesValue) : null
+    this.overlay = { type: "FeatureCollection", features: site ? [site] : [] }
+    this.request = new AbortController()
+    this.basemapTarget.disabled = true
+    const imagery = this.basemapTarget.value === "imagery"
+    setWorkerUrl(this.workerUrlValue)
 
-    const bounds = new L.LatLngBounds(
-      new L.LatLng(-180, -180),
-      new L.LatLng(180, 180)
-    )
-
-    // Base maps
-    const cartoOptions = { apikey: this.cartoApiKeyValue }
-    const physical = L.tileLayer.provider("CartoDB.PositronNoLabels", cartoOptions)
-    const labelledPhysical = L.tileLayer.provider("CartoDB.Positron", cartoOptions)
-    const imagery = L.tileLayer.provider("Esri.WorldImagery")
-
-    const baseMaps = {
-      "Map": physical,
-      "Map with labels": labelledPhysical,
-      "Imagery": imagery
+    try {
+      this.map = new Map({
+        container: this.containerTarget,
+        style: this.withOverlay(imagery ? imageryStyle : { version: 8, sources: {}, layers: [] }),
+        center: [0, 0],
+        zoom: 2,
+        minZoom: 2,
+        maxZoom: 16,
+        dragRotate: false,
+        pitchWithRotate: false
+      })
+    } catch (error) {
+      this.statusTarget.textContent = "The map could not start on this device."
+      console.error(error)
+      return
     }
 
-    let baseMap = physical
-    if (this.hasBaseMapValue && baseMaps[this.baseMapValue]) {
-      baseMap = baseMaps[this.baseMapValue]
-    }
-
-    // Create map
-    const map = L.map(this.containerTarget, {
-      minZoom: 3,
-      maxZoom: 17,
-      maxBounds: bounds,
-      maxBoundsViscosity: 0.75,
-      renderer: L.canvas(),
-      preferCanvas: true,
-      layers: [baseMap]
+    this.map.touchZoomRotate.disableRotation()
+    this.map.addControl(new NavigationControl({ showCompass: false }))
+    this.map.addControl(new ScaleControl({ unit: "metric" }))
+    this.map.once("style.load", () => {
+      this.basemapTarget.disabled = false
+      if (this.basemapTarget.value !== "imagery") this.changeBasemap()
     })
 
-    this.map = map
-
-    // Additional controls
-    L.control.layers(baseMaps, null, { collapsed: false }).addTo(this.map)
-    L.control.scale({ imperial: false }).addTo(this.map)
-
-    const index = new Supercluster({
-      radius: 60,
-      extent: 256,
-      maxZoom: 8
-    })
-    this.index = index
-
-    const markersLayer = L.geoJson(null, {
-      pointToLayer: this.createClusterIcon
-    })
-    this.markersLayer = markersLayer
-    this.markersLayer.addTo(this.map)
-
-    // Initial view
-    this.map.fitWorld()
-
-    // Load initial markers (local or remote)
-    this.load()
-
-    const update = () => {
-      const bounds = map.getBounds()
-      markersLayer.clearLayers()
-      markersLayer.addData(
-        index.getClusters(
-          [bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth()],
-          map.getZoom()
-        )
-      )
-    }
-
-    map.on("moveend", () => {
-      if (typeof index.points !== "undefined") {
-        update()
-      }
-    })
-
-    markersLayer.on("click", e => {
-      const extend = index.getClusterExpansionZoom(
-        e.layer.feature.properties.cluster_id
-      )
-      if (!isNaN(extend)) {
-        map.flyTo(e.latlng, extend)
-      }
-    })
-  }
-
-  load() {
-    if (this.hasMarkersDataValue) {
-      this.loadMarkers()
-    }
-
-    if (this.hasMarkersUrlValue) {
-      this.loadRemoteMarkers()
+    if (site) {
+      const bounds = site.geometry.coordinates[0].reduce((area, point) => area.extend(point), new LngLatBounds())
+      this.map.fitBounds(bounds, { padding: 28, duration: 0 })
+    } else {
+      const clickableLayers = [overlayId, clustersId, clusterCountId]
+      const canvas = this.map.getCanvas()
+      this.map.on("click", clickableLayers, (event) => this.openFeature(event))
+      this.map.on("mouseenter", clickableLayers, () => { canvas.style.cursor = "pointer" })
+      this.map.on("mouseleave", clickableLayers, () => { canvas.style.cursor = "" })
+      this.loadSites(this.request.signal)
     }
   }
 
   disconnect() {
-    if (this.map) {
-      this.map.remove()
-      this.map = null
-    }
-    this.index = null
-    this.markersLayer = null
-    this._initialized = false
-    this._markersLoaded = false
-    this._markersLoading = false
+    this.request?.abort()
+    this.popup?.remove()
+    this.popup = null
+    this.map?.remove()
+    this.map = null
   }
 
-  loadMarkers() {
-    let markers = this.markersDataValue.map(data =>
-      L.circleMarker([data.lat, data.lng], {
-        color: "black",
-        fillColor: "#A44A3F",
-        fillOpacity: 0.5,
-        weight: 2,
-        radius: 4,
-        id: data.id
+  changeBasemap() {
+    const basemap = this.basemapTarget.value
+    const style = basemap === "imagery"
+      ? imageryStyle
+      : `https://basemaps.cartocdn.com/gl/${basemap}-gl-style/style.json?key=${encodeURIComponent(this.cartoApiKeyValue)}`
+
+    this.map.setStyle(style, { transformStyle: (_previous, next) => this.withOverlay(next) })
+  }
+
+  async loadSites(signal) {
+    this.statusTarget.textContent = "Loading site markers…"
+    try {
+      const response = await fetch(this.markersUrlValue, {
+        headers: { Accept: "application/geo+json" },
+        signal
       })
+      if (!response.ok) throw new Error(`Marker request returned HTTP ${response.status}`)
+
+      const features = await response.json()
+      if (signal.aborted) return
+      if (!Array.isArray(features)) throw new Error("Expected an array of site features")
+
+      const map = this.map
+      if (!map.getSource(overlayId)) await map.once("style.load")
+      if (signal.aborted) return
+
+      this.overlay = { type: "FeatureCollection", features }
+      await map.getSource(overlayId).setData(this.overlay)
+      if (signal.aborted) return
+
+      this.statusTarget.textContent = features.length ? "" : "No mapped sites match these filters."
+    } catch (error) {
+      if (signal.aborted) return
+
+      this.statusTarget.textContent = "Site markers could not be loaded."
+      console.error(error)
+    }
+  }
+
+  withOverlay(style) {
+    const source = { type: "geojson", data: this.overlay }
+    const siteMap = this.hasSiteCoordinatesValue
+    if (!siteMap) Object.assign(source, { cluster: true, clusterRadius: 60, clusterMaxZoom: 7 })
+
+    return {
+      ...style,
+      sources: { ...style.sources, [overlayId]: source },
+      layers: [...style.layers, ...(siteMap ? siteLayers : markerLayers)]
+    }
+  }
+
+  async openFeature(event) {
+    const [feature] = event.features ?? []
+    if (!feature) return
+
+    const { properties, geometry } = feature
+    const map = this.map
+    const coordinates = [...geometry.coordinates]
+    coordinates[0] += 360 * Math.round((event.lngLat.lng - coordinates[0]) / 360)
+    if (properties.cluster) {
+      try {
+        const zoom = await map.getSource(overlayId).getClusterExpansionZoom(properties.cluster_id)
+        if (this.map === map) map.easeTo({ center: coordinates, zoom })
+      } catch (error) {
+        if (this.map === map) console.error(error)
+      }
+      return
+    }
+
+    const content = document.createElement("div")
+    const name = document.createElement("h5")
+    name.textContent = properties.name
+    const link = document.createElement("a")
+    link.className = "btn btn-primary btn-sm"
+    link.href = `/sites/${encodeURIComponent(properties.id)}`
+    link.target = "_blank"
+    link.rel = "noopener"
+    link.textContent = "Site details"
+    content.append(name, link)
+
+    this.popup?.remove()
+    this.popup = new Popup().setLngLat(coordinates).setDOMContent(content).addTo(map)
+  }
+}
+
+function siteArea([longitude, latitude]) {
+  const radians = Math.PI / 180
+  const centerLatitude = latitude * radians
+  const angularDistance = siteRadius / 6371000
+  const sinLatitude = Math.sin(centerLatitude)
+  const cosLatitude = Math.cos(centerLatitude)
+  const sinDistance = Math.sin(angularDistance)
+  const cosDistance = Math.cos(angularDistance)
+  // Trace the radius on the globe so the area remains 300 m at every zoom.
+  const ring = Array.from({ length: 64 }, (_, step) => {
+    const bearing = -step * Math.PI / 32
+    const pointLatitude = Math.asin(sinLatitude * cosDistance + cosLatitude * sinDistance * Math.cos(bearing))
+    const offsetLongitude = Math.atan2(
+      Math.sin(bearing) * sinDistance * cosLatitude,
+      cosDistance - sinLatitude * Math.sin(pointLatitude)
     )
+    return [longitude + offsetLongitude / radians, pointLatitude / radians]
+  })
+  ring.push(ring[0])
 
-    if (this.hasStyleValue && this.styleValue === "show_site") {
-      markers = this.markersDataValue.map(data =>
-        L.circle([data.lat, data.lng], {
-          color: "#b99555",
-          fillColor: "#b99555",
-          fillOpacity: 0.5,
-          weight: 10,
-          radius: 300,
-          id: data.id
-        })
-      )
-    }
-
-    const group = L.featureGroup(markers)
-    group.addTo(this.map)
-    this.map.fitBounds(group.getBounds())
-  }
-
-  createClusterIcon(feature, latlng) {
-    if (!feature.properties.cluster) {
-      return L.circleMarker(latlng, {
-        color: "black",
-        fillColor: "#A44A3F",
-        fillOpacity: 0.5,
-        weight: 2,
-        radius: 4,
-        id: feature.properties.id
-      }).bindPopup(
-        "<h5>" + feature.properties.name + "</h5>" +
-        '<a class="btn btn-primary btn-sm" style="color: #fff" href="/sites/' +
-        feature.properties.id +
-        '" target="_blank">' +
-        'Site details <i class="fa fa-external-link"></i>' +
-        "</a>"
-      )
-    }
-
-    const count = feature.properties.point_count
-    const size =
-      count < 100 ? "small" :
-      count < 1000 ? "medium" : "large"
-
-    const icon = L.divIcon({
-      html: `<div><span>${feature.properties.point_count_abbreviated}</span></div>`,
-      className: `marker-cluster marker-cluster-${size}`,
-      iconSize: L.point(40, 40)
-    })
-
-    return L.marker(latlng, { icon })
-  }
-
-  loadRemoteMarkers() {
-    // Avoid double-fetching (e.g. reconnects or multiple loads)
-    if (this._markersLoaded || this._markersLoading) return
-
-    this._markersLoading = true
-
-    const markersUrl = new URL(this.markersUrlValue)
-    console.debug("Fetching map data from " + markersUrl.toString())
-    this.showSpinner()
-
-    fetch(markersUrl, { headers: { Accept: "application/geo+json" } })
-      .then(response => response.json())
-      .then(data => {
-        // build_geojson_from_sql returns an array of features
-        if (Array.isArray(data) && data.length > 0) {
-          this.index.load(data)
-          const bounds = this.map.getBounds()
-          this.markersLayer.addData(
-            this.index.getClusters(
-              [bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth()],
-              this.map.getZoom()
-            )
-          )
-          this._markersLoaded = true
-        }
-      })
-      .catch(error => {
-        console.error("Error loading map data:", error)
-      })
-      .finally(() => {
-        this._markersLoading = false
-        this.hideSpinner()
-      })
-  }
-
-  showSpinner() {
-    if (this.hasSpinnerTarget) {
-      this.spinnerTarget.classList.remove("visually-hidden")
-    }
-  }
-
-  hideSpinner() {
-    if (this.hasSpinnerTarget) {
-      this.spinnerTarget.classList.add("visually-hidden")
-    }
-  }
+  return { type: "Feature", properties: {}, geometry: { type: "Polygon", coordinates: [ring] } }
 }

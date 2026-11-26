@@ -15,6 +15,16 @@ class XronosDataControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test 'the data browser map requests markers for the current filters' do
+    filters = { sites: { country_code: ['CH'] } }
+    get data_path, params: { filter: filters }
+
+    assert_response :success
+    map = Nokogiri::HTML(response.body).at_css('[data-controller="map"]')
+    assert map
+    assert_equal data_path(filter: filters), URI.parse(map['data-map-markers-url-value']).request_uri
+  end
+
   test 'data json responds successfully' do
     get data_path(format: :json)
 

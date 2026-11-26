@@ -12,10 +12,8 @@
 		"bootstrap": "^5.3.8",
 		"bootstrap-icons": "^1.13.1",
 		"easymde": "^2.18.0",
-		"leaflet": "^1.8.0",
-		"leaflet-providers": "^4.0.0",
+		"maplibre-gl": "^6.19.0",
 		"nouislider": "^15.7.0",
-		"supercluster": "^7.1.5",
 		"tom-select": "^2.0.1",
 		"vega": "^6.4.0",
 		"vega-embed": "^7.3.0",
@@ -35,7 +33,7 @@
 		"source-map-js": "^1.2.2"
 	},
 	"scripts": {
-		"build": "esbuild app/javascript/*.* --bundle --minify --sourcemap --outdir=app/assets/builds --public-path=/assets --loader:.png=file",
+		"build": "esbuild app/javascript/*.* maplibre-worker=node_modules/maplibre-gl/dist/maplibre-gl-worker.mjs --bundle --minify --sourcemap --outdir=app/assets/builds --public-path=/assets --loader:.png=file",
 		"build:css:compile": "sass --quiet-deps --style=compressed ./app/assets/stylesheets/application.bootstrap.scss:./app/assets/builds/frontend.css --no-source-map --load-path=node_modules",
 		"build:css:prefix": "postcss ./app/assets/builds/frontend.css --use=autoprefixer --no-map --output=./app/assets/builds/frontend.css",
 		"build:css": "yarn build:css:compile && yarn build:css:prefix",
