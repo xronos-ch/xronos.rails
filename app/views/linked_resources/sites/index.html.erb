@@ -2,6 +2,10 @@
 
 <h2 class="border-bottom">Sites</h2>
 
+<% if can?(:manage, Site) %>
+  <p><%= link_to "Review Wikidata proposals", linked_resources_wikidata_proposals_path %></p>
+<% end %>
+
 <%= render "linked_resources/nav", model: Site, base_path: linked_resources_sites_path %>
 
 <turbo-frame id="linked-resources-sites-table">

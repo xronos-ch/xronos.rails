@@ -34,6 +34,7 @@ class Site < ApplicationRecord
   has_many :site_names, dependent: :destroy
   has_many :contexts
   destroy_async_with_paper_trail :contexts
+  has_many :curation_proposals, as: :subject, dependent: :delete_all
   has_many :citations, as: :citing, dependent: :destroy_async
 
   # Grandchildren

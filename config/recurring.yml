@@ -26,3 +26,6 @@ production:
       system({ "SESSION_DAYS_TRIM_THRESHOLD" => days.to_s },
              Rails.root.join("bin/rails").to_s, "db:sessions:trim", exception: true)
     schedule: "30 3 * * *"
+  wikidata_site_proposals:
+    class: Site::WikidataBatchJob
+    schedule: "0 4 * * 1 UTC"

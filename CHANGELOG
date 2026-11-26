@@ -2,6 +2,8 @@
 
 ## [1.3.1.9000] - unreleased
 
+- **Migrations required:** Wikidata suggestions for sites are generated in the
+  background each week and can be reviewed and approved by curators (#485).
 - Reduce image download sizes on the homepage and in articles by serving
   WebP (#220).
 - Speed up MIaaRD collection exports (#573).

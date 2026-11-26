@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_11_13_120000) do
+ActiveRecord::Schema[8.0].define(version: 2026_11_16_110000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -155,6 +155,18 @@ ActiveRecord::Schema[8.0].define(version: 2026_11_13_120000) do
     t.datetime "updated_at", null: false
     t.index ["controlled_vocabulary_term_id", "normalized"], name: "index_cv_variants_on_term_and_normalized", unique: true
     t.index ["controlled_vocabulary_term_id", "value"], name: "index_cv_variants_on_term_and_value", unique: true
+  end
+
+  create_table "curation_proposals", force: :cascade do |t|
+    t.string "subject_type", null: false
+    t.bigint "subject_id", null: false
+    t.string "kind", null: false
+    t.string "target_key", null: false
+    t.jsonb "evidence", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["kind", "id"], name: "index_curation_proposals_on_kind_and_id"
+    t.index ["subject_type", "subject_id", "kind", "target_key"], name: "index_curation_proposals_on_target", unique: true
   end
 
   create_table "functional_classification_categories", force: :cascade do |t|

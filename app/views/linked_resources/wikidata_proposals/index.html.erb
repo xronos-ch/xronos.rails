@@ -1,0 +1,41 @@
+<% content_for :title, "Wikidata proposals" %>
+
+<p><%= link_to "Back to linked sites", linked_resources_sites_path %></p>
+<h2>Wikidata proposals</h2>
+
+<% if @proposals.any? %>
+  <div class="table-responsive">
+    <table class="table align-middle">
+      <thead>
+        <tr>
+          <th scope="col">Site</th>
+          <th scope="col">Wikidata candidate</th>
+          <th scope="col"><span class="visually-hidden">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @proposals.each do |proposal| %>
+          <tr>
+            <td>
+              <%= link_to proposal.subject.name, proposal.subject %>
+              <div class="small text-body-secondary"><%= proposal.subject.country_code %></div>
+            </td>
+            <td>
+              <%= link_to proposal.target_key, LinkedResource::Source.find("Wikidata").url_for(proposal.target_key) %>
+              <%= proposal.evidence["label"] %>
+              <div class="small text-body-secondary"><%= proposal.evidence["description"] %></div>
+              <div class="small text-body-secondary">Exact English name match</div>
+            </td>
+            <td>
+              <%= button_to "Approve link", linked_resources_wikidata_proposal_approval_path(proposal),
+                            class: "btn btn-primary btn-sm" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <%== @pagy.series_nav(:bootstrap) %>
+<% else %>
+  <p>No current Wikidata proposals.</p>
+<% end %>
