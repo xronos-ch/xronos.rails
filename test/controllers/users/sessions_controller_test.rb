@@ -17,7 +17,9 @@ class Users::SessionsControllerTest < ActionDispatch::IntegrationTest # rubocop:
   test 'create with valid credentials signs the user in' do
     user = create(:user, password: 'password', password_confirmation: 'password')
 
-    post user_session_path, params: { user: { email: user.email, password: 'password' } }
+    assert_difference -> { ActiveRecord::SessionStore::Session.count } do
+      post user_session_path, params: { user: { email: user.email, password: 'password' } }
+    end
 
     assert_response :redirect
   end
