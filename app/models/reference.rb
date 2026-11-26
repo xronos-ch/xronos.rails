@@ -49,7 +49,7 @@ class Reference < ApplicationRecord
   pg_search_scope :search,
     against: [ :short_ref, :bibtex ],
     using: { tsearch: { prefix: true } } # match partial words
-  multisearchable against: [ :short_ref, :bibtex ]
+  multisearchable against: [ :short_ref, :bibtex ], unless: :superseded_in_database?
 
   scope :with_citations_count, -> {
     select <<~SQL
