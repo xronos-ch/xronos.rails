@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_08_163201) do
+ActiveRecord::Schema[8.0].define(version: 2026_11_13_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -426,7 +426,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_08_163201) do
     t.integer "approx_end_time"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
-    t.integer "parent_id"
     t.bigint "sample_id"
     t.index ["name", "sample_id", "created_at"], name: "index_typos_on_name_sample_id_and_created_at"
     t.index ["name"], name: "index_typos_on_name"

@@ -44,7 +44,8 @@ class C14sController < ApplicationController
 
       format.json do
         if params[:schema] == C14::MIAARD::SCHEMA
-          entries = C14::MIAARD.collection(@c14s.reorder(:id)).map(&:to_h)
+          c14s = @c14s.includes(sample: :material).reorder(:id)
+          entries = C14::MIAARD.collection(c14s).map(&:to_h)
           send_miaard_json({ entries: entries }, 'xronos_c14s_miaard.json')
         end
       end
