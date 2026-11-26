@@ -22,7 +22,7 @@
           <div class="small">
             <%= entry.revision_comment.blank? ? "Updated." : md(entry.revision_comment) %>
           </div>
-        <% elsif entry.changeset.any? { |c| c.first != "updated_at" } || (entry.snapshot_id.present? && version_peripheral_diff(entry).present?) %>
+        <% elsif version_changeset(entry).any? { |c| c.first != "updated_at" } || (entry.snapshot_id.present? && version_peripheral_diff(entry).present?) %>
           <details class="timeline-changes">
             <summary title="Show/hide changes">
               <%= entry.revision_comment.blank? ? "Updated." : md(entry.revision_comment) %>

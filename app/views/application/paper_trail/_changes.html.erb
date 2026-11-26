@@ -1,5 +1,5 @@
 <% if entry.respond_to?(:changeset) %>
-  <% entry.changeset.each do |change| %>
+  <% version_changeset(entry).each do |change| %>
     <% unless change.first == "updated_at" %>
       <div class="d-flex">
         <dt><%= change.first.humanize %>:</dt>

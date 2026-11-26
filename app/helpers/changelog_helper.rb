@@ -3,6 +3,16 @@ module ChangelogHelper
   # foreign keys that duplicate information already shown elsewhere.
   HIDDEN_ATTRS = %w[id created_at updated_at linkable_id linkable_type site_id].freeze
 
+  # Historical versions may belong to models that no longer use PaperTrail.
+  # Their changes are still available in the JSONB object_changes column.
+  def version_changeset(version)
+    if version.item_type.safe_constantize.respond_to?(:version_class_name)
+      version.changeset
+    else
+      version.object_changes || {}
+    end
+  end
+
   def combined_changelog(item)
     versions = item.versions.includes(:item).to_a
     events = item.respond_to?(:supersession_events) \
