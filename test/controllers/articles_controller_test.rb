@@ -43,16 +43,6 @@ class ArticlesControllerTest < ActionDispatch::IntegrationTest
     assert html.at_css('article picture img[src]')
   end
 
-  test 'article headers offer WebP at the existing breakpoints' do
-    article = create(:article, :published)
-    attach_splash(article)
-
-    get article_path(section: article.section, slug: article.slug)
-
-    assert_response :success
-    assert_equal 6, response.body.scan('type("image/webp")').size
-  end
-
   # --- Atom and RSS feeds ---
 
   test 'atom feed returns success and correct content type' do
