@@ -19,6 +19,9 @@ application.register("flash", FlashController)
 import HomeHeroController from "./home_hero_controller"
 application.register("home-hero", HomeHeroController)
 
+import LiveSearchController from "./live_search_controller"
+application.register("live-search", LiveSearchController)
+
 import MapController from "./map_controller"
 application.register("map", MapController)
 
