@@ -21,6 +21,10 @@ module Xronos
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
 
+    config.x.natural_earth.data_dir = ENV.fetch("NATURAL_EARTH_DATA_DIR") do
+      Rails.root.join("data/sources/natural_earth").to_s
+    end
+
     config.action_controller.action_on_unpermitted_parameters = :raise
 
     # Compress text responses

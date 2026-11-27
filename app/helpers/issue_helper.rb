@@ -48,6 +48,8 @@ module IssueHelper
       "At least one geographic coordinate is not recorded"
     when :invalid_coordinates
       "At least one geographic coordinate is not valid"
+    when :coordinates_in_water
+      "Coordinates fall well inside a water body mapped by Natural Earth. Review the location on the map."
     when :missing_country_code
       "Country is not recorded"
     # Taxons

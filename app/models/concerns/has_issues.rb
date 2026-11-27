@@ -3,9 +3,9 @@ module HasIssues
   extend ActiveSupport::Concern
 
   included do # instance methods
-    def issues
+    def issues(**known_issues)
       self.class.issues.filter do |issue|
-        self.has_issue?(issue)
+        known_issues.fetch(issue) { has_issue?(issue) }
       end
     end
 

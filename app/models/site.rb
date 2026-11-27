@@ -10,6 +10,7 @@
 #  lat          :decimal(, )
 #  lng          :decimal(, )
 #  name         :string
+#  submerged    :boolean          default(FALSE), not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #
@@ -66,6 +67,7 @@ class Site < ApplicationRecord
   include Duplicable
   potential_duplicates_on :name, :lat, :lng, :country_code
 
+  before_update :clear_submerged_after_coordinate_change
   after_save :merge_exact_duplicates
   validate :no_exact_duplicate, on: :create
 
@@ -79,7 +81,7 @@ class Site < ApplicationRecord
   acts_as_copy_target # enable CSV exports
 
   include HasIssues
-  @issues = %i[missing_coordinates invalid_coordinates missing_country_code]
+  @issues = %i[missing_coordinates invalid_coordinates missing_country_code coordinates_in_water]
 
   include Linkable
   linkable_to :wikidata
@@ -181,6 +183,25 @@ class Site < ApplicationRecord
     coordinates.invalid_latitude? or coordinates.invalid_longitude?
   end
 
+  scope :coordinates_in_water, lambda { |findings = WaterCheck.report&.fetch(:findings)|
+    next none if findings.blank?
+
+    locations = findings.values.map { |finding| finding.values_at(:site_id, :lat, :lng) }
+    where(submerged: false).where([:id, :lat, :lng] => locations)
+  }
+  def coordinates_in_water?(findings = WaterCheck.report&.fetch(:findings))
+    !submerged? && water_finding_current?(findings)
+  end
+
+  def mark_as_submerged(checked_lat, checked_lng)
+    with_lock do
+      findings = WaterCheck.report&.fetch(:findings)
+      next unless water_finding_current?(findings)
+      next unless lat.to_s('F') == checked_lat && lng.to_s('F') == checked_lng
+      submerged? || update(submerged: true, revision_comment: 'Marked site as submerged.')
+    end
+  end
+
   scope :missing_country_code, -> { where("country_code = '' OR country_code IS NULL") }
   def missing_country_code?
     country_code.blank?
@@ -194,6 +215,20 @@ class Site < ApplicationRecord
   end
 
   private
+
+  def clear_submerged_after_coordinate_change
+    return unless will_save_change_to_lat? || will_save_change_to_lng?
+    return if will_save_change_to_submerged?
+
+    # Write false even if this instance predates another editor's mark.
+    submerged_will_change!
+    self.submerged = false
+  end
+
+  def water_finding_current?(findings)
+    finding = findings&.[](id)
+    finding.present? && finding[:lat] == lat && finding[:lng] == lng
+  end
 
   def linked_resources_compatible?(other)
     my_links    = linked_resources.pluck(:source, :external_id).to_h

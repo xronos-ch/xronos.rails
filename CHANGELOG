@@ -2,6 +2,8 @@
 
 ## [1.3.1.9000] - unreleased
 
+- Flag site coordinates mapped in water for review and allow editors to mark
+  submerged sites (#393).
 - Reduce image download sizes on the homepage and in articles by serving
   WebP (#220).
 - Speed up MIaaRD collection exports (#573).
