@@ -24,6 +24,11 @@
     </div>
   </div>
 
+  <%= f.check_box :submerged, label: "Submerged site" %>
+  <% if @site.submerged? %>
+    <p class="form-text text-muted">Changing the coordinates clears this mark so the new location can be checked.</p>
+  <% end %>
+
   <%# country_select is not supported by bootstrap_forms gem, so we need to 
     construct the label and wrapper HTML manually here %>
   <div>

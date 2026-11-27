@@ -13,6 +13,14 @@
 
   <%= render "issues/filter_form" %>
 
+  <% if params[:issue] == "coordinates_in_water" %>
+    <% if @water_check_report %>
+      <p class="text-muted">Last water check <%= time_tag(@water_check_report.fetch(:checked_at), format: :short) %></p>
+    <% else %>
+      <p class="text-muted">Water check results are not available. Run the water check to refresh this list.</p>
+    <% end %>
+  <% end %>
+
   <%=
     case params[:issue]
     when "missing_country_code"

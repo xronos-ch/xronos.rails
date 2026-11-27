@@ -1,3 +1,4 @@
+<% show_review = params[:issue] == "coordinates_in_water" && sites.any? { |site| can?(:update, site) } %>
 <table class="table table-hover">
   <thead>
     <tr>
@@ -32,7 +33,13 @@
           <span class="text-muted"><%= order_indicator %></span>
         <% end %>
       </th>
+      <% if params[:issue] == "coordinates_in_water" %>
+        <th scope="col">Approx. distance to shore</th>
+      <% end %>
       <th scope="col">Issues</th>
+      <% if show_review %>
+        <th scope="col">Review</th>
+      <% end %>
     </tr>
   </thead>
 
@@ -40,16 +47,31 @@
     <% sites.each do |site| %>
       <tr>
         <td class="text-muted"><%= site.id %></td>
-        <td><%= link_to site.name, site, target: :_top %></td>
+        <td>
+          <%= link_to site.name, site_path(site, anchor: ("site-location" if params[:issue] == "coordinates_in_water")), target: :_top %>
+        </td>
         <td><%= site.country_code %></td>
         <td class="font-monospace"><%= site.coordinates.present? ? site.coordinates : na_value %></td>
         <td class="font-monospace text-end"><%= site.c14s_count %></td>
         <td class="font-monospace text-end"><%= site.typos_count %></td>
-        <td><% site.issues.each do |issue| %>
-          <%= issue_badge(issue) %>
-        <% end %></td>
+        <% if params[:issue] == "coordinates_in_water" %>
+          <td><%= number_with_precision(@water_findings.fetch(site.id).fetch(:distance_meters) / 1000.0, precision: 1) %> km</td>
+        <% end %>
+        <td>
+          <% site.issues(coordinates_in_water: site.coordinates_in_water?(@water_findings)).each do |issue| %>
+            <%= issue_badge(issue) %>
+          <% end %>
+        </td>
+        <% if show_review %>
+          <td>
+            <% if can?(:update, site) %>
+              <%= button_to "Mark as submerged", site_path(site), method: :patch,
+                    params: { water_check_coordinates: { lat: site.lat.to_s("F"), lng: site.lng.to_s("F") } },
+                    class: "btn btn-sm btn-outline-secondary", form: { data: { turbo_frame: "_top" } } %>
+            <% end %>
+          </td>
+        <% end %>
       </tr>
-    </tr>
   <% end %>
   </tbody>
 </table>

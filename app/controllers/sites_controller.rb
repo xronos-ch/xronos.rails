@@ -8,6 +8,7 @@ class SitesController < ApplicationController
   before_action :set_versions, only: [:show]
 
   include MergeableController
+  skip_before_action :check_pending_merge, only: :update, if: :water_check_update?
 
   # GET /sites
   # GET /sites.json
@@ -141,6 +142,8 @@ class SitesController < ApplicationController
   # PATCH/PUT /sites/1
   # PATCH/PUT /sites/1.json
   def update
+    return update_from_water_check if water_check_update?
+
     respond_to do |format|
       if @site.update(site_params)
         format.html { redirect_back fallback_location: root_path, notice: "Saved changes to #{@site.name}." }
@@ -166,6 +169,21 @@ class SitesController < ApplicationController
 
   private
 
+  def water_check_update?
+    request.format.html? && params.key?(:water_check_coordinates)
+  end
+
+  def update_from_water_check
+    coordinates = params.expect(water_check_coordinates: %i[lat lng])
+    marked = @site.mark_as_submerged(coordinates[:lat], coordinates[:lng])
+    flash[marked ? :notice : :alert] = if marked
+      'Site marked as submerged.'
+    else
+      'The finding is no longer current. Review the coordinates again.'
+    end
+    redirect_to issues_sites_path(issue: :coordinates_in_water), status: :see_other
+  end
+
   def set_site
     scope = Site.with_counts
     scope = scope.includes(:linked_resources) unless action_name == 'show' && request.format.json?
@@ -184,6 +202,7 @@ class SitesController < ApplicationController
       :name,
       :lat,
       :lng,
+      :submerged,
       { site_type_ids: [] },
       :country_code,
       :revision_comment,
