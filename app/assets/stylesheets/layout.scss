@@ -94,3 +94,111 @@ span.hero_caption:hover {
     font-size: 1rem;
 	font-color: "red";
 }
+
+.data-browser {
+	display: flex;
+	// Keep Leaflet's controls below the toolbar dropdown and filter drawer.
+	isolation: isolate;
+}
+
+.data-browser-results {
+	min-width: 0;
+}
+
+#dataMap.active {
+	display: flex;
+}
+
+.data-browser-map {
+	min-height: 18rem;
+	min-height: clamp(18rem, 60svh, 36rem);
+}
+
+.site-location-map {
+	height: 30rem;
+}
+
+@include bs.media-breakpoint-down(lg) {
+	.data-browser-tabs {
+		width: 100%;
+	}
+
+	.data-filter-sidebar:is(.collapse, .collapsing) {
+		display: block;
+		width: auto !important;
+		overflow: visible;
+	}
+
+	#dataFilters:not(.show, .showing, .hiding) .offcanvas-body {
+		display: none;
+	}
+
+	.site-location-map {
+		height: clamp(16rem, 50svh, 30rem);
+	}
+
+	@media (scripting: none) {
+		.data-browser {
+			display: block;
+		}
+
+		#dataFilters {
+			position: static;
+			visibility: visible;
+			transform: none;
+			width: auto;
+
+			&:not(.show, .showing, .hiding) .offcanvas-body {
+				display: block;
+			}
+		}
+
+		#dataFilters .offcanvas-header {
+			display: none;
+		}
+	}
+}
+
+@include bs.media-breakpoint-up(lg) {
+	#dataFilters {
+		width: clamp(16rem, 28vw, 24rem);
+	}
+
+	#dataFilters form {
+		width: 100%;
+	}
+}
+
+@media (scripting: none) {
+	.data-browser-toolbar [data-bs-toggle],
+	#dataMap.active {
+		display: none !important;
+	}
+
+	#dataTable {
+		display: block;
+	}
+
+	#dataFilters .accordion-collapse {
+		display: block;
+	}
+}
+
+.table-responsive + nav .pagination {
+	flex-wrap: wrap;
+}
+
+@include bs.media-breakpoint-down(md) {
+	.compact-record-table {
+		table-layout: fixed;
+		overflow-wrap: anywhere;
+
+		> tbody > tr > td {
+			vertical-align: top;
+		}
+	}
+
+	.compact-record-table-secondary {
+		width: 36%;
+	}
+}
