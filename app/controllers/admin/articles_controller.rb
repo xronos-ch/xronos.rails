@@ -1,5 +1,6 @@
 class Admin::ArticlesController < AdminController
 
+  before_action { authorize! :manage, Article }
   load_and_authorize_resource
 
   before_action :set_article, only: [:edit, :update, :destroy]
