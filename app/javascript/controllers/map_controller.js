@@ -16,10 +16,6 @@ export default class extends Controller {
   }
 
   connect() {
-    // Avoid double-initialisation (e.g. Turbo / Stimulus reconnects)
-    if (this._initialized) return
-    this._initialized = true
-
     const bounds = new L.LatLngBounds(
       new L.LatLng(-180, -180),
       new L.LatLng(180, 180)
@@ -44,7 +40,7 @@ export default class extends Controller {
 
     // Create map
     const map = L.map(this.containerTarget, {
-      minZoom: 3,
+      minZoom: this.hasMarkersUrlValue ? 0 : 3,
       maxZoom: 17,
       maxBounds: bounds,
       maxBoundsViscosity: 0.75,
@@ -55,8 +51,15 @@ export default class extends Controller {
 
     this.map = map
 
+    this.resizeObserver = new ResizeObserver(([entry]) => {
+      if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
+        map.invalidateSize({ debounceMoveend: true })
+      }
+    })
+    this.resizeObserver.observe(this.containerTarget)
+
     // Additional controls
-    L.control.layers(baseMaps, null, { collapsed: false }).addTo(this.map)
+    L.control.layers(baseMaps).addTo(this.map)
     L.control.scale({ imperial: false }).addTo(this.map)
 
     const index = new Supercluster({
@@ -64,19 +67,11 @@ export default class extends Controller {
       extent: 256,
       maxZoom: 8
     })
-    this.index = index
-
     const markersLayer = L.geoJson(null, {
       pointToLayer: this.createClusterIcon
     })
-    this.markersLayer = markersLayer
-    this.markersLayer.addTo(this.map)
-
-    // Initial view
-    this.map.fitWorld()
-
-    // Load initial markers (local or remote)
-    this.load()
+    markersLayer.addTo(map)
+    map.fitWorld()
 
     const update = () => {
       const bounds = map.getBounds()
@@ -103,28 +98,23 @@ export default class extends Controller {
         map.flyTo(e.latlng, extend)
       }
     })
-  }
 
-  load() {
     if (this.hasMarkersDataValue) {
       this.loadMarkers()
     }
 
     if (this.hasMarkersUrlValue) {
-      this.loadRemoteMarkers()
+      this.loadRemoteMarkers(index, update)
     }
   }
 
   disconnect() {
-    if (this.map) {
-      this.map.remove()
-      this.map = null
-    }
-    this.index = null
-    this.markersLayer = null
-    this._initialized = false
-    this._markersLoaded = false
-    this._markersLoading = false
+    this.resizeObserver?.disconnect()
+    this.markersRequest?.abort()
+    this.markersRequest = null
+    this.hideSpinner()
+    this.map?.remove()
+    this.map = null
   }
 
   loadMarkers() {
@@ -190,50 +180,44 @@ export default class extends Controller {
     return L.marker(latlng, { icon })
   }
 
-  loadRemoteMarkers() {
-    // Avoid double-fetching (e.g. reconnects or multiple loads)
-    if (this._markersLoaded || this._markersLoading) return
-
-    this._markersLoading = true
-
-    const markersUrl = new URL(this.markersUrlValue)
-    console.debug("Fetching map data from " + markersUrl.toString())
+  async loadRemoteMarkers(index, update) {
+    const request = new AbortController()
+    this.markersRequest = request
     this.showSpinner()
 
-    fetch(markersUrl, { headers: { Accept: "application/geo+json" } })
-      .then(response => response.json())
-      .then(data => {
-        // build_geojson_from_sql returns an array of features
-        if (Array.isArray(data) && data.length > 0) {
-          this.index.load(data)
-          const bounds = this.map.getBounds()
-          this.markersLayer.addData(
-            this.index.getClusters(
-              [bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth()],
-              this.map.getZoom()
-            )
-          )
-          this._markersLoaded = true
-        }
+    try {
+      const response = await fetch(this.markersUrlValue, {
+        headers: { Accept: "application/geo+json" },
+        signal: request.signal
       })
-      .catch(error => {
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+
+      const data = await response.json()
+      if (!request.signal.aborted && Array.isArray(data) && data.length > 0) {
+        index.load(data)
+        update()
+      }
+    } catch (error) {
+      if (!request.signal.aborted) {
         console.error("Error loading map data:", error)
-      })
-      .finally(() => {
-        this._markersLoading = false
+      }
+    } finally {
+      if (!request.signal.aborted) {
+        this.markersRequest = null
         this.hideSpinner()
-      })
+      }
+    }
   }
 
   showSpinner() {
     if (this.hasSpinnerTarget) {
-      this.spinnerTarget.classList.remove("visually-hidden")
+      this.spinnerTarget.classList.remove("d-none")
     }
   }
 
   hideSpinner() {
     if (this.hasSpinnerTarget) {
-      this.spinnerTarget.classList.add("visually-hidden")
+      this.spinnerTarget.classList.add("d-none")
     }
   }
 }

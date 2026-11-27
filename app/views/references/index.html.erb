@@ -12,6 +12,7 @@
         <%= link_to bs_icon("download"), references_path(format: :csv, reference: @reference_params), class: "btn btn-sm btn-outline-primary", title: "Download CSV" %>
       </div>
     </div>
+    <div class="table-responsive" tabindex="0" role="region" aria-label="References">
     <table class="responsive nowrap table table-hover align-middle">
       <thead>
         <tr>
@@ -43,6 +44,7 @@
         <% end %>
       </tbody>
     </table>
+    </div>
 
     <%== @pagy.series_nav(:bootstrap) %>
   </turbo-frame>

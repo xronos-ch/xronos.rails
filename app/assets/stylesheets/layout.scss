@@ -1,3 +1,5 @@
+@use 'bootstrap/scss/bootstrap' as bs;
+
 // Offset in-page anchor scrolls so targets are not hidden behind the sticky/fixed navbar
 html {
 	scroll-padding-top: 4.5rem;
@@ -12,6 +14,46 @@ html {
 	}
 }
 
+.main-nav {
+	background-color: var(--bs-primary);
+	box-shadow: var(--bs-box-shadow);
+
+	@include bs.media-breakpoint-down(lg) {
+		.navbar-account {
+			.dropdown-menu {
+				position: static;
+			}
+
+			.dropdown-toggle {
+				max-width: 100%;
+				white-space: normal;
+				overflow-wrap: anywhere;
+			}
+		}
+	}
+}
+
+@include bs.media-breakpoint-up(lg) {
+	.home-nav {
+		position: fixed;
+		inset-inline: 0;
+		z-index: bs.$zindex-fixed;
+
+		&.home-nav-at-top {
+			background-color: transparent;
+			box-shadow: none;
+
+			#navbarSearch {
+				display: none;
+			}
+		}
+	}
+
+	.sign-in-menu {
+		min-width: 24rem;
+	}
+}
+
 // front page hero
 div.hero {
 	color: white;
@@ -19,10 +61,11 @@ div.hero {
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: cover;
-	height: 40vh;
+	min-height: 40vh;
 
 	@media (max-width: 768px) {
-		background-image: url("./hero_image_mobile.webp");
+		background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
+			url("./hero_image_mobile.webp");
 	}
 }
 
@@ -42,8 +85,120 @@ span.hero_caption:hover {
 	background-color: rgba(0, 0, 0, 0.4);
 }
 
+.home-data-icon {
+	width: 5rem;
+	height: 5rem;
+}
 
 .blockquote {
     font-size: 1rem;
 	font-color: "red";
+}
+
+.data-browser {
+	display: flex;
+	// Keep Leaflet's controls below the toolbar dropdown and filter drawer.
+	isolation: isolate;
+}
+
+.data-browser-results {
+	min-width: 0;
+}
+
+#dataMap.active {
+	display: flex;
+}
+
+.data-browser-map {
+	min-height: 18rem;
+	min-height: clamp(18rem, 60svh, 36rem);
+}
+
+.site-location-map {
+	height: 30rem;
+}
+
+@include bs.media-breakpoint-down(lg) {
+	.data-browser-tabs {
+		width: 100%;
+	}
+
+	.data-filter-sidebar:is(.collapse, .collapsing) {
+		display: block;
+		width: auto !important;
+		overflow: visible;
+	}
+
+	#dataFilters:not(.show, .showing, .hiding) .offcanvas-body {
+		display: none;
+	}
+
+	.site-location-map {
+		height: clamp(16rem, 50svh, 30rem);
+	}
+
+	@media (scripting: none) {
+		.data-browser {
+			display: block;
+		}
+
+		#dataFilters {
+			position: static;
+			visibility: visible;
+			transform: none;
+			width: auto;
+
+			&:not(.show, .showing, .hiding) .offcanvas-body {
+				display: block;
+			}
+		}
+
+		#dataFilters .offcanvas-header {
+			display: none;
+		}
+	}
+}
+
+@include bs.media-breakpoint-up(lg) {
+	#dataFilters {
+		width: clamp(16rem, 28vw, 24rem);
+	}
+
+	#dataFilters form {
+		width: 100%;
+	}
+}
+
+@media (scripting: none) {
+	.data-browser-toolbar [data-bs-toggle],
+	#dataMap.active {
+		display: none !important;
+	}
+
+	#dataTable {
+		display: block;
+	}
+
+	#dataFilters .accordion-collapse {
+		display: block;
+	}
+}
+
+.table-responsive + nav .pagination {
+	flex-wrap: wrap;
+}
+
+@include bs.media-breakpoint-down(md) {
+	.compact-record-table {
+		table-layout: fixed;
+		overflow-wrap: anywhere;
+
+		> tbody > tr > td {
+			vertical-align: top;
+		}
+	}
+
+	.compact-record-table-secondary {
+		width: 36%;
+	}
 }

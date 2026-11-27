@@ -1,25 +1,37 @@
-<% content_for :title, "Browse data" %>
+<% content_for :title, "Data browser" %>
 <% content_for :meta_description,
   "Browse and download #{@total_count} chronometric records from XRONOS, including radiocarbon dates, typological classifications, and dendrochronological dates. Filter by countries, specific archaeological site(s), site types, sample materials, sample taxa, radiocarbon laboratories, or laboratory IDs." %>
 
-<div class="px-1 py-2 border-bottom shadow-sm">
+<% content_for :head do %>
+  <%# A Turbo snapshot can retain an open filter drawer and its body scroll lock. %>
+  <meta name="turbo-cache-control" content="no-cache">
+<% end %>
+
+<div class="px-3 py-2 border-bottom">
   <%= render "toolbar" %>
 </div>
 
-<div class="flex-grow-1 d-flex">
-
-  <aside id="dataFilters" class="collapse collapse-horizontal show bg-light">
-    <%= render "filters" %>
+<div class="data-browser flex-grow-1">
+  <aside id="dataFilterSidebar" class="data-filter-sidebar collapse collapse-horizontal show bg-light">
+    <div id="dataFilters" class="offcanvas-lg offcanvas-start" tabindex="-1" aria-labelledby="dataFiltersTitle">
+      <div class="offcanvas-header border-bottom">
+        <h2 class="offcanvas-title h5" id="dataFiltersTitle">Filters</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#dataFilters"
+                aria-label="Close filters"></button>
+      </div>
+      <%# A full-page filter submission clears Bootstrap's modal state. %>
+      <div class="offcanvas-body p-0" data-turbo="false">
+        <%= render "filters" %>
+      </div>
+    </div>
   </aside>
 
-  <div class="flex-grow-1 tab-content">
-    <div class="tab-pane show active w-100 h-100" id="dataMap" role="tabpanel" aria-labelledby="dataMapTab" tabindex="0">
+  <div class="data-browser-results flex-grow-1 d-flex flex-column tab-content">
+    <div class="tab-pane active flex-grow-1" id="dataMap" role="tabpanel" aria-labelledby="dataMapTab" tabindex="0">
       <%= render "map" %>
     </div>
     <div class="tab-pane p-3" id="dataTable" role="tabpanel" aria-labelledby="dataTableTab" tabindex="0">
       <%= render "table" %>
     </div>
-  </div>
-
   </div>
 </div>

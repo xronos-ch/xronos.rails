@@ -1,117 +1,66 @@
-<div class="d-flex">
-
-  <h1 class="h5 my-0 me-3 px-3 py-2 text-primary fw-bold">
+<div class="data-browser-toolbar d-flex flex-wrap align-items-center gap-2">
+  <h1 class="h5 my-0 me-auto me-lg-2 text-primary fw-bold">
     <%= bs_icon "hourglass-split" %>
     Data browser
   </h1>
 
-  <button class="me-3 btn btn btn-outline-primary"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#dataFilters"
-          aria-expanded="true"
+  <button class="btn btn-outline-primary d-lg-none"
+          type="button" data-bs-toggle="offcanvas" data-bs-target="#dataFilters"
           aria-controls="dataFilters">
-    <%= bs_icon "filter" %>
-    Filters
+    <%= bs_icon "filter" %> Filters
+  </button>
+
+  <button class="btn btn-outline-primary d-none d-lg-inline-block"
+          type="button" data-bs-toggle="collapse" data-bs-target="#dataFilterSidebar"
+          aria-expanded="true" aria-controls="dataFilterSidebar">
+    <%= bs_icon "filter" %> Filters
     <span class="collapse-status-open"><%= bs_icon "chevron-left" %></span>
     <span class="collapse-status-closed"><%= bs_icon "chevron-right" %></span>
   </button>
 
-  <div class="px-3 py-2 text-muted">
-    View:
-  </div>
-  <ul class="me-3 nav nav-pills" role="tablist">
+  <ul class="data-browser-tabs nav nav-pills" role="tablist" aria-label="Data browser view">
     <li class="nav-item" role="presentation">
-      <a id="dataMapTab" 
-         class="nav-link active" 
-         data-bs-toggle="pill" 
-         href="#dataMap"
-         role="tab" 
-         aria-controls="dataMap"
-         aria-selected="true">
-        <%= bs_icon "pin-map-fill" %>
-        Sites
-      </a>
+      <button id="dataMapTab" class="nav-link active" type="button" data-bs-toggle="pill"
+              data-bs-target="#dataMap" role="tab" aria-controls="dataMap" aria-selected="true">
+        <%= bs_icon "pin-map-fill" %> Sites
+      </button>
     </li>
     <li class="nav-item" role="presentation">
-      <a id="dataTableTab" 
-         class="nav-link" 
-         data-bs-toggle="pill" 
-         href="#dataTable"
-         role="tab" 
-         aria-controls="dataTable"
-         aria-selected="false">
-        <%= bs_icon "table" %>
-        Radiocarbon dates
-      </a>
+      <button id="dataTableTab" class="nav-link" type="button" data-bs-toggle="pill"
+              data-bs-target="#dataTable" role="tab" aria-controls="dataTable" aria-selected="false">
+        <%= bs_icon "table" %> Radiocarbon dates
+      </button>
     </li>
   </ul>
 
-  <span class="navbar-text me-3">
+  <div class="small me-auto">
     <%= render "filter_status" %>
-  </span>
+  </div>
 
-  <ul class="nav">
-  <!--
-    <li class="nav-item dropdown">
-      <a class="nav-link dropdown-toggle" 
-         id="dataTools"  
-         role="button" 
-         data-bs-toggle="dropdown" 
-         aria-expanded="false" href="#">
-        <%= bs_icon "clipboard-data-fill" %>
-        Analyse
-      </a>
-      <ul class="dropdown-menu" aria-labelledby="dataTools">
-        <li><a class="dropdown-item" href="#">Calibrate</a></li>
-        <li><a class="dropdown-item" href="#">Sum calibrate</a></li>
-      </ul>
-    </li>
-  -->
-    <li class="nav-item dropdown">
-      <a class="nav-link dropdown-toggle" 
-         id="dataDownload"  
-         role="button" 
-         data-bs-toggle="dropdown" 
-         aria-expanded="false" 
-         href="#">
-        <%= bs_icon "download" %>
-        Download
-      </a>
-      <ul class="dropdown-menu" aria-labelledby="dataDownload" style="padding:0px;">
-        <li>
-			<div class="d-grid gap-2">
-			
-			<%= link_to data_path(format: :csv, filter: @raw_filter_params), 
-				class: "nav-link", 
-				title: "CSV",
-				download: "data_#{Date.today}.csv" do %>
-					<%=bs_icon("filetype-csv")%> CSV
-			<% end %>
-		</div>
-	  </li>
-        <li>
-			<div class="d-grid gap-2">
-			
-			<%= link_to data_path(format: :json, filter: @raw_filter_params), 
-				class: "nav-link", 
-				title: "JSON",
-				download: "data_#{Date.today}.json" do %>
-					<%=bs_icon("filetype-json")%> JSON
-			<% end%>
-		</div>
-	  </li>
-        <li>
-          <div class="d-grid gap-2">
-            <%= link_to data_path(format: :json, schema: C14::MIAARD::SCHEMA, filter: @raw_filter_params),
-                        class: "nav-link",
-                        title: "MIaaRD JSON",
-                        download: "data_miaard_#{Date.today}.json" do %>
-              <%= bs_icon("filetype-json") %> MIaaRD JSON
-            <% end %>
-          </div>
-        </li>
-      </ul>
-    </li>
-  </ul>
+  <div class="dropdown">
+    <button id="dataDownload" class="btn btn-outline-primary dropdown-toggle" type="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+      <%= bs_icon "download" %> Download
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dataDownload">
+      <li>
+        <%= link_to data_path(format: :csv, filter: @raw_filter_params),
+                    class: "dropdown-item", download: "data_#{Date.today}.csv" do %>
+          <%= bs_icon "filetype-csv" %> CSV
+        <% end %>
+      </li>
+      <li>
+        <%= link_to data_path(format: :json, filter: @raw_filter_params),
+                    class: "dropdown-item", download: "data_#{Date.today}.json" do %>
+          <%= bs_icon "filetype-json" %> JSON
+        <% end %>
+      </li>
+      <li>
+        <%= link_to data_path(format: :json, schema: C14::MIAARD::SCHEMA, filter: @raw_filter_params),
+                    class: "dropdown-item", download: "data_miaard_#{Date.today}.json" do %>
+          <%= bs_icon "filetype-json" %> MIaaRD JSON
+        <% end %>
+      </li>
+    </ul>
+  </div>
 </div>

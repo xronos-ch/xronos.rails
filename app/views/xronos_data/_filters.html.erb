@@ -1,15 +1,10 @@
-<h2 class="visually-hidden">Filters</h2>
+<%= bootstrap_form_for :filter, method: :get, url: data_path do |f| %>
+  <div class="accordion accordion-flush">
+    <%= render "filter_fields", f: f %>
+  </div>
 
-<div style="width: 30rem">
-  <%= bootstrap_form_for :filter, method: :get, url: data_path do |f| %>
-
-    <div class="accordion accordion-flush">
-      <%= render "filter_fields", f: f %>
-    </div>
-
-    <div class="m-3">
-      <%= f.button "Filter", class: "btn btn-primary" %>
-      <%= link_to "Clear filters", data_path, class: "btn btn-outline-danger" %>
-    </div>
-  <% end %>
-</div>
+  <div class="m-3 d-flex flex-wrap gap-2">
+    <%= f.button "Filter", class: "btn btn-primary" %>
+    <%= link_to "Clear filters", data_path, class: "btn btn-outline-danger" %>
+  </div>
+<% end %>

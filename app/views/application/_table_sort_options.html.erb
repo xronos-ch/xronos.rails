@@ -1,0 +1,13 @@
+<details class="d-md-none mb-2">
+  <summary>Sort by</summary>
+  <ul class="list-unstyled d-flex flex-wrap column-gap-3 row-gap-2 mt-2 mb-0">
+    <% columns.each do |column, label| %>
+      <li>
+        <%= link_to_order_by label, column, table %>
+        <% if ordered_by?(column, table) %>
+          <span class="text-muted"><%= order_indicator table %></span>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+</details>

@@ -1,8 +1,7 @@
-<nav class="navbar navbar-expand-lg sticky-top text-bg-primary mb-0 main-nav shadow"
+<nav class="navbar navbar-expand-lg sticky-lg-top text-white mb-0 main-nav<%= " home-nav" if request.path == "/" %>"
      data-bs-theme="light"
   <% if request.path == "/" %>
        data-controller="home-hero"
-       data-home-hero-target="navbar"
        data-action="scroll@window->home-hero#scroll"
      <% end %>>
 
@@ -12,14 +11,14 @@
          <%= image_tag "xronos_logo_light.svg", alt: "XRONOS", style: 'max-height: 1.5rem' %>
        </a>
 
-       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+       <button class="navbar-toggler" type="button" data-bs-theme="dark" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
          <span class="navbar-toggler-icon"></span>
        </button>
 
        <div class="collapse navbar-collapse" id="navbarSupportedContent">
          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link link-info <%= active_class data_path %>" href="/data" <%= active_aria data_path %>>Browse data</a>
+              <a class="nav-link link-info <%= active_class data_path %>" href="<%= data_path %>" <%= active_aria data_path %>>Explore the map</a>
             </li>
             <% if user_signed_in? %>
             <li class="nav-item dropdown">
@@ -76,8 +75,7 @@
          </ul>
 
          <form id="navbarSearch"
-               data-home-hero-target="search"
-               class="me-3" 
+               class="mb-2 mb-lg-0 me-lg-3"
                role="search"
                action="/search"
                method="get">
@@ -90,13 +88,13 @@
            </div>
          </form>
 
-         <div class="d-flex">
+         <div class="navbar-account">
            <% if user_signed_in? %>
              <div class="dropdown">
-               <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+               <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" id="accountMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                  <%= current_user.email %>
                </button>
-                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
+                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountMenuButton">
                   <li>
                     <%= link_to(new_or_edit_profile_path(current_user.user_profile), class: "dropdown-item") do %>
                       <%= bs_icon "person-circle" %> Edit public profile
@@ -117,11 +115,11 @@
 
            <% else %>
              <div class="dropdown">
-               <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+               <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" id="signInMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                  Sign in
                </button>
 
-                 <div class="dropdown-menu dropdown-menu-end p-3" aria-labelledby="dropdownMenuLink" style="min-width: 24rem" data-bs-display="static">
+                 <div class="dropdown-menu dropdown-menu-end sign-in-menu p-3" aria-labelledby="signInMenuButton">
                    <%= form_for :user, :url => session_path(:user), data: {turbo: false} do |f| %>
                      <h2 class="h6 mb-3">Sign in</h2>
                      <div class="form-floating mb-3">

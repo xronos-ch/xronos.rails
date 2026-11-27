@@ -1,49 +1,82 @@
-<table class="responsive nowrap table table-hover align-middle">
-  <thead>
-    <tr>
-      <th scope="col">
-        <%= link_to_order_by "Name", :name, :sites %>
-        <% if ordered_by?(:name, :sites) %>
-          <span class="text-muted"><%= order_indicator :sites %></span>
-        <% end %>
-      </th>
-      <th scope="col">
-        <%= link_to_order_by "Country", :country_code, :sites %>
-        <% if ordered_by?(:country_code, :sites) %>
-          <span class="text-muted"><%= order_indicator :sites %></span>
-        <% end %>
-      </th>
-      <th scope="col">Coordinates</th>
-      <th scope="col" class="text-end">
-        <%= link_to_order_by C14.label.humanize.pluralize, :c14s_count, :sites %>
-        <% if ordered_by?(:c14s_count, :sites) %>
-          <span class="text-muted"><%= order_indicator :sites %></span>
-        <% end %>
-      </th>
-      <th scope="col" class="text-end">
-        <%= link_to_order_by Typo.label.humanize.pluralize, :typos_count, :sites %>
-        <% if ordered_by?(:typos_count, :sites) %>
-          <span class="text-muted"><%= order_indicator :sites %></span>
-        <% end %>
-      </th>
-      <% if can? :manage, Site %>
-        <th scope="col" class="text-end"><!-- Actions --></th>
-      <% end %>
-    </tr>
-  </thead>
-  
-  <tbody>
-    <% sites.each do |site| %>
+<% c14_label = C14.label.humanize.pluralize %>
+<% typo_label = Typo.label.humanize.pluralize %>
+<% can_manage = can?(:manage, Site) %>
+<%= render "table_sort_options", table: :sites,
+           columns: { name: "Name", country_code: "Country", c14s_count: c14_label, typos_count: typo_label } %>
+
+<div class="table-responsive" tabindex="0" role="region" aria-label="Sites">
+  <table class="table table-hover align-middle compact-record-table">
+    <thead>
       <tr>
-        <td><%= link_to site.name, site, target: :_top %></td>
-        <td><%= site.country.present? ? render("sites/country", site: site) : na_value %></td>
-        <td class="font-monospace"><%= site.coordinates.present? ? site.coordinates : na_value %></td>
-        <td class="text-end"><%= site.c14s_count %></td>
-        <td class="text-end"><%= site.typos_count %></td>
-        <% if can? :manage, Site %>
-          <td class="text-end"><%= render "application/actions", i: site %></td>
+        <th scope="col">
+          <span class="d-md-none">Site</span>
+          <span class="d-none d-md-inline">
+            <%= link_to_order_by "Name", :name, :sites %>
+            <% if ordered_by?(:name, :sites) %>
+              <span class="text-muted"><%= order_indicator :sites %></span>
+            <% end %>
+          </span>
+        </th>
+        <th scope="col" class="d-none d-md-table-cell">
+          <%= link_to_order_by "Country", :country_code, :sites %>
+          <% if ordered_by?(:country_code, :sites) %>
+            <span class="text-muted"><%= order_indicator :sites %></span>
+          <% end %>
+        </th>
+        <th scope="col" class="d-none d-md-table-cell">Coordinates</th>
+        <th scope="col" class="compact-record-table-secondary text-md-end">
+          <span class="d-md-none">Dates</span>
+          <span class="d-none d-md-inline">
+            <%= link_to_order_by c14_label, :c14s_count, :sites %>
+            <% if ordered_by?(:c14s_count, :sites) %>
+              <span class="text-muted"><%= order_indicator :sites %></span>
+            <% end %>
+          </span>
+        </th>
+        <th scope="col" class="d-none d-md-table-cell text-end">
+          <%= link_to_order_by typo_label, :typos_count, :sites %>
+          <% if ordered_by?(:typos_count, :sites) %>
+            <span class="text-muted"><%= order_indicator :sites %></span>
+          <% end %>
+        </th>
+        <% if can_manage %>
+          <th scope="col" class="d-none d-md-table-cell text-end"><!-- Actions --></th>
         <% end %>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+
+    <tbody>
+      <% sites.each do |site| %>
+        <% country = site.country.present? ? render("sites/country", site: site) : na_value %>
+        <% coordinates = site.coordinates || na_value %>
+        <% actions = render("application/actions", i: site) if can_manage %>
+        <tr>
+          <td>
+            <%= link_to site.name, site, target: :_top %>
+            <div class="d-md-none">
+              <div><%= country %></div>
+              <div class="small text-body-secondary"><%= coordinates %></div>
+              <% if can_manage %>
+                <div class="mt-2"><%= actions %></div>
+              <% end %>
+            </div>
+          </td>
+          <td class="d-none d-md-table-cell"><%= country %></td>
+          <td class="d-none d-md-table-cell font-monospace"><%= coordinates %></td>
+          <td class="text-md-end">
+            <div class="d-md-none small text-body-secondary">Radiocarbon</div>
+            <%= site.c14s_count %>
+            <div class="d-md-none mt-1">
+              <div class="small text-body-secondary">Typological</div>
+              <%= site.typos_count %>
+            </div>
+          </td>
+          <td class="d-none d-md-table-cell text-end"><%= site.typos_count %></td>
+          <% if can_manage %>
+            <td class="d-none d-md-table-cell text-end"><%= actions %></td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
