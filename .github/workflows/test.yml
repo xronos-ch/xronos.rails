@@ -83,14 +83,22 @@ jobs:
       - name: Run test suite
         run: SIMPLECOV_COMMAND_NAME=rails-tests bin/rails test
 
+      # Chrome 158 rejects the wildcard origin Capybara 3.40 uses during session reset.
+      - name: Set up Chrome for system tests
+        id: chrome
+        uses: browser-actions/setup-chrome@v2
+        with:
+          chrome-version: '157.0.8103.78'
+          install-chromedriver: true
+
       - name: Run system test suite
         env:
-          # Chrome 158 rejects the wildcard origin Capybara 3.40 uses during session reset.
-          # Remove this pin when Capybara supports newer Chrome versions.
-          SE_BROWSER_VERSION: '157'
-          SE_FORCE_BROWSER_DOWNLOAD: 'true'
-          SE_SKIP_DRIVER_IN_PATH: 'true'
-        run: SIMPLECOV_COMMAND_NAME=system-tests bin/rails test:system
+          SYSTEM_TEST_CHROME_BINARY: ${{ steps.chrome.outputs.chrome-path }}
+          SE_CHROMEDRIVER: ${{ steps.chrome.outputs.chromedriver-path }}
+        run: |
+          "$SYSTEM_TEST_CHROME_BINARY" --version
+          "$SE_CHROMEDRIVER" --version
+          SIMPLECOV_COMMAND_NAME=system-tests bin/rails test:system
 
       - name: Inspect coverage report
         if: always() && hashFiles('coverage/coverage.xml') != ''

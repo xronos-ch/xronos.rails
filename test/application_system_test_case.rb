@@ -3,7 +3,9 @@
 require "test_helper"
 
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
-  driven_by :selenium, using: :headless_chrome, screen_size: [1400, 1400]
+  driven_by :selenium, using: :headless_chrome, screen_size: [1400, 1400] do |options|
+    options.binary = ENV.fetch("SYSTEM_TEST_CHROME_BINARY", nil)
+  end
 
   def assert_no_browser_errors
     logs = page.driver.browser.logs.get(:browser)
