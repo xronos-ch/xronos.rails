@@ -5,11 +5,11 @@
 <% end %>
 <%= content_for :og_title, "XRONOS: Open chronometric data for archaeology" %>
 
-<div class="jumbotron jumbotron-fluid hero mt-0 position-relative hero py-5 shadow">
+<div class="hero d-flex mt-0 position-relative py-5 shadow">
 
-  <div class="container h-100 d-flex flex-column" style="text-shadow: var(--bs-dark) 0 0 1rem;">
-    <p class="mt-auto mb-5 display-5 fw-bold">Open chronometric data for archaeology</h2>
-    <div class="me-auto mb-auto">
+  <div class="container d-flex flex-column" style="text-shadow: var(--bs-dark) 0 0 1rem;">
+    <h1 class="mt-auto mb-4 mb-lg-5 display-5 fw-bold">Open chronometric data for archaeology</h1>
+    <div class="me-lg-auto mb-auto">
       <%= render "searches/form" %>
     </div>
   </div>
@@ -19,63 +19,20 @@
 </div>
 
 
-<section class="mb-5 py-5 bg-primary text-light shadow">
-  <div class="container my-2 text-center">
-
-    <div class="row">
-
-      <div class="col-sm-6 col-lg-3 my-3">
-        <%= xr_icon Site, { light: true }, { class: "d-block mx-auto mb-2", style: "width: 5rem; height: auto;" } %>
-        <a href="/sites" class="display-5 link-secondary text-decoration-none" title="Browse sites">
-          <%= number_with_delimiter(cached_site_count)%>
-        </a>
-        <p class="h4"><%= Site.label.humanize.pluralize %></p>
-      </div>
-
-      <div class="col-sm-6 col-lg-3 my-3">
-        <%= xr_icon C14, { light: true }, { class: "d-block mx-auto mb-2", style: "width: 5rem; height: auto;" } %>
-        <a href="/c14s" class="display-5 link-secondary text-decoration-none" title="Browse radiocarbon dates">
-          <%= number_with_delimiter(cached_c14_count)%>
-        </a>
-        <p class="h4"><%= C14.label.humanize.pluralize %></p>
-      </div>
-
-      <div class="col-sm-6 col-lg-3 my-3">
-        <%= xr_icon Typo, { light: true }, { class: "d-block mx-auto mb-2", style: "width: 5rem; height: auto;" } %>
-        <a href="/typos" class="display-5 link-secondary text-decoration-none" title="Browse typological dates">
-          <%= number_with_delimiter(cached_typo_count)%>
-        </a>
-        <p class="h4"><%= Typo.label.humanize.pluralize %></p>
-      </div>
-
-      <div class="col-sm-6 col-lg-3 my-3 text-dark position-relative">
-        <span class="position-absolute top-0 end-0 text-warning">
-          Coming soon!
-          <%= bs_icon "cone-striped" %>
-        </span>
-        <%= embedded_svg "icons/dendro.svg", class: "d-block mx-auto mb-2", style: "width: 5rem; height: auto;" %>
-        <a href="#" class="display-5 link-dark text-decoration-none">
-          —
-        </a>
-        <p class="h4">Dendro dates</p>
-      </div>
-
-    </div>
-
-  </div>
-</section>
-
-
-<section class="mb-5">
-  <div class="container my-3">
-    <h3 class="visually-hidden">What is XRONOS?</h3>
-    <div class="row">
+<section class="py-4 py-sm-5">
+  <div class="container">
+    <h2 class="visually-hidden">What is XRONOS?</h2>
+    <div class="row g-3 g-lg-4 align-items-center">
       <div class="col-md">
-        <a href="/data" title="Browse XRONOS data">
-          <%= image_tag "xronos_mapviz.webp", width: 640, height: 320, style: "max-width: 100%; height: auto;", alt: "Map showing the density of chronometric records in XRONOS" %>
-        </a>
+        <%= link_to data_path, class: "position-relative d-inline-block link-primary link-offset-2 link-underline-opacity-0 link-underline-opacity-100-hover" do %>
+          <%= image_tag "xronos_mapviz.webp", width: 640, height: 320, class: "d-block img-fluid",
+                        alt: "Map showing the density of chronometric records in XRONOS" %>
+          <span class="position-absolute bottom-0 end-0 d-inline-flex align-items-center gap-2 px-2 py-1 bg-body bg-opacity-75 small fw-semibold">
+            Explore the map <%= bs_icon "arrow-right" %>
+          </span>
+        <% end %>
       </div>
-      <div class="col-md my-auto">
+      <div class="col-md">
         <p class="lead">XRONOS is an open data infrastructure for the backbone of the archaeological record – chronology. It provides open access to published radiocarbon dates and other chronometric data from any period, anywhere in the world.</p>
         <ul class="nav">
           <li class="nav-item"><a class="nav-link ps-0 me-3" href="/about">Learn more</a></li>
@@ -83,14 +40,41 @@
         </ul>
       </div>
     </div>
+  </div>
 </section>
 
-<section class="bg-light">
-  <% unless @news.blank? %>
-    <div class="container my-5">
+<section class="py-4 py-sm-5 bg-primary text-light shadow">
+  <div class="container text-center">
+    <div class="row row-cols-2 row-cols-lg-4 gy-4">
+      <% [
+        [Site, sites_path, cached_site_count],
+        [C14, c14s_path, cached_c14_count],
+        [Typo, typos_path, cached_typo_count]
+      ].each do |model, path, count| %>
+        <div class="col">
+          <%= link_to path, class: "d-inline-block link-light link-underline-opacity-0 link-underline-opacity-100-hover" do %>
+            <%= xr_icon model, { light: true }, { class: "home-data-icon d-block mx-auto mb-2", alt: "" } %>
+            <span class="h5 d-block mb-1"><%= model.label.humanize.pluralize %></span>
+            <span class="display-6 text-secondary"><%= number_with_delimiter(count) %></span>
+          <% end %>
+        </div>
+      <% end %>
+
+      <div class="col">
+        <%= embedded_svg "icons/dendro.svg", class: "home-data-icon d-block mx-auto mb-2" %>
+        <span class="h5 d-block mb-1">Dendro dates</span>
+        <span class="text-warning small">Coming soon!</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<% if @news.present? %>
+  <section class="py-5">
+    <div class="container">
       <div class="row">
         <div class="col col-lg-9 mx-auto">
-          <h3 class="display-5 mb-4">Latest news</h3>
+          <h2 class="display-5 mb-4">Latest news</h2>
 
           <% @news.each do |article| %>
             <%= render "articles/card", article: article %>
@@ -101,11 +85,5 @@
       </div>
 
     </div>
-  <% end %>
-  </div>
-</section>
-
-
-
-
-
+  </section>
+<% end %>
