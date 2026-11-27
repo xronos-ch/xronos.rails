@@ -3,8 +3,19 @@
 require "test_helper"
 
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
-  driven_by :selenium, using: :headless_chrome, screen_size: [1400, 1400] do |options|
-    options.binary = ENV.fetch("SYSTEM_TEST_CHROME_BINARY", nil)
+  driven_by :selenium, using: :headless_chrome, screen_size: [1400, 1400]
+
+  def after_teardown
+    super
+  rescue Selenium::WebDriver::Error::InvalidArgumentError => error
+    # Chrome 158 rejects the wildcard origin used by Capybara 3.40's reset.
+    raise unless error.message.include?("* is not a valid URL")
+
+    begin
+      page.raise_server_error!
+    ensure
+      page.quit
+    end
   end
 
   def assert_no_browser_errors
